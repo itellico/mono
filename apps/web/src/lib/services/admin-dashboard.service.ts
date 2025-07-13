@@ -108,8 +108,8 @@ export class AdminDashboardService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/dashboard?tenantId=${tenantId}`
-        : `${this.API_BASE_URL}/api/v1/admin/dashboard`;
+        ? `${this.API_BASE_URL}/api/v2/admin/dashboard?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v2/admin/dashboard`;
 
       const response = await fetch(url, { headers });
 
@@ -161,8 +161,8 @@ export class AdminDashboardService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/dashboard/stats?tenantId=${tenantId}`
-        : `${this.API_BASE_URL}/api/v1/admin/dashboard/stats`;
+        ? `${this.API_BASE_URL}/api/v2/admin/dashboard/stats?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v2/admin/dashboard/stats`;
 
       const response = await fetch(url, { headers });
 
@@ -211,8 +211,8 @@ export class AdminDashboardService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/dashboard/quick-actions?tenantId=${tenantId}`
-        : `${this.API_BASE_URL}/api/v1/admin/dashboard/quick-actions`;
+        ? `${this.API_BASE_URL}/api/v2/admin/dashboard/quick-actions?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v2/admin/dashboard/quick-actions`;
 
       const response = await fetch(url, { headers });
 
@@ -258,8 +258,8 @@ export class AdminDashboardService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/dashboard/activity?tenantId=${tenantId}&limit=${limit}`
-        : `${this.API_BASE_URL}/api/v1/admin/dashboard/activity?limit=${limit}`;
+        ? `${this.API_BASE_URL}/api/v2/admin/dashboard/activity?tenantId=${tenantId}&limit=${limit}`
+        : `${this.API_BASE_URL}/api/v2/admin/dashboard/activity?limit=${limit}`;
 
       const response = await fetch(url, { headers });
 

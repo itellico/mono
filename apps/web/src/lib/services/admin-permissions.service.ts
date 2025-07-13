@@ -36,7 +36,7 @@ export class AdminPermissionsService {
    */
   static async getUserPermissionAccess(): Promise<UserPermissionAccess | null> {
     try {
-      // Use centralized auth service and correct API path (/api/v1/ not /api/v2/)
+      // Use centralized auth service and correct API path (/api/v2/ not /api/v2/)
       const result = await ApiAuthService.makeAuthenticatedRequest<UserPermissionAccess>(
         '/admin/permissions/user-access'
       );

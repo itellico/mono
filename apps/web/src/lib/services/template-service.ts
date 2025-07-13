@@ -109,7 +109,7 @@ export class TemplateService {
 
       // Try tenant-specific schema first
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/model-schemas?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas?${queryParams}`,
         { headers }
       );
 
@@ -133,7 +133,7 @@ export class TemplateService {
       });
 
       const platformResponse = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/model-schemas?${platformParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas?${platformParams}`,
         { headers }
       );
 
@@ -226,7 +226,7 @@ export class TemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/option-values?optionSetId=${optionSetId}`,
+        `${this.API_BASE_URL}/api/v2/admin/option-values?optionSetId=${optionSetId}`,
         { headers }
       );
 
@@ -313,16 +313,24 @@ export class TemplateService {
     tenantId: string
   ): Promise<ParsedSchema[]> {
     try {
-      const schemas = await db
-        .select()
-        .from(modelSchemas)
-        .where(
-          and(
-            eq(modelSchemas.type, type),
-            eq(modelSchemas.tenantId, tenantId),
-            eq(modelSchemas.isActive, true)
-          )
-        );
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        type,
+        tenantId,
+        isActive: 'true',
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to load schemas: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const schemas = data.data || data;
 
       const parsedSchemas = await Promise.all(
         schemas.map(schema => this.parseSchema(schema, 'form'))
@@ -346,7 +354,7 @@ export class TemplateService {
       }
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/option-sets?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/option-sets?${queryParams}`,
         { headers }
       );
 

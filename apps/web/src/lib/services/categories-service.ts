@@ -94,7 +94,7 @@ export class CategoriesService {
       }
 
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories?${queryParams}`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories?${queryParams}`,
         { headers }
       );
 
@@ -153,7 +153,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${categoryId}`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories/${categoryId}`,
         { headers }
       );
 
@@ -205,7 +205,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories`,
         {
           method: 'POST',
           headers: {
@@ -252,7 +252,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${uuid}`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories/${uuid}`,
         {
           method: 'PUT',
           headers: {
@@ -291,7 +291,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${uuid}`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories/${uuid}`,
         {
           method: 'DELETE',
           headers,
@@ -347,7 +347,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/stats`,
+        `${CategoriesService.API_BASE_URL}/api/v2/admin/categories/stats`,
         { headers }
       );
 

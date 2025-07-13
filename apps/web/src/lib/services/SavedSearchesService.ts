@@ -164,7 +164,7 @@ export class SavedSearchesService {
         });
         
         const response = await fetch(
-          `${this.API_BASE_URL}/api/v1/saved-searches?${queryParams}`,
+          `${this.API_BASE_URL}/api/v2/saved-searches?${queryParams}`,
           { headers }
         );
 
@@ -203,7 +203,7 @@ export class SavedSearchesService {
         });
         
         const response = await fetch(
-          `${this.API_BASE_URL}/api/v1/saved-searches/entity?${queryParams}`,
+          `${this.API_BASE_URL}/api/v2/saved-searches/entity?${queryParams}`,
           { headers }
         );
 
@@ -232,7 +232,7 @@ export class SavedSearchesService {
         
         const headers = await ApiAuthService.getAuthHeaders();
         const response = await fetch(
-          `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+          `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}`,
           { headers }
         );
 
@@ -260,7 +260,7 @@ export class SavedSearchesService {
     
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches`,
+      `${this.API_BASE_URL}/api/v2/saved-searches`,
       {
         method: 'POST',
         headers: {
@@ -297,7 +297,7 @@ export class SavedSearchesService {
     
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}`,
       {
         method: 'PUT',
         headers: {
@@ -341,7 +341,7 @@ export class SavedSearchesService {
 
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}`,
       {
         method: 'DELETE',
         headers,
@@ -384,7 +384,7 @@ export class SavedSearchesService {
     });
     
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/check-name?${queryParams}`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/check-name?${queryParams}`,
       { headers }
     );
 
@@ -412,7 +412,7 @@ export class SavedSearchesService {
     });
     
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/default?${queryParams}`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/default?${queryParams}`,
       { headers }
     );
 
@@ -436,7 +436,7 @@ export class SavedSearchesService {
     
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/default`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}/default`,
       {
         method: 'PUT',
         headers,
@@ -475,7 +475,7 @@ export class SavedSearchesService {
         
         const headers = await ApiAuthService.getAuthHeaders();
         const response = await fetch(
-          `${this.API_BASE_URL}/api/v1/saved-searches/stats?tenantId=${tenantId}`,
+          `${this.API_BASE_URL}/api/v2/saved-searches/stats?tenantId=${tenantId}`,
           { headers }
         );
 
@@ -575,7 +575,7 @@ export class SavedSearchesService {
     
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/override`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}/override`,
       {
         method: 'PUT',
         headers: {
@@ -613,7 +613,7 @@ export class SavedSearchesService {
     
     const headers = await ApiAuthService.getAuthHeaders();
     const response = await fetch(
-      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/promote`,
+      `${this.API_BASE_URL}/api/v2/saved-searches/${uuid}/promote`,
       {
         method: 'PUT',
         headers,

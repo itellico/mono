@@ -119,7 +119,7 @@ export class OptionSetsService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/option-sets?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/option-sets?${queryParams}`,
         { headers }
       );
 
@@ -172,7 +172,7 @@ export class OptionSetsService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/option-sets/${id}?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/option-sets/${id}?${queryParams}`,
         { headers }
       );
 
@@ -266,7 +266,7 @@ export class OptionSetsService {
       logger.info('[OptionSetsService] Creating option set', { data });
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/option-sets`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/option-sets`, {
         method: 'POST',
         headers: {
           ...headers,

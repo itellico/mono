@@ -158,7 +158,7 @@ class TranslationsService {
       });
 
       const response = await fetch(
-        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/get?${queryParams}`,
+        `${TranslationsService.API_BASE_URL}/api/v2/admin/translations/get?${queryParams}`,
         { headers }
       );
 
@@ -223,7 +223,7 @@ class TranslationsService {
       });
 
       const response = await fetch(
-        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/search?${queryParams}`,
+        `${TranslationsService.API_BASE_URL}/api/v2/admin/translations/search?${queryParams}`,
         { headers }
       );
 
@@ -286,7 +286,7 @@ class TranslationsService {
       });
 
       const response = await fetch(
-        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/supported-languages?${queryParams}`,
+        `${TranslationsService.API_BASE_URL}/api/v2/admin/translations/supported-languages?${queryParams}`,
         { headers }
       );
 
@@ -362,7 +362,7 @@ class TranslationsService {
       logger.info('Creating translation', { data });
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${TranslationsService.API_BASE_URL}/api/v1/admin/translations`, {
+      const response = await fetch(`${TranslationsService.API_BASE_URL}/api/v2/admin/translations`, {
         method: 'POST',
         headers: {
           ...headers,

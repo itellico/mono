@@ -64,8 +64,8 @@ class LanguageSettingsService {
       // Query API
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/language-settings?tenantId=${tenantId}`
-        : `${this.API_BASE_URL}/api/v1/admin/language-settings`;
+        ? `${this.API_BASE_URL}/api/v2/admin/language-settings?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v2/admin/language-settings`;
 
       const response = await fetch(url, { headers });
 
@@ -117,8 +117,8 @@ class LanguageSettingsService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const url = tenantId 
-        ? `${this.API_BASE_URL}/api/v1/admin/language-settings?tenantId=${tenantId}`
-        : `${this.API_BASE_URL}/api/v1/admin/language-settings`;
+        ? `${this.API_BASE_URL}/api/v2/admin/language-settings?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v2/admin/language-settings`;
 
       const response = await fetch(url, {
         method: 'PUT',
@@ -191,7 +191,7 @@ class LanguageSettingsService {
   async getAvailableLanguages(): Promise<Array<{ code: string; name: string; nativeName: string }>> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/languages`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/languages`, {
         headers,
       });
 

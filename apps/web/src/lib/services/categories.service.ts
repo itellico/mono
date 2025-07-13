@@ -146,7 +146,7 @@ export class CategoriesService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories?${queryParams}`,
         { headers }
       );
 
@@ -202,7 +202,7 @@ export class CategoriesService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/list?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/list?${queryParams}`,
         { headers }
       );
 
@@ -241,7 +241,7 @@ export class CategoriesService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/tags?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/tags?${queryParams}`,
         { headers }
       );
 
@@ -269,7 +269,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/${id}`,
         { headers }
       );
 
@@ -300,7 +300,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/tags/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/tags/${id}`,
         { headers }
       );
 
@@ -335,7 +335,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories`,
+        `${this.API_BASE_URL}/api/v2/admin/categories`,
         {
           method: 'POST',
           headers: {
@@ -388,7 +388,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/${id}`,
         {
           method: 'PUT',
           headers: {
@@ -439,7 +439,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/${id}`,
         {
           method: 'DELETE',
           headers,
@@ -477,7 +477,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/tags`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/tags`,
         {
           method: 'POST',
           headers: {
@@ -530,7 +530,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/tags/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/tags/${id}`,
         {
           method: 'PUT',
           headers: {
@@ -581,7 +581,7 @@ export class CategoriesService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/tags/${id}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/tags/${id}`,
         {
           method: 'DELETE',
           headers,
@@ -626,7 +626,7 @@ export class CategoriesService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/by-entity?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/by-entity?${queryParams}`,
         { headers }
       );
 
@@ -658,7 +658,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/import`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/import`,
         {
           method: 'POST',
           headers: {
@@ -707,7 +707,7 @@ export class CategoriesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/stats?tenantId=${tenantId}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/stats?tenantId=${tenantId}`,
         { headers }
       );
 
@@ -749,7 +749,7 @@ export class CategoriesService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/categories/search?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/categories/search?${queryParams}`,
         { headers }
       );
 

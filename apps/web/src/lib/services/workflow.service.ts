@@ -59,7 +59,7 @@ export class WorkflowService {
       });
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/workflows`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/workflows`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -111,7 +111,7 @@ export class WorkflowService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/workflows/${workflowId}?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/workflows/${workflowId}?${queryParams}`,
         { headers }
       );
 
@@ -163,7 +163,7 @@ export class WorkflowService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/workflows?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/workflows?${queryParams}`,
         { headers }
       );
 
@@ -197,7 +197,7 @@ export class WorkflowService {
       logger.info('Updating workflow status', { workflowId, tenantId, status, updatedBy });
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/workflows/${workflowId}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/workflows/${workflowId}`, {
         method: 'PATCH',
         headers: {
           ...headers,
@@ -242,7 +242,7 @@ export class WorkflowService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/workflows/${workflowId}?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/workflows/${workflowId}?${queryParams}`,
         {
           method: 'DELETE',
           headers,
@@ -281,7 +281,7 @@ export class WorkflowService {
       });
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/workflows/${workflowId}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/workflows/${workflowId}`, {
         method: 'PUT',
         headers: {
           ...headers,

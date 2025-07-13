@@ -128,7 +128,7 @@ export class AuditService {
   async logAction(entry: AuditLogEntry): Promise<void> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/audit`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -196,7 +196,7 @@ export class AuditService {
   async logUserActivity(entry: UserActivityEntry): Promise<void> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/activity`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/audit/activity`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -270,7 +270,7 @@ export class AuditService {
         }
       });
 
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit?${queryParams}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/audit?${queryParams}`, {
         headers,
       });
 
@@ -320,7 +320,7 @@ export class AuditService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/audit/entity/${entityType}/${entityId}?tenantId=${tenantId}`,
+        `${this.API_BASE_URL}/api/v2/audit/entity/${entityType}/${entityId}?tenantId=${tenantId}`,
         { headers }
       );
 
@@ -398,7 +398,7 @@ export class AuditService {
         }
       });
 
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/activity?${queryParams}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/audit/activity?${queryParams}`, {
         headers,
       });
 
@@ -499,7 +499,7 @@ export class AuditService {
       });
       queryParams.append('format', format);
 
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/export?${queryParams}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/audit/export?${queryParams}`, {
         headers,
       });
 

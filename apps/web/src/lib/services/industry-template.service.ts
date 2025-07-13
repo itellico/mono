@@ -107,7 +107,7 @@ export class IndustryTemplateService {
       });
 
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates?${queryParams}`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates?${queryParams}`,
         { headers }
       );
 
@@ -148,7 +148,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/${id}`,
         { headers }
       );
 
@@ -183,7 +183,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates`,
         {
           method: 'POST',
           headers: {
@@ -228,7 +228,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/${id}`,
         {
           method: 'PUT',
           headers: {
@@ -272,7 +272,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/${id}`,
         {
           method: 'DELETE',
           headers,
@@ -306,7 +306,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${templateId}/components`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/${templateId}/components`,
         { headers }
       );
 
@@ -344,7 +344,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${templateId}/components`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/${templateId}/components`,
         {
           method: 'POST',
           headers: {
@@ -388,7 +388,7 @@ export class IndustryTemplateService {
 
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/stats`,
+        `${IndustryTemplateService.API_BASE_URL}/api/v2/admin/industry-templates/stats`,
         { headers }
       );
 

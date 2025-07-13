@@ -362,7 +362,7 @@ export class PermissionsService {
       }
 
       // Admin API access check
-      if (path.startsWith('/api/v1/admin/')) {
+      if (path.startsWith('/api/v2/admin/')) {
         const canAccess = await this.canAccessAdmin(userId);
         if (!canAccess) {
           return { allowed: false, reason: 'Admin access required' };

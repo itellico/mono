@@ -128,7 +128,7 @@ export class EnhancedTaggingService {
   static async createTag(params: CreateTagParams): Promise<EnhancedTag> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -170,7 +170,7 @@ export class EnhancedTaggingService {
       const headers = await ApiAuthService.getAuthHeaders();
       const { id, ...updateData } = params;
       
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/${id}`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -208,7 +208,7 @@ export class EnhancedTaggingService {
   static async deleteTag(id: string, context: TaggingContext): Promise<boolean> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/${id}`, {
         method: 'DELETE',
         headers: {
           ...headers,
@@ -261,7 +261,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/by-scope?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/by-scope?${queryParams}`,
         { headers }
       );
 
@@ -306,7 +306,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/available?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/available?${queryParams}`,
         { headers }
       );
 
@@ -339,7 +339,7 @@ export class EnhancedTaggingService {
   ): Promise<void> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/tag-entity`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/tag-entity`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -387,7 +387,7 @@ export class EnhancedTaggingService {
   ): Promise<void> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/untag-entity`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/untag-entity`, {
         method: 'DELETE',
         headers: {
           ...headers,
@@ -444,7 +444,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/entity-tags?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/entity-tags?${queryParams}`,
         { headers }
       );
 
@@ -490,7 +490,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/entities-by-tag?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/entities-by-tag?${queryParams}`,
         { headers }
       );
 
@@ -526,7 +526,7 @@ export class EnhancedTaggingService {
   ): Promise<{ entityId: string; tags: TagWithScope[]; relevanceScore: number }[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/search-entities`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/search-entities`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -582,7 +582,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/suggestions?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/suggestions?${queryParams}`,
         { headers }
       );
 
@@ -633,7 +633,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/usage-stats?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/usage-stats?${queryParams}`,
         { headers }
       );
 
@@ -669,7 +669,7 @@ export class EnhancedTaggingService {
   ): Promise<{ successful: number; failed: number; errors: any[] }> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/bulk-tag`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/bulk-tag`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -721,7 +721,7 @@ export class EnhancedTaggingService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/enhanced-tags/${id}?${queryParams}`,
         { headers }
       );
 
@@ -763,7 +763,7 @@ export class EnhancedTaggingService {
   }> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/validate`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/enhanced-tags/validate`, {
         method: 'POST',
         headers: {
           ...headers,

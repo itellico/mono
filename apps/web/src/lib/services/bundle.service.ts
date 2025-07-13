@@ -11,7 +11,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export async function getBundles() {
   try {
     const headers = await ApiAuthService.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/v1/admin/bundles`, { headers });
+    const response = await fetch(`${API_BASE_URL}/api/v2/admin/bundles`, { headers });
     
     if (!response.ok) {
       throw new Error(`Failed to fetch bundles: ${response.statusText}`);
@@ -28,7 +28,7 @@ export async function getBundles() {
 export async function getBundle(id: string) {
   try {
     const headers = await ApiAuthService.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/v1/admin/bundles/${id}`, { headers });
+    const response = await fetch(`${API_BASE_URL}/api/v2/admin/bundles/${id}`, { headers });
     
     if (response.status === 404) {
       return null;
@@ -49,7 +49,7 @@ export async function getBundle(id: string) {
 export async function createBundle(bundle: any, featureIds: string[]) {
   try {
     const headers = await ApiAuthService.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/v1/admin/bundles`, {
+    const response = await fetch(`${API_BASE_URL}/api/v2/admin/bundles`, {
       method: 'POST',
       headers: {
         ...headers,
@@ -73,7 +73,7 @@ export async function createBundle(bundle: any, featureIds: string[]) {
 export async function updateBundle(id: string, bundle: any, featureIds: string[]) {
   try {
     const headers = await ApiAuthService.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/v1/admin/bundles/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v2/admin/bundles/${id}`, {
       method: 'PUT',
       headers: {
         ...headers,
@@ -97,7 +97,7 @@ export async function updateBundle(id: string, bundle: any, featureIds: string[]
 export async function deleteBundle(id: string) {
   try {
     const headers = await ApiAuthService.getAuthHeaders();
-    const response = await fetch(`${API_BASE_URL}/api/v1/admin/bundles/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v2/admin/bundles/${id}`, {
       method: 'DELETE',
       headers,
     });

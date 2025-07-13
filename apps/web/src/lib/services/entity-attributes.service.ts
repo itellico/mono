@@ -71,7 +71,7 @@ export class EntityAttributesService {
   ): Promise<EntityAttribute> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes`, {
+      const response = await fetch(`${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -157,7 +157,7 @@ export class EntityAttributesService {
       });
 
       const response = await fetch(
-        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/get?${queryParams}`,
+        `${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes/get?${queryParams}`,
         { headers }
       );
 
@@ -210,7 +210,7 @@ export class EntityAttributesService {
       });
 
       const response = await fetch(
-        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/list?${queryParams}`,
+        `${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes/list?${queryParams}`,
         { headers }
       );
 
@@ -261,7 +261,7 @@ export class EntityAttributesService {
       });
 
       const response = await fetch(
-        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/search?${queryParams}`,
+        `${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes/search?${queryParams}`,
         { headers }
       );
 
@@ -293,7 +293,7 @@ export class EntityAttributesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/remove`,
+        `${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes/remove`,
         {
           method: 'DELETE',
           headers: {
@@ -352,7 +352,7 @@ export class EntityAttributesService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/bulk`,
+        `${EntityAttributesService.API_BASE_URL}/api/v2/admin/entity-attributes/bulk`,
         {
           method: 'POST',
           headers: {

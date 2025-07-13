@@ -78,7 +78,7 @@ export class SubscriptionService {
   async getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/plans`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/plans`, {
         headers,
       });
 
@@ -99,7 +99,7 @@ export class SubscriptionService {
   async getSubscriptionPlan(id: string): Promise<SubscriptionPlan | null> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/plans/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/plans/${id}`, {
         headers,
       });
 
@@ -142,7 +142,7 @@ export class SubscriptionService {
       queryParams.append('offset', String(pagination.offset));
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/subscriptions?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/subscriptions?${queryParams}`,
         { headers }
       );
 
@@ -168,7 +168,7 @@ export class SubscriptionService {
   async createSubscription(planData: any): Promise<SubscriptionPlan> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/plans`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/plans`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -221,7 +221,7 @@ export class SubscriptionService {
       }
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/plans/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/plans/${id}`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -274,7 +274,7 @@ export class SubscriptionService {
       }
 
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/plans/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/plans/${id}`, {
         method: 'DELETE',
         headers,
       });
@@ -314,7 +314,7 @@ export class SubscriptionService {
   async getFeatures(): Promise<PlatformFeature[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/features`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/features`, {
         headers,
       });
 
@@ -335,7 +335,7 @@ export class SubscriptionService {
   async getFeature(id: string): Promise<PlatformFeature | null> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/features/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/features/${id}`, {
         headers,
       });
 
@@ -361,7 +361,7 @@ export class SubscriptionService {
   async createFeature(featureData: any): Promise<PlatformFeature> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/features`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/features`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -396,7 +396,7 @@ export class SubscriptionService {
   async updateFeature(id: string, featureData: any): Promise<PlatformFeature> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/features/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/features/${id}`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -431,7 +431,7 @@ export class SubscriptionService {
   async deleteFeature(id: string): Promise<boolean> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/features/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/features/${id}`, {
         method: 'DELETE',
         headers,
       });
@@ -461,7 +461,7 @@ export class SubscriptionService {
       const headers = await ApiAuthService.getAuthHeaders();
       const queryParams = planId ? `?planId=${planId}` : '';
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/subscriptions/limits${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/subscriptions/limits${queryParams}`,
         { headers }
       );
 
@@ -483,7 +483,7 @@ export class SubscriptionService {
   async getLimit(id: string): Promise<FeatureLimit | null> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/limits/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/limits/${id}`, {
         headers,
       });
 
@@ -509,7 +509,7 @@ export class SubscriptionService {
   async createLimit(limitData: any): Promise<FeatureLimit> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/limits`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/limits`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -544,7 +544,7 @@ export class SubscriptionService {
   async updateLimit(id: string, limitData: any): Promise<FeatureLimit> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/limits/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/limits/${id}`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -576,7 +576,7 @@ export class SubscriptionService {
   async deleteLimit(id: string): Promise<boolean> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/subscriptions/limits/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/subscriptions/limits/${id}`, {
         method: 'DELETE',
         headers,
       });
@@ -605,7 +605,7 @@ export class SubscriptionService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/tenants/${tenantId}/subscription`,
+        `${this.API_BASE_URL}/api/v2/tenants/${tenantId}/subscription`,
         { headers }
       );
 
@@ -632,7 +632,7 @@ export class SubscriptionService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/tenants/${tenantId}/subscription`,
+        `${this.API_BASE_URL}/api/v2/tenants/${tenantId}/subscription`,
         {
           method: 'POST',
           headers: {
@@ -671,7 +671,7 @@ export class SubscriptionService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/tenants/${tenantId}/subscription`,
+        `${this.API_BASE_URL}/api/v2/tenants/${tenantId}/subscription`,
         {
           method: 'PUT',
           headers: {
@@ -709,7 +709,7 @@ export class SubscriptionService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/tenants/${tenantId}/subscription`,
+        `${this.API_BASE_URL}/api/v2/tenants/${tenantId}/subscription`,
         {
           method: 'DELETE',
           headers,

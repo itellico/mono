@@ -78,7 +78,7 @@ export class LockingService {
 
       // Sync to database via API
       const headers = await ApiAuthService.getAuthHeaders();
-      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks`, {
+      await fetch(`${LockingService.API_BASE_URL}/api/v2/admin/locks`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -139,7 +139,7 @@ export class LockingService {
 
       // Remove from database via API
       const headers = await ApiAuthService.getAuthHeaders();
-      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}`, {
+      await fetch(`${LockingService.API_BASE_URL}/api/v2/admin/locks/${tenantId}/${entityType}/${entityId}`, {
         method: 'DELETE',
         headers,
       });
@@ -273,7 +273,7 @@ export class LockingService {
 
       // Remove from database
       const headers = await ApiAuthService.getAuthHeaders();
-      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}/force`, {
+      await fetch(`${LockingService.API_BASE_URL}/api/v2/admin/locks/${tenantId}/${entityType}/${entityId}/force`, {
         method: 'DELETE',
         headers,
       });
@@ -342,7 +342,7 @@ export class LockingService {
   private async cleanupExpiredLock(tenantId: number, entityType: string, entityId: string): Promise<void> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}/cleanup`, {
+      await fetch(`${LockingService.API_BASE_URL}/api/v2/admin/locks/${tenantId}/${entityType}/${entityId}/cleanup`, {
         method: 'DELETE',
         headers,
       });

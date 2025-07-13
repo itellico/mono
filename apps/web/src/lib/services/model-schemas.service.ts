@@ -107,7 +107,7 @@ export class ModelSchemasService {
   static async getAllModelSchemas(): Promise<ModelSchema[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas`, {
         headers,
       });
 
@@ -132,7 +132,7 @@ export class ModelSchemasService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/model-schemas?type=${encodeURIComponent(type)}`,
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas?type=${encodeURIComponent(type)}`,
         { headers }
       );
 
@@ -185,7 +185,7 @@ export class ModelSchemasService {
       });
 
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/model-schemas/search?${queryParams}`,
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas/search?${queryParams}`,
         { headers }
       );
 
@@ -242,7 +242,7 @@ export class ModelSchemasService {
 
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/${id}`, {
         headers,
       });
 
@@ -287,7 +287,7 @@ export class ModelSchemasService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${this.API_BASE_URL}/api/v1/admin/model-schemas/by-type/${encodeURIComponent(type)}/${encodeURIComponent(subType)}`,
+        `${this.API_BASE_URL}/api/v2/admin/model-schemas/by-type/${encodeURIComponent(type)}/${encodeURIComponent(subType)}`,
         { headers }
       );
 
@@ -324,7 +324,7 @@ export class ModelSchemasService {
   ): Promise<ModelSchema> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -370,7 +370,7 @@ export class ModelSchemasService {
       const headers = await ApiAuthService.getAuthHeaders();
       const { id, ...updateData } = data;
       
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/${id}`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -408,7 +408,7 @@ export class ModelSchemasService {
   static async deleteModelSchema(id: string, userContext?: any): Promise<boolean> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/${id}`, {
         method: 'DELETE',
         headers,
       });
@@ -446,7 +446,7 @@ export class ModelSchemasService {
   ): Promise<ModelSchema[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/create`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/bulk/create`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -486,7 +486,7 @@ export class ModelSchemasService {
   ): Promise<ModelSchema[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/update`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/bulk/update`, {
         method: 'PUT',
         headers: {
           ...headers,
@@ -529,7 +529,7 @@ export class ModelSchemasService {
   ): Promise<ModelSchema[]> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/upsert`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/bulk/upsert`, {
         method: 'POST',
         headers: {
           ...headers,
@@ -569,7 +569,7 @@ export class ModelSchemasService {
   ): Promise<number> {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/delete`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/bulk/delete`, {
         method: 'DELETE',
         headers: {
           ...headers,
@@ -629,7 +629,7 @@ export class ModelSchemasService {
 
     try {
       const headers = await ApiAuthService.getAuthHeaders();
-      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/stats`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/v2/admin/model-schemas/stats`, {
         headers,
       });
 

@@ -182,10 +182,15 @@ class MediaUploadService {
       // Save file to storage
       await this.saveFile(buffer, directoryHash, fileName);
 
-      // Save to database
-      const [mediaAsset] = await db
-        .insert(mediaAssets)
-        .values({
+      // Save to database via API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v2/admin/media-assets`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           tenantId: options.tenantId,
           userId: options.userId,
           fileName,
@@ -199,8 +204,15 @@ class MediaUploadService {
           isProcessed: false,
           processingStatus: 'pending',
           metadata: {},
-        })
-        .returning();
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save media asset: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const mediaAsset = data.data || data;
 
       logger.info('Media asset created', { 
         id: mediaAsset.id, 

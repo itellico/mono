@@ -133,7 +133,7 @@ export class TenantDomainService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/by-domain/${encodeURIComponent(domain)}`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants/by-domain/${encodeURIComponent(domain)}`,
         { headers }
       );
 
@@ -172,7 +172,7 @@ export class TenantDomainService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/by-slug/${encodeURIComponent(subdomain)}`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants/by-slug/${encodeURIComponent(subdomain)}`,
         { headers }
       );
 
@@ -213,7 +213,7 @@ export class TenantDomainService {
       // Get tenant to find all associated domains via API
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/${tenantId}`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants/${tenantId}`,
         { headers }
       );
 
@@ -260,7 +260,7 @@ export class TenantDomainService {
     try {
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants?customDomainOnly=true&isActive=true`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants?customDomainOnly=true&isActive=true`,
         { headers }
       );
 
@@ -302,7 +302,7 @@ export class TenantDomainService {
       });
 
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/domain-availability?${queryParams}`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants/domain-availability?${queryParams}`,
         { headers }
       );
 
@@ -331,7 +331,7 @@ export class TenantDomainService {
       // Update tenant via API
       const headers = await ApiAuthService.getAuthHeaders();
       const response = await fetch(
-        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/${tenantId}/custom-domain`,
+        `${TenantDomainService.API_BASE_URL}/api/v2/admin/tenants/${tenantId}/custom-domain`,
         {
           method: 'PUT',
           headers: {

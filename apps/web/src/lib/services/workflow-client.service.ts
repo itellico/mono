@@ -88,7 +88,7 @@ export class WorkflowClientService {
     try {
       browserLogger.userAction('workflow_load_requested', JSON.stringify({ workflowId }));
 
-      const response = await fetch(`/api/v1/workflows/${workflowId}`, {
+      const response = await fetch(`/api/v2/workflows/${workflowId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export class WorkflowClientService {
     try {
       browserLogger.userAction('workflow_update_requested', JSON.stringify({ workflowId, hasNodes: !!data.nodes, hasEdges: !!data.edges }));
 
-      const response = await fetch(`/api/v1/workflows/${workflowId}`, {
+      const response = await fetch(`/api/v2/workflows/${workflowId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

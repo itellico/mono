@@ -48,7 +48,7 @@ export class OperationalModesService {
       if (!session?.user?.id) return false;
       
       const userContext = extractUserContext(session);
-      const result = canAccessAPI(userContext, '/api/v1/admin/settings/god-mode', 'POST');
+      const result = canAccessAPI(userContext, '/api/v2/admin/settings/god-mode', 'POST');
       return result.allowed;
     } catch (error) {
       logger.error('Failed to check god mode permission:', error);
@@ -64,7 +64,7 @@ export class OperationalModesService {
       if (!session?.user?.id) return false;
       
       const userContext = extractUserContext(session);
-      const result = canAccessAPI(userContext, '/api/v1/admin/settings', 'PUT');
+      const result = canAccessAPI(userContext, '/api/v2/admin/settings', 'PUT');
       return result.allowed;
     } catch (error) {
       logger.error('Failed to check developer mode permission:', error);
