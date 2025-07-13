@@ -1,0 +1,25 @@
+{
+  "subject": "{% if status == 'approved' %}🎉 Your application was approved!{% elif status == 'shortlisted' %}You've been shortlisted for \"{{ projectTitle }}\"{% elif status == 'rejected' %}Update on your application for \"{{ projectTitle }}\"{% else %}Application status update for \"{{ projectTitle }}\"{% endif %}",
+  "preheader": "{% if status == 'approved' %}Congratulations! Your application for {{ projectTitle }} has been approved.{% elif status == 'shortlisted' %}Great news! You've moved to the next round for {{ projectTitle }}.{% else %}Your application status has been updated.{% endif %}",
+  "category": "workflow",
+  "layout": "base",
+  "variables": {
+    "userName": "Applicant's full name",
+    "status": "Application status: approved, rejected, shortlisted, under_review",
+    "projectTitle": "Title of the project/opportunity",
+    "projectType": "Type of project: photoshoot, casting, gig, etc.",
+    "clientName": "Name of the client who posted the opportunity",
+    "approverName": "Name of person who approved/reviewed application",
+    "applicationDate": "Date when application was submitted",
+    "projectBudget": "Budget for the project",
+    "message": "Optional personal message from client/approver",
+    "contractUrl": "URL to contract (for approved applications)",
+    "applicationUrl": "URL to view the full application",
+    "timeframeDays": "Days until final decision (for shortlisted)",
+    "interviewRequired": "Boolean - whether interview is needed",
+    "rejectionReason": "Feedback for rejected applications",
+    "similarOpportunities": "Array of similar opportunities to suggest",
+    "tenantName": "Name of the tenant/platform"
+  },
+  "description": "Application status update email sent when application status changes in workflow"
+}

@@ -1,0 +1,389 @@
+{
+  "auth": {
+    "error": {
+      "invalidCredentials": "Ungültige Anmeldedaten",
+      "noRefreshToken": "Kein Refresh-Token",
+      "invalidRefreshToken": "Ungültiger Refresh-Token",
+      "invalidAccount": "Ungültiges Konto",
+      "currentPasswordIncorrect": "Aktuelles Passwort ist falsch",
+      "authenticationRequired": "Authentifizierung erforderlich",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen",
+      "accountLocked": "Konto ist gesperrt",
+      "accountDisabled": "Konto ist deaktiviert",
+      "emailNotVerified": "E-Mail nicht verifiziert",
+      "twoFactorRequired": "Zwei-Faktor-Authentifizierung erforderlich",
+      "invalidTwoFactorCode": "Ungültiger Zwei-Faktor-Authentifizierungscode"
+    },
+    "success": {
+      "passwordChanged": "Passwort erfolgreich geändert. Bitte melden Sie sich erneut an.",
+      "loginSuccessful": "Anmeldung erfolgreich",
+      "logoutSuccessful": "Abmeldung erfolgreich",
+      "tokenRefreshed": "Authentifizierungs-Token aktualisiert",
+      "accountVerified": "Konto erfolgreich verifiziert",
+      "emailSent": "Verifizierungs-E-Mail gesendet",
+      "passwordReset": "Passwort erfolgreich zurückgesetzt"
+    }
+  },
+  "users": {
+    "error": {
+      "notFound": "Benutzer nicht gefunden",
+      "fetchProfileFailed": "Profil konnte nicht abgerufen werden",
+      "updateProfileFailed": "Profil konnte nicht aktualisiert werden",
+      "createFailed": "Benutzer konnte nicht erstellt werden",
+      "deleteFailed": "Benutzer konnte nicht gelöscht werden",
+      "searchFailed": "Benutzersuche fehlgeschlagen",
+      "fetchFailed": "Benutzer konnte nicht abgerufen werden",
+      "invalidConfirmation": "Ungültige Bestätigung",
+      "invalidPassword": "Ungültiges Passwort",
+      "deleteAccountFailed": "Konto konnte nicht gelöscht werden",
+      "emailExists": "E-Mail existiert bereits",
+      "usernameExists": "Benutzername existiert bereits",
+      "invalidUserType": "Ungültiger Benutzertyp",
+      "permissionDenied": "Berechtigung verweigert"
+    },
+    "success": {
+      "created": "Benutzer erfolgreich erstellt",
+      "updated": "Benutzer erfolgreich aktualisiert", 
+      "deleted": "Benutzer erfolgreich gelöscht",
+      "accountDeleted": "Konto erfolgreich gelöscht",
+      "profileUpdated": "Profil erfolgreich aktualisiert",
+      "statusUpdated": "Benutzerstatus erfolgreich aktualisiert",
+      "roleUpdated": "Benutzerrolle erfolgreich aktualisiert",
+      "permissionsUpdated": "Benutzerberechtigungen erfolgreich aktualisiert"
+    }
+  },
+  "media": {
+    "error": {
+      "authenticationRequired": "Authentifizierung erforderlich",
+      "noFilesProvided": "Keine Dateien bereitgestellt",
+      "uploadContextRequired": "Upload-Kontext erforderlich",
+      "userAccountNotFound": "Benutzerkonto oder Mandant nicht gefunden",
+      "fileTypesNotAllowed": "Dateitypen {{types}} nicht erlaubt. Erlaubt: {{allowed}}",
+      "fileSizeExceeded": "Dateien überschreiten maximale Größe von {{maxSize}}MB",
+      "totalSizeExceeded": "Gesamtgröße überschreitet {{maxSize}}MB-Limit",
+      "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "notFound": "Medien-Asset nicht gefunden oder Zugriff verweigert",
+      "alreadyMarkedForDeletion": "Medien-Asset ist bereits zum Löschen markiert",
+      "alreadyDeleted": "Medien-Asset wurde bereits gelöscht",
+      "processingFailed": "Löschungsanfrage konnte nicht bearbeitet werden",
+      "garbageCollectionFailed": "Garbage Collection fehlgeschlagen",
+      "getFailed": "Medien-Asset konnte nicht abgerufen werden",
+      "permissionDenied": "Berechtigung verweigert",
+      "deleteFailed": "Medien-Asset konnte nicht gelöscht werden",
+      "listFailed": "Medien-Assets konnten nicht aufgelistet werden",
+      "getProcessingStatusFailed": "Verarbeitungsstatus konnte nicht abgerufen werden",
+      "processingError": "Fehler bei der Verarbeitung der Mediendatei",
+      "optimizationFailed": "Medienoptimierung fehlgeschlagen",
+      "thumbnailGenerationFailed": "Thumbnail-Generierung fehlgeschlagen",
+      "formatNotSupported": "Medienformat wird nicht unterstützt",
+      "corruptedFile": "Datei scheint beschädigt zu sein",
+      "virusScanFailed": "Virenscan fehlgeschlagen",
+      "quarantined": "Datei wurde unter Quarantäne gestellt"
+    },
+    "success": {
+      "uploaded": "Medien erfolgreich hochgeladen",
+      "deleted": "Medien-Asset erfolgreich gelöscht",
+      "markedForDeletion": "Medien-Asset erfolgreich zum Löschen markiert",
+      "processed": "Medienverarbeitung abgeschlossen",
+      "optimized": "Medienoptimierung abgeschlossen",
+      "thumbnailGenerated": "Thumbnail erfolgreich generiert",
+      "virusScanPassed": "Datei hat Virenscan bestanden",
+      "metadataExtracted": "Metadaten erfolgreich extrahiert"
+    },
+    "status": {
+      "uploading": "Wird hochgeladen",
+      "processing": "Wird verarbeitet",
+      "optimizing": "Wird optimiert",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen",
+      "quarantined": "Unter Quarantäne",
+      "deleted": "Gelöscht",
+      "markedForDeletion": "Zum Löschen markiert"
+    }
+  },
+  "permissions": {
+    "error": {
+      "fetchFailed": "Berechtigungen konnten nicht abgerufen werden",
+      "nameExists": "Berechtigung mit diesem Namen existiert bereits",
+      "createFailed": "Berechtigung konnte nicht erstellt werden",
+      "notFound": "Berechtigung nicht gefunden",
+      "updateFailed": "Berechtigung konnte nicht aktualisiert werden",
+      "deleteFailed": "Berechtigung konnte nicht gelöscht werden",
+      "fetchStatsFailed": "Berechtigungsstatistiken konnten nicht abgerufen werden",
+      "invalidPattern": "Ungültiges Berechtigungsmuster",
+      "circularDependency": "Zirkuläre Abhängigkeit erkannt",
+      "inheritanceFailed": "Berechtigungsvererbung fehlgeschlagen",
+      "grantFailed": "Berechtigung konnte nicht gewährt werden",
+      "revokeFailed": "Berechtigung konnte nicht widerrufen werden"
+    },
+    "success": {
+      "created": "Berechtigung erfolgreich erstellt",
+      "updated": "Berechtigung erfolgreich aktualisiert",
+      "deleted": "Berechtigung erfolgreich gelöscht",
+      "granted": "Berechtigung erfolgreich gewährt",
+      "revoked": "Berechtigung erfolgreich widerrufen",
+      "inheritanceUpdated": "Berechtigungsvererbung erfolgreich aktualisiert"
+    }
+  },
+  "categories": {
+    "error": {
+      "notFound": "Kategorie nicht gefunden",
+      "accountNotFound": "Konto nicht gefunden",
+      "slugExists": "Kategorie mit diesem Slug existiert bereits",
+      "invalidParent": "Ungültige übergeordnete Kategorie",
+      "cannotDeleteWithChildren": "Kategorie mit Kindern kann nicht gelöscht werden",
+      "createFailed": "Kategorie konnte nicht erstellt werden",
+      "updateFailed": "Kategorie konnte nicht aktualisiert werden",
+      "deleteFailed": "Kategorie konnte nicht gelöscht werden",
+      "fetchFailed": "Kategorien konnten nicht abgerufen werden",
+      "circularReference": "Zirkulärer Verweis in Kategorienhierarchie erkannt",
+      "maxDepthExceeded": "Maximale Kategorienebene überschritten",
+      "invalidHierarchy": "Ungültige Kategorienhierarchie"
+    },
+    "success": {
+      "created": "Kategorie erfolgreich erstellt",
+      "updated": "Kategorie erfolgreich aktualisiert",
+      "deleted": "Kategorie erfolgreich gelöscht",
+      "hierarchyUpdated": "Kategorienhierarchie erfolgreich aktualisiert",
+      "orderUpdated": "Kategorienreihenfolge erfolgreich aktualisiert"
+    },
+    "default": {
+      "unknown": "Unbekannt"
+    }
+  },
+  "forms": {
+    "error": {
+      "notFound": "Formular nicht gefunden",
+      "createFailed": "Formular konnte nicht erstellt werden",
+      "updateFailed": "Formular konnte nicht aktualisiert werden",
+      "deleteFailed": "Formular konnte nicht gelöscht werden",
+      "cannotDeleteWithSubmissions": "Formular mit vorhandenen Übermittlungen kann nicht gelöscht werden",
+      "schemaNotFound": "Schema nicht gefunden",
+      "validationFailed": "Formularvalidierung fehlgeschlagen",
+      "submissionFailed": "Formularübermittlung fehlgeschlagen",
+      "invalidStructure": "Ungültige Formularstruktur",
+      "fieldRequired": "Erforderliches Feld fehlt",
+      "fieldInvalid": "Ungültiger Feldwert"
+    },
+    "success": {
+      "created": "Formular erfolgreich erstellt",
+      "updated": "Formular erfolgreich aktualisiert",
+      "deleted": "Formular erfolgreich gelöscht",
+      "submitted": "Formular erfolgreich übermittelt",
+      "validated": "Formularvalidierung bestanden"
+    },
+    "template": {
+      "generatedFrom": "Generiert aus {{schema}}-Schema"
+    }
+  },
+  "webhooks": {
+    "error": {
+      "integrationNotFound": "Integration nicht gefunden oder deaktiviert",
+      "invalidSignature": "Ungültige Webhook-Signatur",
+      "processingFailed": "Webhook-Verarbeitung fehlgeschlagen",
+      "fetchLogsFailed": "Webhook-Protokolle konnten nicht abgerufen werden",
+      "fetchConfigFailed": "Webhook-Konfiguration konnte nicht abgerufen werden",
+      "regenerateSecretFailed": "Webhook-Geheimnis konnte nicht neu generiert werden",
+      "testFailed": "Webhook-Test fehlgeschlagen",
+      "invalidPayload": "Ungültige Webhook-Nutzlast",
+      "rateLimited": "Webhook-Rate-Limit überschritten",
+      "deliveryFailed": "Webhook-Zustellung fehlgeschlagen",
+      "retryLimitExceeded": "Webhook-Wiederholungs-Limit überschritten"
+    },
+    "success": {
+      "processed": "Webhook erfolgreich verarbeitet: {{type}}",
+      "slackEventProcessed": "Slack-Ereignis verarbeitet: {{event}}",
+      "githubWebhookProcessed": "GitHub-Webhook verarbeitet",
+      "stripeEventProcessed": "Stripe-Ereignis verarbeitet: {{event}}",
+      "configUpdated": "Webhook-Konfiguration erfolgreich aktualisiert",
+      "secretRegenerated": "Webhook-Geheimnis erfolgreich neu generiert",
+      "testCompleted": "Webhook-Test erfolgreich abgeschlossen"
+    },
+    "events": {
+      "unknownSlackEvent": "Unbekanntes Slack-Webhook-Ereignis",
+      "urlVerificationChallenge": "URL-Verifizierungs-Challenge",
+      "deliveryAttempt": "Webhook-Zustellungsversuch {{attempt}} von {{maxAttempts}}",
+      "deliverySuccessful": "Webhook erfolgreich zugestellt",
+      "deliveryRetrying": "Webhook-Zustellung wird wiederholt"
+    }
+  },
+  "workflows": {
+    "error": {
+      "notFound": "Workflow nicht gefunden",
+      "createFailed": "Workflow konnte nicht erstellt werden",
+      "updateFailed": "Workflow konnte nicht aktualisiert werden",
+      "deleteFailed": "Workflow konnte nicht gelöscht werden",
+      "cannotDeleteWithHistory": "Workflow mit Ausführungshistorie kann nicht gelöscht werden. Archivieren Sie ihn stattdessen.",
+      "notFoundOrInactive": "Workflow nicht gefunden oder inaktiv",
+      "executionFailed": "Workflow-Ausführung fehlgeschlagen",
+      "invalidDefinition": "Ungültige Workflow-Definition",
+      "compilationFailed": "Workflow-Kompilierung fehlgeschlagen",
+      "timeoutExceeded": "Workflow-Ausführungs-Timeout überschritten",
+      "resourceLimitExceeded": "Workflow-Ressourcenlimit überschritten"
+    },
+    "success": {
+      "created": "Workflow erfolgreich erstellt",
+      "updated": "Workflow erfolgreich aktualisiert",
+      "deleted": "Workflow erfolgreich gelöscht",
+      "executed": "Workflow erfolgreich ausgeführt",
+      "archived": "Workflow erfolgreich archiviert",
+      "published": "Workflow erfolgreich veröffentlicht",
+      "paused": "Workflow erfolgreich pausiert",
+      "resumed": "Workflow erfolgreich fortgesetzt"
+    }
+  },
+  "templates": {
+    "error": {
+      "notFound": "Vorlage nicht gefunden",
+      "getFailed": "Vorlagen konnten nicht abgerufen werden",
+      "createFailed": "Vorlage konnte nicht erstellt werden",
+      "updateFailed": "Vorlage konnte nicht aktualisiert werden",
+      "deleteFailed": "Vorlage konnte nicht gelöscht werden",
+      "cloneFailed": "Vorlage konnte nicht geklont werden",
+      "rateFailed": "Vorlage konnte nicht bewertet werden",
+      "permissionDenied": "Berechtigung verweigert",
+      "invalidFormat": "Ungültiges Vorlagenformat",
+      "compilationFailed": "Vorlagenkompilierung fehlgeschlagen",
+      "renderingFailed": "Vorlagen-Rendering fehlgeschlagen",
+      "variableNotFound": "Vorlagenvariable nicht gefunden"
+    },
+    "success": {
+      "created": "Vorlage erfolgreich erstellt",
+      "updated": "Vorlage erfolgreich aktualisiert",
+      "deleted": "Vorlage erfolgreich gelöscht",
+      "cloned": "Vorlage erfolgreich geklont",
+      "rated": "Vorlage erfolgreich bewertet",
+      "published": "Vorlage erfolgreich veröffentlicht",
+      "unpublished": "Vorlage erfolgreich zurückgezogen"
+    },
+    "versioning": {
+      "cloneOf": "Klon von {{name}}",
+      "clonedFrom": "Geklont von {{name}}",
+      "initialVersion": "Anfangsversion",
+      "updatedToVersion": "Auf Version {{version}} aktualisiert"
+    }
+  },
+  "notifications": {
+    "error": {
+      "fetchFailed": "Benachrichtigungen konnten nicht abgerufen werden",
+      "notFound": "Benachrichtigung nicht gefunden",
+      "markReadFailed": "Benachrichtigung konnte nicht als gelesen markiert werden",
+      "markAllReadFailed": "Alle Benachrichtigungen konnten nicht als gelesen markiert werden",
+      "deleteFailed": "Benachrichtigung konnte nicht gelöscht werden",
+      "fetchPreferencesFailed": "Benachrichtigungseinstellungen konnten nicht abgerufen werden",
+      "updatePreferencesFailed": "Benachrichtigungseinstellungen konnten nicht aktualisiert werden",
+      "sendFailed": "Benachrichtigung konnte nicht gesendet werden",
+      "noTargetUsers": "Keine Zielbenutzer gefunden",
+      "fetchTemplatesFailed": "Benachrichtigungsvorlagen konnten nicht abgerufen werden",
+      "createTemplateFailed": "Benachrichtigungsvorlage konnte nicht erstellt werden",
+      "invalidChannel": "Ungültiger Benachrichtigungskanal",
+      "channelUnavailable": "Benachrichtigungskanal nicht verfügbar",
+      "templateNotFound": "Benachrichtigungsvorlage nicht gefunden"
+    },
+    "success": {
+      "sent": "Benachrichtigung erfolgreich gesendet",
+      "markedAsRead": "Benachrichtigung als gelesen markiert",
+      "allMarkedAsRead": "Alle Benachrichtigungen als gelesen markiert",
+      "deleted": "Benachrichtigung erfolgreich gelöscht",
+      "preferencesUpdated": "Benachrichtigungseinstellungen erfolgreich aktualisiert",
+      "templateCreated": "Benachrichtigungsvorlage erfolgreich erstellt",
+      "channelConfigured": "Benachrichtigungskanal erfolgreich konfiguriert"
+    },
+    "validation": {
+      "targetRequired": "Entweder userId oder tenantId muss angegeben werden",
+      "messageRequired": "Benachrichtigungsnachricht ist erforderlich",
+      "channelRequired": "Benachrichtigungskanal ist erforderlich",
+      "templateRequired": "Benachrichtigungsvorlage ist erforderlich"
+    }
+  },
+  "monitoring": {
+    "error": {
+      "fetchMetricsFailed": "Umfassende Metriken konnten nicht abgerufen werden",
+      "fetchDockerStatsFailed": "Docker-Statistiken konnten nicht abgerufen werden",
+      "fetchMonitoringStatsFailed": "Überwachungsstatistiken konnten nicht abgerufen werden",
+      "fetchSystemInfoFailed": "Systeminformationen konnten nicht abgerufen werden",
+      "serviceUnavailable": "Überwachungsdienst nicht verfügbar",
+      "dataCorrupted": "Überwachungsdaten beschädigt",
+      "collectionFailed": "Metrik-Sammlung fehlgeschlagen",
+      "storageError": "Metrik-Speicherfehler",
+      "queryError": "Metrik-Abfragefehler"
+    },
+    "success": {
+      "metricsFetched": "Metriken erfolgreich abgerufen",
+      "systemHealthChecked": "Systemzustand überprüft",
+      "alertConfigured": "Alarm erfolgreich konfiguriert",
+      "thresholdUpdated": "Überwachungsschwellwert aktualisiert",
+      "reportGenerated": "Überwachungsbericht generiert"
+    }
+  },
+  "system": {
+    "error": {
+      "maintenanceMode": "System befindet sich derzeit in Wartung",
+      "serviceUnavailable": "Service vorübergehend nicht verfügbar",
+      "resourceExhausted": "Systemressourcen erschöpft",
+      "configurationError": "Systemkonfigurationsfehler",
+      "databaseConnectionFailed": "Datenbankverbindung fehlgeschlagen",
+      "cacheConnectionFailed": "Cache-Verbindung fehlgeschlagen",
+      "externalServiceError": "Externer Service-Fehler",
+      "timeoutError": "Anfrage-Timeout",
+      "rateLimitExceeded": "Rate-Limit überschritten",
+      "quotaExceeded": "Kontingent überschritten"
+    },
+    "success": {
+      "systemHealthy": "System ist gesund",
+      "serviceRestored": "Service wiederhergestellt",
+      "configurationUpdated": "Systemkonfiguration aktualisiert",
+      "maintenanceCompleted": "Wartung abgeschlossen",
+      "backupCompleted": "System-Backup abgeschlossen",
+      "updateInstalled": "System-Update installiert"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Beeinträchtigt",
+      "maintenance": "In Wartung",
+      "recovering": "Wird wiederhergestellt",
+      "updating": "Wird aktualisiert"
+    }
+  },
+  "validation": {
+    "error": {
+      "required": "Dieses Feld ist erforderlich",
+      "invalidFormat": "Ungültiges Format",
+      "tooShort": "Wert ist zu kurz",
+      "tooLong": "Wert ist zu lang",
+      "invalidEmail": "Ungültige E-Mail-Adresse",
+      "invalidUrl": "Ungültige URL",
+      "invalidDate": "Ungültiges Datum",
+      "invalidNumber": "Ungültige Nummer",
+      "outOfRange": "Wert ist außerhalb des Bereichs",
+      "patternMismatch": "Wert entspricht nicht dem erforderlichen Muster",
+      "uniquenessViolation": "Wert muss eindeutig sein",
+      "foreignKeyViolation": "Referenzierte Ressource existiert nicht",
+      "dataIntegrityViolation": "Datenintegritätsverletzung"
+    }
+  },
+  "common": {
+    "error": {
+      "unknown": "Ein unbekannter Fehler ist aufgetreten",
+      "internalServerError": "Interner Serverfehler",
+      "badRequest": "Ungültige Anfrage",
+      "unauthorized": "Nicht autorisiert",
+      "forbidden": "Verboten",
+      "notFound": "Nicht gefunden",
+      "methodNotAllowed": "Methode nicht erlaubt",
+      "conflict": "Konflikt",
+      "unprocessableEntity": "Nicht verarbeitbare Entität",
+      "tooManyRequests": "Zu viele Anfragen",
+      "serviceUnavailable": "Service nicht verfügbar",
+      "gatewayTimeout": "Gateway-Timeout"
+    },
+    "success": {
+      "operationCompleted": "Vorgang erfolgreich abgeschlossen",
+      "dataRetrieved": "Daten erfolgreich abgerufen",
+      "resourceCreated": "Ressource erfolgreich erstellt",
+      "resourceUpdated": "Ressource erfolgreich aktualisiert",
+      "resourceDeleted": "Ressource erfolgreich gelöscht"
+    }
+  }
+}

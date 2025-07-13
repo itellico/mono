@@ -1,0 +1,197 @@
+{
+  "tags": [
+    {
+      "category": "system",
+      "tags": [
+        {
+          "name": "verified",
+          "slug": "verified",
+          "color": "#34a853",
+          "icon": "check-circle",
+          "description": "Verified entity"
+        },
+        {
+          "name": "featured",
+          "slug": "featured",
+          "color": "#ea4335",
+          "icon": "star",
+          "description": "Featured content"
+        },
+        {
+          "name": "premium",
+          "slug": "premium",
+          "color": "#fbbc04",
+          "icon": "crown",
+          "description": "Premium content"
+        },
+        {
+          "name": "new",
+          "slug": "new",
+          "color": "#4285f4",
+          "icon": "sparkles",
+          "description": "Newly added"
+        },
+        {
+          "name": "trending",
+          "slug": "trending",
+          "color": "#db4437",
+          "icon": "trending-up",
+          "description": "Trending content"
+        },
+        {
+          "name": "official",
+          "slug": "official",
+          "color": "#1a73e8",
+          "icon": "shield",
+          "description": "Official content"
+        }
+      ]
+    },
+    {
+      "category": "status",
+      "tags": [
+        {
+          "name": "active",
+          "slug": "active",
+          "color": "#34a853",
+          "icon": "play-circle",
+          "description": "Active status"
+        },
+        {
+          "name": "inactive",
+          "slug": "inactive",
+          "color": "#757575",
+          "icon": "pause-circle",
+          "description": "Inactive status"
+        },
+        {
+          "name": "pending",
+          "slug": "pending",
+          "color": "#fbbc04",
+          "icon": "clock",
+          "description": "Pending approval"
+        },
+        {
+          "name": "draft",
+          "slug": "draft",
+          "color": "#9e9e9e",
+          "icon": "edit",
+          "description": "Draft status"
+        },
+        {
+          "name": "archived",
+          "slug": "archived",
+          "color": "#616161",
+          "icon": "archive",
+          "description": "Archived content"
+        }
+      ]
+    },
+    {
+      "category": "industry",
+      "tags": [
+        {
+          "name": "b2b",
+          "slug": "b2b",
+          "color": "#1a73e8",
+          "icon": "building",
+          "description": "Business to Business"
+        },
+        {
+          "name": "b2c",
+          "slug": "b2c",
+          "color": "#34a853",
+          "icon": "shopping-cart",
+          "description": "Business to Consumer"
+        },
+        {
+          "name": "saas",
+          "slug": "saas",
+          "color": "#4285f4",
+          "icon": "cloud",
+          "description": "Software as a Service"
+        },
+        {
+          "name": "marketplace",
+          "slug": "marketplace",
+          "color": "#ea4335",
+          "icon": "store",
+          "description": "Marketplace platform"
+        },
+        {
+          "name": "enterprise",
+          "slug": "enterprise",
+          "color": "#db4437",
+          "icon": "enterprise",
+          "description": "Enterprise solution"
+        }
+      ]
+    },
+    {
+      "category": "location",
+      "tags": [
+        {
+          "name": "global",
+          "slug": "global",
+          "color": "#1a73e8",
+          "icon": "globe",
+          "description": "Global availability"
+        },
+        {
+          "name": "local",
+          "slug": "local",
+          "color": "#34a853",
+          "icon": "map-pin",
+          "description": "Local only"
+        },
+        {
+          "name": "remote",
+          "slug": "remote",
+          "color": "#4285f4",
+          "icon": "wifi",
+          "description": "Remote available"
+        },
+        {
+          "name": "on-site",
+          "slug": "on-site",
+          "color": "#ea4335",
+          "icon": "building",
+          "description": "On-site only"
+        }
+      ]
+    },
+    {
+      "category": "priority",
+      "tags": [
+        {
+          "name": "urgent",
+          "slug": "urgent",
+          "color": "#db4437",
+          "icon": "alert-circle",
+          "description": "Urgent priority"
+        },
+        {
+          "name": "high",
+          "slug": "high",
+          "color": "#ea4335",
+          "icon": "chevron-up",
+          "description": "High priority"
+        },
+        {
+          "name": "medium",
+          "slug": "medium",
+          "color": "#fbbc04",
+          "icon": "minus",
+          "description": "Medium priority"
+        },
+        {
+          "name": "low",
+          "slug": "low",
+          "color": "#34a853",
+          "icon": "chevron-down",
+          "description": "Low priority"
+        }
+      ]
+    }
+  ]
+}

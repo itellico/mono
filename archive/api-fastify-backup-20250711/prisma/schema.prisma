@@ -1,0 +1,1043 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                     Int       @id @default(autoincrement())
+  tenantId               Int
+  email                  String    @unique
+  emailVerified          Boolean   @default(false)
+  passwordHash           String?
+  accountType            String    @default("personal") @db.VarChar(20)
+  phone                  String?   @db.VarChar(30)
+  timezone               String?   @db.VarChar(50)
+  countryCode            String?   @db.VarChar(2)
+  languageLocale         String?   @db.VarChar(10)
+  currencyCode           String?   @default("EUR") @db.VarChar(3)
+  city                   String?   @db.VarChar(100)
+  dateFormat             String?   @db.VarChar(20)
+  timeFormat             String?   @db.VarChar(20)
+  numberFormat           String?   @db.VarChar(20)
+  emailNotifications     Boolean   @default(true)
+  smsNotifications       Boolean   @default(false)
+  themePreference        String    @default("system") @db.VarChar(20)
+  accountCapabilities    Json?
+  primaryMarketplaceSide String?   @db.VarChar(20)
+  allowDualSide          Boolean   @default(false)
+  isActive               Boolean   @default(true)
+  isVerified             Boolean   @default(false)
+  lastLoginAt            DateTime? @db.Timestamptz(6)
+  createdAt              DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime  @db.Timestamptz(6)
+  compactMode            Boolean   @default(false)
+  currencyPosition       String    @default("before") @db.VarChar(10)
+  currencySpace          Boolean   @default(false)
+  decimalSeparator       String    @default(".") @db.VarChar(1)
+  firstDayOfWeek         Int       @default(0)
+  notificationTimeFormat String    @default("12h") @db.VarChar(10)
+  relativeTimeStyle      String    @default("long") @db.VarChar(10)
+  relativeTimeThreshold  Int       @default(24)
+  showSeconds            Boolean   @default(false)
+  showTimezone           Boolean   @default(false)
+  thousandsSeparator     String    @default(",") @db.VarChar(1)
+  useRelativeTime        Boolean   @default(true)
+  uuid                   String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  Tenant                 Tenant    @relation(fields: [tenantId], references: [id])
+  User                   User[]
+  Tag                    Tag[]
+  Category               Category[]
+  CategoryTag            CategoryTag[]
+  TagInheritance         TagInheritance[]
+  CategoryInheritance    CategoryInheritance[]
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  uuid        String       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug        String       @db.VarChar(100)
+  name        String       @db.VarChar(255)
+  description String?
+  parentId    Int?
+  scope       String       @default("tenant") @db.VarChar(20) // platform, tenant, account
+  tenantId    Int?
+  accountId   Int?
+  isActive    Boolean      @default(true)
+  isSystem    Boolean      @default(false)
+  createdBy   Int?
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @db.Timestamptz(6)
+  
+  // Relations
+  parent      Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[]   @relation("CategoryHierarchy")
+  tenant      Tenant?      @relation(fields: [tenantId], references: [id])
+  account     Account?     @relation(fields: [accountId], references: [id])
+  creator     User?        @relation(fields: [createdBy], references: [id])
+  tags        CategoryTag[]
+  inheritances CategoryInheritance[] @relation("SourceCategory")
+  
+  @@unique([scope, tenantId, accountId, slug], map: "Category_scope_tenantId_accountId_slug_key")
+  @@index([tenantId])
+  @@index([accountId])
+  @@index([scope])
+}
+
+model CategoryTag {
+  id         Int       @id @default(autoincrement())
+  categoryId Int
+  tagId      Int
+  scope      String    @default("tenant") @db.VarChar(20)
+  tenantId   Int?
+  accountId  Int?
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  createdBy  Int?
+  
+  // Relations
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  tag        Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tenant     Tenant?   @relation(fields: [tenantId], references: [id])
+  account    Account?  @relation(fields: [accountId], references: [id])
+  creator    User?     @relation(fields: [createdBy], references: [id])
+  
+  @@unique([categoryId, tagId, scope, tenantId, accountId])
+  @@index([categoryId])
+  @@index([tagId])
+}
+
+model CategoryInheritance {
+  id                 Int       @id @default(autoincrement())
+  sourceCategoryId   Int
+  targetScope        String    @db.VarChar(20)
+  targetTenantId     Int?
+  targetAccountId    Int?
+  inheritedAt        DateTime  @default(now()) @db.Timestamptz(6)
+  inheritedBy        Int?
+  
+  // Relations
+  sourceCategory     Category  @relation("SourceCategory", fields: [sourceCategoryId], references: [id], onDelete: Cascade)
+  targetTenant       Tenant?   @relation(fields: [targetTenantId], references: [id], onDelete: Cascade)
+  targetAccount      Account?  @relation(fields: [targetAccountId], references: [id], onDelete: Cascade)
+  inheritedByUser    User?     @relation(fields: [inheritedBy], references: [id])
+  
+  @@unique([sourceCategoryId, targetScope, targetTenantId, targetAccountId])
+  @@index([sourceCategoryId])
+  @@index([targetTenantId])
+  @@index([targetAccountId])
+}
+
+model CollectionItem {
+  id             Int            @id @default(autoincrement())
+  uuid           String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  collectionId   Int
+  entityType     String         @db.VarChar(50)
+  entityId       String         @db.Uuid
+  position       Int?
+  notes          String?
+  metadata       Json?
+  addedAt        DateTime       @default(now()) @db.Timestamptz(6)
+  UserCollection UserCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, entityType, entityId])
+  @@index([entityType, entityId])
+}
+
+model Conversation {
+  id                      Int                       @id @default(autoincrement())
+  uuid                    String                    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId                Int
+  type                    MessageContext
+  gigId                   Int?
+  bookingId               Int?
+  projectId               String?                   @db.Uuid
+  jobId                   Int?
+  allowFiles              Boolean                   @default(true)
+  maxFileSize             Int                       @default(10485760)
+  allowedFileTypes        Json?
+  autoTranslate           Boolean                   @default(false)
+  primaryLanguage         String                    @default("en") @db.VarChar(5)
+  createdAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime                  @default(now()) @db.Timestamptz(6)
+  GigOffering             GigOffering?              @relation(fields: [gigId], references: [id])
+  JobPosting              JobPosting?               @relation(fields: [jobId], references: [id])
+  Tenant                  Tenant                    @relation(fields: [tenantId], references: [id])
+  ConversationParticipant ConversationParticipant[]
+  Message                 Message[]
+
+  @@index([createdAt])
+  @@index([tenantId, type])
+}
+
+model ConversationParticipant {
+  id                Int          @id @default(autoincrement())
+  uuid              String       @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId    Int
+  userId            Int
+  role              String       @db.VarChar(20)
+  joinedAt          DateTime     @default(now()) @db.Timestamptz(6)
+  lastReadAt        DateTime?    @db.Timestamptz(6)
+  notificationPrefs Json?
+  Conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  User              User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(2)
+  name      String   @db.VarChar(100)
+  dialCode  String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @db.Timestamptz(6)
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(3)
+  name      String   @db.VarChar(100)
+  symbol    String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @db.Timestamptz(6)
+}
+
+model EmergencyAccess {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  targetType    String    @db.VarChar(50)
+  targetId      String    @db.VarChar(255)
+  justification String
+  grantedAt     DateTime? @default(now()) @db.Timestamptz(6)
+  expiresAt     DateTime  @db.Timestamptz(6)
+  revokedAt     DateTime? @db.Timestamptz(6)
+  approvedBy    Int?
+  approvedAt    DateTime? @db.Timestamptz(6)
+
+  @@index([expiresAt], map: "idx_emergency_access_expires")
+  @@index([targetType, targetId], map: "idx_emergency_access_target")
+  @@index([userId], map: "idx_emergency_access_user")
+}
+
+model EmergencyAudit {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  type          String   @db.VarChar(50)
+  justification String?
+  actionDetails Json?
+  ipAddress     String?  @db.VarChar(45)
+  userAgent     String?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([userId])
+}
+
+model EntityTag {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   Int
+  tagId      Int
+  entityType String   @db.VarChar(50)
+  entityId   String   @db.Uuid
+  addedBy    Int
+  addedAt    DateTime @default(now()) @db.Timestamptz(6)
+  User       User     @relation(fields: [addedBy], references: [id])
+  Tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  Tenant     Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([tagId, entityType, entityId])
+  @@index([entityType, entityId])
+  @@index([tenantId, entityType])
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique @db.VarChar(50)
+  name        String   @db.VarChar(100)
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @db.Timestamptz(6)
+  uuid        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model FeatureSet {
+  id               Int                @id @default(autoincrement())
+  uuid             String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String             @db.VarChar(200)
+  slug             String             @unique @db.VarChar(100)
+  description      String?
+  category         String             @db.VarChar(50)
+  isActive         Boolean            @default(true)
+  features         Json               @default("{}")
+  dependencies     String[]
+  conflicts        String[]
+  availableInTiers String[]
+  minimumTier      String?            @default("free") @db.VarChar(50)
+  apiEndpoints     Json               @default("{}")
+  serviceConfig    Json               @default("{}")
+  databaseSchema   Json               @default("{}")
+  uiComponents     Json               @default("{}")
+  permissions      String[]
+  navigationItems  Json               @default("{}")
+  complexity       String             @default("medium") @db.VarChar(50)
+  resourceUsage    String             @default("medium") @db.VarChar(50)
+  setupRequired    Boolean            @default(false)
+  version          String?            @default("1.0.0") @db.VarChar(20)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  TenantFeatureSet TenantFeatureSet[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model GigBooking {
+  id              Int         @id @default(autoincrement())
+  uuid            String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  gigId           Int
+  clientId        Int
+  packageSelected String      @db.VarChar(20)
+  scheduledDate   DateTime    @db.Timestamptz(6)
+  duration        Json
+  requirements    String?
+  price           Json
+  status          String      @default("pending") @db.VarChar(20)
+  paymentStatus   String      @default("pending") @db.VarChar(20)
+  paymentId       String?     @db.Uuid
+  createdAt       DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime    @default(now()) @db.Timestamptz(6)
+  User            User        @relation(fields: [clientId], references: [id])
+  GigOffering     GigOffering @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  Message         Message[]
+
+  @@index([scheduledDate])
+  @@index([status])
+}
+
+model GigOffering {
+  id              Int            @id @default(autoincrement())
+  uuid            String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        Int
+  talentId        Int
+  profileId       String         @db.Uuid
+  title           String
+  category        String         @db.VarChar(50)
+  subcategory     String         @db.VarChar(50)
+  description     String
+  highlights      Json
+  requirements    Json
+  packages        Json
+  gallery         Json
+  availability    Json
+  serviceLocation Json
+  rating          Float          @default(0)
+  completedOrders Int            @default(0)
+  responseTime    String?        @db.VarChar(50)
+  completionRate  Float          @default(100)
+  status          String         @default("draft") @db.VarChar(20)
+  featured        Boolean        @default(false)
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @default(now()) @db.Timestamptz(6)
+  Conversation    Conversation[]
+  GigBooking      GigBooking[]
+  User            User           @relation(fields: [talentId], references: [id])
+  Tenant          Tenant         @relation(fields: [tenantId], references: [id])
+
+  @@index([category])
+  @@index([talentId])
+  @@index([tenantId, status])
+}
+
+model IndustryTemplate {
+  id                     Int                      @id @default(autoincrement())
+  uuid                   String                   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String                   @db.VarChar(200)
+  slug                   String                   @unique @db.VarChar(100)
+  description            String?
+  category               String                   @db.VarChar(50)
+  industry               String                   @db.VarChar(100)
+  complexity             String                   @default("medium") @db.VarChar(50)
+  setupTimeMinutes       Int                      @default(30)
+  popularity             Int                      @default(0)
+  usageCount             Int                      @default(0)
+  targetUserTypes        String[]
+  isActive               Boolean                  @default(true)
+  isDefault              Boolean                  @default(false)
+  primaryColor           String?                  @db.VarChar(7)
+  secondaryColor         String?                  @db.VarChar(7)
+  accentColor            String?                  @db.VarChar(7)
+  logoUrl                String?
+  faviconUrl             String?
+  customCss              String?
+  defaultSettings        Json                     @default("{}")
+  defaultCategories      Json                     @default("[]")
+  defaultTags            Json                     @default("[]")
+  defaultRoles           Json                     @default("[]")
+  defaultPermissions     Json                     @default("[]")
+  defaultWorkflows       Json                     @default("[]")
+  requiredFeatures       String[]
+  recommendedFeatures    String[]
+  emailTemplates         Json                     @default("{}")
+  version                String?                  @default("1.0.0") @db.VarChar(20)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @default(now())
+  TenantIndustryTemplate TenantIndustryTemplate[]
+
+  @@index([category])
+  @@index([industry])
+  @@index([isActive])
+}
+
+model JobApplication {
+  id            Int        @id @default(autoincrement())
+  uuid          String     @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId         Int
+  applicantId   Int
+  profileId     String     @db.Uuid
+  coverLetter   String?
+  answers       Json?
+  portfolio     Json?
+  availability  Json?
+  proposedRate  Json?
+  status        String     @default("draft") @db.VarChar(20)
+  statusHistory Json       @default("[]")
+  appliedAt     DateTime   @default(now()) @db.Timestamptz(6)
+  viewedAt      DateTime?  @db.Timestamptz(6)
+  shortlistedAt DateTime?  @db.Timestamptz(6)
+  rejectedAt    DateTime?  @db.Timestamptz(6)
+  acceptedAt    DateTime?  @db.Timestamptz(6)
+  User          User       @relation(fields: [applicantId], references: [id])
+  JobPosting    JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  Message       Message[]
+
+  @@unique([jobId, applicantId])
+  @@index([appliedAt])
+  @@index([status])
+}
+
+model JobPosting {
+  id                   Int              @id @default(autoincrement())
+  uuid                 String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             Int
+  postedById           Int
+  profileId            String           @db.Uuid
+  profileType          String           @db.VarChar(20)
+  companyName          String?
+  verified             Boolean          @default(false)
+  title                String
+  category             String           @db.VarChar(50)
+  type                 String           @db.VarChar(50)
+  description          String
+  requirements         Json
+  targetProfiles       Json
+  applicationDeadline  DateTime         @db.Timestamptz(6)
+  maxApplications      Int?
+  autoCloseOnMax       Boolean          @default(false)
+  applicationQuestions Json?
+  jobDates             Json
+  compensation         Json
+  visibility           String           @default("public") @db.VarChar(20)
+  featured             Boolean          @default(false)
+  boost                Json?
+  status               String           @default("draft") @db.VarChar(20)
+  publishedAt          DateTime?        @db.Timestamptz(6)
+  filledAt             DateTime?        @db.Timestamptz(6)
+  stats                Json             @default("{\"saved\": 0, \"views\": 0, \"shares\": 0, \"applications\": 0}")
+  createdAt            DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime         @default(now()) @db.Timestamptz(6)
+  Conversation         Conversation[]
+  JobApplication       JobApplication[]
+  User                 User             @relation(fields: [postedById], references: [id])
+  Tenant               Tenant           @relation(fields: [tenantId], references: [id])
+
+  @@index([category])
+  @@index([publishedAt])
+  @@index([tenantId, status])
+}
+
+model Language {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique @db.VarChar(10)
+  name       String   @db.VarChar(100)
+  nativeName String?  @db.VarChar(100)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @db.Timestamptz(6)
+}
+
+model Message {
+  id                 Int                 @id @default(autoincrement())
+  uuid               String              @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId     Int
+  senderId           Int
+  content            String
+  language           String              @db.VarChar(5)
+  translations       Json?
+  translationQuality Json?
+  richContent        Json?
+  gigMilestone       String?             @db.VarChar(50)
+  contractUpdate     Boolean             @default(false)
+  jobApplicationId   Int?
+  gigBookingId       Int?
+  sentAt             DateTime            @default(now()) @db.Timestamptz(6)
+  editedAt           DateTime?           @db.Timestamptz(6)
+  deletedAt          DateTime?           @db.Timestamptz(6)
+  Conversation       Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  GigBooking         GigBooking?         @relation(fields: [gigBookingId], references: [id])
+  JobApplication     JobApplication?     @relation(fields: [jobApplicationId], references: [id])
+  User               User                @relation(fields: [senderId], references: [id])
+  MessageAttachment  MessageAttachment[]
+
+  @@index([conversationId, sentAt])
+  @@index([senderId])
+}
+
+model MessageAttachment {
+  id                      Int                 @id @default(autoincrement())
+  uuid                    String              @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  messageId               Int
+  type                    String              @db.VarChar(20)
+  fileName                String
+  fileUrl                 String
+  fileSize                Int
+  mimeType                String              @db.VarChar(100)
+  documentType            String?             @db.VarChar(20)
+  requiresSignature       Boolean             @default(false)
+  signatureStatus         Json?
+  version                 Int                 @default(1)
+  previousVersionId       Int?
+  uploadedAt              DateTime            @default(now()) @db.Timestamptz(6)
+  Message                 Message             @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  MessageAttachment       MessageAttachment?  @relation("MessageAttachmentToMessageAttachment", fields: [previousVersionId], references: [id])
+  other_MessageAttachment MessageAttachment[] @relation("MessageAttachmentToMessageAttachment")
+
+  @@index([messageId])
+}
+
+model OptionSet {
+  id          Int      @id @default(autoincrement())
+  slug        String   @db.VarChar(100)
+  label       String   @db.VarChar(255)
+  tenantId    Int?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @db.Timestamptz(6)
+  uuid        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@unique([slug, tenantId])
+}
+
+model OptionValue {
+  id               Int      @id @default(autoincrement())
+  optionSetId      Int
+  value            String   @db.VarChar(255)
+  label            String   @db.VarChar(255)
+  order            Int      @default(0)
+  canonicalRegion  String?  @db.VarChar(10)
+  regionalMappings Json?
+  metadata         Json?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime @db.Timestamptz(6)
+  uuid             String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@unique([optionSetId, value])
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  pattern     String?  @db.VarChar(100)
+  resource    String?  @db.VarChar(50)
+  action      String?  @db.VarChar(50)
+  scope       String?  @db.VarChar(20)
+  isWildcard  Boolean? @default(false)
+  priority    Int?     @default(100)
+
+  @@index([resource, action, scope], map: "idx_permission_resource_action_scope")
+}
+
+model PermissionAudit {
+  id                BigInt    @id @default(autoincrement())
+  userId            Int
+  permissionPattern String    @db.VarChar(100)
+  resource          String?   @db.VarChar(255)
+  action            String    @db.VarChar(50)
+  granted           Boolean
+  ipAddress         String?   @db.VarChar(45)
+  userAgent         String?
+  requestId         String?   @db.VarChar(36)
+  checkDurationMs   Int?
+  tenantId          Int?
+  timestamp         DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([granted], map: "idx_permission_audit_granted")
+  @@index([timestamp], map: "idx_permission_audit_timestamp")
+}
+
+model PermissionExpansion {
+  pattern          String   @id @db.VarChar(100)
+  expandedPatterns Json
+  computedAt       DateTime @db.Timestamptz(6)
+
+  @@index([computedAt], map: "idx_permission_expansion_computed")
+}
+
+model PermissionInheritance {
+  parentId Int
+  childId  Int
+
+  @@id([parentId, childId])
+  @@index([childId], map: "idx_permission_inheritance_child")
+}
+
+model PermissionSet {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model PermissionSetItem {
+  setId        Int
+  permissionId Int
+
+  @@id([setId, permissionId])
+  @@index([permissionId], map: "idx_permission_set_item_permission")
+}
+
+model PlanFeatureLimit {
+  id        Int      @id @default(autoincrement())
+  planId    Int
+  featureId Int
+  limit     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@unique([planId, featureId])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model RBACConfig {
+  id                     Int       @id @default(1)
+  enableWildcards        Boolean?  @default(true)
+  enableInheritance      Boolean?  @default(true)
+  enableCaching          Boolean?  @default(true)
+  cacheExpirationMinutes Int?      @default(15)
+  maxPermissionsPerUser  Int?      @default(1000)
+  enableAuditLog         Boolean?  @default(true)
+  auditRetentionDays     Int?      @default(90)
+  updatedAt              DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  code        String?  @unique(map: "idx_role_code") @db.VarChar(50)
+  level       Int?     @default(0)
+  isSystem    Boolean? @default(false)
+  tenantId    Int?
+
+  @@index([level], map: "idx_role_level")
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  @@id([roleId, permissionId])
+}
+
+model RolePermissionSet {
+  roleId Int
+  setId  Int
+
+  @@id([roleId, setId])
+  @@index([setId], map: "idx_role_permission_set_set")
+}
+
+model SubscriptionPlan {
+  id                 Int                  @id @default(autoincrement())
+  uuid               String               @unique
+  name               String
+  description        String?
+  price              Float
+  currency           String
+  billingCycle       String
+  isPublic           Boolean              @default(true)
+  isActive           Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  TenantSubscription TenantSubscription[]
+}
+
+model Tag {
+  id             Int              @id @default(autoincrement())
+  uuid           String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug           String           @db.VarChar(100)
+  name           String
+  description    String?
+  scope          String           @default("tenant") @db.VarChar(20) // platform, tenant, account
+  tenantId       Int?
+  accountId      Int?
+  parentTagId    Int?
+  category       String?          @db.VarChar(50)
+  usageCount     Int?             @default(0)
+  isActive       Boolean          @default(true)
+  isSystem       Boolean          @default(false)
+  createdBy      Int?
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime         @db.Timestamptz(6)
+  
+  // Relations
+  tenant         Tenant?          @relation(fields: [tenantId], references: [id])
+  account        Account?         @relation(fields: [accountId], references: [id])
+  creator        User?            @relation(fields: [createdBy], references: [id])
+  parentTag      Tag?             @relation("TagHierarchy", fields: [parentTagId], references: [id])
+  childTags      Tag[]            @relation("TagHierarchy")
+  entityTags     EntityTag[]
+  categoryTags   CategoryTag[]
+  inheritances   TagInheritance[] @relation("SourceTag")
+  
+  @@unique([scope, tenantId, accountId, slug], map: "Tag_scope_tenantId_accountId_slug_key")
+  @@index([tenantId, category])
+  @@index([accountId])
+  @@index([scope])
+  @@index([parentTagId])
+  @@index([usageCount])
+}
+
+model TagInheritance {
+  id              Int       @id @default(autoincrement())
+  sourceTagId     Int
+  targetScope     String    @db.VarChar(20)
+  targetTenantId  Int?
+  targetAccountId Int?
+  inheritedAt     DateTime  @default(now()) @db.Timestamptz(6)
+  inheritedBy     Int?
+  
+  // Relations
+  sourceTag       Tag       @relation("SourceTag", fields: [sourceTagId], references: [id], onDelete: Cascade)
+  targetTenant    Tenant?   @relation(fields: [targetTenantId], references: [id], onDelete: Cascade)
+  targetAccount   Account?  @relation(fields: [targetAccountId], references: [id], onDelete: Cascade)
+  inheritedByUser User?     @relation(fields: [inheritedBy], references: [id])
+  
+  @@unique([sourceTagId, targetScope, targetTenantId, targetAccountId])
+  @@index([sourceTagId])
+  @@index([targetTenantId])
+  @@index([targetAccountId])
+}
+
+model Tenant {
+  id                     Int                      @id @default(autoincrement())
+  uuid                   String                   @unique
+  name                   String
+  domain                 String                   @unique
+  slug                   String?
+  description            Json?
+  features               Json?
+  settings               Json?
+  categories             Json?
+  allowedCountries       Json?
+  defaultCurrency        String?
+  isActive               Boolean                  @default(true)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime
+  Account                Account[]
+  Conversation           Conversation[]
+  EntityTag              EntityTag[]
+  GigOffering            GigOffering[]
+  JobPosting             JobPosting[]
+  Tag                    Tag[]
+  Category               Category[]
+  CategoryTag            CategoryTag[]
+  TagInheritance         TagInheritance[]
+  CategoryInheritance    CategoryInheritance[]
+  TenantFeatureSet       TenantFeatureSet[]
+  TenantIndustryTemplate TenantIndustryTemplate[]
+  TenantSubscription     TenantSubscription?
+  UserCollection         UserCollection[]
+}
+
+model TenantFeatureSet {
+  id           Int        @id @default(autoincrement())
+  tenantId     Int
+  featureSetId Int
+  enabledAt    DateTime   @default(now())
+  config       Json       @default("{}")
+  isActive     Boolean    @default(true)
+  FeatureSet   FeatureSet @relation(fields: [featureSetId], references: [id], onDelete: Cascade)
+  Tenant       Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, featureSetId])
+}
+
+model TenantIndustryTemplate {
+  id               Int              @id @default(autoincrement())
+  tenantId         Int
+  templateId       Int
+  appliedAt        DateTime         @default(now())
+  customizations   Json             @default("{}")
+  isActive         Boolean          @default(true)
+  IndustryTemplate IndustryTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  Tenant           Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, templateId])
+}
+
+model TenantSubscription {
+  id               Int              @id @default(autoincrement())
+  tenantId         Int              @unique
+  planId           Int
+  startDate        DateTime
+  endDate          DateTime?
+  status           String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  SubscriptionPlan SubscriptionPlan @relation(fields: [planId], references: [id])
+  Tenant           Tenant           @relation(fields: [tenantId], references: [id])
+}
+
+model User {
+  id                       Int                       @id @default(autoincrement())
+  uuid                     String
+  accountId                Int
+  firstName                String
+  lastName                 String
+  username                 String                    @unique
+  userType                 String                    @default("individual")
+  profilePhotoUrl          String?
+  bio                      String?
+  website                  String?
+  dateOfBirth              DateTime?
+  gender                   String?
+  accountRole              String                    @default("entity_viewer")
+  canCreateProfiles        Boolean                   @default(false)
+  canManageAllProfiles     Boolean                   @default(false)
+  canAccessBilling         Boolean                   @default(false)
+  canBookJobs              Boolean                   @default(false)
+  profileApplicationStatus String?
+  profileApprovedAt        DateTime?
+  profileRejectedAt        DateTime?
+  totalApplications        Int                       @default(0)
+  lastApplicationAt        DateTime?
+  userHash                 String
+  isActive                 Boolean                   @default(true)
+  isVerified               Boolean                   @default(false)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime
+  emergencyUntil           DateTime?                 @db.Timestamptz(6)
+  ConversationParticipant  ConversationParticipant[]
+  EntityTag                EntityTag[]
+  GigBooking               GigBooking[]
+  GigOffering              GigOffering[]
+  JobApplication           JobApplication[]
+  JobPosting               JobPosting[]
+  Message                  Message[]
+  Tag                      Tag[]
+  Category                 Category[]
+  CategoryTag              CategoryTag[]
+  TagInheritance           TagInheritance[]
+  CategoryInheritance      CategoryInheritance[]
+  Account                  Account                   @relation(fields: [accountId], references: [id])
+  UserCollection           UserCollection[]
+  audit_logs               audit_logs[]
+  record_locks             record_locks[]
+  user_activity_logs       user_activity_logs[]
+
+  @@index([emergencyUntil])
+}
+
+model UserCollection {
+  id             Int              @id @default(autoincrement())
+  uuid           String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         Int
+  tenantId       Int
+  name           String           @db.VarChar(100)
+  type           String           @db.VarChar(50)
+  description    String?
+  isPublic       Boolean          @default(false)
+  shareToken     String?          @unique @db.VarChar(100)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime         @default(now()) @db.Timestamptz(6)
+  CollectionItem CollectionItem[]
+  Tenant         Tenant           @relation(fields: [tenantId], references: [id])
+  User           User             @relation(fields: [userId], references: [id])
+
+  @@index([type])
+  @@index([userId])
+}
+
+model UserPermission {
+  userId       Int
+  permissionId Int
+  granted      Boolean?  @default(true)
+  validFrom    DateTime? @default(now()) @db.Timestamptz(6)
+  validUntil   DateTime? @db.Timestamptz(6)
+  grantedBy    Int?
+  grantReason  String?
+  resourceType String?   @db.VarChar(50)
+  resourceId   String?   @db.VarChar(255)
+  conditions   Json?
+  createdAt    DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@id([userId, permissionId])
+  @@index([granted], map: "idx_user_permission_granted")
+  @@index([permissionId], map: "idx_user_permission_permission")
+  @@index([resourceType, resourceId], map: "idx_user_permission_resource")
+  @@index([validUntil], map: "idx_user_permission_valid_until")
+}
+
+model UserPermissionCache {
+  userId       Int      @id
+  permissions  Json
+  computedAt   DateTime @db.Timestamptz(6)
+  expiresAt    DateTime @db.Timestamptz(6)
+  cacheVersion Int?     @default(1)
+
+  @@index([expiresAt], map: "idx_user_permission_cache_expires")
+}
+
+model UserRole {
+  userId      Int
+  roleId      Int
+  validFrom   DateTime? @default(now()) @db.Timestamptz(6)
+  validUntil  DateTime? @db.Timestamptz(6)
+  grantedBy   Int?
+  grantReason String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@id([userId, roleId])
+  @@index([validUntil], map: "idx_user_role_valid_until")
+}
+
+model audit_logs {
+  id         BigInt   @id @default(autoincrement())
+  tenantId   Int?
+  userId     Int?
+  action     String
+  entityType String?
+  entityId   String?
+  changes    Json?
+  context    Json?
+  timestamp  DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+}
+
+model record_locks {
+  id         String    @id
+  entityType String
+  entityId   String
+  lockedBy   Int
+  lockedAt   DateTime  @default(now())
+  expiresAt  DateTime?
+  reason     String?
+  User       User      @relation(fields: [lockedBy], references: [id])
+
+  @@unique([entityType, entityId])
+  @@index([expiresAt])
+  @@index([lockedBy])
+}
+
+model user_activity_logs {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  Int?
+  userId    Int?
+  action    String
+  component String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+  User      User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+}
+
+enum ChangeLevel {
+  OPTIMISTIC
+  PROCESSING
+  COMMITTED
+}
+
+enum ChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  APPLIED
+  ROLLED_BACK
+  CONFLICTED
+}
+
+enum ConflictResolution {
+  ACCEPT_CURRENT
+  ACCEPT_INCOMING
+  MERGE
+  MANUAL
+  RETRY
+}
+
+enum ConflictType {
+  CONCURRENT_EDIT
+  VALIDATION_FAILURE
+  DEPENDENCY_MISSING
+  PERMISSION_DENIED
+  BUSINESS_RULE
+  STALE_DATA
+}
+
+enum MessageContext {
+  DIRECT
+  PROJECT
+  GIG
+  BOOKING
+  JOB_APPLICATION
+}
+
+enum SavedSearchScope {
+  SYSTEM
+  TENANT
+  USER
+}
+
+enum settings_category {
+  general
+  media
+  security
+  business
+  notification
+  integration
+  appearance
+  workflow
+}
+
+enum settings_governance {
+  super_admin_only
+  tenant_admin
+  user_managed
+}
+
+enum settings_level {
+  global
+  tenant
+  user
+}

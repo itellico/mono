@@ -1,0 +1,109 @@
+{
+  "title": "Tenant Management",
+  "description": "Manage platform tenants and their configurations",
+  "table": {
+    "title": "Tenant List",
+    "description": "Overview of all tenant organizations",
+    "name": "Name",
+    "domain": "Domain", 
+    "status": "Status",
+    "userCount": "Users",
+    "currency": "Currency",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actions": "Actions"
+  },
+  "filters": {
+    "search_by_name": "Search by name...",
+    "search_by_domain": "Search by domain...",
+    "all_statuses": "All Statuses",
+    "minUsers": "Min users",
+    "allCurrencies": "All Currencies"
+  },
+  "actions": {
+    "createNew": "Create Tenant",
+    "exportAll": "Export All",
+    "viewDetails": "View Details",
+    "editSettings": "Edit Settings", 
+    "manageUsers": "Manage Users",
+    "exportData": "Export Data",
+    "suspend": "Suspend Tenant"
+  },
+  "stats": {
+    "total": "Total Tenants",
+    "totalDescription": "All registered tenant organizations",
+    "active": "Active Tenants", 
+    "activeDescription": "Currently operational tenants",
+    "inactive": "Inactive Tenants",
+    "inactiveDescription": "Temporarily disabled tenants",
+    "totalUsers": "Total Users",
+    "totalUsersDescription": "Users across all tenants"
+  },
+  "empty": {
+    "title": "No tenants found",
+    "description": "Try adjusting your search or filter criteria"
+  },
+  "create": {
+    "title": "Create New Tenant",
+    "description": "Set up a new tenant on the itellico Mono. This will create a new isolated environment for the organization.",
+    "tenantInfo": {
+      "title": "Tenant Information"
+    },
+    "form": {
+      "name": "Tenant Name",
+      "namePlaceholder": "e.g., Acme Corporation",
+      "nameDescription": "The display name for this tenant organization",
+      "slug": "Tenant Slug",
+      "slugPlaceholder": "e.g., acme-corp",
+      "slugDescription": "Unique identifier for URLs and API access (letters, numbers, hyphens only)",
+      "domain": "Primary Domain",
+      "domainPlaceholder": "e.g., acme.com",
+      "domainDescription": "The primary domain this tenant will use for branding and email",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "Describe this tenant organization...",
+      "descriptionDescription": "Brief description of the tenant organization"
+    },
+    "adminInfo": {
+      "title": "Admin User Information",
+      "description": "Create the initial administrator account for this tenant",
+      "firstName": "Admin First Name",
+      "firstNamePlaceholder": "Enter admin first name",
+      "firstNameDescription": "First name for the tenant administrator",
+      "lastName": "Admin Last Name", 
+      "lastNamePlaceholder": "Enter admin last name",
+      "lastNameDescription": "Last name for the tenant administrator",
+      "email": "Admin Email (Optional)",
+      "emailPlaceholder": "admin@company.com",
+      "emailDescription": "Custom email for admin user. If not provided, will use {slug}-admin@mono.com",
+      "emailFormat": "slug-admin@mono.com",
+      "password": "Admin Password",
+      "passwordNote": "A secure password will be generated automatically",
+      "permissions": "Admin Permissions",
+      "permissionsList": "Full tenant administration, user management, content moderation",
+      "adminName": "Admin Name",
+      "defaultFirstName": "Tenant",
+      "defaultLastName": "Admin",
+      "defaultFullName": "Tenant Admin"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Tenant",
+      "creating": "Creating..."
+    },
+    "success": {
+      "title": "Tenant Created Successfully",
+      "message": "The tenant has been created and is ready to use.",
+      "adminCredentials": "Admin Login Credentials",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "copyCredentials": "Copy Credentials",
+      "securityNote": "Save these credentials securely. The password cannot be recovered.",
+      "close": "Close"
+    },
+    "toast": {
+      "createSuccess": "Tenant created successfully",
+      "createSuccessDescription": "Admin login: {email}",
+      "createError": "Failed to create tenant"
+    }
+  }
+} 

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makeup Artist Dashboard - Sofia Rodriguez</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 280px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
+        .main-content { margin-left: 280px; padding: 20px; }
+        .profile-hero { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            color: white;
+            padding: 2rem 0;
+            margin: -20px -20px 30px -20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+        }
+        .service-package { 
+            border: 2px solid #e9ecef; 
+            border-radius: 15px; 
+            padding: 25px; 
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .service-package:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .service-package.featured { 
+            border-color: #ff6b6b; 
+            background: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%);
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .portfolio-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+        .kit-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .kit-item:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .certification-badge {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 5px;
+            display: inline-block;
+        }
+        @media (max-width: 768px) {
+            .sidebar { 
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .portfolio-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Profile Hero Section -->
+            <div class="profile-hero">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="https://images.unsplash.com/photo-1580894908361-967195033215?w=400&h=400&fit=crop&crop=face" 
+                                 class="rounded-circle profile-image mb-3" alt="Sofia Rodriguez">
+                            <div class="text-center">
+                                <span class="badge bg-success">Available</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 class="fw-bold mb-2">Sofia Rodriguez</h1>
+                            <p class="fs-5 mb-3">Professional Makeup Artist & Beauty Specialist</p>
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark me-2">Bridal</span>
+                                <span class="badge bg-light text-dark me-2">Editorial</span>
+                                <span class="badge bg-light text-dark me-2">Special FX</span>
+                                <span class="badge bg-light text-dark me-2">Commercial</span>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">8+</h4>
+                                        <small>Years Experience</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">500+</h4>
+                                        <small>Clients</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">4.9</h4>
+                                        <small>Rating</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">$180</h4>
+                                        <small>Avg Rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <button class="btn btn-light btn-lg mb-2 w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>Book Session
+                            </button>
+                            <button class="btn btn-outline-light btn-lg w-100">
+                                <i class="fas fa-envelope me-2"></i>Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabbed Content -->
+            <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio" type="button" role="tab">
+                        <i class="fas fa-images me-2"></i>Portfolio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+                        <i class="fas fa-paint-brush me-2"></i>Services
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kit-tab" data-bs-toggle="tab" data-bs-target="#kit" type="button" role="tab">
+                        <i class="fas fa-toolbox me-2"></i>Makeup Kit
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">
+                        <i class="fas fa-calendar me-2"></i>Bookings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                        <i class="fas fa-star me-2"></i>Reviews
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="certifications-tab" data-bs-toggle="tab" data-bs-target="#certifications" type="button" role="tab">
+                        <i class="fas fa-certificate me-2"></i>Certifications
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="before-after-tab" data-bs-toggle="tab" data-bs-target="#before-after" type="button" role="tab">
+                        <i class="fas fa-magic me-2"></i>Before/After
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tutorials-tab" data-bs-toggle="tab" data-bs-target="#tutorials" type="button" role="tab">
+                        <i class="fas fa-video me-2"></i>Tutorials
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="earnings-tab" data-bs-toggle="tab" data-bs-target="#earnings" type="button" role="tab">
+                        <i class="fas fa-chart-line me-2"></i>Earnings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">
+                        <i class="fas fa-comments me-2"></i>Messages
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="academy-tab" data-bs-toggle="tab" data-bs-target="#academy" type="button" role="tab">
+                        <i class="fas fa-graduation-cap me-2"></i>Academy
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="dashboardTabsContent">
+                <!-- Portfolio Tab -->
+                <div class="tab-pane fade show active" id="portfolio" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Portfolio Gallery</h3>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-primary active" data-category="all">All</button>
+                            <button class="btn btn-outline-primary" data-category="bridal">Bridal</button>
+                            <button class="btn btn-outline-primary" data-category="editorial">Editorial</button>
+                            <button class="btn btn-outline-primary" data-category="special-fx">Special FX</button>
+                            <button class="btn btn-outline-primary" data-category="commercial">Commercial</button>
+                        </div>
+                    </div>
+                    <div class="portfolio-grid">
+                        <div class="portfolio-item" data-category="bridal">
+                            <img src="https://images.unsplash.com/photo-1594736797933-d0c9c48e5ac3?w=400&h=300&fit=crop" class="w-100" alt="Bridal Makeup">
+                            <div class="p-3">
+                                <h6 class="mb-1">Elegant Bridal Look</h6>
+                                <small class="text-muted">Classic bridal makeup with soft glam</small>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="editorial">
+                            <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&h=300&fit=crop" class="w-100" alt="Editorial Makeup">
+                            <div class="p-3">
+                                <h6 class="mb-1">High Fashion Editorial</h6>
+                                <small class="text-muted">Bold editorial look for magazine shoot</small>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="special-fx">
+                            <img src="https://images.unsplash.com/photo-1509909756405-be0199881695?w=400&h=300&fit=crop" class="w-100" alt="Special FX">
+                            <div class="p-3">
+                                <h6 class="mb-1">Zombie Special Effects</h6>
+                                <small class="text-muted">Professional SFX for horror film</small>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="commercial">
+                            <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=400&h=300&fit=crop" class="w-100" alt="Commercial Makeup">
+                            <div class="p-3">
+                                <h6 class="mb-1">Commercial Beauty</h6>
+                                <small class="text-muted">Natural beauty look for commercial</small>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="bridal">
+                            <img src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?w=400&h=300&fit=crop" class="w-100" alt="Bridal Party">
+                            <div class="p-3">
+                                <h6 class="mb-1">Bridal Party Glam</h6>
+                                <small class="text-muted">Coordinated looks for entire bridal party</small>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="editorial">
+                            <img src="https://images.unsplash.com/photo-1457972729786-0411a3b2b626?w=400&h=300&fit=crop" class="w-100" alt="Avant Garde">
+                            <div class="p-3">
+                                <h6 class="mb-1">Avant Garde Art</h6>
+                                <small class="text-muted">Creative artistic makeup design</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div class="tab-pane fade" id="services" role="tabpanel">
+                    <h3 class="mb-4">Services & Packages</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="service-package featured">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="fw-bold">Bridal Package</h5>
+                                    <span class="badge bg-warning">Most Popular</span>
+                                </div>
+                                <p class="text-muted mb-3">Complete bridal makeup experience with trial session</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Bridal trial session</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Wedding day makeup</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Touch-up kit included</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>On-location service</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional photos</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold text-primary">$450</span>
+                                        <small class="text-muted">/package</small>
+                                    </div>
+                                    <button class="btn btn-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">Editorial/Fashion</h5>
+                                <p class="text-muted mb-3">High-fashion makeup for photo shoots and runway</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Creative concept development</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional makeup application</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Touch-ups during shoot</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional kit included</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$280</span>
+                                        <small class="text-muted">/session</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">Special Effects</h5>
+                                <p class="text-muted mb-3">Professional SFX makeup for film and theater</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Character design consultation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Prosthetics application</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Blood effects & wounds</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Aging and fantasy looks</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$350</span>
+                                        <small class="text-muted">/session</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">Event Makeup</h5>
+                                <p class="text-muted mb-3">Perfect look for special occasions and events</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Consultation and color matching</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Full makeup application</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Lash application</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Setting spray included</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$120</span>
+                                        <small class="text-muted">/session</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Makeup Kit Tab -->
+                <div class="tab-pane fade" id="kit" role="tabpanel">
+                    <h3 class="mb-4">Professional Makeup Kit</h3>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h5 class="text-muted mb-3">Foundation & Base</h5>
+                            <div class="kit-item">
+                                <i class="fas fa-palette fa-2x text-warning mb-2"></i>
+                                <h6>Fenty Beauty Pro Filt'r</h6>
+                                <small>40 shades foundation</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-circle fa-2x text-secondary mb-2"></i>
+                                <h6>Laura Mercier Powder</h6>
+                                <small>Translucent setting powder</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-sun fa-2x text-warning mb-2"></i>
+                                <h6>Tarte Shape Tape</h6>
+                                <small>Full coverage concealer</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h5 class="text-muted mb-3">Eyes & Brows</h5>
+                            <div class="kit-item">
+                                <i class="fas fa-eye fa-2x text-info mb-2"></i>
+                                <h6>Urban Decay Naked</h6>
+                                <small>Professional eyeshadow palettes</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-minus fa-2x text-dark mb-2"></i>
+                                <h6>Anastasia Brow Wiz</h6>
+                                <small>Precision brow pencils</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-brush fa-2x text-primary mb-2"></i>
+                                <h6>Benefit Mascara</h6>
+                                <small>Volumizing and lengthening</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h5 class="text-muted mb-3">Lips & Cheeks</h5>
+                            <div class="kit-item">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h6>NARS Blush Collection</h6>
+                                <small>Professional blush palette</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-kiss fa-2x text-danger mb-2"></i>
+                                <h6>Pat McGrath Lipstick</h6>
+                                <small>Luxury lip collection</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                                <h6>Fenty Highlight</h6>
+                                <small>Trophy Wife highlighter</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h5 class="text-muted mb-3">Tools & Brushes</h5>
+                            <div class="kit-item">
+                                <i class="fas fa-paint-brush fa-2x text-success mb-2"></i>
+                                <h6>Morphe Brush Set</h6>
+                                <small>Professional brush collection</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-circle-o fa-2x text-info mb-2"></i>
+                                <h6>Beauty Blender</h6>
+                                <small>Professional makeup sponges</small>
+                            </div>
+                            <div class="kit-item">
+                                <i class="fas fa-spray-can fa-2x text-primary mb-2"></i>
+                                <h6>UD All Nighter</h6>
+                                <small>Setting spray collection</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Tab -->
+                <div class="tab-pane fade" id="bookings" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Upcoming Bookings</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Booking
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">Tomorrow - 9:00 AM</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Sarah's Bridal Trial</h6>
+                                    <p class="card-text small">Bridal makeup trial session for upcoming wedding</p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="badge bg-success">Confirmed</span>
+                                        <strong>$150</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h6 class="mb-0">July 10 - 2:00 PM</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Fashion Shoot</h6>
+                                    <p class="card-text small">Editorial makeup for magazine photoshoot</p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="badge bg-warning">Pending</span>
+                                        <strong>$280</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">July 15 - 6:00 PM</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Prom Makeup</h6>
+                                    <p class="card-text small">Glam makeup for high school prom</p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="badge bg-info">Booked</span>
+                                        <strong>$120</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Client Reviews</h3>
+                        <div class="text-end">
+                            <h4 class="text-warning mb-0">4.9 <i class="fas fa-star"></i></h4>
+                            <small class="text-muted">Based on 127 reviews</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <strong>Jennifer Walsh</strong>
+                                        <div class="text-warning">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">"Sofia did my wedding makeup and it was absolutely perfect! She listened to exactly what I wanted and executed it flawlessly. Highly recommend!"</p>
+                                    <small class="text-muted">Bridal Package - June 2024</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <strong>Maya Patel</strong>
+                                        <div class="text-warning">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">"Professional, punctual, and incredibly talented. Sofia transformed me for my photoshoot and the results were stunning!"</p>
+                                    <small class="text-muted">Editorial Session - May 2024</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications Tab -->
+                <div class="tab-pane fade" id="certifications" role="tabpanel">
+                    <h3 class="mb-4">Certifications & Training</h3>
+                    <div class="text-center mb-4">
+                        <div class="certification-badge">MAC Pro Certified</div>
+                        <div class="certification-badge">Bobbi Brown Certified</div>
+                        <div class="certification-badge">SFX Institute Graduate</div>
+                        <div class="certification-badge">Bridal Specialist</div>
+                        <div class="certification-badge">Airbrush Certified</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Professional Makeup Artistry</h5>
+                                    <p class="text-muted">Academy of Freelance Makeup</p>
+                                    <small>Graduated 2016 - Honors</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Special Effects Makeup</h5>
+                                    <p class="text-muted">Tom Savini's Special Makeup Effects Program</p>
+                                    <small>Completed 2018</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Before/After Tab -->
+                <div class="tab-pane fade" id="before-after" role="tabpanel">
+                    <h3 class="mb-4">Before & After Transformations</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="before-after">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616c79a6a24?w=300&h=300&fit=crop" class="w-100" alt="Before">
+                                    <img src="https://images.unsplash.com/photo-1498577174694-2310b6bbc7e5?w=300&h=300&fit=crop" class="w-100" alt="After">
+                                </div>
+                                <div class="card-body text-center">
+                                    <h6>Bridal Transformation</h6>
+                                    <small class="text-muted">Natural to Glam</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="before-after">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop" class="w-100" alt="Before">
+                                    <img src="https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=300&h=300&fit=crop" class="w-100" alt="After">
+                                </div>
+                                <div class="card-body text-center">
+                                    <h6>Editorial Look</h6>
+                                    <small class="text-muted">Bold Fashion Statement</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tabs (Tutorials, Earnings, Messages, Academy, Settings) would follow similar patterns -->
+                <div class="tab-pane fade" id="tutorials" role="tabpanel">
+                    <h3 class="mb-4">Makeup Tutorials</h3>
+                    <p class="text-muted">Coming soon - video tutorials and educational content.</p>
+                </div>
+
+                <div class="tab-pane fade" id="earnings" role="tabpanel">
+                    <h3 class="mb-4">Earnings Dashboard</h3>
+                    <p class="text-muted">Financial overview and analytics.</p>
+                </div>
+
+                <div class="tab-pane fade" id="messages" role="tabpanel">
+                    <h3 class="mb-4">Messages</h3>
+                    <p class="text-muted">Client communication center.</p>
+                </div>
+
+                <div class="tab-pane fade" id="academy" role="tabpanel">
+                    <h3 class="mb-4">Makeup Academy</h3>
+                    <p class="text-muted">Continuous learning and skill development.</p>
+                </div>
+
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <h3 class="mb-4">Account Settings</h3>
+                    <p class="text-muted">Profile and preference management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script src="navigation.js"></script>
+    <script>
+        // Render Sidebar for Makeup Artist
+        document.getElementById('sidebar').innerHTML = createSidebar('Makeup Artist', [
+            { label: 'Portfolio', icon: 'fas fa-images', href: '#portfolio', active: true },
+            { label: 'Services', icon: 'fas fa-paint-brush', href: '#services' },
+            { label: 'Makeup Kit', icon: 'fas fa-toolbox', href: '#kit' },
+            { label: 'Bookings', icon: 'fas fa-calendar', href: '#bookings' },
+            { label: 'Reviews', icon: 'fas fa-star', href: '#reviews' },
+            { label: 'Certifications', icon: 'fas fa-certificate', href: '#certifications' },
+            { label: 'Before/After', icon: 'fas fa-magic', href: '#before-after' },
+            { label: 'Tutorials', icon: 'fas fa-video', href: '#tutorials' },
+            { label: 'Earnings', icon: 'fas fa-chart-line', href: '#earnings' },
+            { label: 'Messages', icon: 'fas fa-comments', href: '#messages' },
+            { label: 'Academy', icon: 'fas fa-graduation-cap', href: '#academy' },
+            { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+        ]);
+
+        // Portfolio filtering functionality
+        document.querySelectorAll('[data-category]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('[data-category]').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter portfolio items
+                const category = this.getAttribute('data-category');
+                document.querySelectorAll('.portfolio-item').forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Add mobile hamburger button
+        if (window.innerWidth <= 768) {
+            const hamburger = document.createElement('button');
+            hamburger.className = 'btn btn-primary position-fixed';
+            hamburger.style = 'top: 20px; left: 20px; z-index: 1001;';
+            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            hamburger.onclick = toggleSidebar;
+            document.body.appendChild(hamburger);
+        }
+    </script>
+</body>
+</html>

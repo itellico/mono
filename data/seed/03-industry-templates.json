@@ -1,0 +1,351 @@
+{
+  "industry_templates": [
+    {
+      "id": "fashion_modeling",
+      "name": "Fashion & Modeling",
+      "slug": "fashion-modeling",
+      "description": "Complete marketplace for models, photographers, stylists, and agencies in the fashion industry",
+      "icon": "fas fa-camera",
+      "coverImage": "/templates/fashion-modeling-cover.jpg",
+      "category": "creative",
+      "features": [
+        "comp_cards",
+        "portfolios",
+        "bookings",
+        "castings",
+        "digitals",
+        "polaroids",
+        "measurements",
+        "availability_calendar",
+        "rate_cards",
+        "travel_booking"
+      ],
+      "default_plans": [
+        {
+          "name": "Model Starter",
+          "price": 0,
+          "features": ["basic_profile", "search", "apply_to_jobs"],
+          "limits": {
+            "comp_cards": 1,
+            "portfolios": 2,
+            "images": 20,
+            "storage_gb": 1
+          }
+        },
+        {
+          "name": "Professional Model",
+          "price": 29,
+          "features": ["everything_in_starter", "comp_cards", "portfolio", "analytics", "calendar"],
+          "limits": {
+            "comp_cards": 5,
+            "portfolios": 10,
+            "images": 500,
+            "storage_gb": 50
+          }
+        },
+        {
+          "name": "Agency",
+          "price": 199,
+          "features": ["everything_in_professional", "manage_models", "commission_tracking", "contracts"],
+          "limits": {
+            "comp_cards": -1,
+            "portfolios": -1,
+            "images": -1,
+            "storage_gb": 500,
+            "managed_profiles": 100
+          }
+        }
+      ],
+      "option_sets": {
+        "model_types": ["Fashion", "Commercial", "Editorial", "Runway", "Fitness", "Plus Size", "Petite", "Parts", "Glamour"],
+        "ethnicities": ["Caucasian", "African", "Asian", "Hispanic/Latino", "Middle Eastern", "Mixed", "Other"],
+        "hair_colors": ["Black", "Brown", "Blonde", "Red", "Auburn", "Gray", "White", "Bald"],
+        "eye_colors": ["Brown", "Blue", "Green", "Hazel", "Gray", "Amber"],
+        "height_ranges": ["Under 5'0\"", "5'0\" - 5'3\"", "5'4\" - 5'7\"", "5'8\" - 5'11\"", "6'0\" - 6'3\"", "Over 6'3\""],
+        "dress_sizes_us": ["0", "2", "4", "6", "8", "10", "12", "14", "16", "18+"],
+        "shoe_sizes_us": ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12+"],
+        "experience_levels": ["New Face", "Beginner (0-1 year)", "Intermediate (1-3 years)", "Experienced (3-5 years)", "Professional (5+ years)"]
+      },
+      "schemas": {
+        "model_profile": {
+          "tabs": [
+            {
+              "id": "basic",
+              "label": "Basic Info",
+              "fields": [
+                {"name": "stage_name", "type": "text", "label": "Stage Name", "required": true},
+                {"name": "bio", "type": "textarea", "label": "Bio", "maxLength": 500},
+                {"name": "model_types", "type": "multiselect", "label": "Model Types", "optionSet": "model_types"},
+                {"name": "experience_level", "type": "select", "label": "Experience", "optionSet": "experience_levels"}
+              ]
+            },
+            {
+              "id": "appearance",
+              "label": "Appearance",
+              "fields": [
+                {"name": "ethnicity", "type": "select", "label": "Ethnicity", "optionSet": "ethnicities"},
+                {"name": "hair_color", "type": "select", "label": "Hair Color", "optionSet": "hair_colors"},
+                {"name": "eye_color", "type": "select", "label": "Eye Color", "optionSet": "eye_colors"},
+                {"name": "height", "type": "measurement", "label": "Height", "unit": "height"},
+                {"name": "weight", "type": "measurement", "label": "Weight", "unit": "weight", "optional": true}
+              ]
+            },
+            {
+              "id": "measurements",
+              "label": "Measurements",
+              "fields": [
+                {"name": "bust", "type": "measurement", "label": "Bust/Chest", "unit": "inches", "regional": true},
+                {"name": "waist", "type": "measurement", "label": "Waist", "unit": "inches", "regional": true},
+                {"name": "hips", "type": "measurement", "label": "Hips", "unit": "inches", "regional": true},
+                {"name": "dress_size", "type": "select", "label": "Dress Size", "optionSet": "dress_sizes_us"},
+                {"name": "shoe_size", "type": "select", "label": "Shoe Size", "optionSet": "shoe_sizes_us"},
+                {"name": "inseam", "type": "measurement", "label": "Inseam", "unit": "inches", "optional": true}
+              ]
+            }
+          ]
+        },
+        "photographer_profile": {
+          "tabs": [
+            {
+              "id": "basic",
+              "label": "Basic Info",
+              "fields": [
+                {"name": "business_name", "type": "text", "label": "Business Name"},
+                {"name": "bio", "type": "textarea", "label": "Bio", "maxLength": 1000},
+                {"name": "specialties", "type": "multiselect", "label": "Specialties", "optionSet": "photography_types"},
+                {"name": "experience_years", "type": "number", "label": "Years of Experience"}
+              ]
+            },
+            {
+              "id": "services",
+              "label": "Services & Rates",
+              "fields": [
+                {"name": "services_offered", "type": "multiselect", "label": "Services", "optionSet": "photography_services"},
+                {"name": "hourly_rate", "type": "price", "label": "Hourly Rate"},
+                {"name": "half_day_rate", "type": "price", "label": "Half Day Rate"},
+                {"name": "full_day_rate", "type": "price", "label": "Full Day Rate"},
+                {"name": "travel_available", "type": "checkbox", "label": "Available for Travel"}
+              ]
+            }
+          ]
+        }
+      },
+      "settings": {
+        "enable_comp_cards": true,
+        "enable_digitals": true,
+        "enable_measurements": true,
+        "measurement_system": "both",
+        "enable_availability": true,
+        "enable_travel_booking": true,
+        "commission_tracking": true,
+        "contract_management": true
+      }
+    },
+    {
+      "id": "fitness_wellness",
+      "name": "Fitness & Wellness",
+      "slug": "fitness-wellness",
+      "description": "Marketplace for fitness trainers, nutritionists, wellness coaches, and health professionals",
+      "icon": "fas fa-dumbbell",
+      "coverImage": "/templates/fitness-wellness-cover.jpg",
+      "category": "health",
+      "features": [
+        "certifications",
+        "class_scheduling",
+        "client_management",
+        "workout_plans",
+        "nutrition_plans",
+        "progress_tracking",
+        "video_sessions",
+        "payment_processing"
+      ],
+      "default_plans": [
+        {
+          "name": "Trainer Starter",
+          "price": 0,
+          "features": ["basic_profile", "search", "messaging"],
+          "limits": {
+            "clients": 5,
+            "classes_per_month": 10,
+            "workout_plans": 3
+          }
+        },
+        {
+          "name": "Professional Trainer",
+          "price": 49,
+          "features": ["everything_in_starter", "scheduling", "payment_processing", "video_sessions"],
+          "limits": {
+            "clients": 50,
+            "classes_per_month": -1,
+            "workout_plans": -1,
+            "storage_gb": 100
+          }
+        },
+        {
+          "name": "Fitness Studio",
+          "price": 299,
+          "features": ["everything_in_professional", "multi_trainer", "facility_management", "analytics"],
+          "limits": {
+            "trainers": 20,
+            "clients": -1,
+            "locations": 5
+          }
+        }
+      ],
+      "option_sets": {
+        "fitness_specialties": ["Personal Training", "Group Fitness", "Yoga", "Pilates", "CrossFit", "Strength Training", "Cardio", "HIIT", "Nutrition", "Rehabilitation"],
+        "certifications": ["ACE", "NASM", "ACSM", "NSCA", "ISSA", "NCSF", "RYT-200", "RYT-500", "Pilates Certified", "CrossFit L1", "CrossFit L2"],
+        "class_types": ["1-on-1", "Small Group (2-5)", "Large Group (6-15)", "Class (16+)", "Online", "Hybrid"],
+        "experience_levels": ["Entry Level (0-1 year)", "Intermediate (1-3 years)", "Experienced (3-5 years)", "Expert (5-10 years)", "Master (10+ years)"]
+      },
+      "schemas": {
+        "trainer_profile": {
+          "tabs": [
+            {
+              "id": "basic",
+              "label": "Basic Info",
+              "fields": [
+                {"name": "display_name", "type": "text", "label": "Professional Name", "required": true},
+                {"name": "bio", "type": "textarea", "label": "Bio", "maxLength": 1000},
+                {"name": "specialties", "type": "multiselect", "label": "Specialties", "optionSet": "fitness_specialties"},
+                {"name": "experience_level", "type": "select", "label": "Experience", "optionSet": "experience_levels"}
+              ]
+            },
+            {
+              "id": "qualifications",
+              "label": "Qualifications",
+              "fields": [
+                {"name": "certifications", "type": "multiselect", "label": "Certifications", "optionSet": "certifications"},
+                {"name": "education", "type": "text", "label": "Education"},
+                {"name": "insurance", "type": "checkbox", "label": "Liability Insurance"},
+                {"name": "cpr_certified", "type": "checkbox", "label": "CPR Certified"}
+              ]
+            },
+            {
+              "id": "services",
+              "label": "Services & Rates",
+              "fields": [
+                {"name": "class_types", "type": "multiselect", "label": "Class Types", "optionSet": "class_types"},
+                {"name": "session_rate", "type": "price", "label": "Per Session Rate"},
+                {"name": "package_5", "type": "price", "label": "5 Session Package"},
+                {"name": "package_10", "type": "price", "label": "10 Session Package"},
+                {"name": "monthly_rate", "type": "price", "label": "Monthly Unlimited"}
+              ]
+            }
+          ]
+        }
+      },
+      "settings": {
+        "enable_scheduling": true,
+        "enable_payment_processing": true,
+        "enable_video_sessions": true,
+        "enable_progress_tracking": true,
+        "enable_nutrition_plans": true,
+        "enable_waivers": true,
+        "commission_percentage": 20
+      }
+    },
+    {
+      "id": "entertainment_talent",
+      "name": "Entertainment & Talent",
+      "slug": "entertainment-talent",
+      "description": "Marketplace for actors, musicians, dancers, voice artists, and entertainment professionals",
+      "icon": "fas fa-star",
+      "coverImage": "/templates/entertainment-talent-cover.jpg",
+      "category": "entertainment",
+      "features": [
+        "demo_reels",
+        "audio_samples",
+        "resume_builder",
+        "audition_management",
+        "representation",
+        "booking_calendar",
+        "contracts",
+        "royalty_tracking"
+      ],
+      "default_plans": [
+        {
+          "name": "Talent Basic",
+          "price": 0,
+          "features": ["basic_profile", "search", "audition_alerts"],
+          "limits": {
+            "demo_reels": 1,
+            "audio_samples": 3,
+            "headshots": 5
+          }
+        },
+        {
+          "name": "Professional Talent",
+          "price": 39,
+          "features": ["everything_in_basic", "resume_builder", "analytics", "priority_listing"],
+          "limits": {
+            "demo_reels": 5,
+            "audio_samples": 20,
+            "headshots": 50,
+            "storage_gb": 100
+          }
+        },
+        {
+          "name": "Talent Agency",
+          "price": 499,
+          "features": ["everything_in_professional", "roster_management", "commission_tracking", "contracts"],
+          "limits": {
+            "managed_talent": 200,
+            "storage_gb": 1000,
+            "users": 10
+          }
+        }
+      ],
+      "option_sets": {
+        "talent_types": ["Actor", "Musician", "Singer", "Dancer", "Voice Artist", "Comedian", "Host/MC", "DJ", "Producer", "Director"],
+        "genres": ["Drama", "Comedy", "Action", "Musical", "Commercial", "Documentary", "Animation", "Reality", "Theatre", "Film"],
+        "skills": ["Stage Combat", "Accents/Dialects", "Dance", "Singing", "Musical Instruments", "Comedy", "Improv", "Stunts", "Languages"],
+        "union_status": ["SAG-AFTRA", "AEA", "IATSE", "AFM", "AGMA", "Non-Union"]
+      },
+      "schemas": {
+        "actor_profile": {
+          "tabs": [
+            {
+              "id": "basic",
+              "label": "Basic Info",
+              "fields": [
+                {"name": "stage_name", "type": "text", "label": "Stage Name", "required": true},
+                {"name": "bio", "type": "textarea", "label": "Bio", "maxLength": 1000},
+                {"name": "talent_types", "type": "multiselect", "label": "Talent Types", "optionSet": "talent_types"},
+                {"name": "union_status", "type": "multiselect", "label": "Union Status", "optionSet": "union_status"}
+              ]
+            },
+            {
+              "id": "appearance",
+              "label": "Appearance",
+              "fields": [
+                {"name": "age_range", "type": "text", "label": "Playing Age Range"},
+                {"name": "height", "type": "measurement", "label": "Height", "unit": "height"},
+                {"name": "hair_color", "type": "select", "label": "Hair Color", "optionSet": "hair_colors"},
+                {"name": "eye_color", "type": "select", "label": "Eye Color", "optionSet": "eye_colors"}
+              ]
+            },
+            {
+              "id": "skills",
+              "label": "Skills & Training",
+              "fields": [
+                {"name": "skills", "type": "multiselect", "label": "Special Skills", "optionSet": "skills"},
+                {"name": "training", "type": "textarea", "label": "Training & Education"},
+                {"name": "languages", "type": "multiselect", "label": "Languages", "optionSet": "languages"},
+                {"name": "accents", "type": "multiselect", "label": "Accents/Dialects", "optionSet": "accents"}
+              ]
+            }
+          ]
+        }
+      },
+      "settings": {
+        "enable_demo_reels": true,
+        "enable_audio_samples": true,
+        "enable_resume_builder": true,
+        "enable_representation": true,
+        "enable_audition_management": true,
+        "commission_percentage": 10
+      }
+    }
+  ]
+}

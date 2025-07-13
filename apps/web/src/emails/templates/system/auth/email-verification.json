@@ -1,0 +1,15 @@
+{
+  "subject": "Verify your email for {{ tenantName or platformName }}",
+  "preheader": "Click to verify {{ userEmail }} and complete your account setup",
+  "category": "authentication",
+  "layout": "base",
+  "variables": {
+    "userName": "User's full name",
+    "userEmail": "User's email address to be verified",
+    "verificationUrl": "Email verification URL with token",
+    "expirationHours": "Number of hours until link expires (default: 48)",
+    "userType": "Type of user: model, photographer, agency, client",
+    "tenantName": "Name of the tenant/platform"
+  },
+  "description": "Email verification link sent after account creation"
+}

@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Read(*)"
+    ],
+    "deny": []
+  },
+  "autoApprove": {
+    "write": true,
+    "create": true,
+    "delete": false
+  },
+  "skipConfirmation": [
+    "*.md",
+    "*.json",
+    "*.ts",
+    "*.tsx",
+    "*.js",
+    "*.jsx",
+    "*.yml",
+    "*.yaml",
+    "*.toml",
+    "*.txt",
+    "*.log",
+    "docs/**/*",
+    "src/**/*",
+    "scripts/**/*",
+    "prisma/**/*"
+  ],
+  "confirmationThreshold": {
+    "fileCount": 20,
+    "sizeKB": 1000
+  },
+  "env": {
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "0",
+    "DISABLE_COST_WARNINGS": "1"
+  }
+}

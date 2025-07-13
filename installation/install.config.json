@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "name": "itellico Mono Installation",
+  "description": "Complete installation configuration for itellico Mono platform",
+  "created": "2024-01-11",
+  "author": "itellico Team",
+  "structure": {
+    "platform": {
+      "description": "Core platform configuration files",
+      "files": [
+        "platform-config.json",
+        "default-tenant.json",
+        "admin-user.json",
+        "rbac-complete.json",
+        "categories.json",
+        "tags.json",
+        "option-sets.json",
+        "features.json",
+        "plans.json"
+      ]
+    },
+    "tenants": {
+      "description": "Tenant-specific configurations",
+      "tenants": {
+        "go-models.com": {
+          "name": "GoModels",
+          "industry": "modeling",
+          "description": "Professional modeling and talent marketplace",
+          "files": [
+            "tenant-config.json",
+            "tenant-users.json",
+            "categories.json",
+            "tags.json",
+            "option-sets.json",
+            "schemas.json",
+            "accounts.json",
+            "account-users.json",
+            "profiles.json"
+          ]
+        }
+      }
+    }
+  },
+  "installationOrder": [
+    "platform",
+    "tenants"
+  ],
+  "requirements": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0",
+    "postgresql": ">=14.0",
+    "redis": ">=6.0"
+  },
+  "environment": {
+    "required": [
+      "DATABASE_URL",
+      "REDIS_URL"
+    ],
+    "optional": [
+      "ADMIN_PASSWORD",
+      "DEBUG"
+    ]
+  },
+  "scripts": {
+    "install": "pnpm tsx installation/install.ts",
+    "install:all": "pnpm tsx installation/install.ts --all",
+    "install:tenant": "pnpm tsx installation/install.ts --tenant=",
+    "validate": "pnpm tsx installation/install.ts --validate-only",
+    "reset": "pnpm tsx installation/install.ts --reset"
+  }
+}

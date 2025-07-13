@@ -1,0 +1,285 @@
+{
+  "optionSets": [
+    {
+      "name": "Model Heights",
+      "slug": "model-heights",
+      "description": "Height measurements for models in cm and feet/inches",
+      "type": "measurement",
+      "category": "physical",
+      "values": [
+        { "cm": "150", "feet": "4'11\"", "label": "150 cm / 4'11\"" },
+        { "cm": "152", "feet": "5'0\"", "label": "152 cm / 5'0\"" },
+        { "cm": "155", "feet": "5'1\"", "label": "155 cm / 5'1\"" },
+        { "cm": "157", "feet": "5'2\"", "label": "157 cm / 5'2\"" },
+        { "cm": "160", "feet": "5'3\"", "label": "160 cm / 5'3\"" },
+        { "cm": "163", "feet": "5'4\"", "label": "163 cm / 5'4\"" },
+        { "cm": "165", "feet": "5'5\"", "label": "165 cm / 5'5\"" },
+        { "cm": "168", "feet": "5'6\"", "label": "168 cm / 5'6\"" },
+        { "cm": "170", "feet": "5'7\"", "label": "170 cm / 5'7\"" },
+        { "cm": "173", "feet": "5'8\"", "label": "173 cm / 5'8\"" },
+        { "cm": "175", "feet": "5'9\"", "label": "175 cm / 5'9\"" },
+        { "cm": "178", "feet": "5'10\"", "label": "178 cm / 5'10\"" },
+        { "cm": "180", "feet": "5'11\"", "label": "180 cm / 5'11\"" },
+        { "cm": "183", "feet": "6'0\"", "label": "183 cm / 6'0\"" },
+        { "cm": "185", "feet": "6'1\"", "label": "185 cm / 6'1\"" },
+        { "cm": "188", "feet": "6'2\"", "label": "188 cm / 6'2\"" },
+        { "cm": "190", "feet": "6'3\"", "label": "190 cm / 6'3\"" },
+        { "cm": "193", "feet": "6'4\"", "label": "193 cm / 6'4\"" },
+        { "cm": "195", "feet": "6'5\"", "label": "195 cm / 6'5\"" },
+        { "cm": "198", "feet": "6'6\"", "label": "198 cm / 6'6\"" },
+        { "cm": "200", "feet": "6'7\"", "label": "200 cm / 6'7\"" }
+      ]
+    },
+    {
+      "name": "Model Weights",
+      "slug": "model-weights",
+      "description": "Weight measurements for models in kg and lbs",
+      "type": "measurement",
+      "category": "physical",
+      "values": [
+        { "kg": "40", "lbs": "88", "label": "40 kg / 88 lbs" },
+        { "kg": "45", "lbs": "99", "label": "45 kg / 99 lbs" },
+        { "kg": "50", "lbs": "110", "label": "50 kg / 110 lbs" },
+        { "kg": "55", "lbs": "121", "label": "55 kg / 121 lbs" },
+        { "kg": "60", "lbs": "132", "label": "60 kg / 132 lbs" },
+        { "kg": "65", "lbs": "143", "label": "65 kg / 143 lbs" },
+        { "kg": "70", "lbs": "154", "label": "70 kg / 154 lbs" },
+        { "kg": "75", "lbs": "165", "label": "75 kg / 165 lbs" },
+        { "kg": "80", "lbs": "176", "label": "80 kg / 176 lbs" },
+        { "kg": "85", "lbs": "187", "label": "85 kg / 187 lbs" },
+        { "kg": "90", "lbs": "198", "label": "90 kg / 198 lbs" },
+        { "kg": "95", "lbs": "209", "label": "95 kg / 209 lbs" },
+        { "kg": "100", "lbs": "220", "label": "100 kg / 220 lbs" }
+      ]
+    },
+    {
+      "name": "Eye Colors",
+      "slug": "eye-colors",
+      "description": "Eye color options for models",
+      "type": "appearance",
+      "category": "physical",
+      "values": [
+        { "value": "blue", "label": "Blue", "hex": "#0084FF" },
+        { "value": "green", "label": "Green", "hex": "#00A656" },
+        { "value": "brown", "label": "Brown", "hex": "#8B4513" },
+        { "value": "hazel", "label": "Hazel", "hex": "#8E7618" },
+        { "value": "gray", "label": "Gray", "hex": "#808080" },
+        { "value": "amber", "label": "Amber", "hex": "#FFBF00" },
+        { "value": "black", "label": "Black", "hex": "#000000" },
+        { "value": "violet", "label": "Violet", "hex": "#8B00FF" },
+        { "value": "heterochromia", "label": "Heterochromia", "hex": "#MULTI" }
+      ]
+    },
+    {
+      "name": "Hair Colors",
+      "slug": "hair-colors",
+      "description": "Hair color options for models",
+      "type": "appearance",
+      "category": "physical",
+      "values": [
+        { "value": "blonde", "label": "Blonde", "hex": "#FAF0BE" },
+        { "value": "light-blonde", "label": "Light Blonde", "hex": "#FDEFD3" },
+        { "value": "dark-blonde", "label": "Dark Blonde", "hex": "#D4A76A" },
+        { "value": "brown", "label": "Brown", "hex": "#964B00" },
+        { "value": "light-brown", "label": "Light Brown", "hex": "#A0826D" },
+        { "value": "dark-brown", "label": "Dark Brown", "hex": "#654321" },
+        { "value": "black", "label": "Black", "hex": "#000000" },
+        { "value": "red", "label": "Red", "hex": "#FF0000" },
+        { "value": "auburn", "label": "Auburn", "hex": "#A52A2A" },
+        { "value": "strawberry-blonde", "label": "Strawberry Blonde", "hex": "#FF9966" },
+        { "value": "gray", "label": "Gray", "hex": "#808080" },
+        { "value": "silver", "label": "Silver", "hex": "#C0C0C0" },
+        { "value": "white", "label": "White", "hex": "#FFFFFF" },
+        { "value": "colored", "label": "Colored/Dyed", "hex": "#MULTI" },
+        { "value": "highlights", "label": "Highlights", "hex": "#MIXED" }
+      ]
+    },
+    {
+      "name": "Skin Tones",
+      "slug": "skin-tones",
+      "description": "Skin tone options using industry standard",
+      "type": "appearance",
+      "category": "physical",
+      "values": [
+        { "value": "fair", "label": "Fair", "hex": "#FDDCCF" },
+        { "value": "light", "label": "Light", "hex": "#F5DEB3" },
+        { "value": "medium", "label": "Medium", "hex": "#D2B48C" },
+        { "value": "olive", "label": "Olive", "hex": "#C3B091" },
+        { "value": "tan", "label": "Tan", "hex": "#D2691E" },
+        { "value": "brown", "label": "Brown", "hex": "#A0522D" },
+        { "value": "dark", "label": "Dark", "hex": "#8B4513" },
+        { "value": "deep", "label": "Deep", "hex": "#654321" }
+      ]
+    },
+    {
+      "name": "Ethnicities",
+      "slug": "ethnicities",
+      "description": "Ethnic background options",
+      "type": "appearance",
+      "category": "demographic",
+      "values": [
+        { "value": "caucasian", "label": "Caucasian/White" },
+        { "value": "african", "label": "African/Black" },
+        { "value": "asian", "label": "Asian" },
+        { "value": "hispanic", "label": "Hispanic/Latino" },
+        { "value": "middle-eastern", "label": "Middle Eastern" },
+        { "value": "native-american", "label": "Native American" },
+        { "value": "pacific-islander", "label": "Pacific Islander" },
+        { "value": "mixed", "label": "Mixed/Multiracial" },
+        { "value": "other", "label": "Other" }
+      ]
+    },
+    {
+      "name": "Dress Sizes (Women)",
+      "slug": "dress-sizes-women",
+      "description": "Women's dress sizes by region",
+      "type": "clothing",
+      "category": "sizes",
+      "regionalValues": {
+        "EU": ["32", "34", "36", "38", "40", "42", "44", "46", "48", "50"],
+        "US": ["0", "2", "4", "6", "8", "10", "12", "14", "16", "18"],
+        "UK": ["4", "6", "8", "10", "12", "14", "16", "18", "20", "22"],
+        "IT": ["36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+        "FR": ["32", "34", "36", "38", "40", "42", "44", "46", "48", "50"]
+      }
+    },
+    {
+      "name": "Suit Sizes (Men)",
+      "slug": "suit-sizes-men",
+      "description": "Men's suit sizes by region",
+      "type": "clothing",
+      "category": "sizes",
+      "regionalValues": {
+        "EU": ["44", "46", "48", "50", "52", "54", "56", "58", "60"],
+        "US": ["34", "36", "38", "40", "42", "44", "46", "48", "50"],
+        "UK": ["34", "36", "38", "40", "42", "44", "46", "48", "50"]
+      }
+    },
+    {
+      "name": "Shoe Sizes (Women)",
+      "slug": "shoe-sizes-women",
+      "description": "Women's shoe sizes by region",
+      "type": "clothing",
+      "category": "sizes",
+      "regionalValues": {
+        "EU": ["35", "36", "37", "38", "39", "40", "41", "42"],
+        "US": ["5", "6", "7", "8", "9", "10", "11", "12"],
+        "UK": ["2.5", "3.5", "4.5", "5.5", "6.5", "7.5", "8.5", "9.5"]
+      }
+    },
+    {
+      "name": "Shoe Sizes (Men)",
+      "slug": "shoe-sizes-men",
+      "description": "Men's shoe sizes by region",
+      "type": "clothing",
+      "category": "sizes",
+      "regionalValues": {
+        "EU": ["39", "40", "41", "42", "43", "44", "45", "46", "47", "48"],
+        "US": ["6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
+        "UK": ["5.5", "6.5", "7.5", "8.5", "9.5", "10.5", "11.5", "12.5", "13.5", "14.5"]
+      }
+    },
+    {
+      "name": "Bust Measurements",
+      "slug": "bust-measurements",
+      "description": "Bust measurements in cm and inches",
+      "type": "measurement",
+      "category": "body",
+      "values": [
+        { "cm": "75-80", "inches": "30-31", "label": "75-80 cm / 30-31\"" },
+        { "cm": "81-85", "inches": "32-33", "label": "81-85 cm / 32-33\"" },
+        { "cm": "86-90", "inches": "34-35", "label": "86-90 cm / 34-35\"" },
+        { "cm": "91-95", "inches": "36-37", "label": "91-95 cm / 36-37\"" },
+        { "cm": "96-100", "inches": "38-39", "label": "96-100 cm / 38-39\"" },
+        { "cm": "101-105", "inches": "40-41", "label": "101-105 cm / 40-41\"" },
+        { "cm": "106-110", "inches": "42-43", "label": "106-110 cm / 42-43\"" }
+      ]
+    },
+    {
+      "name": "Waist Measurements",
+      "slug": "waist-measurements",
+      "description": "Waist measurements in cm and inches",
+      "type": "measurement",
+      "category": "body",
+      "values": [
+        { "cm": "55-60", "inches": "22-24", "label": "55-60 cm / 22-24\"" },
+        { "cm": "61-65", "inches": "24-26", "label": "61-65 cm / 24-26\"" },
+        { "cm": "66-70", "inches": "26-28", "label": "66-70 cm / 26-28\"" },
+        { "cm": "71-75", "inches": "28-30", "label": "71-75 cm / 28-30\"" },
+        { "cm": "76-80", "inches": "30-31", "label": "76-80 cm / 30-31\"" },
+        { "cm": "81-85", "inches": "32-33", "label": "81-85 cm / 32-33\"" },
+        { "cm": "86-90", "inches": "34-35", "label": "86-90 cm / 34-35\"" }
+      ]
+    },
+    {
+      "name": "Hip Measurements",
+      "slug": "hip-measurements",
+      "description": "Hip measurements in cm and inches",
+      "type": "measurement",
+      "category": "body",
+      "values": [
+        { "cm": "80-85", "inches": "31-33", "label": "80-85 cm / 31-33\"" },
+        { "cm": "86-90", "inches": "34-35", "label": "86-90 cm / 34-35\"" },
+        { "cm": "91-95", "inches": "36-37", "label": "91-95 cm / 36-37\"" },
+        { "cm": "96-100", "inches": "38-39", "label": "96-100 cm / 38-39\"" },
+        { "cm": "101-105", "inches": "40-41", "label": "101-105 cm / 40-41\"" },
+        { "cm": "106-110", "inches": "42-43", "label": "106-110 cm / 42-43\"" },
+        { "cm": "111-115", "inches": "44-45", "label": "111-115 cm / 44-45\"" }
+      ]
+    },
+    {
+      "name": "Cup Sizes",
+      "slug": "cup-sizes",
+      "description": "Bra cup sizes",
+      "type": "clothing",
+      "category": "sizes",
+      "values": [
+        { "value": "AA", "label": "AA" },
+        { "value": "A", "label": "A" },
+        { "value": "B", "label": "B" },
+        { "value": "C", "label": "C" },
+        { "value": "D", "label": "D" },
+        { "value": "DD", "label": "DD/E" },
+        { "value": "F", "label": "F" },
+        { "value": "G", "label": "G" },
+        { "value": "H", "label": "H" }
+      ]
+    },
+    {
+      "name": "Languages",
+      "slug": "model-languages",
+      "description": "Languages spoken by models",
+      "type": "skills",
+      "category": "professional",
+      "values": [
+        { "code": "en", "label": "English", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "de", "label": "German", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "fr", "label": "French", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "es", "label": "Spanish", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "it", "label": "Italian", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "pt", "label": "Portuguese", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "ru", "label": "Russian", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "zh", "label": "Chinese", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "ja", "label": "Japanese", "fluencyLevels": ["basic", "conversational", "fluent", "native"] },
+        { "code": "ar", "label": "Arabic", "fluencyLevels": ["basic", "conversational", "fluent", "native"] }
+      ]
+    },
+    {
+      "name": "Experience Years",
+      "slug": "experience-years",
+      "description": "Years of modeling experience",
+      "type": "professional",
+      "category": "experience",
+      "values": [
+        { "value": "0", "label": "Less than 1 year" },
+        { "value": "1", "label": "1 year" },
+        { "value": "2", "label": "2 years" },
+        { "value": "3-5", "label": "3-5 years" },
+        { "value": "6-10", "label": "6-10 years" },
+        { "value": "11-15", "label": "11-15 years" },
+        { "value": "16-20", "label": "16-20 years" },
+        { "value": "20+", "label": "20+ years" }
+      ]
+    }
+  ]
+}

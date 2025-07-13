@@ -1,0 +1,567 @@
+{
+  "limit_types": {
+    "storage": {
+      "name": "Storage Limits",
+      "description": "File storage and media upload limits",
+      "units": ["MB", "GB", "TB"],
+      "default_unit": "GB",
+      "enforcement": "hard",
+      "category": "storage"
+    },
+    "users": {
+      "name": "User Limits",
+      "description": "Total number of individual users in the system",
+      "units": ["users"],
+      "default_unit": "users",
+      "enforcement": "block",
+      "category": "access"
+    },
+    "seats": {
+      "name": "Seat Limits",
+      "description": "Licensed seats or concurrent active users",
+      "units": ["seats"],
+      "default_unit": "seats",
+      "enforcement": "block",
+      "category": "access"
+    },
+    "accounts": {
+      "name": "Account Limits",
+      "description": "Number of separate account entities (agencies, companies)",
+      "units": ["accounts"],
+      "default_unit": "accounts",
+      "enforcement": "block",
+      "category": "access"
+    },
+    "api_calls": {
+      "name": "API Rate Limits",
+      "description": "API requests per time period",
+      "units": ["per_hour", "per_day", "per_month"],
+      "default_unit": "per_day",
+      "enforcement": "throttle",
+      "category": "usage"
+    },
+    "media_files": {
+      "name": "Media File Limits",
+      "description": "Number of images, videos, or media files",
+      "units": ["files", "images", "videos"],
+      "default_unit": "images",
+      "enforcement": "block",
+      "category": "content"
+    },
+    "portfolios": {
+      "name": "Portfolio Limits",
+      "description": "Number of portfolios or galleries",
+      "units": ["portfolios", "galleries", "collections"],
+      "default_unit": "portfolios",
+      "enforcement": "block",
+      "category": "content"
+    },
+    "projects": {
+      "name": "Project Limits",
+      "description": "Active projects (all types combined)",
+      "units": ["projects"],
+      "default_unit": "projects",
+      "enforcement": "block",
+      "category": "business"
+    },
+    "jobs": {
+      "name": "Job Postings",
+      "description": "Active job postings and opportunities",
+      "units": ["jobs"],
+      "default_unit": "jobs",
+      "enforcement": "block",
+      "category": "business"
+    },
+    "castings": {
+      "name": "Casting Calls",
+      "description": "Active casting calls and auditions",
+      "units": ["castings"],
+      "default_unit": "castings",
+      "enforcement": "block",
+      "category": "business"
+    },
+    "notifications": {
+      "name": "Notification Limits",
+      "description": "Email, SMS, or push notifications",
+      "units": ["per_day", "per_month", "unlimited"],
+      "default_unit": "per_month",
+      "enforcement": "queue",
+      "category": "communication"
+    },
+    "bandwidth": {
+      "name": "Bandwidth Limits",
+      "description": "Data transfer for media streaming",
+      "units": ["GB", "TB", "unlimited"],
+      "default_unit": "GB",
+      "enforcement": "throttle",
+      "category": "performance"
+    },
+    "custom_fields": {
+      "name": "Custom Field Limits",
+      "description": "Custom form fields and schema extensions",
+      "units": ["fields", "schemas", "forms"],
+      "default_unit": "fields",
+      "enforcement": "block",
+      "category": "customization"
+    },
+    "integrations": {
+      "name": "Integration Limits",
+      "description": "Third-party integrations and webhooks",
+      "units": ["integrations", "webhooks", "endpoints"],
+      "default_unit": "integrations",
+      "enforcement": "block",
+      "category": "connectivity"
+    }
+  },
+  "predefined_limits": {
+    "starter": {
+      "storage": { "value": 1, "unit": "GB" },
+      "users": { "value": 5, "unit": "users" },
+      "seats": { "value": 3, "unit": "seats" },
+      "accounts": { "value": 1, "unit": "accounts" },
+      "api_calls": { "value": 1000, "unit": "per_day" },
+      "media_files": { "value": 50, "unit": "images" },
+      "portfolios": { "value": 1, "unit": "portfolios" },
+      "projects": { "value": 3, "unit": "projects" },
+      "jobs": { "value": 2, "unit": "jobs" },
+      "castings": { "value": 1, "unit": "castings" },
+      "notifications": { "value": 100, "unit": "per_month" },
+      "bandwidth": { "value": 10, "unit": "GB" },
+      "custom_fields": { "value": 5, "unit": "fields" },
+      "integrations": { "value": 1, "unit": "integrations" }
+    },
+    "professional": {
+      "storage": { "value": 50, "unit": "GB" },
+      "users": { "value": 25, "unit": "users" },
+      "seats": { "value": 15, "unit": "seats" },
+      "accounts": { "value": 3, "unit": "accounts" },
+      "api_calls": { "value": 10000, "unit": "per_day" },
+      "media_files": { "value": 500, "unit": "images" },
+      "portfolios": { "value": 10, "unit": "portfolios" },
+      "projects": { "value": 25, "unit": "projects" },
+      "jobs": { "value": 15, "unit": "jobs" },
+      "castings": { "value": 10, "unit": "castings" },
+      "notifications": { "value": 2500, "unit": "per_month" },
+      "bandwidth": { "value": 250, "unit": "GB" },
+      "custom_fields": { "value": 25, "unit": "fields" },
+      "integrations": { "value": 5, "unit": "integrations" }
+    },
+    "agency": {
+      "storage": { "value": 250, "unit": "GB" },
+      "users": { "value": 100, "unit": "users" },
+      "seats": { "value": 50, "unit": "seats" },
+      "accounts": { "value": 10, "unit": "accounts" },
+      "api_calls": { "value": 50000, "unit": "per_day" },
+      "media_files": { "value": 2500, "unit": "images" },
+      "portfolios": { "value": 50, "unit": "portfolios" },
+      "projects": { "value": 100, "unit": "projects" },
+      "jobs": { "value": 75, "unit": "jobs" },
+      "castings": { "value": 50, "unit": "castings" },
+      "notifications": { "value": 10000, "unit": "per_month" },
+      "bandwidth": { "value": 1000, "unit": "GB" },
+      "custom_fields": { "value": 100, "unit": "fields" },
+      "integrations": { "value": 15, "unit": "integrations" }
+    },
+    "enterprise": {
+      "storage": { "value": 1000, "unit": "GB" },
+      "users": { "value": 500, "unit": "users" },
+      "seats": { "value": 250, "unit": "seats" },
+      "accounts": { "value": 50, "unit": "accounts" },
+      "api_calls": { "value": 250000, "unit": "per_day" },
+      "media_files": { "value": 10000, "unit": "images" },
+      "portfolios": { "value": 250, "unit": "portfolios" },
+      "projects": { "value": 500, "unit": "projects" },
+      "jobs": { "value": 300, "unit": "jobs" },
+      "castings": { "value": 200, "unit": "castings" },
+      "notifications": { "value": 50000, "unit": "per_month" },
+      "bandwidth": { "value": 5000, "unit": "GB" },
+      "custom_fields": { "value": 500, "unit": "fields" },
+      "integrations": { "value": 50, "unit": "integrations" }
+    },
+    "platform": {
+      "storage": { "value": -1, "unit": "unlimited" },
+      "users": { "value": -1, "unit": "unlimited" },
+      "seats": { "value": -1, "unit": "unlimited" },
+      "accounts": { "value": -1, "unit": "unlimited" },
+      "api_calls": { "value": -1, "unit": "unlimited" },
+      "media_files": { "value": -1, "unit": "unlimited" },
+      "portfolios": { "value": -1, "unit": "unlimited" },
+      "projects": { "value": -1, "unit": "unlimited" },
+      "jobs": { "value": -1, "unit": "unlimited" },
+      "castings": { "value": -1, "unit": "unlimited" },
+      "notifications": { "value": -1, "unit": "unlimited" },
+      "bandwidth": { "value": -1, "unit": "unlimited" },
+      "custom_fields": { "value": -1, "unit": "unlimited" },
+      "integrations": { "value": -1, "unit": "unlimited" }
+    }
+  },
+  "individual_features": {
+    "user_management": {
+      "name": "User Management",
+      "description": "Basic user registration, login, and profile management",
+      "category": "core",
+      "required_limits": ["users", "seats", "accounts"],
+      "optional_limits": ["storage"]
+    },
+    "basic_search": {
+      "name": "Basic Search",
+      "description": "Simple search functionality across profiles and content",
+      "category": "core",
+      "required_limits": ["api_calls"],
+      "optional_limits": []
+    },
+    "profile_creation": {
+      "name": "Profile Creation",
+      "description": "Allow users to create and edit basic profiles",
+      "category": "core",
+      "required_limits": ["storage", "media_files"],
+      "optional_limits": ["custom_fields"]
+    },
+    "basic_messaging": {
+      "name": "Basic Messaging",
+      "description": "Simple messaging between users",
+      "category": "core",
+      "required_limits": ["notifications"],
+      "optional_limits": ["storage"]
+    },
+    "standard_support": {
+      "name": "Standard Support",
+      "description": "Email support during business hours",
+      "category": "core",
+      "required_limits": [],
+      "optional_limits": []
+    },
+    "advanced_search": {
+      "name": "Advanced Search",
+      "description": "Complex filtering, sorting, and search capabilities",
+      "category": "professional",
+      "required_limits": ["api_calls"],
+      "optional_limits": ["custom_fields"]
+    },
+    "portfolio_builder": {
+      "name": "Portfolio Builder",
+      "description": "Advanced portfolio creation with galleries and media management",
+      "category": "professional",
+      "required_limits": ["portfolios", "media_files", "storage"],
+      "optional_limits": ["bandwidth"]
+    },
+    "calendar_integration": {
+      "name": "Calendar Integration",
+      "description": "Sync with external calendars and booking systems",
+      "category": "professional",
+      "required_limits": ["integrations", "api_calls"],
+      "optional_limits": []
+    },
+    "payment_processing": {
+      "name": "Payment Processing",
+      "description": "Handle payments, invoicing, and financial transactions",
+      "category": "professional",
+      "required_limits": ["projects", "integrations"],
+      "optional_limits": ["notifications"]
+    },
+    "analytics_basic": {
+      "name": "Basic Analytics",
+      "description": "View basic performance metrics and statistics",
+      "category": "professional",
+      "required_limits": ["api_calls"],
+      "optional_limits": ["storage"]
+    },
+    "priority_support": {
+      "name": "Priority Support",
+      "description": "Faster response times and priority handling",
+      "category": "professional",
+      "required_limits": [],
+      "optional_limits": []
+    },
+    "team_management": {
+      "name": "Team Management",
+      "description": "Manage multiple users, roles, and permissions",
+      "category": "agency",
+      "required_limits": ["users", "seats", "accounts"],
+      "optional_limits": ["custom_fields"]
+    },
+    "client_management": {
+      "name": "Client Management",
+      "description": "CRM functionality for managing clients and relationships",
+      "category": "agency",
+      "required_limits": ["projects", "storage"],
+      "optional_limits": ["notifications", "integrations"]
+    },
+    "advanced_analytics": {
+      "name": "Advanced Analytics",
+      "description": "Detailed reporting, dashboards, and business intelligence",
+      "category": "agency",
+      "required_limits": ["api_calls", "bandwidth"],
+      "optional_limits": ["storage"]
+    },
+    "custom_branding": {
+      "name": "Custom Branding",
+      "description": "White-label solutions and custom branding options",
+      "category": "agency",
+      "required_limits": ["custom_fields", "storage"],
+      "optional_limits": []
+    },
+    "bulk_operations": {
+      "name": "Bulk Operations",
+      "description": "Mass import/export and batch processing capabilities",
+      "category": "agency",
+      "required_limits": ["api_calls", "storage"],
+      "optional_limits": ["bandwidth"]
+    },
+    "dedicated_support": {
+      "name": "Dedicated Support",
+      "description": "Dedicated support representative and priority assistance",
+      "category": "agency",
+      "required_limits": [],
+      "optional_limits": []
+    },
+    "sso_integration": {
+      "name": "SSO Integration",
+      "description": "Single Sign-On with enterprise identity providers",
+      "category": "enterprise",
+      "required_limits": ["integrations", "api_calls"],
+      "optional_limits": []
+    },
+    "advanced_rbac": {
+      "name": "Advanced RBAC",
+      "description": "Fine-grained role-based access control",
+      "category": "enterprise",
+      "required_limits": ["users", "seats", "accounts", "custom_fields"],
+      "optional_limits": []
+    },
+    "api_access": {
+      "name": "API Access",
+      "description": "Full REST API access for custom integrations",
+      "category": "enterprise",
+      "required_limits": ["api_calls", "bandwidth"],
+      "optional_limits": ["integrations"]
+    },
+    "white_labeling": {
+      "name": "White Labeling",
+      "description": "Complete white-label solution with custom domains",
+      "category": "enterprise",
+      "required_limits": ["custom_fields", "storage", "bandwidth"],
+      "optional_limits": []
+    },
+    "compliance_tools": {
+      "name": "Compliance Tools",
+      "description": "GDPR, SOC2, and other compliance management tools",
+      "category": "enterprise",
+      "required_limits": ["storage", "api_calls"],
+      "optional_limits": []
+    },
+    "dedicated_account_manager": {
+      "name": "Dedicated Account Manager",
+      "description": "Personal account manager and strategic consultation",
+      "category": "enterprise",
+      "required_limits": [],
+      "optional_limits": []
+    },
+    "booking_system": {
+      "name": "Booking System",
+      "description": "Advanced booking and scheduling system",
+      "category": "marketplace",
+      "required_limits": ["projects", "jobs", "castings", "notifications", "api_calls"],
+      "optional_limits": ["integrations"]
+    },
+    "payment_gateway": {
+      "name": "Payment Gateway",
+      "description": "Integrated payment processing with multiple providers",
+      "category": "marketplace",
+      "required_limits": ["integrations", "api_calls"],
+      "optional_limits": ["notifications"]
+    },
+    "commission_management": {
+      "name": "Commission Management",
+      "description": "Automated commission calculation and distribution",
+      "category": "marketplace",
+      "required_limits": ["projects", "api_calls"],
+      "optional_limits": ["notifications"]
+    },
+    "invoice_generation": {
+      "name": "Invoice Generation",
+      "description": "Automated invoice creation and management",
+      "category": "marketplace",
+      "required_limits": ["projects", "storage"],
+      "optional_limits": ["notifications"]
+    },
+    "tax_calculation": {
+      "name": "Tax Calculation",
+      "description": "Automated tax calculation for different regions",
+      "category": "marketplace",
+      "required_limits": ["api_calls", "integrations"],
+      "optional_limits": []
+    },
+    "dispute_resolution": {
+      "name": "Dispute Resolution",
+      "description": "Built-in dispute resolution and mediation system",
+      "category": "marketplace",
+      "required_limits": ["notifications", "storage"],
+      "optional_limits": ["projects"]
+    },
+    "video_calling": {
+      "name": "Video Calling",
+      "description": "Integrated video conferencing and calling",
+      "category": "communication",
+      "required_limits": ["bandwidth", "api_calls"],
+      "optional_limits": ["storage"]
+    },
+    "file_sharing": {
+      "name": "File Sharing",
+      "description": "Secure file sharing and collaboration tools",
+      "category": "communication",
+      "required_limits": ["storage", "bandwidth"],
+      "optional_limits": ["notifications"]
+    },
+    "notification_center": {
+      "name": "Notification Center",
+      "description": "Centralized notification management and preferences",
+      "category": "communication",
+      "required_limits": ["notifications"],
+      "optional_limits": ["storage"]
+    },
+    "email_templates": {
+      "name": "Email Templates",
+      "description": "Customizable email templates and automation",
+      "category": "communication",
+      "required_limits": ["notifications", "custom_fields"],
+      "optional_limits": ["storage"]
+    },
+    "sms_integration": {
+      "name": "SMS Integration",
+      "description": "SMS notifications and two-factor authentication",
+      "category": "communication",
+      "required_limits": ["notifications", "integrations"],
+      "optional_limits": []
+    },
+    "push_notifications": {
+      "name": "Push Notifications",
+      "description": "Mobile and web push notifications",
+      "category": "communication",
+      "required_limits": ["notifications", "api_calls"],
+      "optional_limits": []
+    }
+  },
+  "feature_sets": {
+    "core_features": {
+      "name": "Core Features",
+      "description": "Essential marketplace functionality",
+      "features": [
+        "user_management",
+        "basic_search",
+        "profile_creation",
+        "basic_messaging",
+        "standard_support"
+      ]
+    },
+    "professional_features": {
+      "name": "Professional Features",
+      "description": "Advanced features for professionals",
+      "features": [
+        "advanced_search",
+        "portfolio_builder",
+        "calendar_integration",
+        "payment_processing",
+        "analytics_basic",
+        "priority_support"
+      ]
+    },
+    "agency_features": {
+      "name": "Agency Features",
+      "description": "Multi-user collaboration and management",
+      "features": [
+        "team_management",
+        "client_management",
+        "advanced_analytics",
+        "custom_branding",
+        "bulk_operations",
+        "dedicated_support"
+      ]
+    },
+    "enterprise_features": {
+      "name": "Enterprise Features",
+      "description": "Enterprise-grade security and customization",
+      "features": [
+        "sso_integration",
+        "advanced_rbac",
+        "api_access",
+        "white_labeling",
+        "compliance_tools",
+        "dedicated_account_manager"
+      ]
+    },
+    "marketplace_features": {
+      "name": "Marketplace Features",
+      "description": "Commerce and transaction features",
+      "features": [
+        "booking_system",
+        "payment_gateway",
+        "commission_management",
+        "invoice_generation",
+        "tax_calculation",
+        "dispute_resolution"
+      ]
+    },
+    "communication_features": {
+      "name": "Communication Features",
+      "description": "Enhanced messaging and notification tools",
+      "features": [
+        "video_calling",
+        "file_sharing",
+        "notification_center",
+        "email_templates",
+        "sms_integration",
+        "push_notifications"
+      ]
+    }
+  },
+  "validation_rules": {
+    "storage": {
+      "min_value": 0.1,
+      "max_value": 10000,
+      "allowed_units": ["MB", "GB", "TB"]
+    },
+    "users": {
+      "min_value": 1,
+      "max_value": 10000,
+      "allowed_units": ["users"]
+    },
+    "seats": {
+      "min_value": 1,
+      "max_value": 5000,
+      "allowed_units": ["seats"]
+    },
+    "accounts": {
+      "min_value": 1,
+      "max_value": 1000,
+      "allowed_units": ["accounts"]
+    },
+    "api_calls": {
+      "min_value": 100,
+      "max_value": 1000000,
+      "allowed_units": ["per_hour", "per_day", "per_month"]
+    }
+  },
+  "plan_templates": {
+    "saas_basic": {
+      "name": "SaaS Basic Template",
+      "feature_sets": ["core_features"],
+      "limits": "starter"
+    },
+    "saas_pro": {
+      "name": "SaaS Professional Template",
+      "feature_sets": ["core_features", "professional_features"],
+      "limits": "professional"
+    },
+    "marketplace_standard": {
+      "name": "Marketplace Standard Template",
+      "feature_sets": ["core_features", "professional_features", "marketplace_features"],
+      "limits": "professional"
+    },
+    "enterprise_complete": {
+      "name": "Enterprise Complete Template",
+      "feature_sets": ["core_features", "professional_features", "agency_features", "enterprise_features", "marketplace_features", "communication_features"],
+      "limits": "enterprise"
+    }
+  }
+}

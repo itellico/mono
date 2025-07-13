@@ -1,0 +1,477 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE PLATFORM MODELS (snake_case database, camelCase TypeScript)
+// ============================================================================
+
+model Tenant {
+  uuid              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                Int      @unique @default(autoincrement())
+  domain            String   @unique
+  name              String
+  slug              String?
+  description       Json?
+  features          Json?
+  settings          Json?
+  categories        Json?
+  allowed_countries Json?    @map("allowed_countries")
+  default_currency  String?  @map("default_currency")
+  is_active         Boolean  @default(true) @map("is_active")
+  created_at        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  accounts              Account[]
+  tenantSubscriptions   TenantSubscription?
+  conversations         Conversation[]
+  entityTags            EntityTag[]
+  gigOfferings          GigOffering[]
+  jobPostings           JobPosting[]
+  tags                  Tag[]
+  userCollections       UserCollection[]
+  changeSets            ChangeSet[]
+  siteSettings          SiteSettings[]
+  versionHistories      VersionHistory[]
+  roles                 Role[]
+  permissionCaches      PermissionCache[]
+  cacheWarmupQueues     CacheWarmupQueue[]
+  cacheConfigurations   CacheConfiguration[]
+
+  @@map("tenants")
+}
+
+model Account {
+  uuid                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                           Int       @unique @default(autoincrement())
+  tenant_id                    Int       @map("tenant_id")
+  email                        String    @unique
+  email_verified               Boolean   @default(false) @map("email_verified")
+  password_hash                String?   @map("password_hash")
+  account_type                 String    @default("personal") @map("account_type") @db.VarChar(20)
+  phone                        String?   @db.VarChar(30)
+  timezone                     String?   @db.VarChar(50)
+  country_code                 String?   @map("country_code") @db.VarChar(2)
+  language_locale              String?   @map("language_locale") @db.VarChar(10)
+  currency_code                String?   @default("EUR") @map("currency_code") @db.VarChar(3)
+  city                         String?   @db.VarChar(100)
+  date_format                  String?   @map("date_format") @db.VarChar(20)
+  time_format                  String?   @map("time_format") @db.VarChar(20)
+  number_format                String?   @map("number_format") @db.VarChar(20)
+  email_notifications          Boolean   @default(true) @map("email_notifications")
+  sms_notifications            Boolean   @default(false) @map("sms_notifications")
+  theme_preference             String    @default("system") @map("theme_preference") @db.VarChar(20)
+  account_capabilities         Json?     @map("account_capabilities")
+  primary_marketplace_side     String?   @map("primary_marketplace_side") @db.VarChar(20)
+  allow_dual_side              Boolean   @default(false) @map("allow_dual_side")
+  is_active                    Boolean   @default(true) @map("is_active")
+  is_verified                  Boolean   @default(false) @map("is_verified")
+  last_login_at                DateTime? @map("last_login_at") @db.Timestamptz(6)
+  created_at                   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at                   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  first_day_of_week            Int       @default(0) @map("first_day_of_week")
+  decimal_separator            String    @default(".") @map("decimal_separator") @db.VarChar(1)
+  thousands_separator          String    @default(",") @map("thousands_separator") @db.VarChar(1)
+  currency_position            String    @default("before") @map("currency_position") @db.VarChar(10)
+  currency_space               Boolean   @default(false) @map("currency_space")
+  use_relative_time            Boolean   @default(true) @map("use_relative_time")
+  relative_time_threshold      Int       @default(24) @map("relative_time_threshold")
+  relative_time_style          String    @default("long") @map("relative_time_style") @db.VarChar(10)
+  compact_mode                 Boolean   @default(false) @map("compact_mode")
+  show_seconds                 Boolean   @default(false) @map("show_seconds")
+  show_timezone                Boolean   @default(false) @map("show_timezone")
+  notification_time_format     String    @default("12h") @map("notification_time_format") @db.VarChar(10)
+
+  // Relations
+  tenant Tenant @relation(fields: [tenant_id], references: [id])
+  users  User[]
+
+  @@map("accounts")
+}
+
+model User {
+  uuid                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                        Int       @unique @default(autoincrement())
+  account_id                Int       @map("account_id")
+  first_name                String    @map("first_name")
+  last_name                 String    @map("last_name")
+  username                  String    @unique
+  user_type                 String    @default("individual") @map("user_type")
+  profile_photo_url         String?   @map("profile_photo_url")
+  bio                       String?
+  website                   String?
+  date_of_birth             DateTime? @map("date_of_birth")
+  gender                    String?
+  account_role              String    @default("entity_viewer") @map("account_role")
+  can_create_profiles       Boolean   @default(false) @map("can_create_profiles")
+  can_manage_all_profiles   Boolean   @default(false) @map("can_manage_all_profiles")
+  can_access_billing        Boolean   @default(false) @map("can_access_billing")
+  can_book_jobs             Boolean   @default(false) @map("can_book_jobs")
+  profile_application_status String?  @map("profile_application_status")
+  profile_approved_at       DateTime? @map("profile_approved_at")
+  profile_rejected_at       DateTime? @map("profile_rejected_at")
+  total_applications        Int?      @map("total_applications")
+  last_application_at       DateTime? @map("last_application_at")
+  user_hash                 String?   @map("user_hash")
+  is_active                 Boolean   @default(true) @map("is_active")
+  is_verified               Boolean   @default(false) @map("is_verified")
+  created_at                DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at                DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  emergency_until           DateTime? @map("emergency_until")
+
+  // Relations
+  account                Account             @relation(fields: [account_id], references: [id])
+  userRoles              UserRole[]
+  userPermissions        UserPermission[]
+  permissionCaches       PermissionCache[]
+  cacheWarmupQueues      CacheWarmupQueue[]
+  createdPermissions     Permission[]        @relation("PermissionCreatedBy")
+  updatedPermissions     Permission[]        @relation("PermissionUpdatedBy")
+  deletedPermissions     Permission[]        @relation("PermissionDeletedBy")
+  createdRoles           Role[]              @relation("RoleCreatedBy")
+  updatedRoles           Role[]              @relation("RoleUpdatedBy")
+  deletedRoles           Role[]              @relation("RoleDeletedBy")
+  cacheConfigurations    CacheConfiguration[]
+
+  @@map("users")
+}
+
+// ============================================================================
+// ENHANCED RBAC MODELS
+// ============================================================================
+
+model Permission {
+  uuid        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int       @unique @default(autoincrement())
+  name        String    @unique
+  module      String?   @db.VarChar(50)
+  resource    String?   @db.VarChar(50)
+  action      String?   @db.VarChar(50)
+  scope       String?   @db.VarChar(20)
+  pattern     String?   @db.VarChar(100)
+  context     String?   @db.VarChar(50)
+  condition   Json      @default("{}") @db.JsonB
+  metadata    Json      @default("{}") @db.JsonB
+  description String?
+  is_wildcard Boolean   @default(false) @map("is_wildcard")
+  is_system   Boolean   @default(false) @map("is_system")
+  priority    Int       @default(100)
+  tenant_id   Int?      @map("tenant_id")
+  created_by  Int?      @map("created_by")
+  updated_by  Int?      @map("updated_by")
+  deleted_by  Int?      @map("deleted_by")
+  created_at  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deleted_at  DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Relations
+  tenant               Tenant?             @relation(fields: [tenant_id], references: [id])
+  createdBy            User?               @relation("PermissionCreatedBy", fields: [created_by], references: [id])
+  updatedBy            User?               @relation("PermissionUpdatedBy", fields: [updated_by], references: [id])
+  deletedBy            User?               @relation("PermissionDeletedBy", fields: [deleted_by], references: [id])
+  rolePermissions      RolePermission[]
+  userPermissions      UserPermission[]
+  permissionSets       PermissionSetItem[]
+  permissionAudits     PermissionAudit[]
+  permissionExpansions PermissionExpansion[]
+
+  @@map("permissions")
+}
+
+model Role {
+  uuid         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           Int       @unique @default(autoincrement())
+  tenant_id    Int?      @map("tenant_id")
+  name         String
+  code         String    @unique @db.VarChar(50)
+  description  String?
+  module       String?   @db.VarChar(50)
+  level        Int       @default(0)
+  inherit_from Int?      @map("inherit_from")
+  metadata     Json      @default("{}") @db.JsonB
+  is_system    Boolean   @default(false) @map("is_system")
+  is_default   Boolean   @default(false) @map("is_default")
+  is_active    Boolean   @default(true) @map("is_active")
+  created_by   Int?      @map("created_by")
+  updated_by   Int?      @map("updated_by")
+  deleted_by   Int?      @map("deleted_by")
+  created_at   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deleted_at   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Relations
+  tenant              Tenant?               @relation(fields: [tenant_id], references: [id])
+  inheritFrom         Role?                 @relation("RoleInheritance", fields: [inherit_from], references: [id])
+  childRoles          Role[]                @relation("RoleInheritance")
+  createdBy           User?                 @relation("RoleCreatedBy", fields: [created_by], references: [id])
+  updatedBy           User?                 @relation("RoleUpdatedBy", fields: [updated_by], references: [id])
+  deletedBy           User?                 @relation("RoleDeletedBy", fields: [deleted_by], references: [id])
+  userRoles           UserRole[]
+  rolePermissions     RolePermission[]
+  rolePermissionSets  RolePermissionSet[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  uuid       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         Int       @unique @default(autoincrement())
+  user_id    Int       @map("user_id")
+  role_id    Int       @map("role_id")
+  assigned_by Int?     @map("assigned_by")
+  assigned_at DateTime @default(now()) @map("assigned_at") @db.Timestamptz(6)
+  expires_at  DateTime? @map("expires_at") @db.Timestamptz(6)
+  is_active   Boolean  @default(true) @map("is_active")
+  metadata    Json     @default("{}") @db.JsonB
+  created_at  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, role_id])
+  @@map("user_roles")
+}
+
+model UserPermission {
+  uuid          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int       @unique @default(autoincrement())
+  user_id       Int       @map("user_id")
+  permission_id Int       @map("permission_id")
+  granted_by    Int?      @map("granted_by")
+  granted_at    DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  expires_at    DateTime? @map("expires_at") @db.Timestamptz(6)
+  is_denied     Boolean   @default(false) @map("is_denied")
+  condition     Json      @default("{}") @db.JsonB
+  metadata      Json      @default("{}") @db.JsonB
+  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, permission_id])
+  @@map("user_permissions")
+}
+
+model RolePermission {
+  uuid          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int       @unique @default(autoincrement())
+  role_id       Int       @map("role_id")
+  permission_id Int       @map("permission_id")
+  granted_by    Int?      @map("granted_by")
+  granted_at    DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  expires_at    DateTime? @map("expires_at") @db.Timestamptz(6)
+  is_denied     Boolean   @default(false) @map("is_denied")
+  condition     Json      @default("{}") @db.JsonB
+  metadata      Json      @default("{}") @db.JsonB
+  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  role       Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@map("role_permissions")
+}
+
+// ============================================================================
+// CACHE MODELS
+// ============================================================================
+
+model PermissionCache {
+  uuid          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int      @unique @default(autoincrement())
+  cache_key     String   @unique @map("cache_key") @db.VarChar(255)
+  namespace     String   @default("permissions") @db.VarChar(50)
+  user_id       Int      @map("user_id")
+  tenant_id     Int      @map("tenant_id")
+  context       String   @db.VarChar(50)
+  permissions   String[] @db.Text
+  roles         Int[]    @db.Integer
+  metadata      Json     @default("{}") @db.JsonB
+  computed_at   DateTime @default(now()) @map("computed_at") @db.Timestamptz(6)
+  expires_at    DateTime @map("expires_at") @db.Timestamptz(6)
+  access_count  Int      @default(0) @map("access_count")
+  last_accessed DateTime @default(now()) @map("last_accessed") @db.Timestamptz(6)
+  version       Int      @default(1)
+  hash          String   @db.VarChar(64)
+  in_redis      Boolean  @default(false) @map("in_redis")
+  redis_key     String?  @map("redis_key") @db.VarChar(255)
+  redis_ttl     Int?     @map("redis_ttl")
+
+  // Relations
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("permission_cache")
+}
+
+model CacheInvalidationLog {
+  uuid             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               BigInt    @unique @default(autoincrement())
+  target_type      String    @map("target_type") @db.VarChar(50)
+  target_id        String    @map("target_id") @db.VarChar(255)
+  pattern          String?   @db.VarChar(255)
+  reason           String
+  invalidated_by   Int?      @map("invalidated_by")
+  invalidated_at   DateTime  @default(now()) @map("invalidated_at") @db.Timestamptz(6)
+  processed        Boolean   @default(false)
+  processed_at     DateTime? @map("processed_at") @db.Timestamptz(6)
+  keys_invalidated Int       @default(0) @map("keys_invalidated")
+
+  @@map("cache_invalidation_log")
+}
+
+model CacheWarmupQueue {
+  uuid         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           Int       @unique @default(autoincrement())
+  user_id      Int       @map("user_id")
+  tenant_id    Int       @map("tenant_id")
+  priority     Int       @default(0)
+  status       String    @default("pending") @db.VarChar(20)
+  attempts     Int       @default(0)
+  scheduled_at DateTime  @default(now()) @map("scheduled_at") @db.Timestamptz(6)
+  started_at   DateTime? @map("started_at") @db.Timestamptz(6)
+  completed_at DateTime? @map("completed_at") @db.Timestamptz(6)
+  last_error   String?   @map("last_error")
+
+  // Relations
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("cache_warmup_queue")
+}
+
+model CacheConfiguration {
+  uuid              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                Int      @unique @default(autoincrement())
+  entity_type       String   @map("entity_type") @db.VarChar(50)
+  entity_id         Int?     @map("entity_id")
+  tenant_id         Int?     @map("tenant_id")
+  l1_ttl            Int      @default(60) @map("l1_ttl")
+  l2_ttl            Int      @default(3600) @map("l2_ttl")
+  l3_ttl            Int      @default(86400) @map("l3_ttl")
+  max_permissions   Int      @default(1000) @map("max_permissions")
+  max_cache_size_kb Int      @default(1024) @map("max_cache_size_kb")
+  auto_warm         Boolean  @default(true) @map("auto_warm")
+  compress_data     Boolean  @default(false) @map("compress_data")
+  is_active         Boolean  @default(true) @map("is_active")
+  created_at        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  created_by        Int?     @map("created_by")
+
+  // Relations
+  tenant    Tenant? @relation(fields: [tenant_id], references: [id])
+  createdBy User?   @relation(fields: [created_by], references: [id])
+
+  @@unique([entity_type, entity_id, tenant_id])
+  @@map("cache_configuration")
+}
+
+model CacheMetrics {
+  uuid             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  metric_date      DateTime  @map("metric_date") @db.Date
+  hour             Int
+  cache_level      String    @map("cache_level") @db.VarChar(10)
+  operation        String    @db.VarChar(50)
+  request_count    BigInt    @default(0) @map("request_count")
+  hit_count        BigInt    @default(0) @map("hit_count")
+  miss_count       BigInt    @default(0) @map("miss_count")
+  error_count      BigInt    @default(0) @map("error_count")
+  avg_latency_ms   Float?    @map("avg_latency_ms") @db.DoublePrecision
+  p95_latency_ms   Float?    @map("p95_latency_ms") @db.DoublePrecision
+  p99_latency_ms   Float?    @map("p99_latency_ms") @db.DoublePrecision
+  keys_count       Int?      @map("keys_count")
+  memory_bytes     BigInt?   @map("memory_bytes")
+  created_at       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([metric_date, hour, cache_level, operation])
+  @@map("cache_metrics")
+}
+
+// Note: Additional models would be added here following the same pattern
+// This is a core subset focusing on the RBAC and caching infrastructure
+
+// Placeholder models for existing tables (simplified)
+model PermissionAudit {
+  id Int @id @default(autoincrement())
+  permission Permission? @relation(fields: [permissionId], references: [id])
+  permissionId Int?
+  @@map("permission_audit")
+}
+
+model PermissionExpansion {
+  id Int @id @default(autoincrement())
+  permission Permission? @relation(fields: [permissionId], references: [id])
+  permissionId Int?
+  @@map("permission_expansions")
+}
+
+model PermissionSet {
+  id Int @id @default(autoincrement())
+  name String @unique
+  items PermissionSetItem[]
+  @@map("permission_sets")
+}
+
+model PermissionSetItem {
+  id Int @id @default(autoincrement())
+  permissionSet PermissionSet @relation(fields: [permissionSetId], references: [id])
+  permissionSetId Int
+  permission Permission @relation(fields: [permissionId], references: [id])
+  permissionId Int
+  @@map("permission_set_items")
+}
+
+model RolePermissionSet {
+  id Int @id @default(autoincrement())
+  role Role @relation(fields: [roleId], references: [id])
+  roleId Int
+  @@map("role_permission_sets")
+}
+
+// Additional placeholder models for tables that exist but are not core to RBAC
+model Tag { id Int @id @default(autoincrement()); @@map("tags") }
+model Category { id Int @id @default(autoincrement()); @@map("categories") }
+model CategoryTag { id Int @id; @@map("category_tags") }
+model CollectionItem { id Int @id @default(autoincrement()); @@map("collection_items") }
+model Conversation { id Int @id @default(autoincrement()); @@map("conversations") }
+model ConversationParticipant { id Int @id; @@map("conversation_participants") }
+model Country { id Int @id @default(autoincrement()); @@map("countries") }
+model Currency { id Int @id @default(autoincrement()); @@map("currencies") }
+model EmergencyAccess { id Int @id @default(autoincrement()); @@map("emergency_access") }
+model EmergencyAudit { id Int @id @default(autoincrement()); @@map("emergency_audit") }
+model EntityTag { id Int @id @default(autoincrement()); @@map("entity_tags") }
+model Feature { id Int @id @default(autoincrement()); @@map("features") }
+model GigBooking { id Int @id @default(autoincrement()); @@map("gig_bookings") }
+model GigOffering { id Int @id @default(autoincrement()); @@map("gig_offerings") }
+model JobApplication { id Int @id @default(autoincrement()); @@map("job_applications") }
+model JobPosting { id Int @id @default(autoincrement()); @@map("job_postings") }
+model Language { id Int @id @default(autoincrement()); @@map("languages") }
+model Message { id Int @id @default(autoincrement()); @@map("messages") }
+model MessageAttachment { id Int @id; @@map("message_attachments") }
+model OptionSet { id Int @id @default(autoincrement()); @@map("option_sets") }
+model OptionValue { id Int @id @default(autoincrement()); @@map("option_values") }
+model PlanFeatureLimit { id Int @id @default(autoincrement()); @@map("plan_feature_limits") }
+model RbacConfig { id Int @id; @@map("rbac_config") }
+model SubscriptionPlan { id Int @id @default(autoincrement()); @@map("subscription_plans") }
+model TenantSubscription { id Int @id; @@map("tenant_subscriptions") }
+model UserCollection { id Int @id @default(autoincrement()); @@map("user_collections") }
+model UserPermissionCache { id Int @id; @@map("user_permission_cache") }
+model AuditLog { id Int @id; @@map("audit_logs") }
+model ChangeConflict { id Int @id; @@map("change_conflicts") }
+model ChangeSet { id Int @id @default(autoincrement()); tenant Tenant? @relation(fields: [tenantId], references: [id]); tenantId Int?; @@map("change_sets") }
+model RecordLock { id Int @id; @@map("record_locks") }
+model SiteSettings { id Int @id; tenant Tenant? @relation(fields: [tenantId], references: [id]); tenantId Int?; @@map("site_settings") }
+model UserActivityLog { id Int @id; @@map("user_activity_logs") }
+model VersionHistory { id Int @id; tenant Tenant? @relation(fields: [tenantId], references: [id]); tenantId Int?; @@map("version_history") }

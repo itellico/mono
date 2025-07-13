@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management - Vogue Fashion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .project-card { border-left: 4px solid #007bff; transition: all 0.3s; cursor: pointer; }
+        .project-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .project-status { font-weight: 500; }
+        .timeline-item { border-left: 2px solid #e9ecef; }
+        .timeline-marker { width: 12px; height: 12px; background: #007bff; border-radius: 50%; margin-left: -7px; }
+        .talent-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .budget-progress { height: 8px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Project Stats -->
+                <div class="row mb-4" id="project-stats"></div>
+                
+                <!-- Projects Tabs -->
+                <div id="projects-tabs"></div>
+                
+                <!-- Modals -->
+                <div id="modals"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar for Client Project Management
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'client.html' },
+                { label: 'Search Talent', icon: 'fas fa-search', href: 'talent-search.html' },
+                { label: 'Projects', icon: 'fas fa-project-diagram', active: true },
+                { label: 'Saved Searches', icon: 'fas fa-bookmark', href: 'saved-searches.html' },
+                { label: 'Collections', icon: 'fas fa-folder', href: 'collections.html' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Messages', icon: 'fas fa-envelope', href: 'messages.html' },
+                { label: 'Contracts', icon: 'fas fa-file-contract', href: 'contracts.html' },
+                { label: 'Company Profile', icon: 'fas fa-building', href: 'company-profile.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Vogue Fashion', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Anna Client', 'Creative Director', 'Account');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Account', href: 'index.html' },
+                { label: 'Client Dashboard', href: 'client.html' },
+                { label: 'Projects' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Project Stats
+            const projectStatsHtml = [
+                createStatCard('Active Projects', '5', 'fas fa-project-diagram', 'primary'),
+                createStatCard('Total Budget', '$125,000', 'fas fa-dollar-sign', 'success'),
+                createStatCard('Talents Hired', '18', 'fas fa-users', 'warning'),
+                createStatCard('Completion Rate', '78%', 'fas fa-chart-line', 'info')
+            ].join('');
+            document.getElementById('project-stats').innerHTML = projectStatsHtml;
+            
+            // Active Projects Tab Content
+            const activeProjectsContent = `
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        ${createSearchBar('Search projects...')}
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                            <i class="fas fa-plus me-2"></i> New Project
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card project-card h-100" onclick="openProjectDetails('summer-campaign')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title">Summer Fashion Campaign</h5>
+                                    <span class="badge bg-warning project-status">In Progress</span>
+                                </div>
+                                <p class="text-muted mb-3">Fashion Editorial for Summer Collection</p>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Start Date</small>
+                                        <div class="fw-bold">Jun 1, 2024</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Due Date</small>
+                                        <div class="fw-bold">Jun 30, 2024</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Progress</small>
+                                        <small class="text-muted">65%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-warning" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Budget Used</small>
+                                        <small class="text-muted">$18,500 / $25,000</small>
+                                    </div>
+                                    <div class="progress budget-progress">
+                                        <div class="progress-bar bg-success" style="width: 74%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Emma">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Michael">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Sofia">
+                                        <span class="badge bg-light text-dark ms-1">+2</span>
+                                    </div>
+                                    <small class="text-muted">5 talents</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card project-card h-100" onclick="openProjectDetails('autumn-lookbook')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title">Autumn Lookbook</h5>
+                                    <span class="badge bg-info project-status">Planning</span>
+                                </div>
+                                <p class="text-muted mb-3">Commercial Photography for Fall Collection</p>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Start Date</small>
+                                        <div class="fw-bold">Jul 15, 2024</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Due Date</small>
+                                        <div class="fw-bold">Aug 30, 2024</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Progress</small>
+                                        <small class="text-muted">25%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-info" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Budget Used</small>
+                                        <small class="text-muted">$5,000 / $35,000</small>
+                                    </div>
+                                    <div class="progress budget-progress">
+                                        <div class="progress-bar bg-success" style="width: 14%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="David">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Isabella">
+                                        <span class="badge bg-light text-dark ms-1">+1</span>
+                                    </div>
+                                    <small class="text-muted">3 talents</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card project-card h-100" onclick="openProjectDetails('beauty-campaign')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title">Beauty Campaign</h5>
+                                    <span class="badge bg-success project-status">Completed</span>
+                                </div>
+                                <p class="text-muted mb-3">Skincare Product Launch Campaign</p>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Start Date</small>
+                                        <div class="fw-bold">May 1, 2024</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Completed</small>
+                                        <div class="fw-bold">May 28, 2024</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Progress</small>
+                                        <small class="text-muted">100%</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small class="text-muted">Final Budget</small>
+                                        <small class="text-muted">$19,800 / $20,000</small>
+                                    </div>
+                                    <div class="progress budget-progress">
+                                        <div class="progress-bar bg-success" style="width: 99%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Emma">
+                                        <img src="https://via.placeholder.com/32" class="talent-avatar me-1" alt="Sofia">
+                                    </div>
+                                    <small class="text-muted">2 talents</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Project Timeline Tab Content
+            const timelineContent = `
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Project Timeline & Milestones</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <div class="timeline-item ps-4 pb-4">
+                                <div class="timeline-marker position-absolute"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="mb-1">Summer Campaign - Talent Casting Complete</h6>
+                                    <small class="text-muted">Jun 15, 2024</small>
+                                </div>
+                                <p class="text-muted mb-0">Successfully cast 5 models for the summer fashion campaign</p>
+                            </div>
+                            <div class="timeline-item ps-4 pb-4">
+                                <div class="timeline-marker position-absolute"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="mb-1">Autumn Lookbook - Project Approved</h6>
+                                    <small class="text-muted">Jun 10, 2024</small>
+                                </div>
+                                <p class="text-muted mb-0">Project proposal approved with $35,000 budget allocation</p>
+                            </div>
+                            <div class="timeline-item ps-4 pb-4">
+                                <div class="timeline-marker position-absolute"></div>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="mb-1">Beauty Campaign - Final Delivery</h6>
+                                    <small class="text-muted">May 28, 2024</small>
+                                </div>
+                                <p class="text-muted mb-0">All campaign assets delivered and approved by client</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Budget Tracking Tab Content
+            const budgetTrackingContent = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Budget Allocation by Project</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Summer Fashion Campaign</span>
+                                        <span class="fw-bold">$18,500 / $25,000</span>
+                                    </div>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-warning" style="width: 74%"></div>
+                                    </div>
+                                    <small class="text-muted">74% used • $6,500 remaining</small>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Autumn Lookbook</span>
+                                        <span class="fw-bold">$5,000 / $35,000</span>
+                                    </div>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-info" style="width: 14%"></div>
+                                    </div>
+                                    <small class="text-muted">14% used • $30,000 remaining</small>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Beauty Campaign</span>
+                                        <span class="fw-bold">$19,800 / $20,000</span>
+                                    </div>
+                                    <div class="progress mb-1">
+                                        <div class="progress-bar bg-success" style="width: 99%"></div>
+                                    </div>
+                                    <small class="text-muted">99% used • $200 remaining</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Overall Budget Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <h3 class="text-primary">$125,000</h3>
+                                    <small class="text-muted">Total Annual Budget</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>Used</small>
+                                        <small>$43,300</small>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar bg-primary" style="width: 35%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>Allocated</small>
+                                        <small>$60,000</small>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar bg-warning" style="width: 48%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <small>$65,000 Available</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Templates Tab Content
+            const templatesContent = `
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-camera fa-3x text-primary mb-3"></i>
+                                <h6>Fashion Editorial</h6>
+                                <p class="text-muted small">High-end fashion photography project</p>
+                                <button class="btn btn-outline-primary btn-sm">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-bag fa-3x text-success mb-3"></i>
+                                <h6>Commercial Campaign</h6>
+                                <p class="text-muted small">Product marketing and advertising</p>
+                                <button class="btn btn-outline-success btn-sm">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                                <h6>Beauty Campaign</h6>
+                                <p class="text-muted small">Skincare and beauty product shoots</p>
+                                <button class="btn btn-outline-danger btn-sm">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create tabs
+            const tabs = [
+                { label: 'Active Projects', icon: 'fas fa-project-diagram', content: activeProjectsContent },
+                { label: 'Timeline', icon: 'fas fa-clock', content: timelineContent },
+                { label: 'Budget Tracking', icon: 'fas fa-dollar-sign', content: budgetTrackingContent },
+                { label: 'Templates', icon: 'fas fa-copy', content: templatesContent }
+            ];
+            
+            document.getElementById('projects-tabs').innerHTML = createTabs(tabs);
+            
+            // New Project Modal
+            const newProjectModalBody = `
+                ${createFormInput('Project Name', 'text', 'projectName', 'Enter project name', true)}
+                <div class="mb-3">
+                    <label for="projectType" class="form-label">Project Type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="projectType" required>
+                        <option value="">Select project type</option>
+                        <option value="fashion">Fashion Editorial</option>
+                        <option value="commercial">Commercial Campaign</option>
+                        <option value="beauty">Beauty Campaign</option>
+                        <option value="lifestyle">Lifestyle Shoot</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="projectDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="projectDescription" rows="3" placeholder="Project description and objectives"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        ${createFormInput('Start Date', 'date', 'startDate', '', true)}
+                    </div>
+                    <div class="col-md-6">
+                        ${createFormInput('Due Date', 'date', 'dueDate', '', true)}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        ${createFormInput('Budget', 'text', 'budget', 'e.g., $25,000', true)}
+                    </div>
+                    <div class="col-md-6">
+                        ${createFormInput('Talent Needed', 'number', 'talentCount', 'Number of talents')}
+                    </div>
+                </div>
+            `;
+            
+            const newProjectModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Create Project</button>
+            `;
+            
+            const modalsHtml = createModal('newProjectModal', 'Create New Project', newProjectModalBody, newProjectModalFooter);
+            document.getElementById('modals').innerHTML = modalsHtml;
+        });
+        
+        function openProjectDetails(projectId) {
+            // This would typically navigate to a detailed project management page
+            alert('Opening project details for: ' + projectId);
+        }
+    </script>
+</body>
+</html>

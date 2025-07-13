@@ -1,0 +1,227 @@
+{
+  "categories": [
+    {
+      "name": "Fashion Models",
+      "slug": "fashion-models",
+      "description": "Professional fashion models for runway, editorial, and catalog work",
+      "icon": "user-circle",
+      "color": "#E91E63",
+      "order": 1,
+      "subcategories": [
+        {
+          "name": "Runway",
+          "slug": "runway",
+          "description": "Fashion show and catwalk models",
+          "requirements": {
+            "minHeight": { "female": 172, "male": 183 },
+            "experience": "professional"
+          }
+        },
+        {
+          "name": "Editorial",
+          "slug": "editorial",
+          "description": "Magazine and editorial photography",
+          "requirements": {
+            "portfolio": "required",
+            "experience": "intermediate"
+          }
+        },
+        {
+          "name": "Catalog",
+          "slug": "catalog",
+          "description": "E-commerce and catalog modeling",
+          "requirements": {
+            "experience": "beginner"
+          }
+        },
+        {
+          "name": "Showroom",
+          "slug": "showroom",
+          "description": "Showroom and presentation modeling",
+          "requirements": {
+            "languages": ["local"],
+            "availability": "flexible"
+          }
+        },
+        {
+          "name": "Lookbook",
+          "slug": "lookbook",
+          "description": "Brand lookbook and campaign shoots",
+          "requirements": {
+            "portfolio": "required"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commercial Models",
+      "slug": "commercial-models",
+      "description": "Models for advertising, commercials, and lifestyle shoots",
+      "icon": "briefcase",
+      "color": "#4CAF50",
+      "order": 2,
+      "subcategories": [
+        {
+          "name": "Print Advertising",
+          "slug": "print-advertising",
+          "description": "Print ads and billboard campaigns"
+        },
+        {
+          "name": "TV Commercials",
+          "slug": "tv-commercials",
+          "description": "Television and video commercials"
+        },
+        {
+          "name": "Online Advertising",
+          "slug": "online-advertising",
+          "description": "Digital and social media campaigns"
+        },
+        {
+          "name": "Lifestyle",
+          "slug": "lifestyle",
+          "description": "Lifestyle and real people modeling"
+        }
+      ]
+    },
+    {
+      "name": "Fitness Models",
+      "slug": "fitness-models",
+      "description": "Athletic and fitness models",
+      "icon": "activity",
+      "color": "#FF5722",
+      "order": 3,
+      "subcategories": [
+        {
+          "name": "Athletic Wear",
+          "slug": "athletic-wear",
+          "description": "Sportswear and activewear modeling"
+        },
+        {
+          "name": "Gym & Training",
+          "slug": "gym-training",
+          "description": "Fitness facility and equipment shoots"
+        },
+        {
+          "name": "Sports Brands",
+          "slug": "sports-brands",
+          "description": "Sports brand campaigns and sponsorships"
+        },
+        {
+          "name": "Yoga & Wellness",
+          "slug": "yoga-wellness",
+          "description": "Yoga, wellness, and health modeling"
+        }
+      ]
+    },
+    {
+      "name": "Specialty Models",
+      "slug": "specialty-models",
+      "description": "Specialized modeling categories",
+      "icon": "star",
+      "color": "#9C27B0",
+      "order": 4,
+      "subcategories": [
+        {
+          "name": "Hand Models",
+          "slug": "hand-models",
+          "description": "Hand modeling for jewelry and products"
+        },
+        {
+          "name": "Foot Models",
+          "slug": "foot-models",
+          "description": "Foot modeling for shoes and beauty"
+        },
+        {
+          "name": "Hair Models",
+          "slug": "hair-models",
+          "description": "Hair product and salon modeling"
+        },
+        {
+          "name": "Parts Models",
+          "slug": "parts-models",
+          "description": "Specific body parts modeling"
+        },
+        {
+          "name": "Plus Size",
+          "slug": "plus-size",
+          "description": "Plus size and curve modeling"
+        },
+        {
+          "name": "Mature Models",
+          "slug": "mature-models",
+          "description": "Senior and mature age modeling"
+        }
+      ]
+    },
+    {
+      "name": "Child Models",
+      "slug": "child-models",
+      "description": "Children and teen models (with parental consent)",
+      "icon": "baby",
+      "color": "#2196F3",
+      "order": 5,
+      "ageGroups": [
+        {
+          "name": "Baby (0-2)",
+          "slug": "baby",
+          "ageRange": { "min": 0, "max": 2 }
+        },
+        {
+          "name": "Toddler (3-5)",
+          "slug": "toddler",
+          "ageRange": { "min": 3, "max": 5 }
+        },
+        {
+          "name": "Child (6-12)",
+          "slug": "child",
+          "ageRange": { "min": 6, "max": 12 }
+        },
+        {
+          "name": "Teen (13-17)",
+          "slug": "teen",
+          "ageRange": { "min": 13, "max": 17 }
+        }
+      ]
+    },
+    {
+      "name": "Industry Professionals",
+      "slug": "industry-professionals",
+      "description": "Supporting professionals in the modeling industry",
+      "icon": "users",
+      "color": "#795548",
+      "order": 6,
+      "subcategories": [
+        {
+          "name": "Photographers",
+          "slug": "photographers",
+          "description": "Fashion and commercial photographers"
+        },
+        {
+          "name": "Makeup Artists",
+          "slug": "makeup-artists",
+          "description": "Professional makeup and hair artists"
+        },
+        {
+          "name": "Stylists",
+          "slug": "stylists",
+          "description": "Fashion and wardrobe stylists"
+        },
+        {
+          "name": "Agencies",
+          "slug": "agencies",
+          "description": "Modeling agencies and scouts"
+        },
+        {
+          "name": "Casting Directors",
+          "slug": "casting-directors",
+          "description": "Casting professionals"
+        },
+        {
+          "name": "Production",
+          "slug": "production",
+          "description": "Production teams and coordinators"
+        }
+      ]
+    }
+  ]
+}

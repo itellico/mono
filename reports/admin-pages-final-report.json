@@ -1,0 +1,181 @@
+{
+  "timestamp": "2025-07-07T05:12:56.769Z",
+  "summary": {
+    "totalPages": 14,
+    "successfulPages": 0,
+    "pagesWithErrors": 0,
+    "pagesWithNoData": 3
+  },
+  "pages": [
+    {
+      "name": "Dashboard",
+      "path": "/admin",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Users",
+      "path": "/admin/users",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Tenants",
+      "path": "/admin/tenants",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Categories",
+      "path": "/admin/categories",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Tags",
+      "path": "/admin/tags",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Subscriptions",
+      "path": "/admin/subscriptions",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Permissions",
+      "path": "/admin/permissions",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Settings",
+      "path": "/admin/settings",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Search",
+      "path": "/admin/search",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Monitoring",
+      "path": "/admin/monitoring",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Email Templates",
+      "path": "/admin/email/react-templates",
+      "status": "auth-required",
+      "errors": [
+        "Redirected to login - authentication issue"
+      ],
+      "warnings": [],
+      "data": {}
+    },
+    {
+      "name": "Saved Searches",
+      "path": "/admin/saved-searches",
+      "status": "no-data",
+      "errors": [],
+      "warnings": [
+        "Page shows empty state or no data"
+      ],
+      "data": {
+        "hasHeading": false,
+        "hasTable": false,
+        "hasForm": false,
+        "cardCount": 0,
+        "buttonCount": 0,
+        "tableRowCount": 0,
+        "hasEmptyState": false,
+        "hasErrors": false
+      },
+      "screenshotPath": "screenshots/admin-saved-searches.png"
+    },
+    {
+      "name": "Schema Seeder",
+      "path": "/admin/schema-seeder",
+      "status": "no-data",
+      "errors": [],
+      "warnings": [
+        "Page shows empty state or no data"
+      ],
+      "data": {
+        "hasHeading": false,
+        "hasTable": false,
+        "hasForm": false,
+        "cardCount": 0,
+        "buttonCount": 0,
+        "tableRowCount": 0,
+        "hasEmptyState": false,
+        "hasErrors": false
+      },
+      "screenshotPath": "screenshots/admin-schema-seeder.png"
+    },
+    {
+      "name": "Tenant Data Management",
+      "path": "/admin/tenant-data-management",
+      "status": "no-data",
+      "errors": [],
+      "warnings": [
+        "Page shows empty state or no data"
+      ],
+      "data": {
+        "hasHeading": false,
+        "hasTable": false,
+        "hasForm": false,
+        "cardCount": 0,
+        "buttonCount": 0,
+        "tableRowCount": 0,
+        "hasEmptyState": false,
+        "hasErrors": false
+      },
+      "screenshotPath": "screenshots/admin-tenant-data-management.png"
+    }
+  ]
+}

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Stylist Dashboard - Isabella Chen</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 280px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
+        .main-content { margin-left: 280px; padding: 20px; }
+        .profile-hero { 
+            background: linear-gradient(135deg, #8e44ad 0%, #e91e63 100%);
+            color: white;
+            padding: 2rem 0;
+            margin: -20px -20px 30px -20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+        }
+        .style-package { 
+            border: 2px solid #e9ecef; 
+            border-radius: 15px; 
+            padding: 25px; 
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .style-package:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .style-package.featured { 
+            border-color: #8e44ad; 
+            background: linear-gradient(135deg, #f8f5ff 0%, #fce4ec 100%);
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .portfolio-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+        .outfit-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .outfit-card:hover {
+            border-color: #8e44ad;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .brand-badge {
+            background: linear-gradient(135deg, #333 0%, #666 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 3px;
+            display: inline-block;
+        }
+        .client-testimonial {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #8e44ad;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .closet-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .closet-item:hover {
+            background: #f8f9fa;
+            border-color: #8e44ad;
+        }
+        @media (max-width: 768px) {
+            .sidebar { 
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .portfolio-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Profile Hero Section -->
+            <div class="profile-hero">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616c79a6a24?w=400&h=400&fit=crop&crop=face" 
+                                 class="rounded-circle profile-image mb-3" alt="Isabella Chen">
+                            <div class="text-center">
+                                <span class="badge bg-success">Available</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 class="fw-bold mb-2">Isabella Chen</h1>
+                            <p class="fs-5 mb-3">Celebrity Fashion Stylist & Image Consultant</p>
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark me-2">Celebrity</span>
+                                <span class="badge bg-light text-dark me-2">Editorial</span>
+                                <span class="badge bg-light text-dark me-2">Personal Shopping</span>
+                                <span class="badge bg-light text-dark me-2">Wardrobe Consulting</span>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">12+</h4>
+                                        <small>Years Experience</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">200+</h4>
+                                        <small>Celebrity Clients</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">85</h4>
+                                        <small>Magazine Covers</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">$500</h4>
+                                        <small>Hourly Rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <button class="btn btn-light btn-lg mb-2 w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>Book Consultation
+                            </button>
+                            <button class="btn btn-outline-light btn-lg w-100">
+                                <i class="fas fa-envelope me-2"></i>Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabbed Content -->
+            <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio" type="button" role="tab">
+                        <i class="fas fa-images me-2"></i>Portfolio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+                        <i class="fas fa-tshirt me-2"></i>Services
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lookbook-tab" data-bs-toggle="tab" data-bs-target="#lookbook" type="button" role="tab">
+                        <i class="fas fa-book me-2"></i>Lookbook
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="brands-tab" data-bs-toggle="tab" data-bs-target="#brands" type="button" role="tab">
+                        <i class="fas fa-tags me-2"></i>Brand Partners
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="closet-tab" data-bs-toggle="tab" data-bs-target="#closet" type="button" role="tab">
+                        <i class="fas fa-hanger me-2"></i>Digital Closet
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="clients-tab" data-bs-toggle="tab" data-bs-target="#clients" type="button" role="tab">
+                        <i class="fas fa-users me-2"></i>Clients
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="trends-tab" data-bs-toggle="tab" data-bs-target="#trends" type="button" role="tab">
+                        <i class="fas fa-chart-line me-2"></i>Trends
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">
+                        <i class="fas fa-calendar me-2"></i>Bookings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="earnings-tab" data-bs-toggle="tab" data-bs-target="#earnings" type="button" role="tab">
+                        <i class="fas fa-dollar-sign me-2"></i>Earnings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">
+                        <i class="fas fa-comments me-2"></i>Messages
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="academy-tab" data-bs-toggle="tab" data-bs-target="#academy" type="button" role="tab">
+                        <i class="fas fa-graduation-cap me-2"></i>Academy
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="dashboardTabsContent">
+                <!-- Portfolio Tab -->
+                <div class="tab-pane fade show active" id="portfolio" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Styling Portfolio</h3>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-primary active" data-category="all">All</button>
+                            <button class="btn btn-outline-primary" data-category="celebrity">Celebrity</button>
+                            <button class="btn btn-outline-primary" data-category="editorial">Editorial</button>
+                            <button class="btn btn-outline-primary" data-category="red-carpet">Red Carpet</button>
+                            <button class="btn btn-outline-primary" data-category="commercial">Commercial</button>
+                        </div>
+                    </div>
+                    <div class="portfolio-grid">
+                        <div class="portfolio-item" data-category="celebrity">
+                            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=500&fit=crop" class="w-100" alt="Celebrity Styling">
+                            <div class="p-3">
+                                <h6 class="mb-1">Award Show Styling</h6>
+                                <small class="text-muted">Custom Valentino gown for A-list actress</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-warning">Award Show</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="editorial">
+                            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=500&fit=crop" class="w-100" alt="Editorial Fashion">
+                            <div class="p-3">
+                                <h6 class="mb-1">Vogue Editorial</h6>
+                                <small class="text-muted">High fashion editorial for September issue</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-primary">Editorial</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="red-carpet">
+                            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=500&fit=crop" class="w-100" alt="Red Carpet">
+                            <div class="p-3">
+                                <h6 class="mb-1">Met Gala Look</h6>
+                                <small class="text-muted">Couture creation following gala theme</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-danger">Red Carpet</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="commercial">
+                            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop" class="w-100" alt="Commercial Styling">
+                            <div class="p-3">
+                                <h6 class="mb-1">Brand Campaign</h6>
+                                <small class="text-muted">Luxury brand ambassador styling</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-success">Commercial</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="celebrity">
+                            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=500&fit=crop" class="w-100" alt="Street Style">
+                            <div class="p-3">
+                                <h6 class="mb-1">Off-Duty Celebrity</h6>
+                                <small class="text-muted">Casual chic street style</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-info">Street Style</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portfolio-item" data-category="editorial">
+                            <img src="https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=400&h=500&fit=crop" class="w-100" alt="Avant Garde">
+                            <div class="p-3">
+                                <h6 class="mb-1">Avant Garde Fashion</h6>
+                                <small class="text-muted">Conceptual styling for art magazine</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-dark">Avant Garde</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div class="tab-pane fade" id="services" role="tabpanel">
+                    <h3 class="mb-4">Styling Services</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="style-package featured">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="fw-bold">Celebrity Styling</h5>
+                                    <span class="badge bg-warning">VIP</span>
+                                </div>
+                                <p class="text-muted mb-3">Complete red carpet and event styling service</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Initial style consultation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Designer outfit sourcing</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Fitting coordination</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Event day styling</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Media styling support</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold text-primary">$2,500</span>
+                                        <small class="text-muted">/event</small>
+                                    </div>
+                                    <button class="btn btn-primary">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-package">
+                                <h5 class="fw-bold mb-3">Personal Shopping</h5>
+                                <p class="text-muted mb-3">Curated wardrobe shopping experience</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Style assessment consultation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Personal shopping session</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Wardrobe audit</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Mix & match guide</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$500</span>
+                                        <small class="text-muted">/session</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-package">
+                                <h5 class="fw-bold mb-3">Editorial Styling</h5>
+                                <p class="text-muted mb-3">Fashion editorial and photoshoot styling</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Concept development</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Garment sourcing & coordination</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>On-set styling support</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Accessories coordination</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$750</span>
+                                        <small class="text-muted">/day</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-package">
+                                <h5 class="fw-bold mb-3">Virtual Styling</h5>
+                                <p class="text-muted mb-3">Remote styling consultation and advice</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Video style consultation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Digital lookbook creation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Online shopping links</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Style guide PDF</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$200</span>
+                                        <small class="text-muted">/consultation</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lookbook Tab -->
+                <div class="tab-pane fade" id="lookbook" role="tabpanel">
+                    <h3 class="mb-4">Seasonal Lookbook</h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="outfit-card">
+                                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=400&fit=crop" class="w-100 rounded mb-3" alt="Spring Look">
+                                <h6>Spring Casual Chic</h6>
+                                <p class="small text-muted">Perfect for brunch dates and casual meetings</p>
+                                <div class="d-flex justify-content-between">
+                                    <small>Items: 4</small>
+                                    <small class="text-success">$850 total</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="outfit-card">
+                                <img src="https://images.unsplash.com/photo-1479492623889-09c5710af4ba?w=300&h=400&fit=crop" class="w-100 rounded mb-3" alt="Business Look">
+                                <h6>Power Business Look</h6>
+                                <p class="small text-muted">Commanding presence for important meetings</p>
+                                <div class="d-flex justify-content-between">
+                                    <small>Items: 5</small>
+                                    <small class="text-success">$1,200 total</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="outfit-card">
+                                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=300&h=400&fit=crop" class="w-100 rounded mb-3" alt="Evening Look">
+                                <h6>Elegant Evening</h6>
+                                <p class="small text-muted">Sophisticated look for dinner parties</p>
+                                <div class="d-flex justify-content-between">
+                                    <small>Items: 6</small>
+                                    <small class="text-success">$1,500 total</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Partners Tab -->
+                <div class="tab-pane fade" id="brands" role="tabpanel">
+                    <h3 class="mb-4">Brand Partnerships</h3>
+                    <div class="text-center mb-4">
+                        <div class="brand-badge">Chanel</div>
+                        <div class="brand-badge">Dior</div>
+                        <div class="brand-badge">Gucci</div>
+                        <div class="brand-badge">Prada</div>
+                        <div class="brand-badge">Valentino</div>
+                        <div class="brand-badge">Saint Laurent</div>
+                        <div class="brand-badge">Bottega Veneta</div>
+                        <div class="brand-badge">Balenciaga</div>
+                        <div class="brand-badge">Louis Vuitton</div>
+                        <div class="brand-badge">Hermès</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Luxury Fashion Houses</h5>
+                                    <p class="text-muted">Direct relationships with top couture brands for exclusive pieces and early access to collections.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5>Contemporary Designers</h5>
+                                    <p class="text-muted">Partnerships with emerging and established contemporary designers for unique styling opportunities.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Closet Tab -->
+                <div class="tab-pane fade" id="closet" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Digital Closet</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="closet-item">
+                                <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=80&h=80&fit=crop" class="rounded me-3" alt="Blazer">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Saint Laurent Blazer</h6>
+                                    <small class="text-muted">Black wool, Size 38</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-secondary">Available</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-success">$2,800</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="closet-item">
+                                <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=80&h=80&fit=crop" class="rounded me-3" alt="Dress">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Valentino Gown</h6>
+                                    <small class="text-muted">Red silk, Custom fit</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-warning">On Loan</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-success">$8,500</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clients Tab -->
+                <div class="tab-pane fade" id="clients" role="tabpanel">
+                    <h3 class="mb-4">Client Testimonials</h3>
+                    <div class="client-testimonial">
+                        <p class="mb-3">"Isabella has an incredible eye for fashion and helped me find my signature style. Her styling for award season was absolutely flawless!"</p>
+                        <div class="d-flex align-items-center">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616c79a6a24?w=50&h=50&fit=crop&crop=face" class="rounded-circle me-3" alt="Client">
+                            <div>
+                                <strong>Emma Stone</strong>
+                                <div class="text-muted small">Academy Award Winner</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="client-testimonial">
+                        <p class="mb-3">"Working with Isabella was transformative. She understood my vision and brought it to life in ways I never imagined possible."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=50&h=50&fit=crop&crop=face" class="rounded-circle me-3" alt="Client">
+                            <div>
+                                <strong>Zendaya</strong>
+                                <div class="text-muted small">Actress & Singer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tabs follow similar patterns -->
+                <div class="tab-pane fade" id="trends" role="tabpanel">
+                    <h3 class="mb-4">Fashion Trends Analysis</h3>
+                    <p class="text-muted">Trend forecasting and market analysis dashboard.</p>
+                </div>
+
+                <div class="tab-pane fade" id="bookings" role="tabpanel">
+                    <h3 class="mb-4">Upcoming Bookings</h3>
+                    <p class="text-muted">Schedule and booking management system.</p>
+                </div>
+
+                <div class="tab-pane fade" id="earnings" role="tabpanel">
+                    <h3 class="mb-4">Earnings Dashboard</h3>
+                    <p class="text-muted">Financial overview and analytics.</p>
+                </div>
+
+                <div class="tab-pane fade" id="messages" role="tabpanel">
+                    <h3 class="mb-4">Messages</h3>
+                    <p class="text-muted">Client communication center.</p>
+                </div>
+
+                <div class="tab-pane fade" id="academy" role="tabpanel">
+                    <h3 class="mb-4">Fashion Academy</h3>
+                    <p class="text-muted">Continuous learning and trend education.</p>
+                </div>
+
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <h3 class="mb-4">Account Settings</h3>
+                    <p class="text-muted">Profile and preference management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script src="navigation.js"></script>
+    <script>
+        // Render Sidebar for Fashion Stylist
+        document.getElementById('sidebar').innerHTML = createSidebar('Fashion Stylist', [
+            { label: 'Portfolio', icon: 'fas fa-images', href: '#portfolio', active: true },
+            { label: 'Services', icon: 'fas fa-tshirt', href: '#services' },
+            { label: 'Lookbook', icon: 'fas fa-book', href: '#lookbook' },
+            { label: 'Brand Partners', icon: 'fas fa-tags', href: '#brands' },
+            { label: 'Digital Closet', icon: 'fas fa-hanger', href: '#closet' },
+            { label: 'Clients', icon: 'fas fa-users', href: '#clients' },
+            { label: 'Trends', icon: 'fas fa-chart-line', href: '#trends' },
+            { label: 'Bookings', icon: 'fas fa-calendar', href: '#bookings' },
+            { label: 'Earnings', icon: 'fas fa-dollar-sign', href: '#earnings' },
+            { label: 'Messages', icon: 'fas fa-comments', href: '#messages' },
+            { label: 'Academy', icon: 'fas fa-graduation-cap', href: '#academy' },
+            { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+        ]);
+
+        // Portfolio filtering functionality
+        document.querySelectorAll('[data-category]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('[data-category]').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter portfolio items
+                const category = this.getAttribute('data-category');
+                document.querySelectorAll('.portfolio-item').forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Add mobile hamburger button
+        if (window.innerWidth <= 768) {
+            const hamburger = document.createElement('button');
+            hamburger.className = 'btn btn-primary position-fixed';
+            hamburger.style = 'top: 20px; left: 20px; z-index: 1001;';
+            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            hamburger.onclick = toggleSidebar;
+            document.body.appendChild(hamburger);
+        }
+    </script>
+</body>
+</html>

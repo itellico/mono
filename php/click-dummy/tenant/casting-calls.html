@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casting Calls - Go Models NYC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .casting-card { transition: transform 0.2s; border-left: 4px solid #dee2e6; }
+        .casting-card:hover { transform: translateY(-2px); }
+        .casting-card.urgent { border-left-color: #dc3545; }
+        .casting-card.active { border-left-color: #198754; }
+        .casting-card.draft { border-left-color: #ffc107; }
+        .applicant-avatar { width: 32px; height: 32px; border-radius: 50%; }
+        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: 8px; top: 8px; width: 8px; height: 8px; background: #0d6efd; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">Casting Calls</h2>
+                        <p class="text-muted">Manage casting calls and talent selection</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCastingModal">
+                            <i class="fas fa-plus me-2"></i> Create Casting Call
+                        </button>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
+                            <i class="fas fa-template me-2"></i> Use Template
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-download me-2"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4" id="stats-row"></div>
+                
+                <!-- Filters and Search -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div id="search-bar"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-secondary active" data-filter="all">All Castings</button>
+                            <button class="btn btn-outline-secondary" data-filter="active">Active</button>
+                            <button class="btn btn-outline-secondary" data-filter="draft">Drafts</button>
+                            <button class="btn btn-outline-secondary" data-filter="closed">Closed</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Tabs -->
+                <div id="main-tabs"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Casting Modal -->
+    <div id="createCastingModal"></div>
+    
+    <!-- Template Modal -->
+    <div id="templateModal"></div>
+    
+    <!-- Casting Details Modal -->
+    <div id="castingDetailsModal"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Talent Database', icon: 'fas fa-users', href: 'talent-database.html' },
+                { label: 'Casting Calls', icon: 'fas fa-bullhorn', active: true },
+                { label: 'Applications', icon: 'fas fa-clipboard-list', href: 'applications.html' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Categories & Tags', icon: 'fas fa-tags', href: 'categories.html' },
+                { label: 'Blog System', icon: 'fas fa-blog', href: 'blog.html' },
+                { label: 'Academy', icon: 'fas fa-graduation-cap', href: 'academy.html' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-pie', href: 'financial.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Go Models NYC', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Sarah Admin', 'Tenant Administrator', 'Casting Calls');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Dashboard', href: 'index.html' },
+                { label: 'Casting Calls' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Active Castings', '45', 'fas fa-bullhorn', 'success'),
+                createStatCard('Total Applications', '1,267', 'fas fa-clipboard-list', 'primary'),
+                createStatCard('Avg Applications', '28', 'fas fa-chart-line', 'info'),
+                createStatCard('Success Rate', '89%', 'fas fa-trophy', 'warning')
+            ].join('');
+            document.getElementById('stats-row').innerHTML = statsHtml;
+            
+            // Search Bar
+            document.getElementById('search-bar').innerHTML = createSearchBar('Search castings by title, client, or type...');
+            
+            // Casting Calls List Tab
+            const castingCallsContent = `
+                <div class="row">
+                    ${generateCastingCards()}
+                </div>
+                <div class="mt-4">
+                    ${createPagination(1, 12)}
+                </div>
+            `;
+            
+            // Analytics Tab
+            const analyticsContent = `
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i> Applications by Casting Type</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="castingTypeChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i> Applications Over Time</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="applicationsChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-trophy me-2"></i> Top Performing Castings</h6>
+                            </div>
+                            <div class="card-body">
+                                ${createDataTable('', 
+                                    ['Casting Title', 'Client', 'Applications', 'Selected', 'Success Rate'],
+                                    [
+                                        ['Summer Fashion Campaign', 'Vogue NYC', '67', '8', '92%'],
+                                        ['Sports Brand Commercial', 'Nike', '123', '12', '89%'],
+                                        ['Luxury Watch Campaign', 'Rolex', '89', '6', '95%'],
+                                        ['Fitness App Campaign', 'FitTech', '45', '4', '88%']
+                                    ], 
+                                    false
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Calendar Tab
+            const calendarContent = `
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-calendar me-2"></i> Casting Calendar - June 2024</h6>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-secondary">Month</button>
+                                        <button class="btn btn-outline-secondary active">Week</button>
+                                        <button class="btn btn-outline-secondary">Day</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body" style="min-height: 500px;">
+                                <div class="text-center text-muted py-5">
+                                    <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                                    <p>Interactive casting calendar would be displayed here</p>
+                                    <p class="small">Shows casting deadlines, audition dates, and production schedules</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Upcoming Deadlines</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="timeline-item">
+                                    <strong>Summer Campaign</strong><br>
+                                    <small class="text-muted">Applications close in 2 days</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>Nike Commercial</strong><br>
+                                    <small class="text-muted">Auditions start in 5 days</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>Marc Jacobs Show</strong><br>
+                                    <small class="text-muted">Final selection in 1 week</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-sm btn-outline-primary">Send Reminders</button>
+                                    <button class="btn btn-sm btn-outline-warning">Update Deadlines</button>
+                                    <button class="btn btn-sm btn-outline-info">Export Schedule</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create main tabs
+            const tabs = [
+                { label: 'All Castings', icon: 'fas fa-list', content: castingCallsContent },
+                { label: 'Analytics', icon: 'fas fa-chart-bar', content: analyticsContent },
+                { label: 'Calendar', icon: 'fas fa-calendar', content: calendarContent }
+            ];
+            
+            document.getElementById('main-tabs').innerHTML = createTabs(tabs);
+            
+            // Create Casting Modal
+            const createCastingModalBody = `
+                <form id="createCastingForm">
+                    <div class="row">
+                        <div class="col-md-8">
+                            ${createFormInput('Casting Title', 'text', 'title', 'e.g., Summer Fashion Campaign 2024', true)}
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="castingType" class="form-label">Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="castingType" required>
+                                    <option value="">Select type...</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="runway">Runway</option>
+                                    <option value="editorial">Editorial</option>
+                                    <option value="fitness">Fitness</option>
+                                    <option value="catalog">Catalog</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            ${createFormInput('Client/Brand', 'text', 'client', 'e.g., Vogue, Nike, H&M', true)}
+                        </div>
+                        <div class="col-md-6">
+                            ${createFormInput('Project Budget', 'text', 'budget', 'e.g., $50,000 - $100,000')}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            ${createFormInput('Application Deadline', 'date', 'deadline', '', true)}
+                        </div>
+                        <div class="col-md-4">
+                            ${createFormInput('Audition Date', 'date', 'auditionDate')}
+                        </div>
+                        <div class="col-md-4">
+                            ${createFormInput('Shoot/Event Date', 'date', 'eventDate')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Project Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" rows="4" placeholder="Describe the project, vision, and what you're looking for..." required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="genderPreference" class="form-label">Gender Preference</label>
+                                <select class="form-select" id="genderPreference">
+                                    <option value="any">Any</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="non-binary">Non-binary</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ageRange" class="form-label">Age Range</label>
+                                <input type="text" class="form-control" id="ageRange" placeholder="e.g., 18-25, 25-35">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="heightRange" class="form-label">Height Range (cm)</label>
+                                <input type="text" class="form-control" id="heightRange" placeholder="e.g., 170-185">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="experience" class="form-label">Experience Required</label>
+                                <select class="form-select" id="experience">
+                                    <option value="any">Any Level</option>
+                                    <option value="beginner">Beginner (0-2 years)</option>
+                                    <option value="intermediate">Intermediate (2-5 years)</option>
+                                    <option value="advanced">Advanced (5+ years)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="compensation" class="form-label">Compensation Details</label>
+                        <textarea class="form-control" id="compensation" rows="2" placeholder="e.g., $500/hour, $2000/day, TFP (Trade for Portfolio)"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" placeholder="e.g., New York, NY - Studio or On Location">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Special Requirements</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="nudity">
+                            <label class="form-check-label" for="nudity">May include partial nudity</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="travel">
+                            <label class="form-check-label" for="travel">Travel required</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="portfolio">
+                            <label class="form-check-label" for="portfolio">Portfolio usage rights</label>
+                        </div>
+                    </div>
+                </form>
+            `;
+            
+            const createCastingModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary">Save as Draft</button>
+                <button type="submit" form="createCastingForm" class="btn btn-primary">Publish Casting Call</button>
+            `;
+            
+            document.getElementById('createCastingModal').innerHTML = createModal(
+                'createCastingModal',
+                'Create New Casting Call',
+                createCastingModalBody,
+                createCastingModalFooter
+            );
+            
+            // Template Modal
+            const templateModalBody = `
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 template-card" data-template="fashion">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tshirt fa-2x text-primary mb-3"></i>
+                                <h6>Fashion Campaign</h6>
+                                <p class="small text-muted">High-end fashion photography with editorial styling</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 template-card" data-template="commercial">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tv fa-2x text-success mb-3"></i>
+                                <h6>Commercial/TV Ad</h6>
+                                <p class="small text-muted">Television commercial or digital advertisement</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 template-card" data-template="runway">
+                            <div class="card-body text-center">
+                                <i class="fas fa-walking fa-2x text-warning mb-3"></i>
+                                <h6>Runway Show</h6>
+                                <p class="small text-muted">Fashion week or designer runway presentation</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 template-card" data-template="fitness">
+                            <div class="card-body text-center">
+                                <i class="fas fa-dumbbell fa-2x text-info mb-3"></i>
+                                <h6>Fitness/Athletic</h6>
+                                <p class="small text-muted">Sports brand or fitness campaign</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const templateModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="useTemplateBtn" disabled>Use Selected Template</button>
+            `;
+            
+            document.getElementById('templateModal').innerHTML = createModal(
+                'templateModal',
+                'Choose Casting Template',
+                templateModalBody,
+                templateModalFooter
+            );
+        });
+        
+        function generateCastingCards() {
+            const castings = [
+                {
+                    title: 'Summer Fashion Campaign 2024',
+                    client: 'Vogue NYC',
+                    type: 'Editorial',
+                    status: 'active',
+                    applications: 67,
+                    deadline: 'Jun 20, 2024',
+                    budget: '$75,000',
+                    description: 'High-end summer fashion editorial for Vogue magazine featuring luxury beachwear and resort collections.',
+                    requirements: ['Female models', '18-28 years', '5\'8" - 6\'0"', 'Swimwear experience']
+                },
+                {
+                    title: 'Sports Brand Commercial',
+                    client: 'Nike',
+                    type: 'Commercial',
+                    status: 'active',
+                    applications: 123,
+                    deadline: 'Jun 25, 2024',
+                    budget: '$100,000',
+                    description: 'Dynamic commercial showcasing new athletic wear line for diverse athletes.',
+                    requirements: ['All genders', '20-35 years', 'Athletic build', 'Sports background preferred']
+                },
+                {
+                    title: 'Luxury Watch Campaign',
+                    client: 'Rolex',
+                    type: 'Commercial',
+                    status: 'urgent',
+                    applications: 89,
+                    deadline: 'Jun 18, 2024',
+                    budget: '$150,000',
+                    description: 'Elegant luxury watch advertisement requiring sophisticated and refined talents.',
+                    requirements: ['Male models', '25-45 years', 'Sophisticated look', 'Luxury brand experience']
+                },
+                {
+                    title: 'Runway Show NYFW',
+                    client: 'Marc Jacobs',
+                    type: 'Runway',
+                    status: 'active',
+                    applications: 234,
+                    deadline: 'Jul 10, 2024',
+                    budget: '$200,000',
+                    description: 'New York Fashion Week runway show for Fall/Winter collection.',
+                    requirements: ['All genders', '18-30 years', '5\'9" - 6\'2"', 'Runway experience required']
+                },
+                {
+                    title: 'Fitness App Campaign',
+                    client: 'FitTech',
+                    type: 'Digital',
+                    status: 'draft',
+                    applications: 0,
+                    deadline: 'Jun 30, 2024',
+                    budget: '$50,000',
+                    description: 'Digital campaign for new fitness app focusing on healthy lifestyle and wellness.',
+                    requirements: ['Fitness enthusiasts', '22-40 years', 'Athletic build', 'Social media presence']
+                },
+                {
+                    title: 'Beauty Product Launch',
+                    client: 'L\'Oréal',
+                    type: 'Beauty',
+                    status: 'active',
+                    applications: 156,
+                    deadline: 'Jul 5, 2024',
+                    budget: '$80,000',
+                    description: 'Beauty campaign for new skincare line targeting diverse skin tones.',
+                    requirements: ['Diverse models', '18-35 years', 'Clear skin', 'Beauty experience preferred']
+                }
+            ];
+            
+            return castings.map(casting => `
+                <div class="col-lg-6 mb-4">
+                    <div class="card casting-card ${casting.status} h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${casting.title}</h6>
+                                    <small class="text-muted">${casting.client} • ${casting.type}</small>
+                                </div>
+                                <span class="badge ${
+                                    casting.status === 'active' ? 'bg-success' : 
+                                    casting.status === 'urgent' ? 'bg-danger' : 
+                                    'bg-warning'
+                                }">${casting.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text small">${casting.description}</p>
+                            <div class="mb-3">
+                                <h6 class="small mb-2">Requirements:</h6>
+                                ${casting.requirements.map(req => `<span class="badge bg-light text-dark me-1">${req}</span>`).join('')}
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="text-primary fw-bold">${casting.applications}</div>
+                                    <small class="text-muted">Applications</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-success fw-bold">${casting.budget}</div>
+                                    <small class="text-muted">Budget</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-warning fw-bold">${casting.deadline}</div>
+                                    <small class="text-muted">Deadline</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary btn-sm" onclick="viewCastingDetails('${casting.title}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-outline-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-clipboard-list"></i> Applications
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function viewCastingDetails(title) {
+            console.log('Viewing details for:', title);
+            // In a real app, this would show a detailed modal with applications, timeline, etc.
+        }
+    </script>
+</body>
+</html>

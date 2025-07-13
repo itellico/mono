@@ -1,0 +1,95 @@
+{% extends "layouts/base.mjml" %}
+
+{% block content %}
+<mj-text font-size="28px" font-weight="600" color="#f59e0b" align="center">
+  Scheduled Maintenance Notice
+</mj-text>
+
+<mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+  {{ tenantName or platformName }} will be temporarily unavailable
+</mj-text>
+
+{% include "components/alert.mjml" with { 
+  type: "warning", 
+  title: "Maintenance Window",
+  message: maintenanceDate + " from " + startTime + " to " + endTime + " (" + timezone + ")"
+} %}
+
+<mj-text>
+  <p>Hi {{ userName }},</p>
+  
+  <p>We're writing to inform you about scheduled maintenance for {{ tenantName or platformName }}.</p>
+  
+  <p><strong>Maintenance Details:</strong></p>
+  <ul>
+    <li><strong>Date:</strong> {{ maintenanceDate }}</li>
+    <li><strong>Time:</strong> {{ startTime }} - {{ endTime }} ({{ timezone }})</li>
+    <li><strong>Expected Duration:</strong> {{ duration or "2-3 hours" }}</li>
+    <li><strong>Type:</strong> {{ maintenanceType or "Platform updates and improvements" }}</li>
+  </ul>
+</mj-text>
+
+<mj-text>
+  <p><strong>What to Expect:</strong></p>
+  <ul>
+    <li>The platform will be completely unavailable during this time</li>
+    {% if maintenanceType == "database" %}
+    <li>All data will be safely preserved - no data loss will occur</li>
+    <li>Database performance improvements will be implemented</li>
+    {% elif maintenanceType == "security" %}
+    <li>Important security updates will be applied</li>
+    <li>All user data remains secure throughout the process</li>
+    {% else %}
+    <li>Platform improvements and new features will be deployed</li>
+    <li>Performance optimizations will be implemented</li>
+    {% endif %}
+    <li>You'll receive a confirmation email when maintenance is complete</li>
+  </ul>
+</mj-text>
+
+{% if improvements %}
+<mj-text>
+  <p><strong>What's Coming:</strong></p>
+  {% for improvement in improvements %}
+  <mj-text>
+    <li>{{ improvement }}</li>
+  </mj-text>
+  {% endfor %}
+</mj-text>
+{% endif %}
+
+<mj-text>
+  <p><strong>Preparing for Maintenance:</strong></p>
+  <ul>
+    <li>Save any work in progress before the maintenance window</li>
+    <li>Plan any urgent activities outside the maintenance period</li>
+    <li>Check our status page for real-time updates during maintenance</li>
+  </ul>
+</mj-text>
+
+{% if statusPageUrl %}
+<mj-text align="center" padding="20px 0">
+  {% include "components/button.mjml" with { 
+    url: statusPageUrl, 
+    text: "Check Status Page", 
+    style: "secondary" 
+  } %}
+</mj-text>
+{% endif %}
+
+<mj-text>
+  <p>We apologize for any inconvenience this may cause and appreciate your patience as we work to improve your experience on {{ tenantName or platformName }}.</p>
+  
+  <p>If you have any questions or concerns, please don't hesitate to contact our support team.</p>
+  
+  <p>Thank you for your understanding.</p>
+  
+  <p>The {{ tenantName or platformName }} Team</p>
+</mj-text>
+
+<mj-divider border-color="#e5e5e5" padding="30px 0" />
+
+<mj-text font-size="14px" color="#6b7280">
+  <p>This maintenance notice was sent to all active users. You can update your notification preferences in your account settings.</p>
+</mj-text>
+{% endblock %}

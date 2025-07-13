@@ -1,0 +1,347 @@
+import crypto from 'crypto';
+import { eq } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { tenants, mediaAssets } from '@/lib/schema';
+import type { MediaAsset } from '@/lib/schema';
+
+/**
+ * Secure Media Service - Option C: Tenant Hash Implementation
+ * 
+ * Provides cryptographically secure file URLs using:
+ * - 16-char tenant hash (derived from tenant UUID)
+ * - 32-char directory hash (cryptographically random)
+ * - 32-char file hash (cryptographically random)
+ * 
+ * Result: https://cdn.yourapp.com/{tenantHash}/media/{directoryHash}/{fileHash}.{ext}
+ * Security: 2^64 tenant combinations, 2^256 file combinations per tenant
+ */
+export class SecureMediaService {
+  private readonly cdnBaseUrl: string;
+  private readonly tenantHashCache = new Map<number, string>();
+
+  constructor(cdnBaseUrl?: string) {
+    this.cdnBaseUrl = cdnBaseUrl || process.env.CDN_BASE_URL || 'https://cdn.yourapp.com';
+  }
+
+  /**
+   * Generate tenant hash from tenant UUID
+   * Uses SHA-256 hash of tenant UUID, truncated to 16 characters
+   */
+  private generateTenantHash(tenantUuid: string): string {
+    return crypto
+      .createHash('sha256')
+      .update(tenantUuid)
+      .digest('hex')
+      .substring(0, 16);
+  }
+
+  /**
+   * Generate cryptographically secure random hashes for directory and file
+   */
+  private generateSecureHashes(): { directoryHash: string; fileHash: string } {
+    return {
+      directoryHash: crypto.randomBytes(16).toString('hex'), // 32 chars
+      fileHash: crypto.randomBytes(16).toString('hex'),      // 32 chars
+    };
+  }
+
+  /**
+   * Get or generate tenant hash (with caching for performance)
+   */
+  private async getTenantHash(tenantId: number): Promise<string> {
+    // Check cache first
+    if (this.tenantHashCache.has(tenantId)) {
+      return this.tenantHashCache.get(tenantId)!;
+    }
+
+    // Get tenant UUID from database
+    const tenant = await db.query.tenants.findFirst({
+      where: eq(tenants.id, tenantId),
+      columns: { uuid: true }
+    });
+
+    if (!tenant) {
+      throw new Error(`Tenant not found: ${tenantId}`);
+    }
+
+    // Generate and cache tenant hash
+    const tenantHash = this.generateTenantHash(tenant.uuid);
+    this.tenantHashCache.set(tenantId, tenantHash);
+
+    return tenantHash;
+  }
+
+  /**
+   * Generate secure URL for a media asset
+   */
+  async generateSecureUrl(mediaAsset: MediaAsset): Promise<string> {
+    const { directoryHash, fileHash, originalName, tenantId } = mediaAsset;
+    const extension = this.getFileExtension(originalName);
+    const tenantHash = await this.getTenantHash(tenantId);
+    
+    return `${this.cdnBaseUrl}/${tenantHash}/media/${directoryHash}/${fileHash}.${extension}`;
+  }
+
+  /**
+   * Generate secure file path for storage
+   */
+  async generateSecureStoragePath(mediaAsset: MediaAsset): Promise<string> {
+    const { directoryHash, fileHash, originalName, tenantId } = mediaAsset;
+    const extension = this.getFileExtension(originalName);
+    const tenantHash = await this.getTenantHash(tenantId);
+    
+    return `${tenantHash}/media/${directoryHash}/${fileHash}.${extension}`;
+  }
+
+  /**
+   * Create new media asset with secure hashes
+   */
+  async createSecureMediaAsset(
+    file: {
+      originalName: string;
+      mimeType: string;
+      size: number;
+      buffer: Buffer;
+    },
+    userId: bigint,
+    tenantId: number,
+    pictureType?: string,
+    additionalData?: Partial<MediaAsset>
+  ): Promise<MediaAsset & { secureUrl: string; storagePath: string }> {
+    
+    // Generate secure hashes
+    const tenantHash = await this.getTenantHash(tenantId);
+    const { directoryHash, fileHash } = this.generateSecureHashes();
+    const extension = this.getFileExtension(file.originalName);
+    
+    // Generate content hash for integrity
+    const contentHash = crypto
+      .createHash('sha256')
+      .update(file.buffer)
+      .digest('hex');
+
+    // Create unique filename with secure hash
+    const secureFileName = `${fileHash}.${extension}`;
+    const storagePath = `${tenantHash}/media/${directoryHash}/${secureFileName}`;
+    
+    // Insert into database
+    const newMediaAsset = await db.insert(mediaAssets).values({
+      tenantId,
+      userId,
+      
+      // File details
+      fileName: secureFileName,
+      originalName: file.originalName,
+      mimeType: file.mimeType,
+      fileSize: file.size,
+      
+      // Secure URL components
+      tenantHash,
+      directoryHash,
+      fileHash,
+      
+      // Storage details
+      s3BucketPath: storagePath,
+      cdnUrl: `${this.cdnBaseUrl}/${storagePath}`,
+      
+      // Content integrity
+      contentHash,
+      uploadedHash: contentHash,
+      
+      // Media type
+      mediaType: this.getMediaType(file.mimeType),
+      
+      // Picture type (optional)
+      pictureType: pictureType as any,
+      
+      // Additional data
+      ...additionalData,
+      
+      // Processing status
+      isProcessed: false,
+      processingStatus: 'pending',
+      
+      // Approval status
+      approvalStatus: 'pending',
+      
+      // Public/private status
+      isPublic: false, // Default to private
+      isSharedPublicly: false,
+      
+      // Access tracking
+      accessCount: 0,
+    }).returning();
+
+    const mediaAsset = newMediaAsset[0];
+    
+    return {
+      ...mediaAsset,
+      secureUrl: await this.generateSecureUrl(mediaAsset),
+      storagePath
+    };
+  }
+
+  /**
+   * Generate temporary access token for sensitive files
+   */
+  generateAccessToken(mediaAssetId: bigint, expiresInHours: number = 24): string {
+    const payload = {
+      mediaAssetId: mediaAssetId.toString(),
+      exp: Math.floor(Date.now() / 1000) + (expiresInHours * 3600),
+      iat: Math.floor(Date.now() / 1000)
+    };
+    
+    // Simple JWT-like token (use proper JWT library in production)
+    const tokenData = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const signature = crypto
+      .createHmac('sha256', process.env.MEDIA_TOKEN_SECRET || 'your-secret-key')
+      .update(tokenData)
+      .digest('base64url');
+    
+    return `${tokenData}.${signature}`;
+  }
+
+  /**
+   * Verify access token
+   */
+  verifyAccessToken(token: string): { mediaAssetId: bigint; valid: boolean } {
+    try {
+      const [tokenData, signature] = token.split('.');
+      
+      // Verify signature
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.MEDIA_TOKEN_SECRET || 'your-secret-key')
+        .update(tokenData)
+        .digest('base64url');
+      
+      if (signature !== expectedSignature) {
+        return { mediaAssetId: 0n, valid: false };
+      }
+      
+      // Decode payload
+      const payload = JSON.parse(Buffer.from(tokenData, 'base64url').toString());
+      
+      // Check expiration
+      if (payload.exp < Math.floor(Date.now() / 1000)) {
+        return { mediaAssetId: 0n, valid: false };
+      }
+      
+      return {
+        mediaAssetId: BigInt(payload.mediaAssetId),
+        valid: true
+      };
+      
+    } catch (error) {
+      return { mediaAssetId: 0n, valid: false };
+    }
+  }
+
+  /**
+   * Generate secure URL with access token (for sensitive files)
+   */
+  async generateSecureUrlWithToken(
+    mediaAsset: MediaAsset, 
+    expiresInHours: number = 24
+  ): Promise<string> {
+    const baseUrl = await this.generateSecureUrl(mediaAsset);
+    const accessToken = this.generateAccessToken(mediaAsset.id, expiresInHours);
+    
+    return `${baseUrl}?token=${accessToken}`;
+  }
+
+  /**
+   * Update access statistics
+   */
+  async recordAccess(mediaAssetId: bigint): Promise<void> {
+    try {
+      await db.update(mediaAssets)
+        .set({
+          accessCount: db.sql`${mediaAssets.accessCount} + 1`,
+          lastAccessedAt: new Date(),
+        })
+        .where(eq(mediaAssets.id, mediaAssetId));
+    } catch (error) {
+      // Log error but don't fail the request
+      console.error('Failed to record access:', error);
+    }
+  }
+
+  /**
+   * Create share link for public sharing
+   */
+  async createShareLink(
+    mediaAssetId: bigint, 
+    expiresInDays: number = 7
+  ): Promise<string> {
+    const shareToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+    
+    await db.update(mediaAssets)
+      .set({
+        isSharedPublicly: true,
+        shareAccessToken: shareToken,
+        shareExpiresAt: expiresAt,
+      })
+      .where(eq(mediaAssets.id, mediaAssetId));
+    
+    return `${this.cdnBaseUrl}/share/${shareToken}`;
+  }
+
+  /**
+   * Revoke share link
+   */
+  async revokeShareLink(mediaAssetId: bigint): Promise<void> {
+    await db.update(mediaAssets)
+      .set({
+        isSharedPublicly: false,
+        shareAccessToken: null,
+        shareExpiresAt: null,
+      })
+      .where(eq(mediaAssets.id, mediaAssetId));
+  }
+
+  /**
+   * Get media asset by share token
+   */
+  async getMediaAssetByShareToken(shareToken: string): Promise<MediaAsset | null> {
+    const mediaAsset = await db.query.mediaAssets.findFirst({
+      where: eq(mediaAssets.shareAccessToken, shareToken)
+    });
+    
+    if (!mediaAsset) return null;
+    
+    // Check if share link is expired
+    if (mediaAsset.shareExpiresAt && mediaAsset.shareExpiresAt < new Date()) {
+      return null;
+    }
+    
+    return mediaAsset;
+  }
+
+  /**
+   * Clear tenant hash cache (call when tenant data changes)
+   */
+  clearTenantCache(tenantId?: number): void {
+    if (tenantId) {
+      this.tenantHashCache.delete(tenantId);
+    } else {
+      this.tenantHashCache.clear();
+    }
+  }
+
+  // Helper methods
+  private getFileExtension(filename: string): string {
+    return filename.split('.').pop()?.toLowerCase() || 'bin';
+  }
+
+  private getMediaType(mimeType: string): 'photo' | 'video' | 'audio' | 'document' {
+    if (mimeType.startsWith('image/')) return 'photo';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    return 'document';
+  }
+}
+
+// Export singleton instance
+export const secureMediaService = new SecureMediaService(); 

@@ -1,0 +1,558 @@
+{
+  "actions": {
+    "addUser": "",
+    "configure": "",
+    "create": "",
+    "delete": "",
+    "download": "",
+    "export": "",
+    "feature": "",
+    "moderate": "",
+    "retry": "",
+    "review": "",
+    "success": {
+      "description": "",
+      "title": ""
+    },
+    "view": ""
+  },
+  "apiStatus": {
+    "title": ""
+  },
+  "basicInfo": {
+    "dateOfBirth": {
+      "adultModelDescription": "",
+      "childModelDescription": "",
+      "label": "",
+      "title": ""
+    },
+    "language": {
+      "description": "",
+      "primaryLanguage": "",
+      "primaryLanguagePlaceholder": "",
+      "title": ""
+    },
+    "location": {
+      "city": "",
+      "cityPlaceholder": "",
+      "country": "",
+      "countryPlaceholder": "",
+      "description": "",
+      "title": ""
+    },
+    "personalDetails": {
+      "description": "",
+      "firstName": "",
+      "firstNamePlaceholder": "",
+      "lastName": "",
+      "lastNamePlaceholder": "",
+      "phone": "",
+      "title": ""
+    },
+    "subtitle": "",
+    "title": ""
+  },
+  "bulkAction": {
+    "error": "",
+    "success": ""
+  },
+  "bulkActions": {
+    "actions": {
+      "activate": "",
+      "deactivate": "",
+      "delete": "",
+      "export": "",
+      "verify": ""
+    },
+    "confirmation": {
+      "message_one": "",
+      "message_other": ""
+    },
+    "error": {
+      "description": "",
+      "title": ""
+    },
+    "execute": "",
+    "executing": "",
+    "selectAction": "",
+    "selected_one": "",
+    "selected_other": "",
+    "success": {
+      "description_one": "",
+      "description_other": "",
+      "title": ""
+    }
+  },
+  "category": {
+    "all": "",
+    "placeholder": ""
+  },
+  "common": {
+    "actions": "",
+    "cancel": "",
+    "continue": "",
+    "create": "",
+    "errors": {
+      "loadingFailed": "",
+      "submitFailed": ""
+    },
+    "export": "",
+    "retry": "",
+    "save": "",
+    "saving": "",
+    "select": "",
+    "validation": {
+      "max": "",
+      "maxLength": "",
+      "min": "",
+      "minLength": "",
+      "pattern": "",
+      "required": ""
+    }
+  },
+  "dashboard": {
+    "title": "",
+    "welcome": ""
+  },
+  "empty": {
+    "description": "",
+    "title": ""
+  },
+  "errors": {
+    "authenticationRequired": "",
+    "createFailed": "",
+    "deleteFailed": "",
+    "fetchDetailFailed": "",
+    "fetchFailed": "",
+    "fetchStatsFailed": "",
+    "insufficientPermissions": "",
+    "internalServerError": "",
+    "invalidQueryParameters": "",
+    "invalidRequestData": "",
+    "updateFailed": ""
+  },
+  "filters": {
+    "title": false
+  },
+  "globalSearch": {
+    "filters": false
+  },
+  "integrations": {
+    "actions": {
+      "configure": false,
+      "remove": false
+    },
+    "addIntegration": false,
+    "categories": {
+      "analytics": false,
+      "external": false,
+      "workflow": false
+    },
+    "confirmDelete": false,
+    "createSuccess": false,
+    "details": {
+      "category": false,
+      "enabled": false,
+      "version": false,
+      "workflow": false
+    },
+    "dialogs": {
+      "create": {
+        "comingSoon": false,
+        "title": false
+      },
+      "edit": {
+        "comingSoon": false,
+        "title": false
+      }
+    },
+    "errors": {
+      "slugExists": false
+    },
+    "filters": {
+      "all": false
+    },
+    "form": {
+      "category": false,
+      "description": false,
+      "name": false
+    },
+    "listSuccess": false,
+    "overview": {
+      "active": false,
+      "availableIntegrations": false,
+      "categories": false,
+      "currentlyEnabled": false,
+      "differentTypes": false,
+      "temporalReady": false,
+      "totalIntegrations": false,
+      "workflowEnabled": false
+    },
+    "pagination": {
+      "next": false,
+      "previous": false,
+      "showing": false
+    },
+    "recentActivity": {
+      "events": {
+        "configured": false,
+        "configuredTime": false,
+        "installed": false,
+        "installedTime": false,
+        "updated": false,
+        "updatedTime": false
+      },
+      "title": false
+    },
+    "search": {
+      "placeholder": false
+    },
+    "states": {
+      "deleting": false,
+      "error": false,
+      "noDescription": false,
+      "noIntegrations": false,
+      "noIntegrationsDescription": false,
+      "noResults": false,
+      "noResultsDescription": false,
+      "unknownError": false
+    },
+    "statistics": {
+      "avgResponseTime": false,
+      "categoryDistribution": false,
+      "noRecentErrors": false,
+      "recentErrors": false,
+      "statusDistribution": false,
+      "successRate": false,
+      "systemHealth": false,
+      "totalRequests": false
+    },
+    "status": {
+      "active": false,
+      "inactive": false
+    },
+    "subtitle": false,
+    "tabs": {
+      "integrations": false,
+      "overview": false,
+      "statistics": false
+    },
+    "title": false
+  },
+  "list": {
+    "empty": false,
+    "error": false,
+    "title": false
+  },
+  "messages": {
+    "error": {
+      "actionFailed": false
+    },
+    "noData": false
+  },
+  "modelApplication": {
+    "availability": {
+      "availableEvenings": false,
+      "availableWeekends": false,
+      "description": false,
+      "title": false,
+      "willingToTravel": false
+    },
+    "careerGoals": {
+      "label": false,
+      "placeholder": false,
+      "previousWork": false,
+      "previousWorkPlaceholder": false,
+      "title": false
+    },
+    "category": {
+      "description": false,
+      "label": false,
+      "placeholder": false,
+      "title": false
+    },
+    "onlyForModels": false,
+    "physicalAttributes": {
+      "description": false,
+      "eyeColor": false,
+      "eyeColorPlaceholder": false,
+      "hairColor": false,
+      "hairColorPlaceholder": false,
+      "height": false,
+      "title": false,
+      "weight": false
+    },
+    "subtitle": false,
+    "title": false
+  },
+  "moduleManager": {
+    "buttons": {
+      "createModule": false
+    },
+    "createDialog": {
+      "descriptionLabel": false,
+      "nameLabel": false,
+      "submitButton": false,
+      "title": false,
+      "typeLabel": false
+    },
+    "filters": {
+      "allStatuses": false,
+      "allTypes": false,
+      "searchPlaceholder": false,
+      "status": false,
+      "title": false,
+      "type": false
+    },
+    "title": false
+  },
+  "navigation": {
+    "dashboard": false,
+    "integrations": false,
+    "settings": false
+  },
+  "page": {
+    "description": false,
+    "title": false
+  },
+  "permissions": {
+    "accessDenied": false,
+    "insufficientPermissions": false
+  },
+  "professionalInfo": {
+    "experienceLevel": {
+      "description": false,
+      "label": false,
+      "placeholder": false,
+      "title": false
+    },
+    "specialties": {
+      "description": false,
+      "label": false,
+      "title": false
+    },
+    "subtitle": false,
+    "title": false
+  },
+  "profile": {
+    "buttons": {
+      "exitWizard": false,
+      "setupWizard": false
+    },
+    "help": {
+      "buttons": {
+        "getTips": false,
+        "learnMore": false,
+        "viewGuide": false
+      },
+      "optimization": {
+        "description": false,
+        "title": false
+      },
+      "portfolio": {
+        "description": false,
+        "title": false
+      },
+      "title": false,
+      "verification": {
+        "description": "",
+        "title": ""
+      }
+    },
+    "metadata": {
+      "description": false
+    },
+    "stats": {
+      "available": false,
+      "bookings": false,
+      "portfolio": false,
+      "profile": false,
+      "verificationSteps": false,
+      "verified": false
+    },
+    "subtitle": false,
+    "title": false
+  },
+  "quickActions": {
+    "mediaReview": {
+      "description": false,
+      "title": false
+    },
+    "reviewApplications": {
+      "description": false,
+      "title": false
+    },
+    "userManagement": {
+      "description": false,
+      "title": false
+    }
+  },
+  "search": {
+    "placeholder": ""
+  },
+  "searchPlaceholder": false,
+  "sections": {
+    "quickActions": false,
+    "recentActivity": false
+  },
+  "selected": {
+    "items": false
+  },
+  "stats": {
+    "activeJobs": false,
+    "activeUsers": false,
+    "approvedToday": false,
+    "error": false,
+    "jobsPosted": false,
+    "monthlyRevenue": false,
+    "newToday": false,
+    "onboardingUsers": false,
+    "pendingApplications": false,
+    "pendingUsers": false,
+    "revenue": false,
+    "totalUsers": false
+  },
+  "status": {
+    "active": "",
+    "inactive": "",
+    "onboarding": false,
+    "pending": ""
+  },
+  "tenants": {
+    "actions": {
+      "createNew": false,
+      "editSettings": false,
+      "exportAll": false,
+      "exportData": false,
+      "manageUsers": false,
+      "suspend": false,
+      "viewDetails": false
+    },
+    "description": false,
+    "empty": {
+      "title": false
+    },
+    "filters": {
+      "allCurrencies": false,
+      "allStatuses": false,
+      "minUsers": false,
+      "searchByDomain": false,
+      "searchByName": false
+    },
+    "stats": {
+      "active": false,
+      "activeDescription": false,
+      "inactive": false,
+      "inactiveDescription": false,
+      "total": false,
+      "totalDescription": false,
+      "totalUsers": false,
+      "totalUsersDescription": false
+    },
+    "status": {
+      "active": false,
+      "inactive": false
+    },
+    "table": {
+      "createdAt": false,
+      "currency": false,
+      "description": false,
+      "domain": false,
+      "name": false,
+      "status": false,
+      "title": false,
+      "updatedAt": false,
+      "userCount": false
+    },
+    "title": false
+  },
+  "time": {
+    "hoursAgo": false,
+    "justNow": false,
+    "never": false,
+    "yesterday": false
+  },
+  "toast": {
+    "createError": {
+      "title": false
+    },
+    "createSuccess": {
+      "description": false,
+      "title": false
+    },
+    "deleteError": {
+      "title": false
+    },
+    "deleteSuccess": {
+      "description": false,
+      "title": false
+    },
+    "updateError": {
+      "title": false
+    },
+    "updateSuccess": {
+      "description": false,
+      "title": false
+    }
+  },
+  "update": {
+    "error": false,
+    "success": false,
+    "successDescription": false
+  },
+  "upload": {
+    "button": false,
+    "close": false,
+    "firstPhoto": false,
+    "success": false,
+    "successDescription": false,
+    "title": false
+  },
+  "uploads": {
+    "browse": false,
+    "dropHere": false,
+    "selectFiles": false
+  },
+  "userManagementFilters": {
+    "clearAll": "Clear All Filters",
+    "country": {
+      "label": "Country",
+      "options": {
+        "all": "All Countries",
+        "at": "Austria",
+        "ca": "Canada",
+        "de": "Germany",
+        "fr": "France",
+        "gb": "United Kingdom",
+        "us": "United States"
+      },
+      "placeholder": "Select country"
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Search users..."
+    },
+    "status": {
+      "label": "Status",
+      "options": {
+        "active": "Active",
+        "all": "All Statuses",
+        "inactive": "Inactive",
+        "onboarding": "Onboarding",
+        "pending": "Pending"
+      },
+      "placeholder": "Select status"
+    },
+    "title": "Filter Users",
+    "userType": {
+      "label": "User Type",
+      "options": {
+        "agency": "Agency",
+        "all": "All Types",
+        "client": "Client",
+        "model": "Model"
+      },
+      "placeholder": "Select user type"
+    }
+  }
+}

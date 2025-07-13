@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Talent Dashboard - Marcus Williams</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 280px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
+        .main-content { margin-left: 280px; padding: 20px; }
+        .profile-hero { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem 0;
+            margin: -20px -20px 30px -20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+        }
+        .voice-demo {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        .voice-demo:hover {
+            border-color: #1e3c72;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .audio-player {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 15px;
+        }
+        .waveform {
+            height: 60px;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .waveform::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30%;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+        }
+        .service-package { 
+            border: 2px solid #e9ecef; 
+            border-radius: 15px; 
+            padding: 25px; 
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .service-package:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .service-package.featured { 
+            border-color: #1e3c72; 
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f2ff 100%);
+        }
+        .equipment-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .equipment-item:hover {
+            border-color: #1e3c72;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .voice-range {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .range-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0 15px;
+            position: relative;
+        }
+        .range-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 4px;
+        }
+        @media (max-width: 768px) {
+            .sidebar { 
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Profile Hero Section -->
+            <div class="profile-hero">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face" 
+                                 class="rounded-circle profile-image mb-3" alt="Marcus Williams">
+                            <div class="text-center">
+                                <span class="badge bg-success">Available</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 class="fw-bold mb-2">Marcus Williams</h1>
+                            <p class="fs-5 mb-3">Professional Voice Actor & Narrator</p>
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark me-2">Commercial</span>
+                                <span class="badge bg-light text-dark me-2">Narration</span>
+                                <span class="badge bg-light text-dark me-2">Character</span>
+                                <span class="badge bg-light text-dark me-2">E-Learning</span>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">15+</h4>
+                                        <small>Years Experience</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">2,500+</h4>
+                                        <small>Projects</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">4.9</h4>
+                                        <small>Rating</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">$150</h4>
+                                        <small>Hourly Rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <button class="btn btn-light btn-lg mb-2 w-100">
+                                <i class="fas fa-microphone me-2"></i>Book Session
+                            </button>
+                            <button class="btn btn-outline-light btn-lg w-100">
+                                <i class="fas fa-envelope me-2"></i>Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabbed Content -->
+            <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="demos-tab" data-bs-toggle="tab" data-bs-target="#demos" type="button" role="tab">
+                        <i class="fas fa-play me-2"></i>Voice Demos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+                        <i class="fas fa-microphone me-2"></i>Services
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="voice-range-tab" data-bs-toggle="tab" data-bs-target="#voice-range" type="button" role="tab">
+                        <i class="fas fa-chart-bar me-2"></i>Voice Range
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="studio-tab" data-bs-toggle="tab" data-bs-target="#studio" type="button" role="tab">
+                        <i class="fas fa-cogs me-2"></i>Home Studio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">
+                        <i class="fas fa-briefcase me-2"></i>Projects
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="characters-tab" data-bs-toggle="tab" data-bs-target="#characters" type="button" role="tab">
+                        <i class="fas fa-masks me-2"></i>Characters
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="languages-tab" data-bs-toggle="tab" data-bs-target="#languages" type="button" role="tab">
+                        <i class="fas fa-globe me-2"></i>Languages
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">
+                        <i class="fas fa-calendar me-2"></i>Bookings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                        <i class="fas fa-star me-2"></i>Reviews
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="earnings-tab" data-bs-toggle="tab" data-bs-target="#earnings" type="button" role="tab">
+                        <i class="fas fa-dollar-sign me-2"></i>Earnings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">
+                        <i class="fas fa-comments me-2"></i>Messages
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="dashboardTabsContent">
+                <!-- Voice Demos Tab -->
+                <div class="tab-pane fade show active" id="demos" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>Voice Demo Reel</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Upload New Demo
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="voice-demo">
+                                <h5 class="mb-3">Commercial Demo</h5>
+                                <div class="audio-player">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-primary btn-sm me-3">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <div class="flex-grow-1">
+                                            <div class="waveform"></div>
+                                        </div>
+                                        <span class="small text-muted ms-3">2:15</span>
+                                    </div>
+                                    <small class="text-muted">Energetic commercial voiceover showcasing versatility</small>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="badge bg-primary me-2">Commercial</span>
+                                    <span class="badge bg-secondary me-2">Energetic</span>
+                                    <span class="badge bg-success">Popular</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="voice-demo">
+                                <h5 class="mb-3">Narration Demo</h5>
+                                <div class="audio-player">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-primary btn-sm me-3">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <div class="flex-grow-1">
+                                            <div class="waveform"></div>
+                                        </div>
+                                        <span class="small text-muted ms-3">3:45</span>
+                                    </div>
+                                    <small class="text-muted">Professional documentary narration with warm, authoritative tone</small>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="badge bg-info me-2">Narration</span>
+                                    <span class="badge bg-secondary me-2">Authoritative</span>
+                                    <span class="badge bg-warning">Featured</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="voice-demo">
+                                <h5 class="mb-3">Character Voices</h5>
+                                <div class="audio-player">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-primary btn-sm me-3">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <div class="flex-grow-1">
+                                            <div class="waveform"></div>
+                                        </div>
+                                        <span class="small text-muted ms-3">4:20</span>
+                                    </div>
+                                    <small class="text-muted">Range of character voices for animation and gaming</small>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="badge bg-danger me-2">Character</span>
+                                    <span class="badge bg-secondary me-2">Animation</span>
+                                    <span class="badge bg-dark">Gaming</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="voice-demo">
+                                <h5 class="mb-3">E-Learning Demo</h5>
+                                <div class="audio-player">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <button class="btn btn-primary btn-sm me-3">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <div class="flex-grow-1">
+                                            <div class="waveform"></div>
+                                        </div>
+                                        <span class="small text-muted ms-3">2:55</span>
+                                    </div>
+                                    <small class="text-muted">Clear, engaging educational content delivery</small>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="badge bg-success me-2">E-Learning</span>
+                                    <span class="badge bg-secondary me-2">Educational</span>
+                                    <span class="badge bg-info">Corporate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div class="tab-pane fade" id="services" role="tabpanel">
+                    <h3 class="mb-4">Voice Over Services</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="service-package featured">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="fw-bold">Commercial Voiceover</h5>
+                                    <span class="badge bg-warning">Most Popular</span>
+                                </div>
+                                <p class="text-muted mb-3">Professional commercial voiceover for TV, radio, and digital ads</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Script consultation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional recording</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Multiple takes included</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Same-day delivery</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Commercial usage rights</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold text-primary">$300</span>
+                                        <small class="text-muted">/30 seconds</small>
+                                    </div>
+                                    <button class="btn btn-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">Narration</h5>
+                                <p class="text-muted mb-3">Documentary, audiobook, and corporate narration</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Professional narration</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Chapter marking</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Pronunciation research</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Multiple formats</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$150</span>
+                                        <small class="text-muted">/hour</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">Character Voice Acting</h5>
+                                <p class="text-muted mb-3">Animation, gaming, and character voice work</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Character development</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Multiple character voices</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Direction following</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Emotional range</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$200</span>
+                                        <small class="text-muted">/hour</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="service-package">
+                                <h5 class="fw-bold mb-3">E-Learning & Training</h5>
+                                <p class="text-muted mb-3">Educational content and corporate training modules</p>
+                                <ul class="list-unstyled mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i>Clear articulation</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Engaging delivery</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Technical accuracy</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Module organization</li>
+                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="h4 fw-bold">$125</span>
+                                        <small class="text-muted">/hour</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Range Tab -->
+                <div class="tab-pane fade" id="voice-range" role="tabpanel">
+                    <h3 class="mb-4">Voice Characteristics & Range</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Vocal Range</h5>
+                            <div class="voice-range">
+                                <span class="small">Bass</span>
+                                <div class="range-bar">
+                                    <div class="range-fill" style="width: 85%;"></div>
+                                </div>
+                                <span class="small">Baritone</span>
+                            </div>
+                            <div class="voice-range">
+                                <span class="small">Low</span>
+                                <div class="range-bar">
+                                    <div class="range-fill" style="width: 75%;"></div>
+                                </div>
+                                <span class="small">High</span>
+                            </div>
+                            
+                            <h5 class="mb-3 mt-4">Delivery Styles</h5>
+                            <div class="mb-2">
+                                <span class="badge bg-primary me-2">Conversational</span>
+                                <span class="badge bg-secondary me-2">Authoritative</span>
+                                <span class="badge bg-success me-2">Warm</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge bg-info me-2">Energetic</span>
+                                <span class="badge bg-warning me-2">Narrative</span>
+                                <span class="badge bg-danger me-2">Character</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Accents & Dialects</h5>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>General American</span>
+                                    <span class="badge bg-success">Native</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>British RP</span>
+                                    <span class="badge bg-primary">Excellent</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Southern American</span>
+                                    <span class="badge bg-primary">Excellent</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>New York</span>
+                                    <span class="badge bg-info">Good</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Irish</span>
+                                    <span class="badge bg-info">Good</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Studio Tab -->
+                <div class="tab-pane fade" id="studio" role="tabpanel">
+                    <h3 class="mb-4">Professional Home Studio</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="text-muted mb-3">Recording Equipment</h5>
+                            <div class="equipment-item">
+                                <i class="fas fa-microphone fa-2x text-primary mb-2"></i>
+                                <h6>Neumann U87 Ai</h6>
+                                <small>Studio Condenser Microphone</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-headphones fa-2x text-info mb-2"></i>
+                                <h6>Audio-Technica ATH-M50x</h6>
+                                <small>Professional Monitor Headphones</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-sliders-h fa-2x text-success mb-2"></i>
+                                <h6>Focusrite Scarlett 2i2</h6>
+                                <small>USB Audio Interface</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-muted mb-3">Software & Processing</h5>
+                            <div class="equipment-item">
+                                <i class="fas fa-wave-square fa-2x text-warning mb-2"></i>
+                                <h6>Pro Tools Ultimate</h6>
+                                <small>Professional DAW Software</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-equalizer fa-2x text-danger mb-2"></i>
+                                <h6>iZotope RX Suite</h6>
+                                <small>Audio Repair & Enhancement</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-compact-disc fa-2x text-dark mb-2"></i>
+                                <h6>Adobe Audition</h6>
+                                <small>Audio Editing & Mastering</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-muted mb-3">Studio Environment</h5>
+                            <div class="equipment-item">
+                                <i class="fas fa-home fa-2x text-success mb-2"></i>
+                                <h6>Acoustic Treatment</h6>
+                                <small>Professional sound dampening</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-volume-mute fa-2x text-secondary mb-2"></i>
+                                <h6>Isolation Booth</h6>
+                                <small>Dedicated recording space</small>
+                            </div>
+                            <div class="equipment-item">
+                                <i class="fas fa-wifi fa-2x text-info mb-2"></i>
+                                <h6>High-Speed Internet</h6>
+                                <small>Live session capability</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div class="tab-pane fade" id="projects" role="tabpanel">
+                    <h3 class="mb-4">Recent Projects</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <h6 class="card-title">Nike Commercial Campaign</h6>
+                                        <span class="badge bg-success">Completed</span>
+                                    </div>
+                                    <p class="card-text small">National TV commercial for Nike's new running shoe line</p>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Commercial • 30 seconds</small>
+                                        <strong class="text-success">$1,200</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <h6 class="card-title">Documentary Narration</h6>
+                                        <span class="badge bg-primary">In Progress</span>
+                                    </div>
+                                    <p class="card-text small">Nature documentary series for Discovery Channel</p>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Narration • 6 episodes</small>
+                                        <strong class="text-primary">$4,500</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Characters Tab -->
+                <div class="tab-pane fade" id="characters" role="tabpanel">
+                    <h3 class="mb-4">Character Voice Portfolio</h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-ninja fa-3x text-primary mb-3"></i>
+                                    <h6>Wise Mentor</h6>
+                                    <small class="text-muted">Deep, authoritative voice for gaming</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-robot fa-3x text-info mb-3"></i>
+                                    <h6>Robot/AI Character</h6>
+                                    <small class="text-muted">Synthetic voice modulation</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-crown fa-3x text-warning mb-3"></i>
+                                    <h6>Royal Character</h6>
+                                    <small class="text-muted">Regal, commanding presence</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Languages Tab -->
+                <div class="tab-pane fade" id="languages" role="tabpanel">
+                    <h3 class="mb-4">Language Capabilities</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span><i class="fas fa-flag-usa me-2"></i>English</span>
+                                    <span class="badge bg-success">Native</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span><i class="fas fa-flag me-2"></i>Spanish</span>
+                                    <span class="badge bg-primary">Fluent</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span><i class="fas fa-flag me-2"></i>French</span>
+                                    <span class="badge bg-info">Conversational</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tabs follow similar patterns -->
+                <div class="tab-pane fade" id="bookings" role="tabpanel">
+                    <h3 class="mb-4">Upcoming Bookings</h3>
+                    <p class="text-muted">Schedule and booking management system.</p>
+                </div>
+
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <h3 class="mb-4">Client Reviews</h3>
+                    <p class="text-muted">Client testimonials and ratings.</p>
+                </div>
+
+                <div class="tab-pane fade" id="earnings" role="tabpanel">
+                    <h3 class="mb-4">Earnings Dashboard</h3>
+                    <p class="text-muted">Financial overview and analytics.</p>
+                </div>
+
+                <div class="tab-pane fade" id="messages" role="tabpanel">
+                    <h3 class="mb-4">Messages</h3>
+                    <p class="text-muted">Client communication center.</p>
+                </div>
+
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <h3 class="mb-4">Account Settings</h3>
+                    <p class="text-muted">Profile and preference management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script src="navigation.js"></script>
+    <script>
+        // Render Sidebar for Voice Talent
+        document.getElementById('sidebar').innerHTML = createSidebar('Voice Talent', [
+            { label: 'Voice Demos', icon: 'fas fa-play', href: '#demos', active: true },
+            { label: 'Services', icon: 'fas fa-microphone', href: '#services' },
+            { label: 'Voice Range', icon: 'fas fa-chart-bar', href: '#voice-range' },
+            { label: 'Home Studio', icon: 'fas fa-cogs', href: '#studio' },
+            { label: 'Projects', icon: 'fas fa-briefcase', href: '#projects' },
+            { label: 'Characters', icon: 'fas fa-masks', href: '#characters' },
+            { label: 'Languages', icon: 'fas fa-globe', href: '#languages' },
+            { label: 'Bookings', icon: 'fas fa-calendar', href: '#bookings' },
+            { label: 'Reviews', icon: 'fas fa-star', href: '#reviews' },
+            { label: 'Earnings', icon: 'fas fa-dollar-sign', href: '#earnings' },
+            { label: 'Messages', icon: 'fas fa-comments', href: '#messages' },
+            { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+        ]);
+
+        // Audio player simulation
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            if (button.querySelector('.fa-play')) {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('fa-play')) {
+                        icon.classList.remove('fa-play');
+                        icon.classList.add('fa-pause');
+                        
+                        // Simulate playing
+                        setTimeout(() => {
+                            icon.classList.remove('fa-pause');
+                            icon.classList.add('fa-play');
+                        }, 3000);
+                    }
+                });
+            }
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Add mobile hamburger button
+        if (window.innerWidth <= 768) {
+            const hamburger = document.createElement('button');
+            hamburger.className = 'btn btn-primary position-fixed';
+            hamburger.style = 'top: 20px; left: 20px; z-index: 1001;';
+            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            hamburger.onclick = toggleSidebar;
+            document.body.appendChild(hamburger);
+        }
+    </script>
+</body>
+</html>

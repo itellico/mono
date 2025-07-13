@@ -1,0 +1,108 @@
+# NestJS Development Docker Compose
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.nestjs.yml up -d
+
+version: '3.8'
+
+services:
+  # NestJS API with Fastify adapter
+  api-nest:
+    build:
+      context: ./apps/api-nest
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/api-nest:/app
+      - /app/node_modules
+      - /app/dist
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://developer:developer@postgres:5432/mono
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://developer:developer@rabbitmq:5672
+      - JWT_SECRET=dev-jwt-secret-for-development-only
+      - COOKIE_SECRET=dev-cookie-secret-for-development-only
+      - LOG_LEVEL=debug
+      - METRICS_ENABLED=true
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - mono-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/public/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Override web service to point to NestJS API
+  web:
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-nest:3001
+
+  # RabbitMQ (if not already defined in main compose)
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=developer
+      - RABBITMQ_DEFAULT_PASS=developer
+      - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - ./docker-data/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - mono-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker-data/monitoring/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - mono-network
+    restart: unless-stopped
+
+  # Grafana for metrics visualization (if not already defined)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "5005:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - ./docker-data/monitoring/grafana/data:/var/lib/grafana
+      - ./docker/configs/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./docker/configs/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - mono-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+networks:
+  mono-network:
+    driver: bridge

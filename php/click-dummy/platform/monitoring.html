@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitoring - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-healthy { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-critical { background-color: #dc3545; }
+        .metric-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .service-card { transition: all 0.3s; }
+        .service-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 mb-0">System Monitoring</h1>
+                        <p class="text-muted">Real-time platform health and performance metrics</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-success">
+                            <span class="status-indicator status-healthy"></span>
+                            All Systems Operational
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="location.reload()">
+                            <i class="fas fa-sync-alt me-2"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- System Health Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-server fa-2x mb-3"></i>
+                                <h3>99.98%</h3>
+                                <p class="mb-0">Uptime</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tachometer-alt fa-2x mb-3"></i>
+                                <h3>245ms</h3>
+                                <p class="mb-0">Avg Response</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-plug fa-2x mb-3"></i>
+                                <h3>3.2M</h3>
+                                <p class="mb-0">API Requests</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                                <h3>2</h3>
+                                <p class="mb-0">Active Alerts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Status -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">API Gateway</h6>
+                                <span class="status-indicator status-healthy"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>99.99%</strong><br>
+                                        <small class="text-muted">Uptime</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>189ms</strong><br>
+                                        <small class="text-muted">Response</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Database Cluster</h6>
+                                <span class="status-indicator status-healthy"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>99.97%</strong><br>
+                                        <small class="text-muted">Uptime</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>23ms</strong><br>
+                                        <small class="text-muted">Query Time</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Redis Cache</h6>
+                                <span class="status-indicator status-warning"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>99.85%</strong><br>
+                                        <small class="text-muted">Hit Rate</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>1.2ms</strong><br>
+                                        <small class="text-muted">Response</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">File Storage</h6>
+                                <span class="status-indicator status-healthy"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>2.4TB</strong><br>
+                                        <small class="text-muted">Used</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>67%</strong><br>
+                                        <small class="text-muted">Capacity</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Email Service</h6>
+                                <span class="status-indicator status-healthy"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>12,456</strong><br>
+                                        <small class="text-muted">Sent Today</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>98.9%</strong><br>
+                                        <small class="text-muted">Delivery</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card service-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">CDN Network</h6>
+                                <span class="status-indicator status-healthy"></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <strong>156GB</strong><br>
+                                        <small class="text-muted">Bandwidth</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>94%</strong><br>
+                                        <small class="text-muted">Cache Hit</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Charts -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">API Response Times</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="responseChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">System Load</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="loadChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Alerts -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Active Alerts</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-warning d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <strong>High Redis Memory Usage</strong><br>
+                                        <small>Redis cluster memory usage is at 89%. Consider scaling up.</small>
+                                    </div>
+                                    <small class="text-muted">2 hours ago</small>
+                                </div>
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <i class="fas fa-info-circle me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <strong>API Rate Limit Reached</strong><br>
+                                        <small>Go Models NYC tenant hit API rate limits 3 times in the last hour.</small>
+                                    </div>
+                                    <small class="text-muted">45 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-chart-line me-2"></i> View Grafana
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-database me-2"></i> Database Health
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-server me-2"></i> Server Logs
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-bell me-2"></i> Alert Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tenant Performance -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Tenant Performance Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="tenant-performance-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', active: true },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'System Monitoring' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Response Times Chart
+            const ctx1 = document.getElementById('responseChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'API Response Time (ms)',
+                        data: [180, 220, 245, 289, 267, 234],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'ms';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // System Load Chart
+            const ctx2 = document.getElementById('loadChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'CPU Usage (%)',
+                        data: [45, 52, 68, 78, 72, 58],
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.1
+                    }, {
+                        label: 'Memory Usage (%)',
+                        data: [60, 62, 71, 83, 79, 68],
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Tenant Performance Table
+            const performanceHeaders = ['Tenant', 'Status', 'Response Time', 'Error Rate', 'API Calls', 'Uptime'];
+            const performanceRows = [
+                ['Go Models NYC', '<span class="status-indicator status-healthy"></span> Healthy', '198ms', '0.02%', '145K', '99.99%'],
+                ['Elite Fitness Hub', '<span class="status-indicator status-healthy"></span> Healthy', '234ms', '0.01%', '89K', '99.97%'],
+                ['Voice Pros Network', '<span class="status-indicator status-warning"></span> Warning', '345ms', '0.15%', '67K', '99.85%'],
+                ['Kids Talent Hub', '<span class="status-indicator status-healthy"></span> Healthy', '187ms', '0.03%', '34K', '99.98%'],
+                ['Pet Stars Pro', '<span class="status-indicator status-healthy"></span> Healthy', '156ms', '0.01%', '12K', '100%'],
+                ['Creative Lens Studio', '<span class="status-indicator status-healthy"></span> Healthy', '145ms', '0.00%', '3K', '100%']
+            ];
+            document.getElementById('tenant-performance-table').innerHTML = createDataTable('', performanceHeaders, performanceRows);
+        });
+    </script>
+</body>
+</html>

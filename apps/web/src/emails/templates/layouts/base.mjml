@@ -1,0 +1,96 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ subject }}</mj-title>
+    <mj-preview>{{ preheader or "mono Platform Email" }}</mj-preview>
+    
+    <!-- Responsive Design -->
+    <mj-attributes>
+      <mj-all font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" />
+      <mj-text font-size="16px" color="#333333" line-height="1.6" />
+      <mj-section background-color="#ffffff" />
+    </mj-attributes>
+    
+    <!-- Platform Styles -->
+    <mj-style inline="inline">
+      .header-logo { max-width: 180px; }
+      .footer-text { font-size: 12px; color: #666666; }
+      .button-primary { 
+        background-color: {{ tenantBranding.primaryColor or '#4F46E5' }}; 
+        border-radius: 6px; 
+      }
+      .divider { border-top: 1px solid #e5e5e5; margin: 20px 0; }
+    </mj-style>
+    
+    {% if tenantBranding.customCss %}
+    <mj-style inline="inline">
+      {{ tenantBranding.customCss | safe }}
+    </mj-style>
+    {% endif %}
+  </mj-head>
+  
+  <mj-body background-color="#f4f4f4">
+    
+    <!-- Header Section -->
+    <mj-section background-color="#ffffff" padding="20px 0">
+      <mj-column>
+        {% if tenantBranding.logoUrl %}
+        <mj-image 
+          src="{{ tenantBranding.logoUrl }}" 
+          alt="{{ tenantName or platformName }}"
+          css-class="header-logo"
+          align="center" 
+        />
+        {% else %}
+        <mj-text align="center" font-size="24px" font-weight="bold" color="{{ tenantBranding.primaryColor or '#4F46E5' }}">
+          {{ tenantName or platformName }}
+        </mj-text>
+        {% endif %}
+      </mj-column>
+    </mj-section>
+    
+    <!-- Main Content -->
+    <mj-section background-color="#ffffff" padding="40px 20px">
+      <mj-column>
+        {% block content %}
+        <mj-text>
+          <p>Default content - override this block in your template</p>
+        </mj-text>
+        {% endblock %}
+      </mj-column>
+    </mj-section>
+    
+    <!-- Footer Section -->
+    <mj-section background-color="#f8f9fa" padding="30px 20px">
+      <mj-column>
+        <mj-divider border-color="#e5e5e5" />
+        
+        <mj-text css-class="footer-text" align="center">
+          <p>
+            This email was sent by {{ tenantName or platformName }}<br>
+            {% if tenantDomain %}
+            <a href="{{ tenantDomain }}" style="color: #666666;">Visit our platform</a>
+            {% else %}
+            <a href="{{ platformUrl }}" style="color: #666666;">Visit {{ platformName }}</a>
+            {% endif %}
+          </p>
+        </mj-text>
+        
+        <mj-text css-class="footer-text" align="center">
+          <p>
+            Need help? Contact us at 
+            <a href="mailto:{{ supportEmail }}" style="color: {{ tenantBranding.primaryColor or '#4F46E5' }};">
+              {{ supportEmail }}
+            </a>
+          </p>
+        </mj-text>
+        
+        <mj-text css-class="footer-text" align="center">
+          <p>
+            © {{ currentYear }} {{ tenantName or platformName }}. All rights reserved.
+          </p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+  </mj-body>
+</mjml>

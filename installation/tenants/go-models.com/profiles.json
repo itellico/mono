@@ -1,0 +1,847 @@
+{
+  "profiles": [
+    {
+      "comment": "========== ELITE MODEL MANAGEMENT VIENNA - AGENCY PROFILES ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "elite_director",
+      "profileType": "agency",
+      "displayName": "Elite Model Management Vienna",
+      "bio": "Premier modeling agency representing top talent in Austria and Europe. Established 2020, specializing in fashion, commercial, and runway models with international market reach.",
+      "profileData": {
+        "agencyInfo": {
+          "establishedYear": 2020,
+          "licenseNumber": "AT-MODEL-2020-0123",
+          "specialties": ["High Fashion", "Commercial", "Runway", "Editorial"],
+          "markets": ["Vienna", "Paris", "Milan", "London", "New York"],
+          "clientList": ["Chanel", "Dior", "Versace", "H&M", "Zara"],
+          "talentCount": 85,
+          "yearsExperience": 4
+        },
+        "businessInfo": {
+          "address": "Kärntner Ring 12, 1010 Vienna, Austria",
+          "phone": "+43 1 234 5678",
+          "email": "info@elite-vienna.com",
+          "website": "https://elite-vienna.com",
+          "socialMedia": {
+            "instagram": "@eliteviennamodels",
+            "facebook": "EliteViennaModels"
+          }
+        },
+        "services": [
+          "Model Representation",
+          "Career Development",
+          "Portfolio Building", 
+          "International Placement",
+          "Contract Negotiation",
+          "Brand Partnerships"
+        ],
+        "commissionRates": {
+          "domestic": 20,
+          "international": 25,
+          "newFaces": 15
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/elite-vienna/cover.jpg",
+        "galleryImages": [
+          "/profiles/elite-vienna/office-exterior.jpg",
+          "/profiles/elite-vienna/office-interior.jpg",
+          "/profiles/elite-vienna/team-photo.jpg",
+          "/profiles/elite-vienna/runway-show.jpg"
+        ]
+      },
+      "tags": ["agency", "fashion", "commercial", "runway", "international"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true
+    },
+    {
+      "comment": "========== AGENCY TALENT ROSTER - 5 MODELS ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "model_sarah_klein",
+      "profileType": "model",
+      "displayName": "Sarah Klein",
+      "bio": "Professional fashion model with 6 years experience. Specialized in high fashion and editorial work. Featured in Vogue, Elle, and Harper's Bazaar.",
+      "profileData": {
+        "modelInfo": {
+          "category": "fashion-model",
+          "experience": "6 years",
+          "height": {
+            "cm": 178,
+            "feet": "5'10\""
+          },
+          "measurements": {
+            "bust": "86cm",
+            "waist": "61cm", 
+            "hips": "89cm"
+          },
+          "sizes": {
+            "dress": {
+              "EU": "36",
+              "US": "4", 
+              "UK": "8"
+            },
+            "shoes": {
+              "EU": "39",
+              "US": "8.5",
+              "UK": "6"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Blonde",
+            "eyeColor": "Blue",
+            "skinTone": "Fair"
+          }
+        },
+        "personalInfo": {
+          "age": 24,
+          "nationality": "Austrian",
+          "languages": ["German", "English", "French"],
+          "location": "Vienna, Austria"
+        },
+        "careerHighlights": [
+          "Vogue Austria Cover (2023)",
+          "Paris Fashion Week (2022, 2023)",
+          "Chanel Campaign (2023)",
+          "Milan Fashion Week (2022)"
+        ],
+        "skills": ["Runway", "Editorial", "Commercial", "Posing"]
+      },
+      "portfolio": {
+        "coverImage": "/profiles/sarah-klein/headshot.jpg",
+        "galleryImages": [
+          "/profiles/sarah-klein/runway-1.jpg",
+          "/profiles/sarah-klein/editorial-1.jpg",
+          "/profiles/sarah-klein/commercial-1.jpg",
+          "/profiles/sarah-klein/fashion-1.jpg"
+        ]
+      },
+      "tags": ["fashion-model", "runway", "editorial", "vogue", "experienced"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true,
+      "parentAccount": "elite-vienna"
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "model_luca_novak",
+      "profileType": "model",
+      "displayName": "Luca Novak",
+      "bio": "Male fashion model and fitness enthusiast. Specializes in commercial and athletic wear campaigns. Works with major sports brands.",
+      "profileData": {
+        "modelInfo": {
+          "category": "commercial-model",
+          "experience": "4 years",
+          "height": {
+            "cm": 185,
+            "feet": "6'1\""
+          },
+          "measurements": {
+            "chest": "102cm",
+            "waist": "81cm",
+            "hips": "97cm"
+          },
+          "sizes": {
+            "jacket": {
+              "EU": "48",
+              "US": "38",
+              "UK": "38"
+            },
+            "shoes": {
+              "EU": "42",
+              "US": "9",
+              "UK": "8"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Dark Brown",
+            "eyeColor": "Green",
+            "skinTone": "Medium"
+          }
+        },
+        "personalInfo": {
+          "age": 26,
+          "nationality": "Czech",
+          "languages": ["Czech", "German", "English"],
+          "location": "Vienna, Austria"
+        },
+        "careerHighlights": [
+          "Nike Campaign (2023)",
+          "Adidas Editorial (2022)",
+          "Men's Health Cover (2023)",
+          "Vienna Fashion Week (2022, 2023)"
+        ],
+        "skills": ["Commercial", "Athletic", "Fitness", "Lifestyle"]
+      },
+      "portfolio": {
+        "coverImage": "/profiles/luca-novak/headshot.jpg",
+        "galleryImages": [
+          "/profiles/luca-novak/nike-campaign.jpg",
+          "/profiles/luca-novak/fitness-1.jpg",
+          "/profiles/luca-novak/commercial-1.jpg",
+          "/profiles/luca-novak/lifestyle-1.jpg"
+        ]
+      },
+      "tags": ["commercial-model", "fitness", "athletic", "nike", "mens-health"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true,
+      "parentAccount": "elite-vienna"
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "model_anna_weber",
+      "profileType": "model",
+      "displayName": "Anna Weber",
+      "bio": "Plus-size model and body positivity advocate. Featured in major campaigns promoting diversity and inclusion in fashion.",
+      "profileData": {
+        "modelInfo": {
+          "category": "plus-size-model",
+          "experience": "3 years",
+          "height": {
+            "cm": 175,
+            "feet": "5'9\""
+          },
+          "measurements": {
+            "bust": "107cm",
+            "waist": "86cm",
+            "hips": "112cm"
+          },
+          "sizes": {
+            "dress": {
+              "EU": "44",
+              "US": "12",
+              "UK": "16"
+            },
+            "shoes": {
+              "EU": "38",
+              "US": "7.5",
+              "UK": "5.5"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Auburn",
+            "eyeColor": "Brown",
+            "skinTone": "Fair"
+          }
+        },
+        "personalInfo": {
+          "age": 22,
+          "nationality": "German",
+          "languages": ["German", "English"],
+          "location": "Vienna, Austria"
+        },
+        "careerHighlights": [
+          "Dove Campaign (2023)",
+          "ASOS Curve Collection (2022)",
+          "Body Positivity Magazine (2023)",
+          "Plus Size Fashion Week (2022)"
+        ],
+        "skills": ["Editorial", "Commercial", "Body Positivity", "Lifestyle"]
+      },
+      "portfolio": {
+        "coverImage": "/profiles/anna-weber/headshot.jpg",
+        "galleryImages": [
+          "/profiles/anna-weber/dove-campaign.jpg",
+          "/profiles/anna-weber/asos-curve.jpg",
+          "/profiles/anna-weber/lifestyle-1.jpg",
+          "/profiles/anna-weber/editorial-1.jpg"
+        ]
+      },
+      "tags": ["plus-size-model", "body-positivity", "dove", "asos", "diversity"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true,
+      "parentAccount": "elite-vienna"
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "model_elena_popovic",
+      "profileType": "model",
+      "displayName": "Elena Popović",
+      "bio": "Emerging model from Serbia. New face with striking features perfect for high fashion and avant-garde projects.",
+      "profileData": {
+        "modelInfo": {
+          "category": "new-face",
+          "experience": "1 year",
+          "height": {
+            "cm": 180,
+            "feet": "5'11\""
+          },
+          "measurements": {
+            "bust": "84cm",
+            "waist": "60cm",
+            "hips": "88cm"
+          },
+          "sizes": {
+            "dress": {
+              "EU": "34",
+              "US": "2",
+              "UK": "6"
+            },
+            "shoes": {
+              "EU": "40",
+              "US": "9",
+              "UK": "6.5"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Black",
+            "eyeColor": "Grey",
+            "skinTone": "Olive"
+          }
+        },
+        "personalInfo": {
+          "age": 19,
+          "nationality": "Serbian",
+          "languages": ["Serbian", "English", "German"],
+          "location": "Vienna, Austria"
+        },
+        "careerHighlights": [
+          "Elite Vienna Discovery (2023)",
+          "Local Fashion Week Debut (2023)",
+          "Test Shoots with Top Photographers"
+        ],
+        "skills": ["High Fashion", "Avant-garde", "Posing", "Runway Training"]
+      },
+      "portfolio": {
+        "coverImage": "/profiles/elena-popovic/headshot.jpg",
+        "galleryImages": [
+          "/profiles/elena-popovic/test-shoot-1.jpg",
+          "/profiles/elena-popovic/fashion-week.jpg",
+          "/profiles/elena-popovic/avant-garde-1.jpg",
+          "/profiles/elena-popovic/portrait-1.jpg"
+        ]
+      },
+      "tags": ["new-face", "high-fashion", "avant-garde", "emerging", "serbian"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true,
+      "parentAccount": "elite-vienna"
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "userSlug": "model_david_mueller",
+      "profileType": "model",
+      "displayName": "David Müller",
+      "bio": "Character model and actor. Specializes in mature, distinguished looks for luxury brands and lifestyle campaigns.",
+      "profileData": {
+        "modelInfo": {
+          "category": "character-model",
+          "experience": "8 years",
+          "height": {
+            "cm": 183,
+            "feet": "6'0\""
+          },
+          "measurements": {
+            "chest": "104cm",
+            "waist": "85cm",
+            "hips": "98cm"
+          },
+          "sizes": {
+            "jacket": {
+              "EU": "50",
+              "US": "40",
+              "UK": "40"
+            },
+            "shoes": {
+              "EU": "43",
+              "US": "9.5",
+              "UK": "8.5"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Salt & Pepper",
+            "eyeColor": "Blue",
+            "skinTone": "Fair"
+          }
+        },
+        "personalInfo": {
+          "age": 45,
+          "nationality": "Austrian",
+          "languages": ["German", "English", "Italian"],
+          "location": "Vienna, Austria"
+        },
+        "careerHighlights": [
+          "BMW Campaign (2023)",
+          "Rolex Advertisement (2022)",
+          "Austrian Tourism Board (2023)",
+          "Luxury Fashion Campaigns"
+        ],
+        "skills": ["Character Work", "Acting", "Luxury Brands", "Lifestyle"]
+      },
+      "portfolio": {
+        "coverImage": "/profiles/david-mueller/headshot.jpg",
+        "galleryImages": [
+          "/profiles/david-mueller/bmw-campaign.jpg",
+          "/profiles/david-mueller/rolex-ad.jpg",
+          "/profiles/david-mueller/luxury-1.jpg",
+          "/profiles/david-mueller/lifestyle-1.jpg"
+        ]
+      },
+      "tags": ["character-model", "mature", "luxury", "bmw", "rolex"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true,
+      "parentAccount": "elite-vienna"
+    },
+    {
+      "comment": "========== STEFAN BERGER PHOTOGRAPHY - PHOTOGRAPHER PROFILE ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "berger-photography",
+      "userSlug": "stefan_berger",
+      "profileType": "photographer",
+      "displayName": "Stefan Berger Photography",
+      "bio": "Award-winning fashion and commercial photographer with 15+ years experience. Specialized in editorial, beauty, and fashion campaigns. Based in Vienna with international clientele.",
+      "profileData": {
+        "photographerInfo": {
+          "experience": "15+ years",
+          "specialties": ["Fashion", "Editorial", "Beauty", "Commercial", "Portrait"],
+          "awards": [
+            "Fashion Photographer of the Year 2023",
+            "Austrian Photography Award 2022",
+            "International Fashion Photo Contest Winner 2021"
+          ],
+          "equipment": [
+            "Canon EOS R5",
+            "Hasselblad H6D-100c",
+            "Profoto Lighting System",
+            "Broncolor Strobes"
+          ],
+          "studioInfo": {
+            "hasStudio": true,
+            "studioSize": "200sqm",
+            "equipment": "Full lighting setup, backdrop systems, dressing room",
+            "location": "Neubaugasse 45, 1070 Vienna"
+          }
+        },
+        "businessInfo": {
+          "address": "Neubaugasse 45, 1070 Vienna, Austria",
+          "phone": "+43 676 123 4567",
+          "email": "stefan@stefanberger.com",
+          "website": "https://stefanberger.com",
+          "socialMedia": {
+            "instagram": "@stefanbergerphotography",
+            "behance": "stefanberger"
+          }
+        },
+        "clientele": [
+          "Vogue Austria",
+          "Elle Magazine",
+          "H&M",
+          "Zara",
+          "Local Fashion Brands",
+          "International Models"
+        ],
+        "services": [
+          "Fashion Photography",
+          "Editorial Shoots",
+          "Beauty Photography",
+          "Commercial Campaigns",
+          "Model Portfolio Building",
+          "Post-Production & Retouching"
+        ],
+        "rates": {
+          "hourly": 150,
+          "halfDay": 600,
+          "fullDay": 1000,
+          "commercial": "POA"
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/stefan-berger/cover-shot.jpg",
+        "galleryImages": [
+          "/profiles/stefan-berger/fashion-editorial-1.jpg",
+          "/profiles/stefan-berger/beauty-shot-1.jpg",
+          "/profiles/stefan-berger/commercial-campaign.jpg",
+          "/profiles/stefan-berger/portrait-series.jpg",
+          "/profiles/stefan-berger/studio-setup.jpg",
+          "/profiles/stefan-berger/behind-scenes.jpg"
+        ]
+      },
+      "tags": ["photographer", "fashion", "editorial", "beauty", "award-winning"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true
+    },
+    {
+      "comment": "========== SOPHIE LAURENT - INDIVIDUAL MODEL PROFILE ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "sophie-laurent",
+      "userSlug": "sophie_laurent",
+      "profileType": "model",
+      "displayName": "Sophie Laurent",
+      "bio": "Professional fashion model from France, now based in Vienna. 5 years of international experience with major publications and luxury brands. Speaks fluent French, English, and German.",
+      "profileData": {
+        "modelInfo": {
+          "category": "fashion-model",
+          "experience": "5 years",
+          "height": {
+            "cm": 177,
+            "feet": "5'10\""
+          },
+          "measurements": {
+            "bust": "85cm",
+            "waist": "60cm",
+            "hips": "88cm"
+          },
+          "sizes": {
+            "dress": {
+              "EU": "36",
+              "US": "4",
+              "UK": "8"
+            },
+            "shoes": {
+              "EU": "39",
+              "US": "8.5",
+              "UK": "6"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Brunette",
+            "eyeColor": "Green",
+            "skinTone": "Medium"
+          }
+        },
+        "personalInfo": {
+          "age": 23,
+          "nationality": "French",
+          "languages": ["French", "English", "German"],
+          "location": "Vienna, Austria",
+          "hometown": "Lyon, France"
+        },
+        "careerHighlights": [
+          "Vogue Paris Editorial (2022)",
+          "Elle Magazine Cover (2023)",
+          "Harper's Bazaar Feature (2022)",
+          "Chanel Campaign (2023)",
+          "Dior Advertisement (2022)",
+          "Versace Runway Show (2023)"
+        ],
+        "representation": {
+          "motherAgency": "Elite Model Management Vienna",
+          "territories": ["Austria", "Germany", "Switzerland"],
+          "exclusive": false
+        },
+        "skills": [
+          "High Fashion",
+          "Editorial",
+          "Runway",
+          "Commercial",
+          "Beauty",
+          "Luxury Brands"
+        ],
+        "availability": {
+          "openForWork": true,
+          "willingToTravel": true,
+          "languages": ["French", "English", "German"]
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/sophie-laurent/main-headshot.jpg",
+        "galleryImages": [
+          "/profiles/sophie-laurent/vogue-editorial.jpg",
+          "/profiles/sophie-laurent/elle-cover.jpg",
+          "/profiles/sophie-laurent/chanel-campaign.jpg",
+          "/profiles/sophie-laurent/dior-ad.jpg",
+          "/profiles/sophie-laurent/versace-runway.jpg",
+          "/profiles/sophie-laurent/beauty-shot.jpg",
+          "/profiles/sophie-laurent/lifestyle-1.jpg",
+          "/profiles/sophie-laurent/portrait-1.jpg"
+        ]
+      },
+      "tags": ["fashion-model", "international", "vogue", "chanel", "dior", "versace"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true
+    },
+    {
+      "comment": "========== MÜLLER FAMILY - GUARDIAN ACCOUNT WITH CHILDREN ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "mueller-family",
+      "userSlug": "sabine_mueller",
+      "profileType": "guardian",
+      "displayName": "Müller Family Management",
+      "bio": "Professional family management for child models Emma and Max Müller. Experienced parents ensuring proper education balance, child welfare, and career development in the modeling industry.",
+      "profileData": {
+        "guardianInfo": {
+          "parentNames": ["Sabine Müller", "Thomas Müller"],
+          "managingChildren": 2,
+          "yearsManaging": 2,
+          "location": "Salzburg, Austria",
+          "approach": "Education-first, child welfare priority"
+        },
+        "familyInfo": {
+          "location": "Salzburg, Austria",
+          "languages": ["German", "English"],
+          "values": [
+            "Education comes first",
+            "Limited working hours",
+            "Child happiness priority",
+            "Professional development"
+          ]
+        },
+        "policies": {
+          "workingHours": "Max 4 hours per day",
+          "schoolPriority": true,
+          "chaperoneRequired": true,
+          "approvalRequired": true,
+          "educationFirst": true
+        },
+        "contact": {
+          "email": "family@mueller.at",
+          "phone": "+43 664 345 6789",
+          "preferredContact": "Email for bookings"
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/mueller-family/family-photo.jpg",
+        "galleryImages": [
+          "/profiles/mueller-family/children-portfolio.jpg",
+          "/profiles/mueller-family/family-lifestyle.jpg"
+        ]
+      },
+      "tags": ["guardian", "family-management", "child-models", "salzburg"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": false
+    },
+    {
+      "accountSlug": "mueller-family",
+      "userSlug": "emma_mueller",
+      "profileType": "model",
+      "displayName": "Emma Müller",
+      "bio": "8-year-old child model with natural charm and photogenic qualities. Managed by loving parents with strict education-first policy.",
+      "profileData": {
+        "modelInfo": {
+          "category": "child-model",
+          "experience": "2 years",
+          "height": {
+            "cm": 128,
+            "feet": "4'2\""
+          },
+          "sizes": {
+            "clothing": {
+              "age": "8 years",
+              "EU": "128",
+              "US": "8"
+            },
+            "shoes": {
+              "EU": "32",
+              "US": "1",
+              "UK": "13"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Blonde",
+            "eyeColor": "Blue",
+            "skinTone": "Fair"
+          }
+        },
+        "personalInfo": {
+          "age": 8,
+          "nationality": "Austrian",
+          "location": "Salzburg, Austria",
+          "school": "Elementary School",
+          "hobbies": ["Drawing", "Dancing", "Reading"],
+          "languages": ["German", "Basic English"]
+        },
+        "parentalConsent": {
+          "consentGiven": true,
+          "guardians": ["Sabine Müller", "Thomas Müller"],
+          "restrictions": [
+            "School hours protected",
+            "Maximum 4 hours work per day",
+            "Parental supervision required",
+            "Educational activities prioritized"
+          ]
+        },
+        "experience": [
+          "Local clothing brand campaigns",
+          "Children's magazine features",
+          "Educational material photography"
+        ],
+        "skills": ["Natural posing", "Following directions", "Comfort with cameras"],
+        "workingConditions": {
+          "chaperoneRequired": true,
+          "maxHoursPerDay": 4,
+          "schoolTimeProtected": true,
+          "breakTimeRequired": "Every 30 minutes"
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/emma-mueller/headshot.jpg",
+        "galleryImages": [
+          "/profiles/emma-mueller/natural-1.jpg",
+          "/profiles/emma-mueller/clothing-campaign.jpg",
+          "/profiles/emma-mueller/lifestyle-1.jpg",
+          "/profiles/emma-mueller/portrait-1.jpg"
+        ]
+      },
+      "tags": ["child-model", "8-years-old", "natural", "education-first"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": false,
+      "parentalSupervision": {
+        "required": true,
+        "guardians": ["sabine_mueller", "thomas_mueller"]
+      }
+    },
+    {
+      "accountSlug": "mueller-family",
+      "userSlug": "max_mueller",
+      "profileType": "model",
+      "displayName": "Max Müller",
+      "bio": "10-year-old child model with energetic personality and athletic build. Perfect for sports brands and active lifestyle campaigns.",
+      "profileData": {
+        "modelInfo": {
+          "category": "child-model",
+          "experience": "1.5 years",
+          "height": {
+            "cm": 135,
+            "feet": "4'5\""
+          },
+          "sizes": {
+            "clothing": {
+              "age": "10 years",
+              "EU": "140",
+              "US": "10"
+            },
+            "shoes": {
+              "EU": "34",
+              "US": "2.5",
+              "UK": "2"
+            }
+          },
+          "physicalAttributes": {
+            "hairColor": "Brown",
+            "eyeColor": "Brown",
+            "skinTone": "Fair"
+          }
+        },
+        "personalInfo": {
+          "age": 10,
+          "nationality": "Austrian",
+          "location": "Salzburg, Austria",
+          "school": "Elementary School",
+          "hobbies": ["Soccer", "Swimming", "Video Games"],
+          "languages": ["German", "Basic English"],
+          "sports": ["Soccer", "Swimming", "Cycling"]
+        },
+        "parentalConsent": {
+          "consentGiven": true,
+          "guardians": ["Sabine Müller", "Thomas Müller"],
+          "restrictions": [
+            "School hours protected",
+            "Maximum 4 hours work per day",
+            "Parental supervision required",
+            "Sports activities encouraged"
+          ]
+        },
+        "experience": [
+          "Sports brand campaigns",
+          "Children's athletic wear",
+          "Local advertisements"
+        ],
+        "skills": ["Athletic posing", "Natural movement", "Team sports", "Energy on camera"],
+        "workingConditions": {
+          "chaperoneRequired": true,
+          "maxHoursPerDay": 4,
+          "schoolTimeProtected": true,
+          "physicalActivityBreaks": "Every 45 minutes"
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/max-mueller/headshot.jpg",
+        "galleryImages": [
+          "/profiles/max-mueller/sports-1.jpg",
+          "/profiles/max-mueller/athletic-wear.jpg",
+          "/profiles/max-mueller/lifestyle-1.jpg",
+          "/profiles/max-mueller/action-shot.jpg"
+        ]
+      },
+      "tags": ["child-model", "10-years-old", "athletic", "sports", "energetic"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": false,
+      "parentalSupervision": {
+        "required": true,
+        "guardians": ["sabine_mueller", "thomas_mueller"]
+      }
+    },
+    {
+      "comment": "========== MAKEUP & STYLE COLLECTIVE - CREATIVE TEAM PROFILES ==========",
+      "profiles": []
+    },
+    {
+      "accountSlug": "makeup-style-collective",
+      "userSlug": "collective_founder",
+      "profileType": "creative",
+      "displayName": "Makeup & Style Collective",
+      "bio": "Creative collective of makeup artists, stylists, and hair professionals. Founded 2019, specializing in high-fashion editorials, commercial campaigns, and collaborative creative projects.",
+      "profileData": {
+        "collectiveInfo": {
+          "established": 2019,
+          "teamSize": 12,
+          "specialties": ["High Fashion", "Editorial", "Commercial", "Bridal"],
+          "services": [
+            "Makeup Artistry",
+            "Fashion Styling", 
+            "Hair Styling",
+            "Wardrobe Consulting",
+            "Creative Direction"
+          ],
+          "brands": ["MAC", "Charlotte Tilbury", "Nars", "Tom Ford"]
+        },
+        "businessInfo": {
+          "address": "Mariahilfer Straße 89, 1060 Vienna, Austria",
+          "phone": "+43 650 567 8901",
+          "email": "hello@makeupstylecollective.com",
+          "website": "https://makeupstylecollective.com",
+          "socialMedia": {
+            "instagram": "@makeupstylecollective",
+            "facebook": "MakeupStyleCollective"
+          }
+        },
+        "clients": [
+          "Fashion Magazines",
+          "Commercial Brands",
+          "Photography Studios",
+          "Individual Models",
+          "Bridal Clients"
+        ],
+        "rates": {
+          "makeupArtist": 120,
+          "stylist": 100,
+          "combined": 180,
+          "fullTeam": 300
+        }
+      },
+      "portfolio": {
+        "coverImage": "/profiles/collective/team-photo.jpg",
+        "galleryImages": [
+          "/profiles/collective/high-fashion-1.jpg",
+          "/profiles/collective/editorial-work.jpg",
+          "/profiles/collective/commercial-1.jpg",
+          "/profiles/collective/behind-scenes.jpg"
+        ]
+      },
+      "tags": ["creative-collective", "makeup", "styling", "fashion", "team"],
+      "isActive": true,
+      "isVerified": true,
+      "isPublic": true
+    }
+  ]
+}

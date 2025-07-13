@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog System - Go Models NYC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .blog-card { transition: transform 0.2s; cursor: pointer; }
+        .blog-card:hover { transform: translateY(-2px); }
+        .ai-assistant { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .content-preview { max-height: 200px; overflow: hidden; position: relative; }
+        .content-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, white); }
+        .status-draft { border-left: 4px solid #ffc107; }
+        .status-published { border-left: 4px solid #198754; }
+        .status-scheduled { border-left: 4px solid #0d6efd; }
+        .ai-suggestion { border: 2px dashed #6c757d; background: #f8f9fa; }
+        .editor-toolbar { background: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">Blog System</h2>
+                        <p class="text-muted">Create and manage engaging content with AI assistance</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            <i class="fas fa-plus me-2"></i> New Post
+                        </button>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#aiAssistantModal">
+                            <i class="fas fa-robot me-2"></i> AI Assistant
+                        </button>
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#seoToolsModal">
+                            <i class="fas fa-search me-2"></i> SEO Tools
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4" id="stats-row"></div>
+                
+                <!-- AI Content Suggestions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card ai-suggestion">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-lightbulb fa-2x text-warning me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">AI Content Suggestions</h6>
+                                        <small class="text-muted">Based on trending topics and your audience interests</small>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm ms-auto">Generate More</button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="p-3 border rounded bg-white">
+                                            <strong>"Summer Fashion Trends 2024"</strong>
+                                            <p class="small text-muted mb-0">Trending in Fashion • High engagement potential</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="p-3 border rounded bg-white">
+                                            <strong>"Behind the Scenes: Model Casting"</strong>
+                                            <p class="small text-muted mb-0">Educational • Great for engagement</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="p-3 border rounded bg-white">
+                                            <strong>"Sustainable Fashion: Future Focus"</strong>
+                                            <p class="small text-muted mb-0">Trending Topic • Social Impact</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Tabs -->
+                <div id="main-tabs"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Post Modal -->
+    <div id="createPostModal"></div>
+    
+    <!-- AI Assistant Modal -->
+    <div id="aiAssistantModal"></div>
+    
+    <!-- SEO Tools Modal -->
+    <div id="seoToolsModal"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Talent Database', icon: 'fas fa-users', href: 'talent-database.html' },
+                { label: 'Casting Calls', icon: 'fas fa-bullhorn', href: 'casting-calls.html' },
+                { label: 'Applications', icon: 'fas fa-clipboard-list', href: 'applications.html' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Categories & Tags', icon: 'fas fa-tags', href: 'categories.html' },
+                { label: 'Blog System', icon: 'fas fa-blog', active: true },
+                { label: 'Academy', icon: 'fas fa-graduation-cap', href: 'academy.html' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-pie', href: 'financial.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Go Models NYC', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Sarah Admin', 'Tenant Administrator', 'Blog System');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Dashboard', href: 'index.html' },
+                { label: 'Blog System' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Total Posts', '67', 'fas fa-file-alt', 'primary'),
+                createStatCard('Published', '45', 'fas fa-globe', 'success'),
+                createStatCard('Monthly Views', '12.4K', 'fas fa-eye', 'info'),
+                createStatCard('Engagement', '8.2%', 'fas fa-heart', 'warning')
+            ].join('');
+            document.getElementById('stats-row').innerHTML = statsHtml;
+            
+            // All Posts Tab Content
+            const allPostsContent = `
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Filter Bar -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="statusFilter" id="all" checked>
+                                <label class="btn btn-outline-primary" for="all">All Posts (67)</label>
+                                
+                                <input type="radio" class="btn-check" name="statusFilter" id="published">
+                                <label class="btn btn-outline-success" for="published">Published (45)</label>
+                                
+                                <input type="radio" class="btn-check" name="statusFilter" id="drafts">
+                                <label class="btn btn-outline-warning" for="drafts">Drafts (15)</label>
+                                
+                                <input type="radio" class="btn-check" name="statusFilter" id="scheduled">
+                                <label class="btn btn-outline-info" for="scheduled">Scheduled (7)</label>
+                            </div>
+                            <div class="input-group" style="width: 300px;">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search posts...">
+                            </div>
+                        </div>
+                        
+                        <!-- Blog Posts Grid -->
+                        <div class="row">
+                            ${generateBlogPosts()}
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            ${createPagination(1, 7)}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <!-- Quick Actions -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-bolt me-2"></i> Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-plus me-2"></i> New Post
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-robot me-2"></i> AI Content Ideas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-calendar me-2"></i> Schedule Post
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-chart-line me-2"></i> Analytics
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Categories -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-folder me-2"></i> Categories</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Fashion Tips</span>
+                                        <span class="badge bg-primary">23</span>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Industry News</span>
+                                        <span class="badge bg-success">18</span>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Model Spotlights</span>
+                                        <span class="badge bg-warning">15</span>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Behind the Scenes</span>
+                                        <span class="badge bg-info">11</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Activity -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i> Recent Activity</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="small">
+                                    <div class="mb-3">
+                                        <strong>2 hours ago</strong><br>
+                                        "Summer Fashion Trends" published
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>1 day ago</strong><br>
+                                        "Model Interview Series" draft saved
+                                    </div>
+                                    <div>
+                                        <strong>3 days ago</strong><br>
+                                        "Photography Tips" scheduled for Monday
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Content Editor Tab
+            const editorContent = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Editor -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-edit me-2"></i> Content Editor</h6>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="fas fa-eye me-1"></i> Preview
+                                        </button>
+                                        <button class="btn btn-outline-primary">
+                                            <i class="fas fa-save me-1"></i> Save Draft
+                                        </button>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-globe me-1"></i> Publish
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <!-- Editor Toolbar -->
+                                <div class="editor-toolbar">
+                                    <div class="btn-group btn-group-sm me-3">
+                                        <button class="btn btn-outline-secondary" title="Bold"><i class="fas fa-bold"></i></button>
+                                        <button class="btn btn-outline-secondary" title="Italic"><i class="fas fa-italic"></i></button>
+                                        <button class="btn btn-outline-secondary" title="Underline"><i class="fas fa-underline"></i></button>
+                                    </div>
+                                    <div class="btn-group btn-group-sm me-3">
+                                        <button class="btn btn-outline-secondary" title="Heading"><i class="fas fa-heading"></i></button>
+                                        <button class="btn btn-outline-secondary" title="List"><i class="fas fa-list"></i></button>
+                                        <button class="btn btn-outline-secondary" title="Link"><i class="fas fa-link"></i></button>
+                                    </div>
+                                    <div class="btn-group btn-group-sm me-3">
+                                        <button class="btn btn-outline-secondary" title="Image"><i class="fas fa-image"></i></button>
+                                        <button class="btn btn-outline-secondary" title="Video"><i class="fas fa-video"></i></button>
+                                        <button class="btn btn-outline-secondary" title="Gallery"><i class="fas fa-images"></i></button>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" title="AI Assistant">
+                                        <i class="fas fa-robot me-1"></i> AI Help
+                                    </button>
+                                </div>
+                                
+                                <!-- Title Input -->
+                                <div class="p-3 border-bottom">
+                                    <input type="text" class="form-control form-control-lg border-0" placeholder="Enter your post title..." value="Summer Fashion Trends: What's Hot in 2024">
+                                </div>
+                                
+                                <!-- Content Area -->
+                                <div class="p-3" style="min-height: 400px;">
+                                    <div class="mb-4">
+                                        <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b" class="img-fluid rounded" alt="Fashion Model">
+                                        <small class="text-muted d-block mt-1">Featured image: Summer fashion collection photoshoot</small>
+                                    </div>
+                                    
+                                    <div class="content-area">
+                                        <p class="lead">As we step into summer 2024, the fashion world is buzzing with fresh trends that promise to redefine style and comfort. From sustainable fabrics to bold color palettes, this season offers something for every fashion enthusiast.</p>
+                                        
+                                        <h3>Key Trends to Watch</h3>
+                                        <p>This summer's fashion landscape is characterized by a beautiful blend of comfort and sophistication. Models and designers alike are embracing versatile pieces that transition seamlessly from day to night.</p>
+                                        
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-robot me-2"></i>
+                                            <strong>AI Suggestion:</strong> Consider adding a section about sustainable fashion choices, as it's trending among your audience.
+                                        </div>
+                                        
+                                        <h4>1. Sustainable Luxury</h4>
+                                        <p>Eco-consciousness meets high fashion as designers prioritize sustainable materials without compromising on style...</p>
+                                        
+                                        <blockquote class="blockquote text-center my-4">
+                                            <p class="mb-0">"Fashion is about dreaming and making other people dream."</p>
+                                            <footer class="blockquote-footer">Donatella Versace</footer>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <!-- Post Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-cog me-2"></i> Post Settings</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select">
+                                        <option>Draft</option>
+                                        <option>Published</option>
+                                        <option>Scheduled</option>
+                                        <option>Private</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select">
+                                        <option>Fashion Tips</option>
+                                        <option>Industry News</option>
+                                        <option>Model Spotlights</option>
+                                        <option>Behind the Scenes</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Tags</label>
+                                    <input type="text" class="form-control" placeholder="summer, fashion, trends">
+                                    <small class="text-muted">Separate with commas</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Publish Date</label>
+                                    <input type="datetime-local" class="form-control">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Featured Image</label>
+                                    <div class="text-center p-3 border rounded">
+                                        <i class="fas fa-image fa-2x text-muted mb-2"></i>
+                                        <br>
+                                        <button class="btn btn-outline-primary btn-sm">Upload Image</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SEO Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-search me-2"></i> SEO Settings</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Meta Description</label>
+                                    <textarea class="form-control" rows="3" placeholder="Brief description for search engines..."></textarea>
+                                    <small class="text-muted">160 characters recommended</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Focus Keyword</label>
+                                    <input type="text" class="form-control" placeholder="summer fashion">
+                                </div>
+                                
+                                <div class="alert alert-success">
+                                    <small>
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        SEO Score: 85/100
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Writing Assistant -->
+                        <div class="card ai-assistant text-white">
+                            <div class="card-header border-0">
+                                <h6 class="mb-0"><i class="fas fa-robot me-2"></i> AI Writing Assistant</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button class="btn btn-light btn-sm w-100 mb-2">
+                                        <i class="fas fa-lightbulb me-2"></i> Generate Ideas
+                                    </button>
+                                    <button class="btn btn-light btn-sm w-100 mb-2">
+                                        <i class="fas fa-spell-check me-2"></i> Improve Writing
+                                    </button>
+                                    <button class="btn btn-light btn-sm w-100 mb-2">
+                                        <i class="fas fa-hashtag me-2"></i> Suggest Tags
+                                    </button>
+                                    <button class="btn btn-light btn-sm w-100">
+                                        <i class="fas fa-search me-2"></i> SEO Optimize
+                                    </button>
+                                </div>
+                                <small>Powered by advanced AI to enhance your content</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Analytics Tab
+            const analyticsContent = `
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-eye fa-2x text-primary mb-2"></i>
+                                <h4>45.2K</h4>
+                                <small class="text-muted">Total Views</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-users fa-2x text-success mb-2"></i>
+                                <h4>12.8K</h4>
+                                <small class="text-muted">Unique Readers</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h4>3.7K</h4>
+                                <small class="text-muted">Likes & Shares</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-comment fa-2x text-warning mb-2"></i>
+                                <h4>892</h4>
+                                <small class="text-muted">Comments</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i> Traffic Analytics</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="trafficChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-trophy me-2"></i> Top Performing Posts</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <strong class="small">Fashion Week Highlights</strong>
+                                        <span class="badge bg-primary">8.2K views</span>
+                                    </div>
+                                    <small class="text-muted">Published 2 weeks ago</small>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <strong class="small">Model Interview: Emma J.</strong>
+                                        <span class="badge bg-success">6.1K views</span>
+                                    </div>
+                                    <small class="text-muted">Published 1 month ago</small>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <strong class="small">Photography Tips</strong>
+                                        <span class="badge bg-info">4.8K views</span>
+                                    </div>
+                                    <small class="text-muted">Published 3 weeks ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create main tabs
+            const tabs = [
+                { label: 'All Posts', icon: 'fas fa-list', content: allPostsContent },
+                { label: 'Editor', icon: 'fas fa-edit', content: editorContent },
+                { label: 'Analytics', icon: 'fas fa-chart-bar', content: analyticsContent }
+            ];
+            
+            document.getElementById('main-tabs').innerHTML = createTabs(tabs);
+            
+            // AI Assistant Modal
+            const aiAssistantModalBody = `
+                <div class="ai-assistant text-white p-4 rounded mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-robot fa-3x mb-3"></i>
+                        <h5>AI Content Assistant</h5>
+                        <p class="mb-0">Get AI-powered help with content creation, optimization, and ideas</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i> Content Ideas</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Topic Category</label>
+                                    <select class="form-select">
+                                        <option>Fashion Trends</option>
+                                        <option>Model Spotlights</option>
+                                        <option>Industry News</option>
+                                        <option>Photography Tips</option>
+                                        <option>Behind the Scenes</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Target Audience</label>
+                                    <select class="form-select">
+                                        <option>Aspiring Models</option>
+                                        <option>Fashion Photographers</option>
+                                        <option>Industry Professionals</option>
+                                        <option>Fashion Enthusiasts</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary w-100">Generate Ideas</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-edit me-2"></i> Content Improvement</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Paste Your Content</label>
+                                    <textarea class="form-control" rows="5" placeholder="Paste your content here for AI improvement suggestions..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Improvement Type</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="grammar" checked>
+                                        <label class="form-check-label" for="grammar">Grammar & Style</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="seo" checked>
+                                        <label class="form-check-label" for="seo">SEO Optimization</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="engagement">
+                                        <label class="form-check-label" for="engagement">Engagement Boost</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success w-100">Improve Content</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i> AI Features</h6>
+                            <ul class="mb-0">
+                                <li>Generate content ideas based on trending topics</li>
+                                <li>Improve writing style and grammar</li>
+                                <li>Optimize content for SEO and engagement</li>
+                                <li>Suggest relevant tags and categories</li>
+                                <li>Create compelling headlines and meta descriptions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const aiAssistantModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save Preferences</button>
+            `;
+            
+            document.getElementById('aiAssistantModal').innerHTML = createModal(
+                'aiAssistantModal',
+                'AI Content Assistant',
+                aiAssistantModalBody,
+                aiAssistantModalFooter
+            );
+        });
+        
+        function generateBlogPosts() {
+            const posts = [
+                {
+                    title: 'Summer Fashion Trends: What\'s Hot in 2024',
+                    excerpt: 'Discover the latest fashion trends taking the modeling world by storm this summer. From sustainable fabrics to bold patterns...',
+                    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b',
+                    status: 'published',
+                    date: '2 hours ago',
+                    views: '1.2K',
+                    likes: '89',
+                    category: 'Fashion Tips'
+                },
+                {
+                    title: 'Behind the Scenes: NYC Fashion Week',
+                    excerpt: 'Take an exclusive look behind the scenes of New York Fashion Week and see what really happens backstage...',
+                    image: 'https://images.unsplash.com/photo-1445205170230-053b83016050',
+                    status: 'published',
+                    date: '1 day ago',
+                    views: '2.8K',
+                    likes: '145',
+                    category: 'Behind the Scenes'
+                },
+                {
+                    title: 'Model Spotlight: Rising Star Emma Thompson',
+                    excerpt: 'Meet Emma Thompson, the 22-year-old model who\'s taking the fashion industry by storm with her unique style and professional attitude...',
+                    image: 'https://images.unsplash.com/photo-1494790108755-2616c74107b2',
+                    status: 'draft',
+                    date: '3 days ago',
+                    views: '0',
+                    likes: '0',
+                    category: 'Model Spotlights'
+                },
+                {
+                    title: 'Photography Tips for Perfect Model Portfolios',
+                    excerpt: 'Learn professional photography techniques that will make your model portfolio stand out from the competition...',
+                    image: 'https://images.unsplash.com/photo-1492138786289-8b63ad12462e',
+                    status: 'scheduled',
+                    date: 'Tomorrow',
+                    views: '0',
+                    likes: '0',
+                    category: 'Industry Tips'
+                },
+                {
+                    title: 'Sustainable Fashion: The Future is Green',
+                    excerpt: 'How the fashion industry is embracing sustainability and what this means for models and photographers working in eco-conscious campaigns...',
+                    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
+                    status: 'published',
+                    date: '1 week ago',
+                    views: '3.4K',
+                    likes: '201',
+                    category: 'Industry News'
+                },
+                {
+                    title: 'Casting Call Success: How to Stand Out',
+                    excerpt: 'Expert tips on making a memorable impression at casting calls and increasing your booking rate...',
+                    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b',
+                    status: 'published',
+                    date: '2 weeks ago',
+                    views: '1.9K',
+                    likes: '112',
+                    category: 'Career Tips'
+                }
+            ];
+            
+            return posts.map(post => `
+                <div class="col-md-6 mb-4">
+                    <div class="card blog-card h-100 status-${post.status}">
+                        <img src="${post.image}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${post.title}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary">${post.category}</span>
+                                <span class="badge ${post.status === 'published' ? 'bg-success' : post.status === 'draft' ? 'bg-warning' : 'bg-info'}">${post.status.toUpperCase()}</span>
+                            </div>
+                            <h6 class="card-title">${post.title}</h6>
+                            <div class="content-preview">
+                                <p class="card-text text-muted small">${post.excerpt}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">${post.date}</small>
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted me-3">
+                                        <i class="fas fa-eye me-1"></i> ${post.views}
+                                    </small>
+                                    <small class="text-muted me-3">
+                                        <i class="fas fa-heart me-1"></i> ${post.likes}
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

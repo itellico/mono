@@ -1,0 +1,261 @@
+{
+  "pages": {
+    "dashboard": {
+      "title": "Admin-Dashboard", 
+      "description": "Umfassendes Rollen- und Berechtigungsmanagement mit Notfallzugriffskontrollen"
+    },
+    "permissions": {
+      "title": "Berechtigungsverwaltung",
+      "description": "Umfassendes Rollen- und Berechtigungsmanagement mit Notfallzugriffskontrollen"
+    },
+    "settings": {
+      "title": "Plattform-Einstellungen",
+      "description": "Plattformkonfiguration, administrative Einstellungen und Systemverhalten verwalten"
+    },
+    "tenants": {
+      "title": "Mandantenverwaltung",
+      "description": "Plattform-Mandanten und deren Konfigurationen verwalten"
+    },
+    "users": {
+      "title": "Benutzerverwaltung", 
+      "description": "Benutzerkonten, Berechtigungen und Aktivitäten plattformweit verwalten"
+    },
+    "categories": {
+      "title": "Kategorienverwaltung",
+      "description": "Hierarchische Kategorien für die Inhaltsorganisation verwalten"
+    },
+    "tags": {
+      "title": "Tag-Verwaltung",
+      "description": "Flache Tags für die Inhaltskategorisierung verwalten"
+    },
+    "audit": {
+      "title": "Audit-Protokolle",
+      "description": "System-Audit-Trails und Benutzeraktivitätsprotokolle anzeigen"
+    },
+    "monitoring": {
+      "title": "Systemüberwachung",
+      "description": "Systemzustand, Leistung und Ressourcennutzung überwachen"
+    }
+  },
+  "sidebar": {
+    "title": "Mono Admin",
+    "documentation": "Dokumentation",
+    "platformSettings": "Plattform-Einstellungen"
+  },
+  "systemInfo": {
+    "platformInformation": "Plattform-Informationen",
+    "systemStatus": "Systemstatus", 
+    "configurationOverview": "Konfigurationsübersicht",
+    "database": "Datenbank",
+    "postgresql": "PostgreSQL",
+    "authentication": "Authentifizierung",
+    "nextAuthJs": "NextAuth.js", 
+    "fileStorage": "Dateispeicher",
+    "localStorage": "Lokaler Speicher",
+    "monoPlatform": "Mono-Plattform",
+    "timezone": "Europa/Wien"
+  },
+  "status": {
+    "connected": "Verbunden",
+    "healthy": "Gesund",
+    "available": "Verfügbar",
+    "production": "Produktion",
+    "development": "Entwicklung",
+    "processing": "Verarbeitung",
+    "failed": "Fehlgeschlagen",
+    "success": "Erfolgreich"
+  },
+  "forms": {
+    "userEdit": {
+      "basicInfo": "Grundlegende Benutzerinformationen und Kontaktdaten",
+      "profileDetails": "Benutzerprofildetails und Social-Media-Links", 
+      "notificationSettings": "Benutzerbenachrichtigungs- und Datenschutzeinstellungen",
+      "toggleAccountStatus": "Benutzerkontostatus umschalten",
+      "emailVerified": "Zeigt an, ob die Benutzer-E-Mail verifiziert ist",
+      "profilePictureUrl": "Profilbild-URL",
+      "bio": "Biografie",
+      "location": "Standort",
+      "website": "Website",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn"
+    },
+    "validation": {
+      "firstNameRequired": "Vorname ist erforderlich",
+      "lastNameRequired": "Nachname ist erforderlich", 
+      "emailRequired": "E-Mail ist erforderlich",
+      "invalidEmailFormat": "Ungültiges E-Mail-Format",
+      "roleRequired": "Rolle ist erforderlich",
+      "phoneRequired": "Telefon ist erforderlich",
+      "websiteRequired": "Website ist erforderlich",
+      "bioRequired": "Biografie ist erforderlich"
+    }
+  },
+  "actions": {
+    "backToUsers": "Zurück zu Benutzern",
+    "saveChanges": "Änderungen speichern",
+    "discardChanges": "Änderungen verwerfen",
+    "editUser": "Benutzer bearbeiten",
+    "deleteUser": "Benutzer löschen",
+    "suspendUser": "Benutzer sperren", 
+    "activateUser": "Benutzer aktivieren",
+    "verifyEmail": "E-Mail verifizieren",
+    "resetPassword": "Passwort zurücksetzen",
+    "viewProfile": "Profil anzeigen",
+    "impersonateUser": "Benutzer verkörpern",
+    "exportData": "Daten exportieren",
+    "importData": "Daten importieren",
+    "bulkActions": "Massenaktionen",
+    "selectAll": "Alle auswählen",
+    "deselectAll": "Alle abwählen"
+  },
+  "permissions": {
+    "accessDenied": "Zugriff verweigert. Sie haben keine Berechtigung, diese Ressource anzuzeigen.",
+    "tagsAccessDenied": "Zugriff verweigert. Sie haben keine Berechtigung, Tags anzuzeigen.",
+    "superAdminAccess": "Super-Admin-Zugriff",
+    "settingsManagementRequired": "Einstellungsverwaltung erforderlich",
+    "platformManagementRequired": "Plattformverwaltung erforderlich",
+    "userManagementRequired": "Benutzerverwaltung erforderlich",
+    "contentModerationRequired": "Inhaltsmoderation erforderlich"
+  },
+  "modals": {
+    "confirmation": {
+      "title": "Aktion bestätigen",
+      "cancel": "Abbrechen",
+      "confirm": "Bestätigen",
+      "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?",
+      "suspendUser": "Sind Sie sicher, dass Sie diesen Benutzer sperren möchten?",
+      "activateUser": "Sind Sie sicher, dass Sie diesen Benutzer aktivieren möchten?",
+      "irreversibleAction": "Diese Aktion kann nicht rückgängig gemacht werden"
+    },
+    "loading": {
+      "title": "Wird geladen...",
+      "pleaseWait": "Bitte warten Sie, während wir Ihre Anfrage bearbeiten"
+    }
+  },
+  "tables": {
+    "headers": {
+      "name": "Name",
+      "email": "E-Mail", 
+      "role": "Rolle",
+      "status": "Status",
+      "createdAt": "Erstellt",
+      "updatedAt": "Aktualisiert",
+      "lastLogin": "Letzte Anmeldung",
+      "actions": "Aktionen",
+      "id": "ID",
+      "type": "Typ",
+      "category": "Kategorie",
+      "description": "Beschreibung",
+      "slug": "Slug",
+      "count": "Anzahl",
+      "usage": "Verwendung",
+      "parent": "Übergeordnet",
+      "children": "Kinder"
+    },
+    "filters": {
+      "search": "Suchen...",
+      "filterByRole": "Nach Rolle filtern",
+      "filterByStatus": "Nach Status filtern", 
+      "filterByType": "Nach Typ filtern",
+      "filterByCategory": "Nach Kategorie filtern",
+      "allRoles": "Alle Rollen",
+      "allStatuses": "Alle Status",
+      "allTypes": "Alle Typen",
+      "allCategories": "Alle Kategorien"
+    },
+    "pagination": {
+      "showing": "Zeige {{start}} bis {{end}} von {{total}} Einträgen",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "first": "Erste",
+      "last": "Letzte",
+      "rowsPerPage": "Zeilen pro Seite"
+    },
+    "empty": {
+      "noData": "Keine Daten verfügbar",
+      "noResults": "Keine Ergebnisse gefunden",
+      "noUsers": "Keine Benutzer gefunden",
+      "noPermissions": "Keine Berechtigungen gefunden",
+      "noCategories": "Keine Kategorien gefunden", 
+      "noTags": "Keine Tags gefunden",
+      "noAuditLogs": "Keine Audit-Protokolle gefunden"
+    }
+  },
+  "stats": {
+    "total": "Gesamt",
+    "active": "Aktiv",
+    "inactive": "Inaktiv", 
+    "pending": "Ausstehend",
+    "suspended": "Gesperrt",
+    "verified": "Verifiziert",
+    "unverified": "Nicht verifiziert",
+    "online": "Online",
+    "offline": "Offline",
+    "today": "Heute",
+    "thisWeek": "Diese Woche",
+    "thisMonth": "Dieser Monat",
+    "thisYear": "Dieses Jahr",
+    "growth": "Wachstum",
+    "decline": "Rückgang",
+    "stable": "Stabil"
+  },
+  "notifications": {
+    "userCreated": "Benutzer erfolgreich erstellt",
+    "userUpdated": "Benutzer erfolgreich aktualisiert",
+    "userDeleted": "Benutzer erfolgreich gelöscht",
+    "userSuspended": "Benutzer erfolgreich gesperrt", 
+    "userActivated": "Benutzer erfolgreich aktiviert",
+    "permissionGranted": "Berechtigung erfolgreich gewährt",
+    "permissionRevoked": "Berechtigung erfolgreich widerrufen",
+    "settingsUpdated": "Einstellungen erfolgreich aktualisiert",
+    "dataExported": "Daten erfolgreich exportiert",
+    "dataImported": "Daten erfolgreich importiert",
+    "operationCompleted": "Vorgang erfolgreich abgeschlossen",
+    "operationFailed": "Vorgang fehlgeschlagen",
+    "accessDenied": "Zugriff verweigert",
+    "invalidData": "Ungültige Daten bereitgestellt",
+    "networkError": "Netzwerkfehler aufgetreten",
+    "serverError": "Serverfehler aufgetreten",
+    "validationError": "Validierungsfehler",
+    "authenticationError": "Authentifizierungsfehler",
+    "permissionError": "Berechtigungsfehler",
+    "notFound": "Ressource nicht gefunden",
+    "conflict": "Ressourcenkonflikt",
+    "timeout": "Anfrage-Timeout",
+    "quotaExceeded": "Kontingent überschritten",
+    "rateLimited": "Rate-Limit überschritten"
+  },
+  "help": {
+    "tooltip": {
+      "edit": "Dieses Element bearbeiten",
+      "delete": "Dieses Element löschen",
+      "view": "Details anzeigen",
+      "activate": "Dieses Element aktivieren",
+      "deactivate": "Dieses Element deaktivieren",
+      "suspend": "Dieses Element sperren",
+      "verify": "Dieses Element verifizieren",
+      "refresh": "Daten aktualisieren",
+      "export": "Daten exportieren",
+      "import": "Daten importieren",
+      "filter": "Ergebnisse filtern",
+      "search": "Elemente suchen",
+      "sort": "Nach dieser Spalte sortieren",
+      "select": "Dieses Element auswählen",
+      "selectAll": "Alle Elemente auswählen",
+      "bulkActions": "Massenaktionen ausführen",
+      "pagination": "Seiten navigieren",
+      "settings": "Einstellungen öffnen",
+      "help": "Hilfe erhalten",
+      "support": "Support kontaktieren"
+    },
+    "description": {
+      "userManagement": "Benutzerkonten, Rollen und Berechtigungen verwalten",
+      "permissionSystem": "Zugriff auf Features und Ressourcen kontrollieren",
+      "auditLogs": "Systemänderungen und Benutzeraktivitäten verfolgen",
+      "systemMonitoring": "Systemzustand und Leistung überwachen",
+      "dataManagement": "Daten importieren, exportieren und verwalten",
+      "settingsPanel": "Systemeinstellungen und Präferenzen konfigurieren"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "mcpServers": {
+    "context7-mcp": {
+      "type": "http",
+      "url": "https://server.smithery.ai/@upstash/context7-mcp/mcp?api_key=9b263169-a008-40e6-8a43-d0e535da75b8&profile=protective-moose-aOoITU"
+    },
+    "magic-mcp": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@21st-dev/magic@latest"
+      ],
+      "env": {
+        "API_KEY": "60837f8a88bf5913e39c81470876b3e0e2f1ed693654c99e45a9cc7eb5ad912d"
+      }
+    },
+    "puppeteer": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "env": {}
+    },
+    "docs-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "/Users/mm2/dev_mm/mono/mcp-servers/docs-server/dist/server.js"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {}
+    },
+    "kanboard-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/mm2/dev_mm/mono/mcp-servers/kanboard/index.js"
+      ],
+      "env": {
+        "KANBOARD_API_TOKEN": "ad2d87eaa6de90d0bce2f26d0ee79279a0f7f608cf18d05f3a4556eb60ad",
+        "KANBOARD_API_ENDPOINT": "http://192.168.178.94:4041/jsonrpc.php"
+      }
+    },
+    "click-dummy-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "/Users/mm2/dev_mm/mono/mcp-servers/click-dummy/dist/server.js"
+      ],
+      "env": {}
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "title": "Tag Management",
+  "description": "Manage content tags and metadata organization",
+  "navigation": {
+    "tags": "Tags"
+  },
+  "tags": {
+    "description": "Manage content tags and metadata organization"
+  },
+  "tag": "tag",
+  "table": {
+    "title": "Tags",
+    "description": "Manage and organize content tags",
+    "name": "Name",
+    "slug": "Slug",
+    "status": "Status",
+    "categories": "Categories",
+    "createdAt": "Created At",
+    "actions": "Actions",
+    "columns": {
+      "name": "Name",
+      "slug": "Slug",
+      "status": "Status",
+      "categories": "Categories",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    }
+  },
+  "stats": {
+    "totalTags": "Total Tags",
+    "activeTags": "Active Tags",
+    "inactiveTags": "Inactive Tags",
+    "totalDescription": "Total number of tags in the system",
+    "activeDescription": "Tags currently active and visible",
+    "inactiveDescription": "Tags that are disabled or hidden"
+  },
+  "actions": {
+    "addTag": "Add Tag",
+    "create": "Create Tag",
+    "edit": "Edit Tag",
+    "delete": "Delete Tag",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "search": {
+    "placeholder": "Search tags..."
+  },
+  "filters": {
+    "status": {
+      "title": "Status",
+      "all": "All Statuses",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "category": {
+      "title": "Category",
+      "all": "All Categories",
+      "uncategorized": "Uncategorized"
+    },
+    "clearAll": "Clear All Filters"
+  },
+  "deleteModal": {
+    "title": "Delete Tag",
+    "description": "Are you sure you want to delete the tag \"{{tagName}}\"? This action cannot be undone."
+  },
+  "editModal": {
+    "title": "Edit Tag",
+    "description": "Update the tag information below."
+  },
+  "createModal": {
+    "title": "Create Tag",
+    "description": "Enter the information for the new tag."
+  },
+  "fields": {
+    "categories": "Categories",
+    "selectCategories": "Select categories...",
+    "searchCategories": "Search categories...",
+    "noCategoryFound": "No category found.",
+    "categoriesDescription": "Select one or more categories for this tag.",
+    "activeDescription": "Set whether this tag is active and visible."
+  },
+  "forms": {
+    "name": {
+      "label": "Tag Name",
+      "placeholder": "Enter tag name",
+      "required": "Tag name is required"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Enter tag description"
+    },
+    "categories": {
+      "label": "Categories",
+      "placeholder": "Select categories for this tag"
+    },
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "messages": {
+    "createSuccess": "Tag created successfully",
+    "updateSuccess": "Tag updated successfully",
+    "deleteSuccess": "Tag deleted successfully",
+    "deleteConfirm": "Are you sure you want to delete this tag?",
+    "deleteWarning": "This action cannot be undone.",
+    "statusChanged": "Tag status updated successfully",
+    "loadingTags": "Loading tags...",
+    "noTags": "No tags found",
+    "errorLoading": "Error loading tags"
+  },
+  "errors": {
+    "loadFailed": "Failed to load tags",
+    "createFailed": "Failed to create tag",
+    "updateFailed": "Failed to update tag",
+    "deleteFailed": "Failed to delete tag",
+    "duplicateName": "A tag with this name already exists"
+  }
+}

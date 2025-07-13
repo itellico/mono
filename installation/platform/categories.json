@@ -1,0 +1,158 @@
+{
+  "categories": [
+    {
+      "name": "Platform",
+      "slug": "platform",
+      "description": "Platform-level categories",
+      "icon": "server",
+      "color": "#1a73e8",
+      "subcategories": [
+        {
+          "name": "System",
+          "slug": "system",
+          "description": "System-related items"
+        },
+        {
+          "name": "Infrastructure",
+          "slug": "infrastructure",
+          "description": "Infrastructure components"
+        },
+        {
+          "name": "Security",
+          "slug": "security",
+          "description": "Security-related items"
+        }
+      ]
+    },
+    {
+      "name": "Business",
+      "slug": "business",
+      "description": "Business and commerce",
+      "icon": "briefcase",
+      "color": "#34a853",
+      "subcategories": [
+        {
+          "name": "E-commerce",
+          "slug": "e-commerce",
+          "description": "Online commerce"
+        },
+        {
+          "name": "Services",
+          "slug": "services",
+          "description": "Service businesses"
+        },
+        {
+          "name": "Consulting",
+          "slug": "consulting",
+          "description": "Consulting services"
+        }
+      ]
+    },
+    {
+      "name": "Creative",
+      "slug": "creative",
+      "description": "Creative industries",
+      "icon": "palette",
+      "color": "#ea4335",
+      "subcategories": [
+        {
+          "name": "Modeling",
+          "slug": "modeling",
+          "description": "Modeling and fashion"
+        },
+        {
+          "name": "Photography",
+          "slug": "photography",
+          "description": "Photography services"
+        },
+        {
+          "name": "Design",
+          "slug": "design",
+          "description": "Design services"
+        },
+        {
+          "name": "Film & Video",
+          "slug": "film-video",
+          "description": "Film and video production"
+        },
+        {
+          "name": "Music",
+          "slug": "music",
+          "description": "Music industry"
+        }
+      ]
+    },
+    {
+      "name": "Technology",
+      "slug": "technology",
+      "description": "Technology and software",
+      "icon": "code",
+      "color": "#fbbc04",
+      "subcategories": [
+        {
+          "name": "Software",
+          "slug": "software",
+          "description": "Software development"
+        },
+        {
+          "name": "Hardware",
+          "slug": "hardware",
+          "description": "Hardware products"
+        },
+        {
+          "name": "AI & ML",
+          "slug": "ai-ml",
+          "description": "Artificial Intelligence"
+        }
+      ]
+    },
+    {
+      "name": "Education",
+      "slug": "education",
+      "description": "Education and learning",
+      "icon": "graduation-cap",
+      "color": "#4285f4",
+      "subcategories": [
+        {
+          "name": "Online Courses",
+          "slug": "online-courses",
+          "description": "Digital learning"
+        },
+        {
+          "name": "Tutoring",
+          "slug": "tutoring",
+          "description": "Personal tutoring"
+        },
+        {
+          "name": "Training",
+          "slug": "training",
+          "description": "Professional training"
+        }
+      ]
+    },
+    {
+      "name": "Healthcare",
+      "slug": "healthcare",
+      "description": "Health and wellness",
+      "icon": "heart",
+      "color": "#db4437",
+      "subcategories": [
+        {
+          "name": "Medical",
+          "slug": "medical",
+          "description": "Medical services"
+        },
+        {
+          "name": "Wellness",
+          "slug": "wellness",
+          "description": "Wellness services"
+        },
+        {
+          "name": "Fitness",
+          "slug": "fitness",
+          "description": "Fitness and sports"
+        }
+      ]
+    }
+  ]
+}

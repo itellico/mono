@@ -1,0 +1,113 @@
+{
+  "tags": [
+    {
+      "category": "experience",
+      "tags": [
+        { "name": "New Face", "slug": "new-face", "color": "#4CAF50", "description": "Fresh talent, less than 1 year experience" },
+        { "name": "Beginner", "slug": "beginner", "color": "#8BC34A", "description": "1-2 years experience" },
+        { "name": "Intermediate", "slug": "intermediate", "color": "#FFC107", "description": "2-5 years experience" },
+        { "name": "Experienced", "slug": "experienced", "color": "#FF9800", "description": "5-10 years experience" },
+        { "name": "Professional", "slug": "professional", "color": "#F44336", "description": "10+ years experience" },
+        { "name": "Published", "slug": "published", "color": "#E91E63", "description": "Featured in major publications" },
+        { "name": "Award Winner", "slug": "award-winner", "color": "#9C27B0", "description": "Industry award recipient" }
+      ]
+    },
+    {
+      "category": "representation",
+      "tags": [
+        { "name": "Agency Represented", "slug": "agency-represented", "color": "#3F51B5", "description": "Signed with modeling agency" },
+        { "name": "Freelance", "slug": "freelance", "color": "#2196F3", "description": "Independent model" },
+        { "name": "Exclusive", "slug": "exclusive", "color": "#673AB7", "description": "Exclusive representation" },
+        { "name": "Non-Exclusive", "slug": "non-exclusive", "color": "#00BCD4", "description": "Multiple agency representation" },
+        { "name": "Mother Agency", "slug": "mother-agency", "color": "#009688", "description": "Primary agency representation" }
+      ]
+    },
+    {
+      "category": "style",
+      "tags": [
+        { "name": "High Fashion", "slug": "high-fashion", "color": "#E91E63", "description": "Haute couture and luxury brands" },
+        { "name": "Commercial", "slug": "commercial", "color": "#4CAF50", "description": "Commercial and lifestyle" },
+        { "name": "Editorial", "slug": "editorial", "color": "#FF5722", "description": "Editorial and artistic" },
+        { "name": "Glamour", "slug": "glamour", "color": "#FF4081", "description": "Glamour and beauty" },
+        { "name": "Alternative", "slug": "alternative", "color": "#795548", "description": "Alternative and edgy styles" },
+        { "name": "Classic", "slug": "classic", "color": "#607D8B", "description": "Classic and timeless" },
+        { "name": "Avant-Garde", "slug": "avant-garde", "color": "#9E9E9E", "description": "Experimental and artistic" }
+      ]
+    },
+    {
+      "category": "body-type",
+      "tags": [
+        { "name": "Petite", "slug": "petite", "color": "#E91E63", "description": "Under 5'6\" (168cm)" },
+        { "name": "Average", "slug": "average", "color": "#4CAF50", "description": "5'6\" - 5'9\" (168-175cm)" },
+        { "name": "Tall", "slug": "tall", "color": "#2196F3", "description": "Over 5'9\" (175cm)" },
+        { "name": "Athletic", "slug": "athletic", "color": "#FF5722", "description": "Athletic build" },
+        { "name": "Slim", "slug": "slim", "color": "#9C27B0", "description": "Slim build" },
+        { "name": "Curvy", "slug": "curvy", "color": "#FF9800", "description": "Curvy figure" },
+        { "name": "Plus Size", "slug": "plus-size", "color": "#795548", "description": "Plus size model" },
+        { "name": "Muscular", "slug": "muscular", "color": "#607D8B", "description": "Muscular physique" }
+      ]
+    },
+    {
+      "category": "specialties",
+      "tags": [
+        { "name": "Runway", "slug": "runway", "color": "#E91E63", "description": "Runway and catwalk experience" },
+        { "name": "Lingerie", "slug": "lingerie", "color": "#FF4081", "description": "Lingerie modeling" },
+        { "name": "Swimwear", "slug": "swimwear", "color": "#00BCD4", "description": "Swimwear and beachwear" },
+        { "name": "Bridal", "slug": "bridal", "color": "#F8BBD0", "description": "Bridal and wedding" },
+        { "name": "Maternity", "slug": "maternity", "color": "#C5CAE9", "description": "Maternity modeling" },
+        { "name": "Underwear", "slug": "underwear", "color": "#BBDEFB", "description": "Underwear modeling" },
+        { "name": "Nude Art", "slug": "nude-art", "color": "#B0BEC5", "description": "Artistic nude (18+)" }
+      ]
+    },
+    {
+      "category": "availability",
+      "tags": [
+        { "name": "Immediate", "slug": "immediate", "color": "#4CAF50", "description": "Available immediately" },
+        { "name": "Weekdays", "slug": "weekdays", "color": "#2196F3", "description": "Available weekdays" },
+        { "name": "Weekends", "slug": "weekends", "color": "#FF9800", "description": "Available weekends" },
+        { "name": "Travel Ready", "slug": "travel-ready", "color": "#9C27B0", "description": "Available for travel" },
+        { "name": "Local Only", "slug": "local-only", "color": "#795548", "description": "Local jobs only" },
+        { "name": "Remote Shoot", "slug": "remote-shoot", "color": "#00BCD4", "description": "Available for remote shoots" }
+      ]
+    },
+    {
+      "category": "locations",
+      "tags": [
+        { "name": "Vienna", "slug": "vienna", "color": "#F44336", "description": "Vienna, Austria" },
+        { "name": "Paris", "slug": "paris", "color": "#E91E63", "description": "Paris, France" },
+        { "name": "Milan", "slug": "milan", "color": "#9C27B0", "description": "Milan, Italy" },
+        { "name": "London", "slug": "london", "color": "#3F51B5", "description": "London, UK" },
+        { "name": "New York", "slug": "new-york", "color": "#2196F3", "description": "New York, USA" },
+        { "name": "Los Angeles", "slug": "los-angeles", "color": "#00BCD4", "description": "Los Angeles, USA" },
+        { "name": "Berlin", "slug": "berlin", "color": "#009688", "description": "Berlin, Germany" },
+        { "name": "Tokyo", "slug": "tokyo", "color": "#4CAF50", "description": "Tokyo, Japan" },
+        { "name": "Sydney", "slug": "sydney", "color": "#8BC34A", "description": "Sydney, Australia" },
+        { "name": "Dubai", "slug": "dubai", "color": "#FFC107", "description": "Dubai, UAE" }
+      ]
+    },
+    {
+      "category": "skills",
+      "tags": [
+        { "name": "Posing", "slug": "posing", "color": "#2196F3", "description": "Professional posing skills" },
+        { "name": "Acting", "slug": "acting", "color": "#4CAF50", "description": "Acting abilities" },
+        { "name": "Dancing", "slug": "dancing", "color": "#FF5722", "description": "Dance skills" },
+        { "name": "Sports", "slug": "sports", "color": "#FF9800", "description": "Athletic abilities" },
+        { "name": "Singing", "slug": "singing", "color": "#9C27B0", "description": "Singing abilities" },
+        { "name": "Languages", "slug": "languages", "color": "#795548", "description": "Multiple languages" },
+        { "name": "Driving", "slug": "driving", "color": "#607D8B", "description": "Valid driving license" },
+        { "name": "Stunts", "slug": "stunts", "color": "#F44336", "description": "Stunt capabilities" }
+      ]
+    },
+    {
+      "category": "shoot-preferences",
+      "tags": [
+        { "name": "Studio", "slug": "studio", "color": "#3F51B5", "description": "Studio shoots preferred" },
+        { "name": "Outdoor", "slug": "outdoor", "color": "#4CAF50", "description": "Outdoor locations" },
+        { "name": "Wardrobe Provided", "slug": "wardrobe-provided", "color": "#FF9800", "description": "Wardrobe must be provided" },
+        { "name": "Own Wardrobe", "slug": "own-wardrobe", "color": "#9C27B0", "description": "Can provide own wardrobe" },
+        { "name": "MUA Provided", "slug": "mua-provided", "color": "#E91E63", "description": "Makeup artist required" },
+        { "name": "TFP Available", "slug": "tfp-available", "color": "#00BCD4", "description": "Time for print available" }
+      ]
+    }
+  ]
+}

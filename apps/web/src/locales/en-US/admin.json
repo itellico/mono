@@ -1,0 +1,121 @@
+{
+  "_note": "This file is kept for backward compatibility. New translations should be added to the modular files in /admin/ directory.",
+  "_migrated_to": {
+    "dashboard": "admin/dashboard.json",
+    "users": "admin/users.json", 
+    "model-schemas": "admin/model-schemas.json",
+    "tenants": "admin/tenants.json"
+  },
+  "common": {
+    "actions": "Actions",
+    "view_details": "View Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search_placeholder": "Search...",
+    "filter_by_status": "Filter by status",
+    "all_statuses": "All Statuses",
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "export": "Export",
+    "import": "Import",
+    "no_results_found": "No results found",
+    "no_results_description": "Try adjusting your search or filter criteria",
+    "error_loading": "Error Loading Data",
+    "retry": "Retry",
+    "showing_results": "Showing {count} results",
+    "validation": {
+      "required": "This field is required",
+      "min": "Must be at least {min}",
+      "max": "Must be no more than {max}",
+      "minLength": "Must be at least {minLength} characters",
+      "maxLength": "Must be no more than {maxLength} characters",
+      "pattern": "Invalid format"
+    },
+    "errors": {
+      "submitFailed": "Failed to submit form. Please try again."
+    }
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "description": "Manage your itellico Mono instance",
+    "stats": {
+      "total_users": "Total Users",
+      "active_users": "Active Users",
+      "total_tenants": "Total Tenants",
+      "system_health": "System Health"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "description": "Manage platform users",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "filters": {
+      "search_by_name": "Search by name",
+      "search_by_email": "Search by email",
+      "all_roles": "All Roles",
+      "all_statuses": "All Statuses"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended"
+    }
+  },
+  "model-schemas": {
+    "title": "Model Schemas",
+    "description": "Manage dynamic form schemas and data structures",
+    "stats": {
+      "total_schemas": "Total Schemas",
+      "total_schemas_description": "All registered model schemas",
+      "active": "Active Schemas",
+      "active_description": "Currently enabled schemas",
+      "inactive": "Inactive Schemas", 
+      "inactive_description": "Disabled schemas",
+      "recent": "Recent Schemas",
+      "recent_description": "Created in last 30 days"
+    },
+    "create": {
+      "modal_title": "Create New Model Schema",
+      "modal_description": "Define a new dynamic schema for data collection and validation",
+      "form": {
+        "name": "Schema Name",
+        "name_placeholder": "e.g., User Profile",
+        "name_description": "Descriptive name for this schema",
+        "type": "Schema Type",
+        "type_placeholder": "Select schema type",
+        "type_description": "Category or type of data this schema represents",
+        "sub_type": "Sub Type",
+        "sub_type_placeholder": "e.g., basic, advanced",
+        "sub_type_description": "Optional sub-categorization",
+        "description": "Description",
+        "description_placeholder": "Describe what this schema is used for...",
+        "description_description": "Detailed description of the schema purpose"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create Schema",
+        "creating": "Creating..."
+      }
+    },
+    "edit": {
+      "modal_title": "Edit Model Schema",
+      "modal_description": "Update schema configuration and structure",
+      "buttons": {
+        "cancel": "Cancel", 
+        "save": "Save Changes",
+        "saving": "Saving..."
+      }
+    }
+  }
+} 

@@ -1,0 +1,193 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { RedisService } from '@common/redis/redis.service';
+import * as bcrypt from 'bcrypt';
+import { JwtPayload } from './strategies/jwt.strategy';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private redis: RedisService,
+  ) {}
+
+  async validateUser(email: string, password: string) {
+    // Find user through account since email is in Account model
+    const account = await this.prisma.account.findUnique({
+      where: { email },
+      include: {
+        users: {
+          include: {
+            userRoles: {
+              include: {
+                role: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!account || !account.is_active) {
+      return null;
+    }
+
+    // Get the primary user for this account
+    const user = account.users[0];
+    if (!user || !user.is_active) {
+      return null;
+    }
+
+    // Check password against account's password_hash
+    const isPasswordValid = await bcrypt.compare(password, account.password_hash || '');
+    if (!isPasswordValid) {
+      return null;
+    }
+
+    // Determine user tier based on roles
+    const tier = this.determineUserTier(user.userRoles || []);
+
+    return {
+      id: user.id.toString(),
+      email: account.email,
+      name: `${user.first_name} ${user.last_name}`.trim(),
+      tier,
+      tenant_id: account.tenant_id.toString(),
+      account_id: user.account_id.toString(),
+    };
+  }
+
+  async signIn(user: any) {
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      tier: user.tier,
+      tenant_id: user.tenant_id,
+      account_id: user.account_id,
+    };
+
+    const token = this.jwtService.sign(payload);
+
+    // Cache user session
+    await this.redis.set(
+      `session:${user.id}`,
+      {
+        user_id: user.id,
+        email: user.email,
+        tier: user.tier,
+        tenant_id: user.tenant_id,
+        account_id: user.account_id,
+        lastActive: new Date().toISOString(),
+      },
+      60 * 60 * 24 * 7, // 7 days
+    );
+
+    return {
+      success: true,
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          tier: user.tier,
+        },
+        token,
+        expiresIn: 60 * 60 * 24 * 7, // 7 days in seconds
+      },
+    };
+  }
+
+  async signOut(userId: string) {
+    // Clear session from Redis
+    await this.redis.del(`session:${userId}`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Successfully signed out',
+      },
+    };
+  }
+
+  async refresh(userId: string) {
+    // Check if session exists
+    const session = await this.redis.get(`session:${userId}`);
+    if (!session) {
+      throw new UnauthorizedException('Session expired');
+    }
+
+    // Get fresh user data
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(user_id) },
+      include: {
+        account: true,
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!user || !user.is_active || !user.account?.is_active) {
+      throw new UnauthorizedException('User not found or inactive');
+    }
+
+    const tier = this.determineUserTier(user.userRoles || []);
+    const payload: JwtPayload = {
+      sub: user.id.toString(),
+      email: user.account.email,
+      tier,
+      tenant_id: user.account.tenant_id.toString(),
+      account_id: user.account_id.toString(),
+    };
+
+    const token = this.jwtService.sign(payload);
+
+    // Update session
+    await this.redis.set(
+      `session:${userId}`,
+      {
+        user_id: user.id.toString(),
+        email: user.account.email,
+        tier,
+        tenant_id: user.account.tenant_id.toString(),
+        account_id: user.account_id.toString(),
+        lastActive: new Date().toISOString(),
+      },
+      60 * 60 * 24 * 7, // 7 days
+    );
+
+    return {
+      success: true,
+      data: {
+        token,
+        expiresIn: 60 * 60 * 24 * 7,
+      },
+    };
+  }
+
+  private determineUserTier(userRoles: any[]): string {
+    // Tier hierarchy: platform > tenant > account > user > public
+    const roleTiers = userRoles.map(ur => {
+      const roleName = ur.role.name.toLowerCase();
+      if (roleName.includes('platform') || roleName.includes('super')) return 'platform';
+      if (roleName.includes('tenant')) return 'tenant';
+      if (roleName.includes('account')) return 'account';
+      return 'user';
+    });
+
+    // Return highest tier
+    if (roleTiers.includes('platform')) return 'platform';
+    if (roleTiers.includes('tenant')) return 'tenant';
+    if (roleTiers.includes('account')) return 'account';
+    return 'user';
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
+  }
+}

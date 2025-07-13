@@ -1,0 +1,511 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                        Int                        @id @default(autoincrement())
+  uuid                      String                     @unique @default(uuid())
+  name                      String
+  domain                    String                     @unique
+  slug                      String?
+  description               Json?
+  features                  Json?
+  settings                  Json?
+  categories                Json?
+  allowedCountries          Json?
+  defaultCurrency           String?
+  isActive                  Boolean                    @default(true)
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  accounts                  Account[]
+  subscriptions             TenantSubscription?
+  auditLogs                 AuditLog[]
+  permissionHealthChecks    PermissionHealthCheck[]
+  permissionTemplates       PermissionTemplate[]
+  permissionUsageTracking   PermissionUsageTracking[]
+  resourceScopedPermissions ResourceScopedPermission[]
+  userActivityLogs          UserActivityLog[]
+}
+
+model Account {
+  id                     Int       @id @default(autoincrement())
+  uuid                   String    @default(uuid())
+  tenantId               Int
+  email                  String    @unique
+  emailVerified          Boolean   @default(false)
+  passwordHash           String?
+  accountType            String    @default("personal")
+  phone                  String?
+  timezone               String?
+  countryCode            String?
+  languageLocale         String?
+  currencyCode           String?   @default("EUR")
+  city                   String?
+  dateFormat             String?
+  timeFormat             String?
+  numberFormat           String?
+  emailNotifications     Boolean   @default(true)
+  smsNotifications       Boolean   @default(false)
+  themePreference        String    @default("system")
+  accountCapabilities    Json?
+  primaryMarketplaceSide String?
+  allowDualSide          Boolean   @default(false)
+  isActive               Boolean   @default(true)
+  isVerified             Boolean   @default(false)
+  lastLoginAt            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  tenant                 Tenant    @relation(fields: [tenantId], references: [id])
+  users                  User[]
+}
+
+model User {
+  id                               Int                        @id @default(autoincrement())
+  uuid                             String                     @default(uuid())
+  accountId                        Int
+  firstName                        String
+  lastName                         String
+  username                         String                     @unique
+  userType                         String                     @default("individual")
+  profilePhotoUrl                  String?
+  bio                              String?
+  website                          String?
+  dateOfBirth                      DateTime?
+  gender                           String?
+  accountRole                      String                     @default("entity_viewer")
+  canCreateProfiles                Boolean                    @default(false)
+  canManageAllProfiles             Boolean                    @default(false)
+  canAccessBilling                 Boolean                    @default(false)
+  canBookJobs                      Boolean                    @default(false)
+  profileApplicationStatus         String?
+  profileApprovedAt                DateTime?
+  profileRejectedAt                DateTime?
+  totalApplications                Int                        @default(0)
+  lastApplicationAt                DateTime?
+  userHash                         String
+  isActive                         Boolean                    @default(true)
+  isVerified                       Boolean                    @default(false)
+  createdAt                        DateTime                   @default(now())
+  updatedAt                        DateTime                   @updatedAt
+  account                          Account                    @relation(fields: [accountId], references: [id])
+  roles                            UserRole[]
+  auditLogs                        AuditLog[]
+  emergencyAccessLogsAsRevoker     EmergencyAccessLog[]       @relation("EmergencyAccessRevokedBy")
+  emergencyAccessLogsAsAdmin       EmergencyAccessLog[]       @relation("EmergencyAccessSuperAdmin")
+  permissionHealthChecks           PermissionHealthCheck[]
+  permissionTemplatesCreated       PermissionTemplate[]
+  permissionUsageTracking          PermissionUsageTracking[]
+  recordLocks                      RecordLock[]
+  resourceScopedPermissionsGrantor ResourceScopedPermission[] @relation("ResourceScopedPermissionGrantor")
+  resourceScopedPermissionsRevoker ResourceScopedPermission[] @relation("ResourceScopedPermissionRevoker")
+  resourceScopedPermissionsUser    ResourceScopedPermission[] @relation("ResourceScopedPermissionUser")
+  savedSearches                    SavedSearch[]
+  userActivityLogs                 UserActivityLog[]
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  permissions RolePermission[]
+  users       UserRole[]
+}
+
+model Permission {
+  id                        Int                        @id @default(autoincrement())
+  name                      String                     @unique
+  description               String?
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  roles                     RolePermission[]
+  permissionUsageTracking   PermissionUsageTracking[]
+  resourceScopedPermissions ResourceScopedPermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model OptionSet {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @default(uuid())
+  slug        String        @unique
+  label       String
+  tenantId    Int?
+  description String?
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  values      OptionValue[]
+
+  @@unique([slug, tenantId])
+}
+
+model OptionValue {
+  id               Int       @id @default(autoincrement())
+  uuid             String    @default(uuid())
+  optionSetId      Int
+  value            String
+  label            String
+  order            Int       @default(0)
+  canonicalRegion  String?
+  regionalMappings Json?
+  metadata         Json?
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  optionSet        OptionSet @relation(fields: [optionSetId], references: [id])
+
+  @@unique([optionSetId, value])
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  uuid          String        @default(uuid())
+  slug          String        @unique
+  name          String
+  description   String?
+  parentId      Int?
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  parent        Category?     @relation("Subcategories", fields: [parentId], references: [id])
+  subcategories Category[]    @relation("Subcategories")
+  tags          CategoryTag[]
+}
+
+model Tag {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @default(uuid())
+  slug        String        @unique
+  name        String
+  description String?
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  categories  CategoryTag[]
+}
+
+model CategoryTag {
+  categoryId Int
+  tagId      Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  tag        Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([categoryId, tagId])
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  symbol    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  dialCode  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Language {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  name       String
+  nativeName String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SubscriptionPlan {
+  id           Int                  @id @default(autoincrement())
+  uuid         String               @unique @default(uuid())
+  name         String
+  description  String?
+  price        Float
+  currency     String
+  billingCycle String
+  isPublic     Boolean              @default(true)
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  features     PlanFeatureLimit[]
+  tenants      TenantSubscription[]
+}
+
+model Feature {
+  id          Int                @id @default(autoincrement())
+  uuid        String             @unique @default(uuid())
+  key         String             @unique
+  name        String
+  description String?
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  plans       PlanFeatureLimit[]
+}
+
+model PlanFeatureLimit {
+  id        Int              @id @default(autoincrement())
+  planId    Int
+  featureId Int
+  limit     Int
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  feature   Feature          @relation(fields: [featureId], references: [id])
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@unique([planId, featureId])
+}
+
+model TenantSubscription {
+  id        Int              @id @default(autoincrement())
+  tenantId  Int              @unique
+  planId    Int
+  startDate DateTime
+  endDate   DateTime?
+  status    String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  tenant    Tenant           @relation(fields: [tenantId], references: [id])
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  tenantId   Int
+  userId     Int?
+  action     String
+  entityType String
+  entityId   String
+  createdAt  DateTime @default(now())
+  ipAddress  String?
+  metadata   Json?
+  newValues  Json?
+  oldValues  Json?
+  userAgent  String?
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model UserActivityLog {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  Int
+  userId    Int?
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  ipAddress String?
+  method    String?
+  params    Json?
+  path      String?
+  sessionId String?
+  userAgent String?
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("user_activity_logs")
+}
+
+model RecordLock {
+  entityType String
+  entityId   String
+  lockedBy   Int
+  lockedAt   DateTime @default(now())
+  expiresAt  DateTime
+  reason     String?
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [lockedBy], references: [id])
+
+  @@unique([entityType, entityId])
+  @@map("record_locks")
+}
+
+model SavedSearch {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @default(uuid())
+  userId          Int
+  tenantId        Int
+  name            String
+  description     String?
+  entityType      String
+  filters         Json
+  sortBy          String?
+  sortOrder       String?
+  columnConfig    Json?
+  searchValue     String?
+  paginationLimit Int?
+  isDefault       Boolean  @default(false)
+  isPublic        Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, entityType, name])
+  @@index([tenantId, entityType])
+  @@index([userId, entityType])
+  @@map("saved_searches")
+}
+
+model EmergencyAccessLog {
+  id               Int       @id @default(autoincrement())
+  superAdminId     Int
+  targetEntityType String
+  targetEntityId   Int
+  actionType       String
+  justification    String
+  durationMinutes  Int?
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  revokedBy        Int?
+  revokeReason     String?
+  ipAddress        String?
+  userAgent        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  revokedByUser    User?     @relation("EmergencyAccessRevokedBy", fields: [revokedBy], references: [id])
+  superAdmin       User      @relation("EmergencyAccessSuperAdmin", fields: [superAdminId], references: [id])
+
+  @@index([superAdminId])
+  @@index([targetEntityType, targetEntityId])
+  @@index([createdAt])
+  @@map("emergency_access_logs")
+}
+
+model PermissionTemplate {
+  id               Int      @id @default(autoincrement())
+  name             String
+  description      String?
+  category         String
+  targetEntityType String
+  templateData     Json
+  isSystem         Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  createdBy        Int?
+  tenantId         Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  creator          User?    @relation(fields: [createdBy], references: [id])
+  tenant           Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@unique([name, tenantId])
+  @@index([category])
+  @@index([targetEntityType])
+  @@index([tenantId])
+  @@map("permission_templates")
+}
+
+model PermissionHealthCheck {
+  id               Int       @id @default(autoincrement())
+  checkType        String
+  entityType       String
+  entityId         Int?
+  status           String    @default("pending")
+  severity         String    @default("info")
+  title            String
+  description      String?
+  issuesFound      Json?
+  recommendations  Json?
+  autoFixAvailable Boolean   @default(false)
+  autoFixApplied   Boolean   @default(false)
+  checkedBy        Int?
+  tenantId         Int?
+  scheduledAt      DateTime?
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  checker          User?     @relation(fields: [checkedBy], references: [id])
+  tenant           Tenant?   @relation(fields: [tenantId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([severity])
+  @@map("permission_health_checks")
+}
+
+model ResourceScopedPermission {
+  id                 Int                       @id @default(autoincrement())
+  userId             Int
+  permissionId       Int
+  resourceType       String
+  resourceIdentifier String
+  scopeConditions    Json?
+  grantedBy          Int
+  grantedAt          DateTime                  @default(now())
+  expiresAt          DateTime?
+  revokedAt          DateTime?
+  revokedBy          Int?
+  revokeReason       String?
+  tenantId           Int?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  usageTracking      PermissionUsageTracking[]
+  grantor            User                      @relation("ResourceScopedPermissionGrantor", fields: [grantedBy], references: [id])
+  permission         Permission                @relation(fields: [permissionId], references: [id])
+  revoker            User?                     @relation("ResourceScopedPermissionRevoker", fields: [revokedBy], references: [id])
+  tenant             Tenant?                   @relation(fields: [tenantId], references: [id])
+  user               User                      @relation("ResourceScopedPermissionUser", fields: [userId], references: [id])
+
+  @@unique([userId, permissionId, resourceType, resourceIdentifier])
+  @@index([userId])
+  @@index([permissionId])
+  @@index([resourceType, resourceIdentifier])
+  @@map("resource_scoped_permissions")
+}
+
+model PermissionUsageTracking {
+  id                         Int                       @id @default(autoincrement())
+  userId                     Int
+  permissionId               Int
+  resourceScopedPermissionId Int?
+  actionPerformed            String
+  resourceAccessed           String?
+  success                    Boolean                   @default(true)
+  errorMessage               String?
+  ipAddress                  String?
+  userAgent                  String?
+  tenantId                   Int?
+  performedAt                DateTime                  @default(now())
+  permission                 Permission                @relation(fields: [permissionId], references: [id])
+  resourceScopedPermission   ResourceScopedPermission? @relation(fields: [resourceScopedPermissionId], references: [id])
+  tenant                     Tenant?                   @relation(fields: [tenantId], references: [id])
+  user                       User                      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([permissionId])
+  @@index([performedAt])
+  @@map("permission_usage_tracking")
+}

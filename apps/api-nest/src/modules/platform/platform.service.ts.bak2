@@ -1,0 +1,573 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { LoggerService } from '@common/logging/logger.service';
+import { RedisService } from '@common/redis/redis.service';
+import { RabbitMQService } from '@common/rabbitmq/rabbitmq.service';
+
+@Injectable()
+export class PlatformService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: LoggerService,
+    private readonly redis: RedisService,
+    private readonly rabbitmq: RabbitMQService,
+  ) {}
+  async getTenants(query: any) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    this.logger.logBusiness('Fetching tenants', { page, limit });
+
+    const [tenants, total] = await Promise.all([
+      this.prisma.tenant.findMany({
+        skip,
+        take: limit,
+        include: {
+          _count: {
+            select: {
+              accounts: true,
+            },
+          },
+        },
+      }),
+      this.prisma.tenant.count(),
+    ]);
+
+    // Get user counts for each tenant
+    const tenantsWithStats = await Promise.all(
+      tenants.map(async (tenant) => {
+        const accountIds = await this.prisma.account.findMany({
+          where: { tenant_id: tenant.id },
+          select: { id: true },
+        }).then(accounts => accounts.map(a => a.id));
+
+        const userCount = await this.prisma.user.count({
+          where: { account_id: { in: accountIds } },
+        });
+
+        return {
+          id: tenant.id.toString(),
+          name: tenant.name,
+          domain: tenant.domain,
+          status: tenant.isActive ? 'active' : 'inactive',
+          accounts: tenant._count.accounts,
+          users: userCount,
+          created_at: tenant.createdAt,
+        };
+      })
+    );
+
+    return {
+      success: true,
+      data: {
+        items: tenantsWithStats,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async createTenant(tenantData: any) {
+    this.logger.logBusiness('Creating new tenant', { name: tenantData.name, domain: tenantData.domain });
+
+    const tenant = await this.prisma.$transaction(async (tx) => {
+      // Create tenant
+      const newTenant = await tx.tenant.create({
+        data: {
+          name: tenantData.name,
+          domain: tenantData.domain,
+          is_active: true,
+        },
+      });
+
+      // Create default tenant settings
+      await tx.tenantSetting.create({
+        data: {
+          tenant_id: newTenant.id,
+          features: tenantData.features || ['basic'],
+          maxAccounts: tenantData.maxAccounts || 10,
+          maxUsers: tenantData.maxUsers || 100,
+          storageQuotaMB: tenantData.storageQuotaMB || 10240,
+        },
+      });
+
+      // Create default admin account
+      const adminAccount = await tx.account.create({
+        data: {
+          tenant_id: newTenant.id,
+          name: 'Admin Account',
+          email: tenantData.adminEmail,
+          password_hash: tenantData.adminPasswordHash || '',
+          is_active: true,
+        },
+      });
+
+      // Create admin user
+      const adminUser = await tx.user.create({
+        data: {
+          account_id: adminAccount.id,
+          name: 'Tenant Admin',
+          is_active: true,
+        },
+      });
+
+      // Create platform admin role
+      const adminRole = await tx.role.create({
+        data: {
+          tenant_id: newTenant.id,
+          name: 'Tenant Admin',
+          permissions: ['tenant.*'],
+        },
+      });
+
+      // Assign role to admin user
+      await tx.userRole.create({
+        data: {
+          user_id: adminUser.id,
+          role_id: adminRole.id,
+        },
+      });
+
+      return newTenant;
+    });
+
+    // Queue welcome email
+    await this.rabbitmq.queueEmailJob({
+      type: 'tenant.welcome',
+      to: tenantData.adminEmail,
+      data: {
+        tenantName: tenant.name,
+        tenantDomain: tenant.domain,
+      },
+    });
+
+    // Log platform event
+    this.logger.logSecurity(`New tenant created: ${tenant.name}`, 'low', {
+      tenant_id: tenant.id,
+      domain: tenant.domain,
+    });
+
+    return {
+      success: true,
+      data: {
+        id: tenant.id.toString(),
+        name: tenant.name,
+        domain: tenant.domain,
+        status: 'active',
+        created_at: tenant.createdAt,
+      },
+    };
+  }
+
+  async getTenant(id: string) {
+    const cacheKey = `platform:tenant:${id}`;
+    
+    // Check cache
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      return { success: true, data: JSON.parse(cached) };
+    }
+
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        tenantSettings: true,
+        _count: {
+          select: {
+            accounts: true,
+          },
+        },
+      },
+    });
+
+    if (!tenant) {
+      throw new Error('Tenant not found');
+    }
+
+    // Get user count
+    const accountIds = await this.prisma.account.findMany({
+      where: { tenant_id: tenant.id },
+      select: { id: true },
+    }).then(accounts => accounts.map(a => a.id));
+
+    const userCount = await this.prisma.user.count({
+      where: { account_id: { in: accountIds } },
+    });
+
+    const tenantData = {
+      id: tenant.id.toString(),
+      name: tenant.name,
+      domain: tenant.domain,
+      status: tenant.isActive ? 'active' : 'inactive',
+      accounts: tenant._count.accounts,
+      users: userCount,
+      settings: {
+        features: tenant.tenantSettings?.features || [],
+        maxAccounts: tenant.tenantSettings?.maxAccounts || 10,
+        maxUsers: tenant.tenantSettings?.maxUsers || 100,
+        storageQuotaMB: tenant.tenantSettings?.storageQuotaMB || 10240,
+      },
+      subscription: {
+        plan: 'enterprise', // TODO: Implement subscription model
+        status: 'active',
+        expiresAt: '2025-12-31T23:59:59Z',
+      },
+      created_at: tenant.createdAt,
+    };
+
+    // Cache for 5 minutes
+    await this.redis.set(cacheKey, JSON.stringify(tenantData), 300);
+
+    return { success: true, data: tenantData };
+  }
+
+  async updateTenant(id: string, updateData: any) {
+    this.logger.logBusiness('Updating tenant', { tenant_id: id });
+
+    await this.prisma.$transaction(async (tx) => {
+      // Update tenant
+      if (updateData.name || updateData.domain || updateData.isActive !== undefined) {
+        await tx.tenant.update({
+          where: { id: parseInt(id) },
+          data: {
+            name: updateData.name,
+            domain: updateData.domain,
+            is_active: updateData.isActive,
+          },
+        });
+      }
+
+      // Update settings
+      if (updateData.settings) {
+        await tx.tenantSetting.update({
+          where: { tenant_id: parseInt(id) },
+          data: {
+            features: updateData.settings.features,
+            maxAccounts: updateData.settings.maxAccounts,
+            maxUsers: updateData.settings.maxUsers,
+            storageQuotaMB: updateData.settings.storageQuotaMB,
+          },
+        });
+      }
+    });
+
+    // Invalidate cache
+    await this.redis.del(`platform:tenant:${id}`);
+
+    // Log security event if tenant is deactivated
+    if (updateData.isActive === false) {
+      this.logger.logSecurity(`Tenant deactivated: ${id}`, 'medium', { tenant_id: id });
+    }
+
+    return this.getTenant(id);
+  }
+
+  async getSystemStatus() {
+    this.logger.logSystem('Checking system status');
+
+    const services = {
+      api: 'healthy',
+      database: 'unknown',
+      redis: 'unknown',
+      rabbitmq: 'unknown',
+    };
+
+    // Check database
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+      services.database = 'healthy';
+    } catch (error) {
+      services.database = 'unhealthy';
+      this.logger.logSecurity('Database health check failed', 'high', { error: error.message });
+    }
+
+    // Check Redis
+    try {
+      await this.redis.ping();
+      services.redis = 'healthy';
+    } catch (error) {
+      services.redis = 'unhealthy';
+      this.logger.logSecurity('Redis health check failed', 'high', { error: error.message });
+    }
+
+    // Check RabbitMQ
+    try {
+      const queueHealth = await this.rabbitmq.getQueueHealth();
+      services.rabbitmq = queueHealth.healthy ? 'healthy' : 'degraded';
+    } catch (error) {
+      services.rabbitmq = 'unhealthy';
+      this.logger.logSecurity('RabbitMQ health check failed', 'high', { error: error.message });
+    }
+
+    const allHealthy = Object.values(services).every(status => status === 'healthy');
+
+    return {
+      success: true,
+      data: {
+        status: allHealthy ? 'operational' : 'degraded',
+        services,
+        uptime: process.uptime(),
+        version: process.env.npm_package_version || '2.0.0',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
+      },
+    };
+  }
+
+  async getSystemMetrics() {
+    const cacheKey = 'platform:metrics';
+    
+    // Check cache (short TTL for metrics)
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      return { success: true, data: JSON.parse(cached) };
+    }
+
+    this.logger.logBusiness('Calculating system metrics');
+
+    // Get counts in parallel
+    const [tenantCount, accountCount, userCount] = await Promise.all([
+      this.prisma.tenant.count(),
+      this.prisma.account.count(),
+      this.prisma.user.count(),
+    ]);
+
+    // Get API request metrics from audit logs
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [todayRequests, weekRequests, monthRequests] = await Promise.all([
+      // this.prisma.auditLog.count({
+        where: {
+          action: { startsWith: 'api.' },
+          created_at: { gte: todayStart },
+        },
+      }),
+      // this.prisma.auditLog.count({
+        where: {
+          action: { startsWith: 'api.' },
+          created_at: { gte: weekStart },
+        },
+      }),
+      // this.prisma.auditLog.count({
+        where: {
+          action: { startsWith: 'api.' },
+          created_at: { gte: monthStart },
+        },
+      }),
+    ]);
+
+    const metrics = {
+      tenants: tenantCount,
+      totalAccounts: accountCount,
+      totalUsers: userCount,
+      apiRequests: {
+        today: todayRequests,
+        week: weekRequests,
+        month: monthRequests,
+      },
+      storage: {
+        used: '125GB', // TODO: Implement actual storage calculation
+        total: '1TB',
+        percentage: 12.5,
+      },
+      performance: {
+        avgResponseTime: 45, // ms - TODO: Calculate from metrics
+        uptime: 99.9, // percentage
+        errorRate: 0.1, // percentage
+      },
+    };
+
+    // Cache for 1 minute
+    await this.redis.set(cacheKey, JSON.stringify(metrics), 60);
+
+    return { success: true, data: metrics };
+  }
+
+  async getSubscriptions() {
+    // TODO: Implement subscription model in database
+    const plans = [
+      { 
+        id: 'basic', 
+        name: 'Basic', 
+        price: 29, 
+        features: ['5 accounts', '25 users', '10GB storage', 'Basic support'],
+        limits: { accounts: 5, users: 25, storageGB: 10 },
+      },
+      { 
+        id: 'pro', 
+        name: 'Professional', 
+        price: 99, 
+        features: ['25 accounts', '100 users', '100GB storage', 'Priority support'],
+        limits: { accounts: 25, users: 100, storageGB: 100 },
+      },
+      { 
+        id: 'enterprise', 
+        name: 'Enterprise', 
+        price: 299, 
+        features: ['Unlimited accounts', 'Unlimited users', '1TB storage', '24/7 support', 'Custom integrations'],
+        limits: { accounts: -1, users: -1, storageGB: 1024 },
+      },
+    ];
+
+    // Calculate active subscriptions and revenue
+    const tenants = await this.prisma.tenant.count({ where: { is_active: true } });
+    
+    // Mock calculation - in real implementation, get from subscription table
+    const distribution = {
+      basic: Math.floor(tenants * 0.5),
+      pro: Math.floor(tenants * 0.3),
+      enterprise: Math.floor(tenants * 0.2),
+    };
+
+    const monthlyRevenue = 
+      distribution.basic * 29 + 
+      distribution.pro * 99 + 
+      distribution.enterprise * 299;
+
+    return {
+      success: true,
+      data: {
+        plans,
+        activeSubscriptions: tenants,
+        distribution,
+        revenue: {
+          monthly: monthlyRevenue,
+          annual: monthlyRevenue * 12,
+        },
+      },
+    };
+  }
+
+  async getSettings() {
+    const cacheKey = 'platform:settings';
+    
+    // Check cache
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      return { success: true, data: JSON.parse(cached) };
+    }
+
+    // TODO: Store these in database configuration table
+    const settings = {
+      platform: {
+        name: 'itellico',
+        version: process.env.npm_package_version || '2.0.0',
+        environment: process.env.NODE_ENV || 'development',
+        baseUrl: process.env.BASE_URL || 'http://localhost:3001',
+      },
+      features: {
+        multiTenant: true,
+        apiAccess: true,
+        customDomains: true,
+        webhooks: true,
+        audit: true,
+        analytics: true,
+      },
+      limits: {
+        maxTenantsPerPlatform: 1000,
+        maxAccountsPerTenant: 100,
+        maxUsersPerAccount: 500,
+        maxApiRequestsPerMinute: 600,
+        maxFileUploadSizeMB: 100,
+      },
+      security: {
+        passwordMinLength: 8,
+        passwordRequireUppercase: true,
+        passwordRequireNumbers: true,
+        passwordRequireSpecial: true,
+        sessionTimeoutMinutes: 1440, // 24 hours
+        mfaRequired: false,
+      },
+      maintenance: {
+        mode: false,
+        message: null,
+        scheduledAt: null,
+      },
+    };
+
+    // Cache for 1 hour
+    await this.redis.set(cacheKey, JSON.stringify(settings), 3600);
+
+    return { success: true, data: settings };
+  }
+
+  async updateSettings(settings: any) {
+    this.logger.logBusiness('Updating platform settings', { sections: Object.keys(settings) });
+
+    // TODO: Persist to database configuration table
+    // For now, just update cache
+    
+    const currentSettings = await this.getSettings();
+    const updatedSettings = {
+      ...currentSettings.data,
+      ...settings,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Cache updated settings
+    await this.redis.set('platform:settings', JSON.stringify(updatedSettings), 3600);
+
+    // Log critical security changes
+    if (settings.security) {
+      this.logger.logSecurity('Platform security settings updated', 'high', { 
+        changes: Object.keys(settings.security),
+      });
+    }
+
+    // Queue notification to platform admins
+    if (settings.maintenance?.mode === true) {
+      await this.rabbitmq.queueNotificationJob({
+        type: 'platform.maintenance',
+        recipients: await this.getPlatformAdmins(),
+        data: {
+          maintenanceMode: true,
+          message: settings.maintenance.message,
+          scheduledAt: settings.maintenance.scheduledAt,
+        },
+        priority: 10,
+      });
+    }
+
+    return { success: true, data: updatedSettings };
+  }
+
+  private async getPlatformAdmins() {
+    // Get all users with platform admin permissions
+    const platformAdmins = await this.prisma.user.findMany({
+      where: {
+        userRoles: {
+          some: {
+            role: {
+              permissions: {
+                has: 'platform.*',
+              },
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        account: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
+
+    return platformAdmins.map(admin => ({
+      id: admin.id,
+      name: admin.name,
+      email: admin.account.email,
+    }));
+  }
+}

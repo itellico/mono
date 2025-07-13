@@ -1,0 +1,238 @@
+{
+  "plans": [
+    {
+      "name": "Free",
+      "slug": "free",
+      "description": "Perfect for trying out the platform",
+      "price": {
+        "EUR": 0,
+        "USD": 0,
+        "GBP": 0
+      },
+      "interval": "month",
+      "tier": "tenant",
+      "features": [
+        "user_management",
+        "rbac",
+        "file_storage",
+        "search",
+        "notifications"
+      ],
+      "limits": {
+        "users": 5,
+        "storage": 1073741824,
+        "apiRequests": 10000,
+        "emailsPerMonth": 100,
+        "projects": 1
+      },
+      "display": {
+        "badge": "Free",
+        "color": "#757575",
+        "popular": false,
+        "order": 1
+      }
+    },
+    {
+      "name": "Starter",
+      "slug": "starter",
+      "description": "For small teams getting started",
+      "price": {
+        "EUR": 29,
+        "USD": 35,
+        "GBP": 25
+      },
+      "interval": "month",
+      "tier": "tenant",
+      "features": [
+        "user_management",
+        "rbac",
+        "file_storage",
+        "search",
+        "notifications",
+        "api_access",
+        "audit_logs",
+        "two_factor_auth"
+      ],
+      "limits": {
+        "users": 20,
+        "storage": 10737418240,
+        "apiRequests": 100000,
+        "emailsPerMonth": 1000,
+        "projects": 5,
+        "customRoles": 5
+      },
+      "display": {
+        "badge": "Starter",
+        "color": "#34a853",
+        "popular": false,
+        "order": 2
+      }
+    },
+    {
+      "name": "Professional",
+      "slug": "professional",
+      "description": "For growing businesses",
+      "price": {
+        "EUR": 99,
+        "USD": 119,
+        "GBP": 89
+      },
+      "interval": "month",
+      "tier": "tenant",
+      "features": [
+        "user_management",
+        "rbac",
+        "file_storage",
+        "search",
+        "notifications",
+        "api_access",
+        "audit_logs",
+        "two_factor_auth",
+        "webhooks",
+        "analytics",
+        "billing",
+        "workflows",
+        "sso"
+      ],
+      "limits": {
+        "users": 100,
+        "storage": 107374182400,
+        "apiRequests": 1000000,
+        "emailsPerMonth": 10000,
+        "projects": 20,
+        "customRoles": 20,
+        "webhooks": 10,
+        "workflows": 10
+      },
+      "display": {
+        "badge": "Most Popular",
+        "color": "#1a73e8",
+        "popular": true,
+        "order": 3
+      }
+    },
+    {
+      "name": "Business",
+      "slug": "business",
+      "description": "For large teams with advanced needs",
+      "price": {
+        "EUR": 299,
+        "USD": 359,
+        "GBP": 269
+      },
+      "interval": "month",
+      "tier": "tenant",
+      "features": [
+        "user_management",
+        "rbac",
+        "file_storage",
+        "search",
+        "notifications",
+        "api_access",
+        "audit_logs",
+        "two_factor_auth",
+        "webhooks",
+        "analytics",
+        "billing",
+        "workflows",
+        "sso",
+        "cache_management",
+        "tenant_management"
+      ],
+      "limits": {
+        "users": 500,
+        "storage": 1099511627776,
+        "apiRequests": 10000000,
+        "emailsPerMonth": 50000,
+        "projects": 100,
+        "customRoles": 100,
+        "webhooks": 50,
+        "workflows": 50,
+        "subAccounts": 10
+      },
+      "display": {
+        "badge": "Business",
+        "color": "#ea4335",
+        "popular": false,
+        "order": 4
+      }
+    },
+    {
+      "name": "Enterprise",
+      "slug": "enterprise",
+      "description": "Custom solutions for enterprises",
+      "price": {
+        "EUR": -1,
+        "USD": -1,
+        "GBP": -1
+      },
+      "interval": "custom",
+      "tier": "tenant",
+      "features": ["*"],
+      "limits": {
+        "users": -1,
+        "storage": -1,
+        "apiRequests": -1,
+        "emailsPerMonth": -1,
+        "projects": -1,
+        "customRoles": -1,
+        "webhooks": -1,
+        "workflows": -1,
+        "subAccounts": -1
+      },
+      "display": {
+        "badge": "Contact Sales",
+        "color": "#fbbc04",
+        "popular": false,
+        "order": 5,
+        "customPricing": true
+      },
+      "benefits": [
+        "Unlimited everything",
+        "Dedicated support",
+        "Custom integrations",
+        "SLA guarantee",
+        "On-premise option",
+        "Custom contracts",
+        "Priority features"
+      ]
+    }
+  ],
+  "addons": [
+    {
+      "name": "Extra Storage",
+      "slug": "extra-storage",
+      "description": "Additional storage space",
+      "price": {
+        "EUR": 5,
+        "USD": 6,
+        "GBP": 4.5
+      },
+      "unit": "100GB",
+      "interval": "month"
+    },
+    {
+      "name": "Extra Users",
+      "slug": "extra-users",
+      "description": "Additional user seats",
+      "price": {
+        "EUR": 3,
+        "USD": 3.5,
+        "GBP": 2.5
+      },
+      "unit": "user",
+      "interval": "month"
+    },
+    {
+      "name": "Premium Support",
+      "slug": "premium-support",
+      "description": "24/7 priority support",
+      "price": {
+        "EUR": 99,
+        "USD": 119,
+        "GBP": 89
+      },
+      "interval": "month"
+    }
+  ]
+}

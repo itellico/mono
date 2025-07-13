@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Admin - Go Models NYC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .talent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .booking-calendar { min-height: 400px; background: #f8f9fa; border-radius: 8px; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Tenant Stats -->
+                <div class="row mb-4" id="stats-row"></div>
+                
+                <!-- Main Content Tabs -->
+                <div id="main-tabs"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items for Tenant Admin
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', active: true },
+                { label: 'Talent Database', icon: 'fas fa-users', href: '#talents' },
+                { label: 'Casting Calls', icon: 'fas fa-bullhorn', href: '#castings' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: '#bookings' },
+                { label: 'Applications', icon: 'fas fa-clipboard-list', href: '#applications' },
+                { label: 'Categories & Tags', icon: 'fas fa-tags', href: '#categories' },
+                { label: 'Blog System', icon: 'fas fa-blog', href: '#blog' },
+                { label: 'Academy', icon: 'fas fa-graduation-cap', href: '#academy' },
+                { label: 'Subscriptions', icon: 'fas fa-credit-card', href: '#subscriptions' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-pie', href: '#finance' },
+                { label: 'Email Templates', icon: 'fas fa-envelope', href: '#emails' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: '#workflows' },
+                { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Go Models NYC', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Sarah Admin', 'Tenant Administrator', 'Tenant');
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Active Models', '1,234', 'fas fa-users', 'primary'),
+                createStatCard('Open Castings', '45', 'fas fa-bullhorn', 'success'),
+                createStatCard('Monthly Bookings', '289', 'fas fa-calendar-check', 'warning'),
+                createStatCard('Revenue', '$45,230', 'fas fa-dollar-sign', 'info')
+            ].join('');
+            document.getElementById('stats-row').innerHTML = statsHtml;
+            
+            // Talent Database Tab
+            const talentContent = `
+                ${createSearchBar('Search models by name, skills, or location...')}
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        ${createFilterPanel([
+                            {
+                                type: 'checkbox',
+                                label: 'Model Type',
+                                options: [
+                                    { id: 'fashion', label: 'Fashion' },
+                                    { id: 'commercial', label: 'Commercial' },
+                                    { id: 'runway', label: 'Runway' },
+                                    { id: 'editorial', label: 'Editorial' }
+                                ]
+                            },
+                            {
+                                type: 'range',
+                                label: 'Height (cm)',
+                                id: 'height',
+                                min: 150,
+                                max: 200
+                            }
+                        ])}
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            ${[
+                                {
+                                    name: 'Emma Johnson',
+                                    type: 'Fashion Model',
+                                    tags: ['Runway', 'Editorial', 'Commercial'],
+                                    description: 'Professional model with 5 years experience',
+                                    rate: '$500/hour',
+                                    rating: '4.9'
+                                },
+                                {
+                                    name: 'Michael Chen',
+                                    type: 'Fitness Model',
+                                    tags: ['Athletic', 'Commercial', 'Print'],
+                                    description: 'Certified personal trainer and fitness model',
+                                    rate: '$400/hour',
+                                    rating: '4.8'
+                                },
+                                {
+                                    name: 'Sofia Rodriguez',
+                                    type: 'Commercial Model',
+                                    tags: ['TV', 'Print', 'Lifestyle'],
+                                    description: 'Versatile commercial model and actress',
+                                    rate: '$450/hour',
+                                    rating: '4.7'
+                                }
+                            ].map(profile => createProfileCard(profile)).join('')}
+                        </div>
+                        ${createPagination(1, 42)}
+                    </div>
+                </div>
+            `;
+            
+            // Casting Calls Tab
+            const castingHeaders = ['Casting Title', 'Client', 'Type', 'Date', 'Applications', 'Status'];
+            const castingRows = [
+                ['Summer Fashion Campaign', 'Vogue NYC', 'Editorial', 'Jun 15, 2024', '67', '<span class="badge bg-success">Active</span>'],
+                ['Sports Brand Commercial', 'Nike', 'Commercial', 'Jun 20, 2024', '123', '<span class="badge bg-success">Active</span>'],
+                ['Runway Show NYFW', 'Marc Jacobs', 'Runway', 'Jul 10, 2024', '89', '<span class="badge bg-warning">Review</span>'],
+                ['Fitness App Campaign', 'FitTech', 'Digital', 'Jun 25, 2024', '45', '<span class="badge bg-info">Draft</span>']
+            ];
+            const castingContent = `
+                <div class="d-flex justify-content-between mb-4">
+                    <h5>Active Casting Calls</h5>
+                    <button class="btn btn-primary"><i class="fas fa-plus me-2"></i> Create New Casting</button>
+                </div>
+                ${createDataTable('', castingHeaders, castingRows, true)}
+            `;
+            
+            // Bookings Tab with Calendar
+            const bookingContent = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="booking-calendar">
+                            <h5 class="mb-3">Booking Calendar - June 2024</h5>
+                            <div class="text-center text-muted">
+                                <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+                                <p>Interactive calendar would show bookings here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Today's Bookings</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 pb-3 border-bottom">
+                                    <strong>Emma Johnson</strong><br>
+                                    <small class="text-muted">Vogue Photoshoot</small><br>
+                                    <small>10:00 AM - 2:00 PM</small>
+                                </div>
+                                <div class="mb-3 pb-3 border-bottom">
+                                    <strong>Michael Chen</strong><br>
+                                    <small class="text-muted">Nike Commercial</small><br>
+                                    <small>2:00 PM - 6:00 PM</small>
+                                </div>
+                                <div>
+                                    <strong>Sofia Rodriguez</strong><br>
+                                    <small class="text-muted">Brand Consultation</small><br>
+                                    <small>4:00 PM - 5:00 PM</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create main tabs
+            const tabs = [
+                { label: 'Talent Database', icon: 'fas fa-users', content: talentContent },
+                { label: 'Casting Calls', icon: 'fas fa-bullhorn', content: castingContent },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', content: bookingContent }
+            ];
+            
+            document.getElementById('main-tabs').innerHTML = createTabs(tabs);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome back, {{name}}!",
+  "navigation": {
+    "dashboard": "Dashboard",
+    "profile": "Profile", 
+    "applications": "Applications",
+    "messages": "Messages",
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "stats": {
+    "applications": "Applications",
+    "messages": "Messages",
+    "earnings": "Earnings",
+    "profileViews": "Profile Views",
+    "totalApplications": "Total Applications",
+    "activeApplications": "Active Applications",
+    "approvedApplications": "Approved",
+    "pendingApplications": "Pending"
+  },
+  "recent": {
+    "applications": "Recent Applications",
+    "messages": "Recent Messages", 
+    "activities": "Recent Activities",
+    "notifications": "Recent Notifications"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "applyToJob": "Apply to Job",
+    "updateProfile": "Update Profile",
+    "viewMessages": "View Messages",
+    "uploadPhotos": "Upload Photos",
+    "viewEarnings": "View Earnings"
+  },
+  "overview": {
+    "title": "Overview",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "change": "{{value}}% from last month",
+    "increase": "increase",
+    "decrease": "decrease"
+  },
+  "applications": {
+    "title": "My Applications",
+    "viewAll": "View All Applications",
+    "noApplications": "No applications yet",
+    "startApplying": "Start applying to jobs to see them here"
+  },
+  "messages": {
+    "title": "Messages",
+    "viewAll": "View All Messages",
+    "noMessages": "No messages yet",
+    "unread": "{{count}} unread message",
+    "unread_plural": "{{count}} unread messages"
+  },
+  "profile": {
+    "completionTitle": "Profile Completion",
+    "completion": "{{percentage}}% complete",
+    "addPhotos": "Add more photos",
+    "updateBio": "Update your bio",
+    "addExperience": "Add experience",
+    "verifyProfile": "Verify your profile"
+  }
+} 

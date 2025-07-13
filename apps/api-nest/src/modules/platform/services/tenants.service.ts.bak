@@ -1,0 +1,656 @@
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { RedisService } from '@common/redis/redis.service';
+import { CreateTenantDto, TenantStatus } from '../dto/create-tenant.dto';
+import { UpdateTenantDto } from '../dto/update-tenant.dto';
+import { randomUUID } from 'crypto';
+import * as bcrypt from 'bcrypt';
+
+@Injectable()
+export class TenantsService {
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
+
+  async getTenants(query: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    plan?: string;
+  }) {
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { domain: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (query.status && query.status !== 'all') {
+      where.is_active = query.status === 'active';
+    }
+
+    const [tenants, total] = await Promise.all([
+      this.prisma.tenant.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+        include: {
+          accounts: {
+            select: {
+              id: true,
+            },
+          },
+          _count: {
+            select: {
+              accounts: true,
+            },
+          },
+        },
+      }),
+      this.prisma.tenant.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        items: tenants,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async getTenant(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      include: {
+        accounts: {
+          take: 10,
+          orderBy: { created_at: 'desc' },
+          include: {
+            users: {
+              take: 1,
+              select: {
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            accounts: true,
+          },
+        },
+      },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    return {
+      success: true,
+      data: tenant,
+    };
+  }
+
+  async createTenant(user_id: string, createTenantDto: CreateTenantDto) {
+    // Check if domain is taken
+    const existing = await this.prisma.tenant.findUnique({
+      where: { domain: createTenantDto.domain || createTenantDto.subdomain },
+    });
+
+    if (existing) {
+      throw new ConflictException('Domain already taken');
+    }
+
+    // Create tenant
+    const tenant = await this.prisma.tenant.create({
+      data: {
+        name: createTenantDto.name,
+        domain: createTenantDto.domain || createTenantDto.subdomain,
+        description: createTenantDto.description,
+        settings: createTenantDto.settings || {},
+        features: createTenantDto.features || {},
+        is_active: true,
+      },
+    });
+
+    // Create admin account and user
+    const hashedPassword = await bcrypt.hash(randomUUID(), 10);
+    
+    const adminAccount = await this.prisma.account.create({
+      data: {
+        tenant_id: tenant.id,
+        email: createTenantDto.adminEmail,
+        password_hash: hashedPassword,
+        is_active: true,
+        is_verified: false,
+      },
+    });
+
+    const adminUser = await this.prisma.user.create({
+      data: {
+        account_id: adminAccount.id,
+        first_name: createTenantDto.adminName?.split(' ')[0] || 'Admin',
+        last_name: createTenantDto.adminName?.split(' ').slice(1).join(' ') || 'User',
+        username: `admin-${tenant.domain}`,
+        is_active: true,
+      },
+    });
+
+    // TODO: Send welcome email to admin
+
+    return {
+      success: true,
+      data: {
+        tenant,
+        adminUser: {
+          id: adminUser.id,
+          email: adminAccount.email,
+          name: `${adminUser.first_name} ${adminUser.last_name}`,
+        },
+      },
+    };
+  }
+
+  async updateTenant(tenant_id: string, updateTenantDto: UpdateTenantDto) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    // Check domain uniqueness if changed
+    const newDomain = updateTenantDto.domain || updateTenantDto.subdomain;
+    if (newDomain && newDomain !== tenant.domain) {
+      const existing = await this.prisma.tenant.findUnique({
+        where: { domain: newDomain },
+      });
+
+      if (existing) {
+        throw new ConflictException('Domain already taken');
+      }
+    }
+
+    const updated = await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        ...(updateTenantDto.name && { name: updateTenantDto.name }),
+        ...(newDomain && { domain: newDomain }),
+        ...(updateTenantDto.description && { description: updateTenantDto.description }),
+        ...(updateTenantDto.settings && { settings: updateTenantDto.settings }),
+        ...(updateTenantDto.features && { features: updateTenantDto.features }),
+      },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}`);
+
+    return {
+      success: true,
+      data: updated,
+    };
+  }
+
+  async deleteTenant(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      include: {
+        _count: {
+          select: {
+            users: true,
+            accounts: true,
+          },
+        },
+      },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    if (tenant._count.users > 0 || tenant._count.accounts > 0) {
+      throw new BadRequestException('Cannot delete tenant with active users or accounts');
+    }
+
+    // Soft delete
+    await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        status: TenantStatus.SUSPENDED,
+        deletedAt: new Date(),
+      },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}`);
+    await this.redis.delPattern(`tenant:${tenant_id}:*`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Tenant marked for deletion',
+      },
+    };
+  }
+
+  async suspendTenant(tenant_id: string, data: {
+    reason: string;
+    notifyUsers?: boolean;
+  }) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        status: TenantStatus.SUSPENDED,
+        suspendedAt: new Date(),
+        suspensionReason: data.reason,
+      },
+    });
+
+    // Invalidate all user sessions for this tenant
+    const users = await this.prisma.user.findMany({
+      where: {
+        tenants: {
+          some: { tenant_id },
+        },
+      },
+      select: { id: true },
+    });
+
+    for (const user of users) {
+      await this.redis.del(`session:${user.id}`);
+    }
+
+    // TODO: Send notification emails if requested
+
+    return {
+      success: true,
+      data: {
+        message: 'Tenant suspended successfully',
+      },
+    };
+  }
+
+  async activateTenant(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        status: TenantStatus.ACTIVE,
+        suspendedAt: null,
+        suspensionReason: null,
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        message: 'Tenant activated successfully',
+      },
+    };
+  }
+
+  async getTenantStats(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    const [userCount, accountCount, schemaCount, storageUsed] = await Promise.all([
+      this.prisma.user.count({
+        where: {
+          tenants: {
+            some: { tenant_id },
+          },
+        },
+      }),
+      this.prisma.account.count({
+        where: { tenant_id },
+      }),
+      0, // this.prisma.modelSchema.count({ where: { tenant_id } }),
+      // TODO: Calculate actual storage usage
+      Promise.resolve(0),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        users: {
+          count: userCount,
+          limit: tenant.limits?.users || 0,
+          percentage: tenant.limits?.users 
+            ? Math.round((userCount / tenant.limits.users) * 100) 
+            : 0,
+        },
+        accounts: {
+          count: accountCount,
+        },
+        schemas: {
+          count: schemaCount,
+        },
+        storage: {
+          used: storageUsed,
+          limit: tenant.limits?.storage || 0,
+          percentage: tenant.limits?.storage 
+            ? Math.round((storageUsed / tenant.limits.storage) * 100) 
+            : 0,
+        },
+      },
+    };
+  }
+
+  async getTenantUsage(tenant_id: string, query: {
+    metric?: string;
+    startDate?: string;
+    endDate?: string;
+  }) {
+    const where: any = { tenant_id };
+
+    if (query.metric) {
+      where.metric = query.metric;
+    }
+
+    if (query.startDate || query.endDate) {
+      where.recordedAt = {};
+      if (query.startDate) where.recordedAt.gte = new Date(query.startDate);
+      if (query.endDate) where.recordedAt.lte = new Date(query.endDate);
+    }
+
+    const usage = []; // await this.prisma.usageRecord.findMany({ where, orderBy: { recordedAt: 'desc' } });
+
+    return {
+      success: true,
+      data: usage,
+    };
+  }
+
+  async getTenantSubscription(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      include: {
+        plan: {
+          include: {
+            features: true,
+            limits: true,
+          },
+        },
+        subscription: true,
+      },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    return {
+      success: true,
+      data: {
+        plan: tenant.plan,
+        subscription: tenant.subscription,
+        customLimits: tenant.limits,
+      },
+    };
+  }
+
+  async updateTenantSubscription(tenant_id: string, data: {
+    planId: string;
+    expiresAt?: string;
+    customLimits?: Record<string, number>;
+  }) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    const plan = null; // await this.prisma.plan.findUnique({ where: { id: data.planId } });
+
+    if (!plan) {
+      throw new NotFoundException('Plan not found');
+    }
+
+    await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        planId: data.planId,
+        limits: data.customLimits || plan.limits,
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : undefined,
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        message: 'Subscription updated successfully',
+      },
+    };
+  }
+
+  async getTenantFeatures(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      include: {
+        plan: {
+          include: { features: true },
+        },
+        enabledFeatures: true,
+      },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    const planFeatures = tenant.plan?.features || [];
+    const customFeatures = tenant.enabledFeatures || [];
+
+    return {
+      success: true,
+      data: {
+        planFeatures,
+        customFeatures,
+        allFeatures: [...planFeatures, ...customFeatures],
+      },
+    };
+  }
+
+  async enableFeature(tenant_id: string, featureId: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    // await this.prisma.tenantFeature.create({
+    //   data: {
+    //     tenant_id,
+    //     featureId,
+    //     enabledBy: 'platform',
+    //   },
+    // });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:features`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Feature enabled successfully',
+      },
+    };
+  }
+
+  async disableFeature(tenant_id: string, featureId: string) {
+    // await this.prisma.tenantFeature.deleteMany({
+    //   where: {
+    //     tenant_id,
+    //     featureId,
+    //   },
+    // });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:features`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Feature disabled successfully',
+      },
+    };
+  }
+
+  async getTenantSettings(tenant_id: string) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      select: { settings: true },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    return {
+      success: true,
+      data: tenant.settings,
+    };
+  }
+
+  async updateTenantSettings(tenant_id: string, settings: Record<string, any>) {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+    });
+
+    if (!tenant) {
+      throw new NotFoundException('Tenant not found');
+    }
+
+    await this.prisma.tenant.update({
+      where: { id: parseInt(tenant_id) },
+      data: {
+        settings: {
+          ...tenant.settings as any,
+          ...settings,
+        },
+      },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:settings`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Settings updated successfully',
+      },
+    };
+  }
+
+  async createTenantBackup(tenant_id: string, options: {
+    includeMedia?: boolean;
+    compress?: boolean;
+  }) {
+    // TODO: Implement backup logic
+    return {
+      success: true,
+      data: {
+        message: 'Backup initiated',
+        backupId: randomUUID(),
+        status: 'in_progress',
+      },
+    };
+  }
+
+  async exportTenantData(tenant_id: string, query: {
+    format?: 'json' | 'csv' | 'sql';
+  }) {
+    // TODO: Implement export logic
+    return {
+      success: true,
+      data: {
+        message: 'Export initiated',
+        exportId: randomUUID(),
+        format: query.format || 'json',
+      },
+    };
+  }
+
+  async cloneTenant(sourceId: string, user_id: string, data: {
+    name: string;
+    subdomain: string;
+    cloneData?: boolean;
+    cloneUsers?: boolean;
+    cloneSettings?: boolean;
+  }) {
+    const source = await this.prisma.tenant.findUnique({
+      where: { id: sourceId },
+    });
+
+    if (!source) {
+      throw new NotFoundException('Source tenant not found');
+    }
+
+    // Create new tenant
+    const newTenant = await this.createTenant(user_id, {
+      name: data.name,
+      subdomain: data.subdomain,
+      adminEmail: 'admin@' + data.subdomain + '.com', // TODO: Get from user input
+      adminName: 'Admin',
+      description: `Clone of ${source.name}`,
+      type: source.type,
+      status: TenantStatus.TRIAL,
+      planId: source.planId,
+      settings: data.cloneSettings ? source.settings : {},
+      limits: source.limits,
+      metadata: {
+        clonedFrom: sourceId,
+        clonedAt: new Date().toISOString(),
+      },
+    });
+
+    // TODO: Clone data if requested
+
+    return {
+      success: true,
+      data: newTenant.data,
+    };
+  }
+}

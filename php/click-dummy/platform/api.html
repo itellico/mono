@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Management - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .endpoint-card { border-left: 4px solid; margin-bottom: 15px; }
+        .method-badge { font-size: 0.75rem; padding: 4px 8px; }
+        .rate-limit-bar { height: 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 mb-0">API Management</h1>
+                        <p class="text-muted">Monitor and manage platform API endpoints and usage</p>
+                    </div>
+                    <div class="btn-group">
+                        <a href="http://localhost:3001/docs" target="_blank" class="btn btn-outline-primary">
+                            <i class="fas fa-book me-2"></i> API Docs
+                        </a>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-key me-2"></i> Generate API Key
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- API Overview Stats -->
+                <div class="row mb-4" id="api-stats"></div>
+                
+                <!-- API Endpoints by Tier -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">API Endpoints by Tier</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="api-tabs"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rate Limiting & Usage -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Rate Limiting Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Go Models NYC</span>
+                                        <span class="text-success">2,340 / 10,000</span>
+                                    </div>
+                                    <div class="progress rate-limit-bar">
+                                        <div class="progress-bar bg-success" style="width: 23%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Elite Fitness Hub</span>
+                                        <span class="text-warning">4,567 / 5,000</span>
+                                    </div>
+                                    <div class="progress rate-limit-bar">
+                                        <div class="progress-bar bg-warning" style="width: 91%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Voice Pros Network</span>
+                                        <span class="text-info">1,234 / 5,000</span>
+                                    </div>
+                                    <div class="progress rate-limit-bar">
+                                        <div class="progress-bar bg-info" style="width: 25%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">API Usage Trends</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="usageChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Tracking -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent API Errors</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Endpoint</th>
+                                                <th>Tenant</th>
+                                                <th>Status</th>
+                                                <th>Error</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>14:32:15</td>
+                                                <td><span class="badge bg-danger method-badge">POST</span> /api/v1/tenant/users</td>
+                                                <td>Go Models NYC</td>
+                                                <td><span class="badge bg-danger">500</span></td>
+                                                <td>Database timeout</td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:28:43</td>
+                                                <td><span class="badge bg-warning method-badge">PUT</span> /api/v1/user/profile</td>
+                                                <td>Elite Fitness</td>
+                                                <td><span class="badge bg-warning">429</span></td>
+                                                <td>Rate limit exceeded</td>
+                                            </tr>
+                                            <tr>
+                                                <td>14:25:12</td>
+                                                <td><span class="badge bg-primary method-badge">GET</span> /api/v1/tenant/analytics</td>
+                                                <td>Voice Pros</td>
+                                                <td><span class="badge bg-warning">401</span></td>
+                                                <td>Invalid API key</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Error Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="errorChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API Keys Management -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Active API Keys</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="api-keys-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', active: true },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'API Management' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Total Endpoints', '47', 'fas fa-plug', 'primary'),
+                createStatCard('Daily Requests', '3.2M', 'fas fa-chart-line', 'success'),
+                createStatCard('Active API Keys', '28', 'fas fa-key', 'warning'),
+                createStatCard('Error Rate', '0.08%', 'fas fa-exclamation-triangle', 'info')
+            ].join('');
+            document.getElementById('api-stats').innerHTML = statsHtml;
+            
+            // API Endpoints by Tier
+            const publicEndpoints = `
+                <div class="endpoint-card card border-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary method-badge">GET</span>
+                                <strong>/api/v1/public/health</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">12,456 calls/day</small><br>
+                                <small class="text-success">99.99% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">System health check endpoint</p>
+                    </div>
+                </div>
+                <div class="endpoint-card card border-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-success method-badge">POST</span>
+                                <strong>/api/v1/public/auth/login</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">8,234 calls/day</small><br>
+                                <small class="text-success">99.85% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">User authentication endpoint</p>
+                    </div>
+                </div>
+            `;
+            
+            const userEndpoints = `
+                <div class="endpoint-card card border-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary method-badge">GET</span>
+                                <strong>/api/v1/user/profile</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">45,678 calls/day</small><br>
+                                <small class="text-success">99.92% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">User profile information</p>
+                    </div>
+                </div>
+                <div class="endpoint-card card border-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-warning method-badge">PUT</span>
+                                <strong>/api/v1/user/settings</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">12,345 calls/day</small><br>
+                                <small class="text-warning">99.78% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">Update user preferences</p>
+                    </div>
+                </div>
+            `;
+            
+            const tenantEndpoints = `
+                <div class="endpoint-card card border-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary method-badge">GET</span>
+                                <strong>/api/v1/tenant/users</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">23,456 calls/day</small><br>
+                                <small class="text-success">99.95% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">Tenant user management</p>
+                    </div>
+                </div>
+                <div class="endpoint-card card border-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-success method-badge">POST</span>
+                                <strong>/api/v1/tenant/castings</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">3,456 calls/day</small><br>
+                                <small class="text-success">99.89% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">Create casting calls</p>
+                    </div>
+                </div>
+            `;
+            
+            const platformEndpoints = `
+                <div class="endpoint-card card border-danger">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary method-badge">GET</span>
+                                <strong>/api/v1/platform/tenants</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">1,234 calls/day</small><br>
+                                <small class="text-success">100% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">Platform tenant management</p>
+                    </div>
+                </div>
+                <div class="endpoint-card card border-danger">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary method-badge">GET</span>
+                                <strong>/api/v1/platform/analytics</strong>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">567 calls/day</small><br>
+                                <small class="text-success">100% success</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small">Platform-wide analytics</p>
+                    </div>
+                </div>
+            `;
+            
+            const tabs = [
+                { label: 'Public Tier', icon: 'fas fa-globe', content: publicEndpoints },
+                { label: 'User Tier', icon: 'fas fa-user', content: userEndpoints },
+                { label: 'Tenant Tier', icon: 'fas fa-building', content: tenantEndpoints },
+                { label: 'Platform Tier', icon: 'fas fa-crown', content: platformEndpoints }
+            ];
+            
+            document.getElementById('api-tabs').innerHTML = createTabs(tabs);
+            
+            // Usage Chart
+            const ctx1 = document.getElementById('usageChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'API Calls (thousands)',
+                        data: [2.8, 3.1, 3.2, 2.9, 3.4, 2.1, 1.8],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'K';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Error Chart
+            const ctx2 = document.getElementById('errorChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['4xx Client Errors', '5xx Server Errors', '429 Rate Limits'],
+                    datasets: [{
+                        data: [45, 23, 12],
+                        backgroundColor: [
+                            'rgb(255, 205, 86)',
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+            
+            // API Keys Table
+            const apiKeyHeaders = ['Tenant', 'Key ID', 'Created', 'Last Used', 'Calls Today', 'Status'];
+            const apiKeyRows = [
+                ['Go Models NYC', 'key_1a2b3c...', 'Jan 15, 2024', '2 min ago', '2,340', '<span class="badge bg-success">Active</span>'],
+                ['Elite Fitness Hub', 'key_4d5e6f...', 'Mar 22, 2024', '5 min ago', '4,567', '<span class="badge bg-warning">Rate Limited</span>'],
+                ['Voice Pros Network', 'key_7g8h9i...', 'Aug 18, 2024', '1 hour ago', '1,234', '<span class="badge bg-success">Active</span>'],
+                ['Kids Talent Hub', 'key_0j1k2l...', 'Jun 10, 2024', '3 hours ago', '567', '<span class="badge bg-success">Active</span>']
+            ];
+            document.getElementById('api-keys-table').innerHTML = createDataTable('', apiKeyHeaders, apiKeyRows);
+        });
+    </script>
+</body>
+</html>

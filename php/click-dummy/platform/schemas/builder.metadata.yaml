@@ -1,0 +1,40 @@
+path: platform/schemas/builder.php
+tier: platform
+title: Schema Builder
+description: Drag-and-drop schema builder for creating data models
+features:
+  - drag-and-drop-interface
+  - field-type-selection
+  - relationship-builder
+  - validation-rules
+  - migration-generator
+components:
+  - form-builder
+  - draggable-fields
+  - property-panel
+  - preview-panel
+implementation_status: not_started
+related_docs:
+  - /docs/architecture/data-models/schema-design.md
+  - /docs/platform/developer-tools/schema-builder.md
+related_tasks:
+  - PLATFORM-001: Implement schema builder UI
+  - PLATFORM-002: Create field type components
+  - API-001: Schema storage endpoints
+permissions:
+  - platform.schemas.create
+  - platform.schemas.update
+  - platform.schemas.delete
+api_endpoints:
+  - /api/v1/platform/schemas
+  - /api/v1/platform/schemas/{id}
+  - /api/v1/platform/schemas/{id}/fields
+implementation_files:
+  frontend:
+    - apps/web/src/components/platform/schema-builder/
+    - apps/web/src/pages/platform/schemas/
+  api:
+    - apps/api/src/routes/platform/schemas/
+    - apps/api/src/services/schema-service.ts
+  database:
+    - prisma/schema.prisma (Schema model)

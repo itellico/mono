@@ -1,0 +1,262 @@
+{
+  "features": [
+    {
+      "name": "User Management",
+      "slug": "user_management",
+      "description": "Complete user management system",
+      "tier": "platform",
+      "category": "core",
+      "dependencies": [],
+      "permissions": [
+        "tenant.users.create",
+        "tenant.users.read",
+        "tenant.users.update",
+        "tenant.users.delete"
+      ],
+      "settings": {
+        "maxUsers": -1,
+        "allowSelfRegistration": true,
+        "requireEmailVerification": true,
+        "allowPasswordReset": true
+      }
+    },
+    {
+      "name": "Tenant Management",
+      "slug": "tenant_management",
+      "description": "Multi-tenant system management",
+      "tier": "platform",
+      "category": "core",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "platform.tenants.create",
+        "platform.tenants.read",
+        "platform.tenants.update",
+        "platform.tenants.delete"
+      ],
+      "settings": {
+        "maxTenants": -1,
+        "isolationLevel": "database",
+        "allowCustomDomains": true
+      }
+    },
+    {
+      "name": "RBAC",
+      "slug": "rbac",
+      "description": "Role-based access control",
+      "tier": "platform",
+      "category": "security",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "tenant.roles.create",
+        "tenant.roles.manage",
+        "tenant.permissions.assign"
+      ],
+      "settings": {
+        "allowCustomRoles": true,
+        "maxRolesPerUser": 10,
+        "hierarchicalRoles": true
+      }
+    },
+    {
+      "name": "Audit Logs",
+      "slug": "audit_logs",
+      "description": "Comprehensive audit logging",
+      "tier": "platform",
+      "category": "security",
+      "dependencies": [],
+      "permissions": [
+        "platform.audit.read",
+        "platform.audit.export"
+      ],
+      "settings": {
+        "retentionDays": 365,
+        "logLevel": "info",
+        "includeReadOperations": false
+      }
+    },
+    {
+      "name": "API Access",
+      "slug": "api_access",
+      "description": "RESTful API access",
+      "tier": "platform",
+      "category": "integration",
+      "dependencies": ["rbac"],
+      "permissions": [
+        "platform.api.manage",
+        "platform.api.keys"
+      ],
+      "settings": {
+        "rateLimit": 1000,
+        "rateLimitWindow": 900000,
+        "allowCORS": true
+      }
+    },
+    {
+      "name": "Webhooks",
+      "slug": "webhooks",
+      "description": "Event-driven webhooks",
+      "tier": "platform",
+      "category": "integration",
+      "dependencies": ["api_access"],
+      "permissions": [
+        "platform.webhooks.create",
+        "platform.webhooks.manage"
+      ],
+      "settings": {
+        "maxWebhooksPerTenant": 50,
+        "retryAttempts": 3,
+        "timeoutSeconds": 30
+      }
+    },
+    {
+      "name": "File Storage",
+      "slug": "file_storage",
+      "description": "File upload and storage",
+      "tier": "tenant",
+      "category": "storage",
+      "dependencies": [],
+      "permissions": [
+        "user.files.upload",
+        "user.files.read",
+        "user.files.delete"
+      ],
+      "settings": {
+        "maxFileSize": 52428800,
+        "allowedMimeTypes": ["image/*", "application/pdf", "video/*"],
+        "storageQuota": -1
+      }
+    },
+    {
+      "name": "Notifications",
+      "slug": "notifications",
+      "description": "Multi-channel notifications",
+      "tier": "tenant",
+      "category": "communication",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "tenant.notifications.send",
+        "tenant.notifications.manage"
+      ],
+      "settings": {
+        "channels": ["email", "in-app", "push", "sms"],
+        "allowUserPreferences": true,
+        "batchingEnabled": true
+      }
+    },
+    {
+      "name": "Analytics",
+      "slug": "analytics",
+      "description": "Platform analytics and insights",
+      "tier": "platform",
+      "category": "analytics",
+      "dependencies": ["audit_logs"],
+      "permissions": [
+        "platform.analytics.read",
+        "platform.analytics.export"
+      ],
+      "settings": {
+        "dataRetentionDays": 730,
+        "realTimeAnalytics": true,
+        "customDashboards": true
+      }
+    },
+    {
+      "name": "Billing",
+      "slug": "billing",
+      "description": "Subscription billing system",
+      "tier": "tenant",
+      "category": "commerce",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "tenant.billing.read",
+        "tenant.billing.manage"
+      ],
+      "settings": {
+        "providers": ["stripe", "paypal"],
+        "currencies": ["EUR", "USD", "GBP"],
+        "taxCalculation": "automatic"
+      }
+    },
+    {
+      "name": "Search",
+      "slug": "search",
+      "description": "Full-text search capabilities",
+      "tier": "platform",
+      "category": "core",
+      "dependencies": [],
+      "permissions": [
+        "public.search"
+      ],
+      "settings": {
+        "engine": "elasticsearch",
+        "fuzzySearch": true,
+        "facetedSearch": true,
+        "searchSuggestions": true
+      }
+    },
+    {
+      "name": "Workflows",
+      "slug": "workflows",
+      "description": "Business process automation",
+      "tier": "tenant",
+      "category": "automation",
+      "dependencies": ["notifications"],
+      "permissions": [
+        "tenant.workflows.create",
+        "tenant.workflows.manage"
+      ],
+      "settings": {
+        "maxWorkflowsPerTenant": 100,
+        "parallelExecution": true,
+        "schedulingEnabled": true
+      }
+    },
+    {
+      "name": "Cache Management",
+      "slug": "cache_management",
+      "description": "Advanced caching system",
+      "tier": "platform",
+      "category": "performance",
+      "dependencies": [],
+      "permissions": [],
+      "settings": {
+        "provider": "redis",
+        "ttl": 3600,
+        "maxMemory": "1gb",
+        "evictionPolicy": "lru"
+      }
+    },
+    {
+      "name": "Two-Factor Auth",
+      "slug": "two_factor_auth",
+      "description": "Two-factor authentication",
+      "tier": "user",
+      "category": "security",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "user.security.manage"
+      ],
+      "settings": {
+        "methods": ["totp", "sms", "email"],
+        "backupCodes": 10,
+        "enforced": false
+      }
+    },
+    {
+      "name": "SSO",
+      "slug": "sso",
+      "description": "Single Sign-On",
+      "tier": "tenant",
+      "category": "security",
+      "dependencies": ["user_management"],
+      "permissions": [
+        "tenant.security.manage"
+      ],
+      "settings": {
+        "providers": ["saml", "oauth2", "openid"],
+        "autoProvision": true,
+        "jitProvisioning": true
+      }
+    }
+  ]
+}

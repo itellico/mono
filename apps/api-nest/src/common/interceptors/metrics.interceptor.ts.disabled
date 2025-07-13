@@ -1,0 +1,83 @@
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
+import { Observable, tap } from 'rxjs';
+import { MetricsService } from '../metrics/metrics.service';
+
+@Injectable()
+export class MetricsInterceptor implements NestInterceptor {
+  constructor(private readonly metricsService: MetricsService) {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const startTime = Date.now();
+    const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
+    
+    const method = request.method;
+    const route = this.getRoutePattern(request);
+    const tier = this.extractTier(route);
+    
+    // Extract tenant info if available
+    const tenantId = request.tenantId || 'unknown';
+    
+    return next.handle().pipe(
+      tap({
+        next: () => {
+          const duration = (Date.now() - startTime) / 1000;
+          const statusCode = response.statusCode || 200;
+          
+          // Record HTTP metrics
+          this.metricsService.incrementHttpRequests(method, route, statusCode, tier);
+          this.metricsService.observeHttpDuration(method, route, statusCode, duration);
+          
+          // Record tenant-specific metrics
+          if (tenantId !== 'unknown') {
+            this.metricsService.incrementTenantRequests(tenantId, tier);
+          }
+        },
+        error: (error) => {
+          const duration = (Date.now() - startTime) / 1000;
+          const statusCode = error.status || 500;
+          
+          // Record error metrics
+          this.metricsService.incrementHttpRequests(method, route, statusCode, tier);
+          this.metricsService.observeHttpDuration(method, route, statusCode, duration);
+          
+          // Record tenant-specific metrics even for errors
+          if (tenantId !== 'unknown') {
+            this.metricsService.incrementTenantRequests(tenantId, tier);
+          }
+        },
+      }),
+    );
+  }
+
+  private getRoutePattern(request: any): string {
+    // Extract route pattern from NestJS
+    const route = request.route?.path || request.url;
+    
+    // Normalize route patterns
+    if (route) {
+      return route
+        .replace(/\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '/:uuid')
+        .replace(/\/\d+/g, '/:id')
+        .replace(/\?.*$/, ''); // Remove query parameters
+    }
+    
+    return 'unknown';
+  }
+
+  private extractTier(route: string): string {
+    if (route.includes('/api/v1/public/')) return 'public';
+    if (route.includes('/api/v1/user/')) return 'user';
+    if (route.includes('/api/v1/account/')) return 'account';
+    if (route.includes('/api/v1/tenant/')) return 'tenant';
+    if (route.includes('/api/v1/platform/')) return 'platform';
+    if (route.includes('/metrics')) return 'system';
+    if (route.includes('/docs')) return 'system';
+    return 'unknown';
+  }
+}

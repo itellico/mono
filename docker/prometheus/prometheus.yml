@@ -1,0 +1,63 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+scrape_configs:
+  # itellico Mono API (Fastify)
+  - job_name: 'mono-api'
+    static_configs:
+      - targets: ['host.docker.internal:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 3s
+
+  # itellico Mono Frontend (Next.js)
+  - job_name: 'mono-frontend'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 5s
+
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (System metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # cAdvisor (Container metrics)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # RabbitMQ (Message Queue metrics)
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Temporal (Workflow Engine metrics)
+  - job_name: 'temporal'
+    static_configs:
+      - targets: ['temporal:9091']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Note: Additional services (Temporal, Grafana, PostgreSQL, Redis, N8N, Mailpit) 
+  # are monitored via container metrics through cAdvisor
+  # Direct HTTP health checks can be performed via external monitoring

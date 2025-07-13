@@ -1,0 +1,279 @@
+# Production Docker Compose Configuration
+# Optimized for production deployment with security and performance
+
+version: '3.8'
+
+services:
+  # Frontend Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+      args:
+        - NODE_ENV=production
+    image: mono-platform/frontend:latest
+    container_name: mono-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://redis:6379
+      - API_URL=http://api:3001
+    depends_on:
+      - api
+      - redis
+      - postgres
+    networks:
+      - mono-network
+    volumes:
+      - frontend-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # API Application
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+      target: runner
+      args:
+        - NODE_ENV=production
+    image: mono-platform/api:latest
+    container_name: mono-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - mono-network
+    volumes:
+      - api-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/public/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: mono-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mono_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-mono_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mono_user} -d ${POSTGRES_DB:-mono_platform}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mono-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Reverse Proxy / Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: mono-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-cache:/var/cache/nginx
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Monitoring - Prometheus
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: mono-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=30d'
+    networks:
+      - mono-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  # Monitoring - Grafana
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: mono-grafana
+    restart: unless-stopped
+    ports:
+      - "3005:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - mono-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+networks:
+  mono-network:
+    driver: bridge
+    name: mono-platform-network
+
+volumes:
+  postgres-data:
+    name: mono-postgres-data
+  redis-data:
+    name: mono-redis-data
+  prometheus-data:
+    name: mono-prometheus-data
+  grafana-data:
+    name: mono-grafana-data
+  frontend-logs:
+    name: mono-frontend-logs
+  api-logs:
+    name: mono-api-logs
+  nginx-cache:
+    name: mono-nginx-cache

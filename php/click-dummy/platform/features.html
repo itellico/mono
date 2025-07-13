@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Sets - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .feature-card { transition: transform 0.2s; }
+        .feature-card:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 mb-0">Feature Sets</h1>
+                        <p class="text-muted">Manage platform features and plan assignments</p>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> Create Feature Set
+                    </button>
+                </div>
+                
+                <div class="row" id="feature-sets"></div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Feature Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="features-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', active: true },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Feature Sets' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Feature Sets
+            const featureSets = [
+                { name: 'Starter Features', description: 'Basic marketplace functionality', features: 5, plans: ['Starter'] },
+                { name: 'Business Features', description: 'Enhanced business tools', features: 8, plans: ['Business', 'Professional'] },
+                { name: 'Professional Features', description: 'Advanced professional tools', features: 12, plans: ['Professional', 'Enterprise'] },
+                { name: 'Enterprise Features', description: 'Full enterprise capabilities', features: 15, plans: ['Enterprise'] }
+            ];
+            
+            const featureSetCards = featureSets.map(set => `
+                <div class="col-md-6 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">${set.name}</h5>
+                            <p class="card-text">${set.description}</p>
+                            <div class="mb-3">
+                                <small class="text-muted">Features: ${set.features}</small><br>
+                                <small class="text-muted">Plans: ${set.plans.join(', ')}</small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary btn-sm">Edit</button>
+                                <button class="btn btn-outline-secondary btn-sm">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('feature-sets').innerHTML = featureSetCards;
+            
+            // Features Table
+            const featureHeaders = ['Feature Name', 'Description', 'Type', 'Plans', 'Usage', 'Status'];
+            const featureRows = [
+                ['User Management', 'Basic user CRUD operations', 'Core', 'All', '100%', '<span class="badge bg-success">Active</span>'],
+                ['Advanced Analytics', 'Detailed reporting and insights', 'Premium', 'Pro, Enterprise', '67%', '<span class="badge bg-success">Active</span>'],
+                ['Custom Branding', 'White-label customization', 'Premium', 'Business+', '42%', '<span class="badge bg-success">Active</span>'],
+                ['API Access', 'Full REST API access', 'Developer', 'Pro, Enterprise', '25%', '<span class="badge bg-success">Active</span>'],
+                ['Workflow Automation', 'Custom workflow builder', 'Enterprise', 'Enterprise', '8%', '<span class="badge bg-warning">Beta</span>']
+            ];
+            document.getElementById('features-table').innerHTML = createDataTable('', featureHeaders, featureRows);
+        });
+    </script>
+</body>
+</html>

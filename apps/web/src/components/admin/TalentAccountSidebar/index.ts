@@ -1,0 +1,1 @@
+export { TalentAccountSidebar } from './TalentAccountSidebar';

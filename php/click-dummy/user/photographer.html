@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographer Dashboard - John Smith</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 280px; position: fixed; height: 100vh; overflow-y: auto; z-index: 1000; }
+        .main-content { margin-left: 280px; padding: 20px; }
+        .profile-hero { 
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 2rem 0;
+            margin: -20px -20px 30px -20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+        }
+        .service-package { 
+            border: 2px solid #e9ecef; 
+            border-radius: 15px; 
+            padding: 25px; 
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .service-package:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .service-package.featured { 
+            border-color: #007bff; 
+            background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .portfolio-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+        .equipment-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .sidebar { 
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .portfolio-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Profile Hero Section -->
+            <div class="profile-hero">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" 
+                                 class="rounded-circle profile-image mb-3" alt="John Smith">
+                            <div class="text-center">
+                                <span class="badge bg-success">Available</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 class="fw-bold mb-2">John Smith</h1>
+                            <p class="fs-5 mb-3">Professional Fashion Photographer</p>
+                            <div class="mb-3">
+                                <span class="badge bg-light text-dark me-2">Fashion</span>
+                                <span class="badge bg-light text-dark me-2">Portrait</span>
+                                <span class="badge bg-light text-dark me-2">Editorial</span>
+                                <span class="badge bg-light text-dark me-2">Commercial</span>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">5 Years</h4>
+                                        <small>Experience</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">2,000 sq ft</h4>
+                                        <small>Studio Space</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card p-3 text-center">
+                                        <h4 class="fw-bold mb-1">NYC</h4>
+                                        <small>Manhattan</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stat-card p-4 mb-3">
+                                <h3 class="fw-bold mb-1">$12,800</h3>
+                                <small>Monthly Revenue</small>
+                            </div>
+                            <div class="stat-card p-4">
+                                <h3 class="fw-bold mb-1">4.9</h3>
+                                <small>⭐ Rating (156 reviews)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Header -->
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Quick Stats Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold">2,456</h3>
+                                <small>Profile Views This Month</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold">6</h3>
+                                <small>Active Bookings</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold">98%</h3>
+                                <small>Client Satisfaction</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h3 class="fw-bold">24h</h3>
+                                <small>Average Response Time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Equipment -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calendar-check me-2 text-success"></i>Upcoming Shoots
+                                </h5>
+                                <a href="#" class="btn btn-outline-primary btn-sm">View Calendar</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 mb-3 bg-light">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">Vogue Editorial Shoot</h6>
+                                                    <p class="text-muted mb-1">Tomorrow, 9:00 AM - 5:00 PM</p>
+                                                    <p class="text-success mb-0">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>Studio 54, Manhattan
+                                                    </p>
+                                                </div>
+                                                <span class="badge bg-success">Confirmed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 mb-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">Nike Commercial Campaign</h6>
+                                                    <p class="text-muted mb-1">June 25, 2024 - 10:00 AM</p>
+                                                    <p class="text-warning mb-0">
+                                                        <i class="fas fa-clock me-1"></i>Equipment Setup Required
+                                                    </p>
+                                                </div>
+                                                <span class="badge bg-warning">Prep Day</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3">
+                                            <h6 class="fw-bold mb-2">H&M Summer Collection</h6>
+                                            <p class="text-muted mb-1">July 2, 2024 - 8:00 AM</p>
+                                            <p class="text-info mb-0">
+                                                <i class="fas fa-users me-1"></i>6 Models, 3 Looks Each
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3">
+                                            <h6 class="fw-bold mb-2">Portrait Session - Emma J.</h6>
+                                            <p class="text-muted mb-1">June 28, 2024 - 2:00 PM</p>
+                                            <p class="text-success mb-0">
+                                                <i class="fas fa-camera me-1"></i>Headshots & Portfolio Update
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-camera me-2 text-primary"></i>Equipment Status
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="equipment-card">
+                                    <i class="fas fa-camera fa-2x text-success mb-2"></i>
+                                    <h6>Canon 5D Mark IV</h6>
+                                    <span class="badge bg-success">Available</span>
+                                </div>
+                                <div class="equipment-card">
+                                    <i class="fas fa-video fa-2x text-warning mb-2"></i>
+                                    <h6>Sony A7R IV</h6>
+                                    <span class="badge bg-warning">In Use Tomorrow</span>
+                                </div>
+                                <div class="equipment-card">
+                                    <i class="fas fa-lightbulb fa-2x text-success mb-2"></i>
+                                    <h6>Profoto Lighting Kit</h6>
+                                    <span class="badge bg-success">Ready</span>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-2">Manage Equipment</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Tabs Content -->
+                <div id="main-tabs"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="btn btn-primary d-md-none position-fixed top-3 start-3" style="z-index: 1001;" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar for Photographer
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', active: true },
+                { label: 'My Profile', icon: 'fas fa-user', href: '#profile' },
+                { label: 'Portfolio', icon: 'fas fa-images', href: '#portfolio' },
+                { label: 'Service Packages', icon: 'fas fa-box', href: '#packages' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: '#bookings' },
+                { label: 'Availability', icon: 'fas fa-calendar', href: '#availability' },
+                { label: 'Client Reviews', icon: 'fas fa-star', href: '#reviews' },
+                { label: 'Earnings', icon: 'fas fa-dollar-sign', href: '#earnings' },
+                { label: 'Messages', icon: 'fas fa-envelope', href: '#messages' },
+                { label: 'Equipment', icon: 'fas fa-camera', href: '#equipment' },
+                { label: 'Studio Info', icon: 'fas fa-building', href: '#studio' },
+                { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('John Smith Photography', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('John Smith', 'Professional Fashion Photographer', 'User Dashboard');
+            
+            // Portfolio Data with Professional Images
+            const portfolioImages = [
+                {
+                    url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=600&fit=crop',
+                    title: 'Fashion Editorial - Vogue',
+                    description: 'High fashion editorial for Vogue Magazine',
+                    category: 'editorial',
+                    tags: ['Fashion', 'Editorial', 'Vogue']
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop',
+                    title: 'Beauty Portrait Session',
+                    description: 'Commercial beauty photography',
+                    category: 'beauty',
+                    tags: ['Beauty', 'Portrait', 'Commercial']
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1506629905587-4b57193e29d9?w=400&h=600&fit=crop',
+                    title: 'Runway Fashion Week',
+                    description: 'Behind the scenes at NYFW',
+                    category: 'fashion',
+                    tags: ['Runway', 'NYFW', 'Fashion']
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop',
+                    title: 'Professional Headshots',
+                    description: 'Corporate and model headshots',
+                    category: 'portrait',
+                    tags: ['Portrait', 'Headshots', 'Professional']
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1494790108755-2616c96793f8?w=400&h=600&fit=crop',
+                    title: 'Lifestyle Campaign',
+                    description: 'Casual lifestyle brand photography',
+                    category: 'lifestyle',
+                    tags: ['Lifestyle', 'Campaign', 'Natural']
+                },
+                {
+                    url: 'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?w=400&h=600&fit=crop',
+                    title: 'Luxury Fashion',
+                    description: 'High-end fashion photography',
+                    category: 'luxury',
+                    tags: ['Luxury', 'Fashion', 'Studio']
+                }
+            ];
+
+            const portfolioCategories = [
+                { label: 'Editorial', value: 'editorial' },
+                { label: 'Fashion', value: 'fashion' },
+                { label: 'Portrait', value: 'portrait' },
+                { label: 'Beauty', value: 'beauty' },
+                { label: 'Lifestyle', value: 'lifestyle' }
+            ];
+
+            // Portfolio Tab Content
+            const portfolioContent = createPortfolioGallery(portfolioImages, portfolioCategories);
+            
+            // Service Packages Tab
+            const packagesContent = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Service Packages</h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create New Package
+                    </button>
+                </div>
+                
+                <div class="service-package featured">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-2">
+                                Premium Editorial Shoot 
+                                <span class="badge bg-primary ms-2">Most Popular</span>
+                            </h5>
+                            <p class="text-muted mb-3">Full-day editorial session with professional retouching and commercial usage rights</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 6-hour studio session</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 50+ professionally edited photos</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Advanced retouching included</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Same-day preview gallery</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Commercial usage rights</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Multiple outfit changes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h2 class="text-primary fw-bold mb-2">$2,500</h2>
+                            <p class="text-muted mb-3">Starting price</p>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary">Edit Package</button>
+                                <button class="btn btn-primary">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-package">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-2">Professional Portrait Session</h5>
+                            <p class="text-muted mb-3">Perfect for headshots, social media, and professional portfolios</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 2-hour session</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 20+ edited photos</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Basic retouching</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Digital delivery</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h2 class="text-primary fw-bold mb-2">$800</h2>
+                            <p class="text-muted mb-3">All inclusive</p>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary">Edit Package</button>
+                                <button class="btn btn-primary">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-package">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-2">Commercial Brand Shoot</h5>
+                            <p class="text-muted mb-3">Professional brand and product photography for commercial use</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 4-hour session</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 30+ edited photos</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> Full commercial rights</li>
+                                        <li class="mb-1"><i class="fas fa-check text-success me-2"></i> 48-hour delivery</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h2 class="text-primary fw-bold mb-2">$1,500</h2>
+                            <p class="text-muted mb-3">Commercial package</p>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary">Edit Package</button>
+                                <button class="btn btn-primary">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Bookings Tab
+            const bookingsHeaders = ['Client', 'Package', 'Date', 'Duration', 'Status', 'Amount'];
+            const bookingsRows = [
+                ['Vogue Magazine', 'Premium Editorial', 'Jun 15, 2024', '6 hours', '<span class="badge bg-success">Confirmed</span>', '$2,500'],
+                ['Nike Brand Team', 'Commercial Shoot', 'Jun 20, 2024', '4 hours', '<span class="badge bg-warning">Pending Contract</span>', '$1,500'],
+                ['Emma Johnson', 'Portrait Session', 'Jun 18, 2024', '2 hours', '<span class="badge bg-success">Confirmed</span>', '$800'],
+                ['H&M Fashion', 'Premium Editorial', 'Jun 25, 2024', '6 hours', '<span class="badge bg-info">Quote Sent</span>', '$2,500'],
+                ['Sarah Chen (Model)', 'Portrait Session', 'Jun 22, 2024', '2 hours', '<span class="badge bg-success">Paid</span>', '$800']
+            ];
+            const bookingsContent = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Booking Management</h5>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-filter me-2"></i>Filter
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-calendar me-2"></i>Calendar View
+                        </button>
+                    </div>
+                </div>
+                ${createDataTable('', bookingsHeaders, bookingsRows, true)}
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h3>6</h3>
+                                <small>Active Bookings</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h3>$7,100</h3>
+                                <small>Pending Revenue</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h3>2</h3>
+                                <small>Quotes Pending</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Reviews Tab
+            const reviewsContent = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Client Reviews</h5>
+                                <button class="btn btn-outline-primary btn-sm">Request Review</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="review-item mb-4 pb-3 border-bottom">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=50&h=50&fit=crop&crop=face" 
+                                             class="rounded-circle me-3" width="40" height="40" alt="Emma">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">Emma Johnson - Fashion Model</h6>
+                                            <div class="mb-1">
+                                                ${Array.from({length: 5}, () => '<i class="fas fa-star text-warning"></i>').join('')}
+                                            </div>
+                                            <small class="text-muted">June 10, 2024</small>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">"Absolutely incredible experience! John's professionalism and creative vision exceeded all my expectations. The photos turned out stunning and really captured the essence of what we were going for. Highly recommend to anyone looking for top-tier photography work!"</p>
+                                </div>
+                                
+                                <div class="review-item mb-4 pb-3 border-bottom">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" 
+                                             class="rounded-circle me-3" width="40" height="40" alt="Vogue">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">Vogue Magazine Editorial Team</h6>
+                                            <div class="mb-1">
+                                                ${Array.from({length: 5}, () => '<i class="fas fa-star text-warning"></i>').join('')}
+                                            </div>
+                                            <small class="text-muted">June 5, 2024</small>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">"John delivered exceptional work on our editorial shoot. His attention to detail and ability to work under pressure made the entire process smooth and enjoyable. The final images were exactly what we envisioned for our summer issue."</p>
+                                </div>
+                                
+                                <div class="review-item mb-4 pb-3 border-bottom">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" 
+                                             class="rounded-circle me-3" width="40" height="40" alt="Nike">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">Nike Brand Marketing</h6>
+                                            <div class="mb-1">
+                                                ${Array.from({length: 4}, () => '<i class="fas fa-star text-warning"></i>').join('')}
+                                                <i class="far fa-star text-warning"></i>
+                                            </div>
+                                            <small class="text-muted">May 28, 2024</small>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">"Great commercial shoot! John understood our brand vision perfectly and delivered high-quality images that aligned with our campaign goals. Professional setup and excellent communication throughout."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Rating Overview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <h2 class="fw-bold">4.9</h2>
+                                    <div class="mb-2">
+                                        ${Array.from({length: 5}, () => '<i class="fas fa-star text-warning"></i>').join('')}
+                                    </div>
+                                    <small class="text-muted">Based on 156 reviews</small>
+                                </div>
+                                
+                                <div class="rating-breakdown">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>5 stars</span>
+                                        <div class="progress flex-grow-1 mx-3" style="height: 6px;">
+                                            <div class="progress-bar" style="width: 82%"></div>
+                                        </div>
+                                        <span class="text-muted">128</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>4 stars</span>
+                                        <div class="progress flex-grow-1 mx-3" style="height: 6px;">
+                                            <div class="progress-bar" style="width: 15%"></div>
+                                        </div>
+                                        <span class="text-muted">24</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>3 stars</span>
+                                        <div class="progress flex-grow-1 mx-3" style="height: 6px;">
+                                            <div class="progress-bar" style="width: 3%"></div>
+                                        </div>
+                                        <span class="text-muted">4</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>2 stars</span>
+                                        <div class="progress flex-grow-1 mx-3" style="height: 6px;">
+                                            <div class="progress-bar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="text-muted">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>1 star</span>
+                                        <div class="progress flex-grow-1 mx-3" style="height: 6px;">
+                                            <div class="progress-bar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="text-muted">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">Recent Activity</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="small">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-star text-warning me-2"></i>
+                                        <span>New 5-star review from Emma J.</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-calendar text-primary me-2"></i>
+                                        <span>Booking confirmed with Vogue</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-dollar-sign text-success me-2"></i>
+                                        <span>Payment received: $2,500</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Equipment Tab
+            const equipmentContent = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Equipment & Studio</h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add Equipment
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-camera fa-3x text-primary mb-3"></i>
+                                        <h6>Canon EOS 5D Mark IV</h6>
+                                        <span class="badge bg-success mb-2">Available</span>
+                                        <p class="small text-muted">Professional DSLR camera with 30.4MP full-frame sensor</p>
+                                        <button class="btn btn-outline-primary btn-sm">Schedule Maintenance</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-video fa-3x text-success mb-3"></i>
+                                        <h6>Sony Alpha A7R IV</h6>
+                                        <span class="badge bg-warning mb-2">In Use Tomorrow</span>
+                                        <p class="small text-muted">Mirrorless camera with 61MP resolution</p>
+                                        <button class="btn btn-outline-primary btn-sm">View Schedule</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                                        <h6>Profoto B1X Flash Kit</h6>
+                                        <span class="badge bg-success mb-2">Ready</span>
+                                        <p class="small text-muted">Professional off-camera flash system</p>
+                                        <button class="btn btn-outline-primary btn-sm">Check Settings</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-film fa-3x text-danger mb-3"></i>
+                                        <h6>RED Digital Cinema Camera</h6>
+                                        <span class="badge bg-danger mb-2">Maintenance</span>
+                                        <p class="small text-muted">8K video recording capability</p>
+                                        <button class="btn btn-outline-danger btn-sm">Service Required</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Studio Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    <strong>Location:</strong><br>
+                                    <span class="text-muted">Studio 54, Manhattan<br>123 West 54th Street, NYC</span>
+                                </div>
+                                <div class="mb-3">
+                                    <i class="fas fa-ruler text-success me-2"></i>
+                                    <strong>Space:</strong><br>
+                                    <span class="text-muted">2,000 sq ft main studio<br>500 sq ft prep area</span>
+                                </div>
+                                <div class="mb-3">
+                                    <i class="fas fa-palette text-warning me-2"></i>
+                                    <strong>Backdrops:</strong><br>
+                                    <span class="text-muted">Seamless paper rolls<br>Textured walls available</span>
+                                </div>
+                                <div class="mb-3">
+                                    <i class="fas fa-car text-info me-2"></i>
+                                    <strong>Parking:</strong><br>
+                                    <span class="text-muted">Street parking available<br>Garage 2 blocks away</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Stats</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6 mb-3">
+                                        <h4 class="text-primary">15</h4>
+                                        <small class="text-muted">Equipment Items</small>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h4 class="text-success">98%</h4>
+                                        <small class="text-muted">Uptime</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="text-warning">2</h4>
+                                        <small class="text-muted">Maintenance Due</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="text-info">$45K</h4>
+                                        <small class="text-muted">Equipment Value</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Create tabs
+            const tabs = [
+                { label: 'Portfolio', icon: 'fas fa-images', content: portfolioContent },
+                { label: 'Service Packages', icon: 'fas fa-box', content: packagesContent },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', content: bookingsContent },
+                { label: 'Reviews', icon: 'fas fa-star', content: reviewsContent },
+                { label: 'Equipment', icon: 'fas fa-camera', content: equipmentContent }
+            ];
+            
+            document.getElementById('main-tabs').innerHTML = createTabs(tabs);
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.d-md-none');
+            
+            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

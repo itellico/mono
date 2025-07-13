@@ -1,0 +1,214 @@
+{
+  "accounts": [
+    {
+      "name": "Elite Model Management Vienna",
+      "slug": "elite-vienna",
+      "type": "agency",
+      "description": "Premier modeling agency representing top talent in Austria and Europe",
+      "email": "info@elite-vienna.com",
+      "phone": "+43 1 234 5678",
+      "website": "https://elite-vienna.com",
+      "address": {
+        "street": "Kärntner Ring 12",
+        "city": "Vienna",
+        "state": "Vienna",
+        "country": "AT",
+        "postalCode": "1010"
+      },
+      "settings": {
+        "accountType": "agency",
+        "teamSize": "medium",
+        "allowSubAccounts": true,
+        "maxUsers": 20,
+        "features": [
+          "talent_management",
+          "booking_management",
+          "commission_tracking",
+          "contract_management",
+          "portfolio_review",
+          "scouting_tools"
+        ],
+        "commission": {
+          "modelRate": 20,
+          "clientRate": 20,
+          "internationalRate": 25
+        }
+      },
+      "metadata": {
+        "established": 2020,
+        "specialties": ["fashion", "commercial", "runway"],
+        "markets": ["Vienna", "Paris", "Milan", "London"],
+        "certifications": ["ISO 9001", "GDPR Compliant"]
+      }
+    },
+    {
+      "name": "Stefan Berger Photography",
+      "slug": "berger-photography",
+      "type": "professional",
+      "description": "Award-winning fashion and commercial photographer",
+      "email": "studio@stefanberger.com",
+      "phone": "+43 676 123 4567",
+      "website": "https://stefanberger.com",
+      "address": {
+        "street": "Neubaugasse 45",
+        "city": "Vienna",
+        "state": "Vienna",
+        "country": "AT",
+        "postalCode": "1070"
+      },
+      "settings": {
+        "accountType": "photographer",
+        "teamSize": "small",
+        "allowSubAccounts": false,
+        "maxUsers": 5,
+        "features": [
+          "booking_calendar",
+          "portfolio_showcase",
+          "client_management",
+          "project_management",
+          "invoice_management",
+          "location_scouting"
+        ],
+        "specialties": {
+          "photography": ["fashion", "editorial", "commercial", "portrait"],
+          "postProduction": true,
+          "studioAvailable": true
+        }
+      },
+      "metadata": {
+        "experience": "15+ years",
+        "equipment": ["Canon", "Hasselblad", "Profoto"],
+        "languages": ["de-DE", "en-US", "fr-FR"],
+        "awards": ["Fashion Photographer of the Year 2023"]
+      }
+    },
+    {
+      "name": "Sophie Laurent",
+      "slug": "sophie-laurent",
+      "type": "individual",
+      "description": "Professional fashion model",
+      "email": "sophie@sophielaurent.com",
+      "phone": "+43 660 234 5678",
+      "website": "https://sophielaurent.com",
+      "address": {
+        "city": "Vienna",
+        "country": "AT"
+      },
+      "settings": {
+        "accountType": "model",
+        "teamSize": "individual",
+        "allowSubAccounts": false,
+        "maxUsers": 2,
+        "features": [
+          "portfolio_management",
+          "booking_calendar",
+          "availability_management",
+          "comp_card_builder",
+          "travel_management",
+          "earnings_tracking"
+        ],
+        "representation": {
+          "motherAgency": "Elite Model Management Vienna",
+          "exclusive": false,
+          "territories": ["Austria", "Germany", "Switzerland"]
+        }
+      },
+      "metadata": {
+        "category": "fashion-model",
+        "experience": "5 years",
+        "publications": ["Vogue", "Elle", "Harper's Bazaar"],
+        "campaigns": ["Chanel", "Dior", "Versace"],
+        "verified": true
+      }
+    },
+    {
+      "name": "Müller Family Account",
+      "slug": "mueller-family",
+      "type": "guardian",
+      "description": "Parent account managing child model profiles",
+      "email": "family@mueller.at",
+      "phone": "+43 664 345 6789",
+      "address": {
+        "city": "Salzburg",
+        "country": "AT"
+      },
+      "settings": {
+        "accountType": "guardian",
+        "teamSize": "family",
+        "allowSubAccounts": true,
+        "maxUsers": 4,
+        "features": [
+          "child_profile_management",
+          "parental_controls",
+          "booking_approval",
+          "schedule_management",
+          "education_tracking",
+          "earnings_trust_management"
+        ],
+        "parentalControls": {
+          "approvalRequired": true,
+          "workHourLimits": true,
+          "schoolPriority": true,
+          "chaperoneRequired": true
+        }
+      },
+      "metadata": {
+        "children": [
+          {
+            "name": "Emma Müller",
+            "age": 8,
+            "category": "child-model"
+          },
+          {
+            "name": "Max Müller",
+            "age": 10,
+            "category": "child-model"
+          }
+        ],
+        "managedSince": 2023
+      }
+    },
+    {
+      "name": "Makeup & Style Collective",
+      "slug": "makeup-style-collective",
+      "type": "professional",
+      "description": "Creative collective of makeup artists and stylists",
+      "email": "hello@makeupstylecollective.com",
+      "phone": "+43 650 567 8901",
+      "website": "https://makeupstylecollective.com",
+      "address": {
+        "street": "Mariahilfer Straße 89",
+        "city": "Vienna",
+        "state": "Vienna",
+        "country": "AT",
+        "postalCode": "1060"
+      },
+      "settings": {
+        "accountType": "creative_professional",
+        "teamSize": "medium",
+        "allowSubAccounts": true,
+        "maxUsers": 15,
+        "features": [
+          "team_scheduling",
+          "portfolio_showcase",
+          "kit_management",
+          "client_management",
+          "collaborative_projects",
+          "trend_tracking"
+        ],
+        "services": {
+          "makeup": ["beauty", "editorial", "sfx", "bridal"],
+          "styling": ["fashion", "commercial", "personal"],
+          "hair": true,
+          "wardrobe": true
+        }
+      },
+      "metadata": {
+        "teamMembers": 12,
+        "established": 2019,
+        "specialties": ["high-fashion", "editorial", "commercial"],
+        "brands": ["MAC", "Charlotte Tilbury", "Nars"]
+      }
+    }
+  ]
+}

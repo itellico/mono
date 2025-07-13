@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Management - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .doc-card { transition: all 0.3s; cursor: pointer; }
+        .doc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .approval-card { border-left: 4px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                
+                <!-- Hero Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card overflow-hidden">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1200&h=300&fit=crop" 
+                                     class="w-100" style="height: 200px; object-fit: cover;" alt="Documentation">
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center">
+                                    <div class="container text-white">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h1 class="h3 mb-2">Documentation Management</h1>
+                                                <p class="mb-0">5-tier platform documentation with approval workflow</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <a href="http://localhost:3001/docs" target="_blank" class="btn btn-light">
+                                                    <i class="fas fa-external-link-alt me-2"></i> API Docs
+                                                </a>
+                                                <button class="btn btn-warning">
+                                                    <i class="fas fa-clock me-2"></i> 3 Pending Approvals
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documentation Stats -->
+                <div class="row mb-4" id="docs-stats"></div>
+                
+                <!-- Pending Approvals -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card approval-card">
+                            <div class="card-header bg-warning">
+                                <h5 class="mb-0 text-dark">
+                                    <i class="fas fa-clock me-2"></i> Pending Documentation Approvals
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-warning">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=60&h=60&fit=crop" 
+                                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="API Update">
+                                                    <div>
+                                                        <h6 class="mb-1">API Endpoint Updates</h6>
+                                                        <small class="text-muted">Claude AI Assistant</small>
+                                                    </div>
+                                                </div>
+                                                <p class="small text-muted mb-3">New authentication endpoints for tenant-level API access. Includes rate limiting and permission updates.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">2 hours ago</small>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-success">Approve</button>
+                                                        <button class="btn btn-outline-danger">Reject</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-warning">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=60&h=60&fit=crop" 
+                                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Schema Update">
+                                                    <div>
+                                                        <h6 class="mb-1">Schema Documentation</h6>
+                                                        <small class="text-muted">Claude AI Assistant</small>
+                                                    </div>
+                                                </div>
+                                                <p class="small text-muted mb-3">Updated model schemas for voice talent marketplace. Added audio portfolio fields and language capabilities.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">4 hours ago</small>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-success">Approve</button>
+                                                        <button class="btn btn-outline-danger">Reject</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-warning">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=60&h=60&fit=crop" 
+                                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Workflow Update">
+                                                    <div>
+                                                        <h6 class="mb-1">Workflow Integration</h6>
+                                                        <small class="text-muted">Claude AI Assistant</small>
+                                                    </div>
+                                                </div>
+                                                <p class="small text-muted mb-3">N8N workflow documentation for automated documentation processing and approval notifications.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">6 hours ago</small>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-success">Approve</button>
+                                                        <button class="btn btn-outline-danger">Reject</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documentation Categories -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card doc-card h-100">
+                            <div class="card-body text-center">
+                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200&h=150&fit=crop" 
+                                     class="img-fluid rounded mb-3" alt="Architecture">
+                                <h5 class="card-title">Architecture</h5>
+                                <p class="text-muted small">System design, patterns, and technical architecture documentation</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-primary">24 Documents</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-primary btn-sm w-100">View Architecture Docs</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card doc-card h-100">
+                            <div class="card-body text-center">
+                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&h=150&fit=crop" 
+                                     class="img-fluid rounded mb-3" alt="Features">
+                                <h5 class="card-title">Features</h5>
+                                <p class="text-muted small">Feature specifications, user guides, and implementation details</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-success">18 Documents</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-success btn-sm w-100">View Feature Docs</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card doc-card h-100">
+                            <div class="card-body text-center">
+                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&h=150&fit=crop" 
+                                     class="img-fluid rounded mb-3" alt="API Reference">
+                                <h5 class="card-title">API Reference</h5>
+                                <p class="text-muted small">Complete API documentation with examples and authentication</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-warning">47 Endpoints</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="http://localhost:3001/docs" target="_blank" class="btn btn-outline-warning btn-sm w-100">
+                                    View API Docs <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card doc-card h-100">
+                            <div class="card-body text-center">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=150&fit=crop&crop=face" 
+                                     class="img-fluid rounded mb-3" alt="Guides">
+                                <h5 class="card-title">User Guides</h5>
+                                <p class="text-muted small">Step-by-step guides for platform users and administrators</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-info">12 Guides</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-info btn-sm w-100">View User Guides</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documentation Workflow -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Documentation Approval Workflow</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=250&fit=crop" 
+                                             class="img-fluid rounded mb-3" alt="Workflow">
+                                        <h6 class="fw-bold">Automated Documentation Process</h6>
+                                        <ol class="small">
+                                            <li>Claude AI generates documentation updates</li>
+                                            <li>Updates are submitted via platform API</li>
+                                            <li>N8N workflow triggers review process</li>
+                                            <li>Notifications sent via Mattermost</li>
+                                            <li>Human approval at <code>/admin/docs/review/{id}</code></li>
+                                            <li>Redis cache invalidation on approval</li>
+                                            <li>HTML documentation generation</li>
+                                        </ol>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3">Integration Status</h6>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Platform API</span>
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Active</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>N8N Workflows</span>
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Running</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Mattermost Notifications</span>
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Connected</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Redis Caching</span>
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Enabled</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between">
+                                                <span>HTML Generation</span>
+                                                <span class="text-success"><i class="fas fa-check-circle"></i> Automated</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Recent Activity</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="timeline">
+                                    <div class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="bg-success rounded-circle me-3" style="width: 8px; height: 8px; margin-top: 8px;"></div>
+                                            <div>
+                                                <strong class="small">API Documentation Approved</strong><br>
+                                                <small class="text-muted">3 new endpoints documented</small><br>
+                                                <small class="text-muted">2 hours ago</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="bg-warning rounded-circle me-3" style="width: 8px; height: 8px; margin-top: 8px;"></div>
+                                            <div>
+                                                <strong class="small">Schema Update Pending</strong><br>
+                                                <small class="text-muted">Voice talent model changes</small><br>
+                                                <small class="text-muted">4 hours ago</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex">
+                                            <div class="bg-info rounded-circle me-3" style="width: 8px; height: 8px; margin-top: 8px;"></div>
+                                            <div>
+                                                <strong class="small">User Guide Updated</strong><br>
+                                                <small class="text-muted">Model onboarding process</small><br>
+                                                <small class="text-muted">1 day ago</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-plus me-2"></i> Create Documentation
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-file-export me-2"></i> Export All Docs
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-cog me-2"></i> Workflow Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documentation Table -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">All Documentation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="docs-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', active: true },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Documentation' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Total Documents', '101', 'fas fa-file-alt', 'primary'),
+                createStatCard('Pending Approvals', '3', 'fas fa-clock', 'warning'),
+                createStatCard('API Endpoints', '47', 'fas fa-plug', 'success'),
+                createStatCard('User Guides', '12', 'fas fa-book-open', 'info')
+            ].join('');
+            document.getElementById('docs-stats').innerHTML = statsHtml;
+            
+            // Documentation Table
+            const docHeaders = ['Document', 'Category', 'Author', 'Last Updated', 'Status', 'Actions'];
+            const docRows = [
+                ['5-Tier API Architecture', 'Architecture', 'Claude AI', '2 hours ago', '<span class="badge bg-success">Approved</span>'],
+                ['User Authentication Guide', 'Guides', 'Claude AI', '4 hours ago', '<span class="badge bg-warning">Pending</span>'],
+                ['Schema Builder Documentation', 'Features', 'Claude AI', '6 hours ago', '<span class="badge bg-warning">Pending</span>'],
+                ['Platform Monitoring Setup', 'Operations', 'Claude AI', '1 day ago', '<span class="badge bg-success">Approved</span>'],
+                ['Tenant Management Guide', 'Guides', 'Claude AI', '2 days ago', '<span class="badge bg-success">Approved</span>'],
+                ['API Rate Limiting', 'API', 'Claude AI', '3 days ago', '<span class="badge bg-success">Approved</span>']
+            ];
+            document.getElementById('docs-table').innerHTML = createDataTable('', docHeaders, docRows);
+        });
+    </script>
+</body>
+</html>

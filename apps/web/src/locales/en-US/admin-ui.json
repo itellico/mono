@@ -1,0 +1,261 @@
+{
+  "pages": {
+    "dashboard": {
+      "title": "Admin Dashboard", 
+      "description": "Comprehensive role and permission management with emergency access controls"
+    },
+    "permissions": {
+      "title": "Permission Management",
+      "description": "Comprehensive role and permission management with emergency access controls"
+    },
+    "settings": {
+      "title": "Platform Settings",
+      "description": "Manage platform configuration, administrative settings, and system behavior"
+    },
+    "tenants": {
+      "title": "Tenant Management",
+      "description": "Manage platform tenants and their configurations"
+    },
+    "users": {
+      "title": "User Management", 
+      "description": "Manage user accounts, permissions, and activity across the platform"
+    },
+    "categories": {
+      "title": "Category Management",
+      "description": "Manage hierarchical categories for content organization"
+    },
+    "tags": {
+      "title": "Tag Management",
+      "description": "Manage flat tags for content categorization"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "description": "View system audit trails and user activity logs"
+    },
+    "monitoring": {
+      "title": "System Monitoring",
+      "description": "Monitor system health, performance, and resource usage"
+    }
+  },
+  "sidebar": {
+    "title": "Mono Admin",
+    "documentation": "Documentation",
+    "platformSettings": "Platform Settings"
+  },
+  "systemInfo": {
+    "platformInformation": "Platform Information",
+    "systemStatus": "System Status", 
+    "configurationOverview": "Configuration Overview",
+    "database": "Database",
+    "postgresql": "PostgreSQL",
+    "authentication": "Authentication",
+    "nextAuthJs": "NextAuth.js", 
+    "fileStorage": "File Storage",
+    "localStorage": "Local Storage",
+    "monoPlatform": "itellico Mono",
+    "timezone": "Europe/Vienna"
+  },
+  "status": {
+    "connected": "Connected",
+    "healthy": "Healthy",
+    "available": "Available",
+    "production": "Production",
+    "development": "Development",
+    "processing": "Processing",
+    "failed": "Failed",
+    "success": "Success"
+  },
+  "forms": {
+    "userEdit": {
+      "basicInfo": "Basic user information and contact details",
+      "profileDetails": "User profile details and social media links", 
+      "notificationSettings": "User notification and privacy settings",
+      "toggleAccountStatus": "Toggle user account status",
+      "emailVerified": "Indicates if user email is verified",
+      "profilePictureUrl": "Profile Picture URL",
+      "bio": "Bio",
+      "location": "Location",
+      "website": "Website",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn"
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required", 
+      "emailRequired": "Email is required",
+      "invalidEmailFormat": "Invalid email format",
+      "roleRequired": "Role is required",
+      "phoneRequired": "Phone is required",
+      "websiteRequired": "Website is required",
+      "bioRequired": "Bio is required"
+    }
+  },
+  "actions": {
+    "backToUsers": "Back to Users",
+    "saveChanges": "Save Changes",
+    "discardChanges": "Discard Changes",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "suspendUser": "Suspend User", 
+    "activateUser": "Activate User",
+    "verifyEmail": "Verify Email",
+    "resetPassword": "Reset Password",
+    "viewProfile": "View Profile",
+    "impersonateUser": "Impersonate User",
+    "exportData": "Export Data",
+    "importData": "Import Data",
+    "bulkActions": "Bulk Actions",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All"
+  },
+  "permissions": {
+    "accessDenied": "Access denied. You don't have permission to view this resource.",
+    "tagsAccessDenied": "Access denied. You don't have permission to view tags.",
+    "superAdminAccess": "Super Admin Access",
+    "settingsManagementRequired": "Settings Management Required",
+    "platformManagementRequired": "Platform Management Required",
+    "userManagementRequired": "User Management Required",
+    "contentModerationRequired": "Content Moderation Required"
+  },
+  "modals": {
+    "confirmation": {
+      "title": "Confirm Action",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "deleteUser": "Are you sure you want to delete this user?",
+      "suspendUser": "Are you sure you want to suspend this user?",
+      "activateUser": "Are you sure you want to activate this user?",
+      "irreversibleAction": "This action cannot be undone"
+    },
+    "loading": {
+      "title": "Loading...",
+      "pleaseWait": "Please wait while we process your request"
+    }
+  },
+  "tables": {
+    "headers": {
+      "name": "Name",
+      "email": "Email", 
+      "role": "Role",
+      "status": "Status",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "lastLogin": "Last Login",
+      "actions": "Actions",
+      "id": "ID",
+      "type": "Type",
+      "category": "Category",
+      "description": "Description",
+      "slug": "Slug",
+      "count": "Count",
+      "usage": "Usage",
+      "parent": "Parent",
+      "children": "Children"
+    },
+    "filters": {
+      "search": "Search...",
+      "filterByRole": "Filter by role",
+      "filterByStatus": "Filter by status", 
+      "filterByType": "Filter by type",
+      "filterByCategory": "Filter by category",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "allCategories": "All Categories"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} entries",
+      "previous": "Previous",
+      "next": "Next",
+      "first": "First",
+      "last": "Last",
+      "rowsPerPage": "Rows per page"
+    },
+    "empty": {
+      "noData": "No data available",
+      "noResults": "No results found",
+      "noUsers": "No users found",
+      "noPermissions": "No permissions found",
+      "noCategories": "No categories found", 
+      "noTags": "No tags found",
+      "noAuditLogs": "No audit logs found"
+    }
+  },
+  "stats": {
+    "total": "Total",
+    "active": "Active",
+    "inactive": "Inactive", 
+    "pending": "Pending",
+    "suspended": "Suspended",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "online": "Online",
+    "offline": "Offline",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "thisYear": "This Year",
+    "growth": "Growth",
+    "decline": "Decline",
+    "stable": "Stable"
+  },
+  "notifications": {
+    "userCreated": "User created successfully",
+    "userUpdated": "User updated successfully",
+    "userDeleted": "User deleted successfully",
+    "userSuspended": "User suspended successfully", 
+    "userActivated": "User activated successfully",
+    "permissionGranted": "Permission granted successfully",
+    "permissionRevoked": "Permission revoked successfully",
+    "settingsUpdated": "Settings updated successfully",
+    "dataExported": "Data exported successfully",
+    "dataImported": "Data imported successfully",
+    "operationCompleted": "Operation completed successfully",
+    "operationFailed": "Operation failed",
+    "accessDenied": "Access denied",
+    "invalidData": "Invalid data provided",
+    "networkError": "Network error occurred",
+    "serverError": "Server error occurred",
+    "validationError": "Validation error",
+    "authenticationError": "Authentication error",
+    "permissionError": "Permission error",
+    "notFound": "Resource not found",
+    "conflict": "Resource conflict",
+    "timeout": "Request timeout",
+    "quotaExceeded": "Quota exceeded",
+    "rateLimited": "Rate limit exceeded"
+  },
+  "help": {
+    "tooltip": {
+      "edit": "Edit this item",
+      "delete": "Delete this item",
+      "view": "View details",
+      "activate": "Activate this item",
+      "deactivate": "Deactivate this item",
+      "suspend": "Suspend this item",
+      "verify": "Verify this item",
+      "refresh": "Refresh data",
+      "export": "Export data",
+      "import": "Import data",
+      "filter": "Filter results",
+      "search": "Search items",
+      "sort": "Sort by this column",
+      "select": "Select this item",
+      "selectAll": "Select all items",
+      "bulkActions": "Perform bulk actions",
+      "pagination": "Navigate pages",
+      "settings": "Open settings",
+      "help": "Get help",
+      "support": "Contact support"
+    },
+    "description": {
+      "userManagement": "Manage user accounts, roles, and permissions",
+      "permissionSystem": "Control access to features and resources",
+      "auditLogs": "Track system changes and user activity",
+      "systemMonitoring": "Monitor system health and performance",
+      "dataManagement": "Import, export, and manage data",
+      "settingsPanel": "Configure system settings and preferences"
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{% extends "layouts/base.mjml" %}
+
+{% block content %}
+{% if status == "approved" %}
+  <mj-text font-size="28px" font-weight="600" color="#16a34a" align="center">
+    🎉 Application Approved!
+  </mj-text>
+  
+  <mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+    Congratulations! Your application has been accepted.
+  </mj-text>
+  
+  {% include "components/alert.mjml" with { 
+    type: "success", 
+    title: "Application Approved",
+    message: "Your application for \"" + projectTitle + "\" has been approved by " + approverName + "."
+  } %}
+
+{% elif status == "rejected" %}
+  <mj-text font-size="28px" font-weight="600" color="#dc2626" align="center">
+    Application Update
+  </mj-text>
+  
+  <mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+    Thank you for your interest in this opportunity
+  </mj-text>
+  
+  {% include "components/alert.mjml" with { 
+    type: "error", 
+    title: "Application Not Selected",
+    message: "Your application for \"" + projectTitle + "\" was not selected at this time."
+  } %}
+
+{% elif status == "shortlisted" %}
+  <mj-text font-size="28px" font-weight="600" color="#f59e0b" align="center">
+    You're Shortlisted! 🌟
+  </mj-text>
+  
+  <mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+    Your application has moved to the next round
+  </mj-text>
+  
+  {% include "components/alert.mjml" with { 
+    type: "warning", 
+    title: "Shortlisted for Review",
+    message: "Your application for \"" + projectTitle + "\" has been shortlisted for further consideration."
+  } %}
+
+{% else %}
+  <mj-text font-size="28px" font-weight="600" color="#3b82f6" align="center">
+    Application Status Update
+  </mj-text>
+  
+  <mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+    Your application status has been updated
+  </mj-text>
+{% endif %}
+
+<mj-text>
+  <p>Hi {{ userName }},</p>
+  
+  <p>We have an update regarding your application for the following opportunity:</p>
+</mj-text>
+
+<!-- Project Details Card -->
+<mj-section background-color="#f8f9fa" border-radius="8px" padding="20px">
+  <mj-column>
+    <mj-text font-size="20px" font-weight="600" color="#1f2937">
+      {{ projectTitle }}
+    </mj-text>
+    
+    {% if projectType %}
+    <mj-text font-size="14px" color="#6b7280">
+      <strong>Type:</strong> {{ projectType | title }}
+    </mj-text>
+    {% endif %}
+    
+    {% if clientName %}
+    <mj-text font-size="14px" color="#6b7280">
+      <strong>Client:</strong> {{ clientName }}
+    </mj-text>
+    {% endif %}
+    
+    {% if applicationDate %}
+    <mj-text font-size="14px" color="#6b7280">
+      <strong>Applied:</strong> {{ applicationDate | date }}
+    </mj-text>
+    {% endif %}
+    
+    {% if projectBudget %}
+    <mj-text font-size="14px" color="#6b7280">
+      <strong>Budget:</strong> {{ projectBudget | currency }}
+    </mj-text>
+    {% endif %}
+  </mj-column>
+</mj-section>
+
+{% if status == "approved" %}
+  <mj-text>
+    <p><strong>Next Steps:</strong></p>
+    <ul>
+      <li>The client will contact you directly to discuss project details</li>
+      <li>Review and sign the project contract when provided</li>
+      <li>Coordinate scheduling and logistics</li>
+      <li>Prepare any materials or equipment needed for the project</li>
+    </ul>
+  </mj-text>
+  
+  {% if contractUrl %}
+  <mj-text align="center" padding="20px 0">
+    {% include "components/button.mjml" with { 
+      url: contractUrl, 
+      text: "Review Contract", 
+      style: "primary" 
+    } %}
+  </mj-text>
+  {% endif %}
+
+{% elif status == "shortlisted" %}
+  <mj-text>
+    <p>Your application impressed us and you've been selected for the next round of consideration.</p>
+    
+    <p><strong>What happens next:</strong></p>
+    <ul>
+      <li>The client will review shortlisted applications in detail</li>
+      <li>You may be contacted for an interview or portfolio review</li>
+      <li>Additional project details may be shared with you</li>
+      <li>Final selection will be made within {{ timeframeDays or 7 }} days</li>
+    </ul>
+  </mj-text>
+  
+  {% if interviewRequired %}
+  <mj-text>
+    <p><strong>Interview Required:</strong> The client would like to schedule a brief interview. Please check your calendar and be ready to discuss your approach to this project.</p>
+  </mj-text>
+  {% endif %}
+
+{% elif status == "rejected" %}
+  <mj-text>
+    <p>While your application was not selected for this particular opportunity, we want you to know that this doesn't reflect on your talent or capabilities.</p>
+    
+    {% if rejectionReason %}
+    <p><strong>Feedback:</strong> {{ rejectionReason }}</p>
+    {% endif %}
+    
+    <p><strong>Keep applying!</strong> Here are some similar opportunities you might be interested in:</p>
+  </mj-text>
+  
+  {% if similarOpportunities %}
+    {% for opportunity in similarOpportunities %}
+    <mj-text background-color="#f8f9fa" padding="15px" border-radius="4px">
+      <p><strong>{{ opportunity.title }}</strong><br>
+      {{ opportunity.type }} • {{ opportunity.budget | currency }}<br>
+      <a href="{{ opportunity.url }}" style="color: {{ tenantBranding.primaryColor or '#4F46E5' }};">View Opportunity →</a></p>
+    </mj-text>
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
+{% if message %}
+<mj-text>
+  <p><strong>{{ approverName or "The client" }} left you a message:</strong></p>
+</mj-text>
+
+<mj-text background-color="#f0f9ff" border-left="4px solid #3b82f6" padding="20px">
+  "{{ message }}"
+</mj-text>
+{% endif %}
+
+<mj-text>
+  {% if status == "approved" %}
+  <p>Congratulations again, and we look forward to seeing your excellent work on this project!</p>
+  {% else %}
+  <p>Thank you for being part of our creative community. Keep applying and showcasing your amazing work!</p>
+  {% endif %}
+  
+  <p>Best regards,<br>
+  The {{ tenantName or platformName }} Team</p>
+</mj-text>
+
+{% if applicationUrl %}
+<mj-text align="center" padding="20px 0">
+  {% include "components/button.mjml" with { 
+    url: applicationUrl, 
+    text: "View Application", 
+    style: "secondary" 
+  } %}
+</mj-text>
+{% endif %}
+{% endblock %}

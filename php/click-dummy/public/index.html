@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Models NYC - Fashion Model Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .talent-card {
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .talent-card:hover {
+            transform: translateY(-5px);
+        }
+        .category-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .category-card:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-star text-primary me-2"></i>
+                Go Models NYC
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#browse">Browse Talent</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#castings">Castings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#academy">Academy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#blog">Blog</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    <a href="login.html" class="btn btn-outline-primary me-2">Login</a>
+                    <a href="register.html" class="btn btn-primary">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Discover Amazing Talent</h1>
+            <p class="lead mb-5">Connect with professional models, photographers, and creatives in NYC's premier marketplace</p>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8">
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" placeholder="Search for models, photographers, or services...">
+                        <button class="btn btn-light" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h3 class="fw-bold">1,200+</h3>
+                    <p>Active Talents</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="fw-bold">450+</h3>
+                    <p>Successful Bookings</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="fw-bold">89</h3>
+                    <p>Active Castings</p>
+                </div>
+                <div class="col-md-3">
+                    <h3 class="fw-bold">4.9</h3>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Featured Talent -->
+    <section class="py-5" id="browse">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Featured Talent</h2>
+                <p class="text-muted">Discover our top-rated professionals</p>
+            </div>
+            
+            <div class="row" id="featured-talent"></div>
+            
+            <div class="text-center mt-4">
+                <a href="browse.html" class="btn btn-primary btn-lg">View All Talent</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Categories -->
+    <section class="py-5 bg-light" id="categories">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Browse by Category</h2>
+                <p class="text-muted">Find the perfect talent for your needs</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="category-card">
+                        <i class="fas fa-female feature-icon text-primary"></i>
+                        <h5>Fashion Models</h5>
+                        <p class="mb-0">234 talents</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="category-card">
+                        <i class="fas fa-camera feature-icon text-success"></i>
+                        <h5>Photographers</h5>
+                        <p class="mb-0">156 professionals</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="category-card">
+                        <i class="fas fa-dumbbell feature-icon text-warning"></i>
+                        <h5>Fitness Models</h5>
+                        <p class="mb-0">89 athletes</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="category-card">
+                        <i class="fas fa-microphone feature-icon text-info"></i>
+                        <h5>Voice Talent</h5>
+                        <p class="mb-0">67 voices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Active Castings -->
+    <section class="py-5" id="castings">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Active Casting Calls</h2>
+                <p class="text-muted">Latest opportunities for talent</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Summer Fashion Campaign</h5>
+                            <p class="text-muted">Vogue Magazine</p>
+                            <p class="card-text">Looking for fashion models for upcoming summer editorial shoot.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">Fashion</span>
+                                <small class="text-muted">67 applications</small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Deadline: June 20, 2024</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Athletic Wear Commercial</h5>
+                            <p class="text-muted">Nike</p>
+                            <p class="card-text">Seeking fitness models for new athletic wear commercial campaign.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Fitness</span>
+                                <small class="text-muted">34 applications</small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Deadline: June 25, 2024</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Beauty Product Launch</h5>
+                            <p class="text-muted">L'Oreal</p>
+                            <p class="card-text">Commercial models needed for new beauty product launch campaign.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-warning">Beauty</span>
+                                <small class="text-muted">89 applications</small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Deadline: July 1, 2024</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="castings.html" class="btn btn-outline-primary">View All Castings</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Why Choose Go Models NYC?</h2>
+                <p class="text-muted">The premier platform for fashion professionals</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-shield-alt feature-icon text-primary"></i>
+                    <h5>Verified Profiles</h5>
+                    <p class="text-muted">All talents are verified and professional</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-handshake feature-icon text-success"></i>
+                    <h5>Secure Booking</h5>
+                    <p class="text-muted">Safe and secure booking process</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-star feature-icon text-warning"></i>
+                    <h5>Top Quality</h5>
+                    <p class="text-muted">Only the best talent in the industry</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Go Models NYC</h5>
+                    <p class="text-muted">The premier marketplace for fashion talent in New York City.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6>Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">Browse Talent</a></li>
+                        <li><a href="#" class="text-muted">Castings</a></li>
+                        <li><a href="#" class="text-muted">Academy</a></li>
+                        <li><a href="#" class="text-muted">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>For Talent</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">Sign Up</a></li>
+                        <li><a href="#" class="text-muted">Portfolio Tips</a></li>
+                        <li><a href="#" class="text-muted">Career Guide</a></li>
+                        <li><a href="#" class="text-muted">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>For Clients</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">Post Casting</a></li>
+                        <li><a href="#" class="text-muted">Pricing</a></li>
+                        <li><a href="#" class="text-muted">How It Works</a></li>
+                        <li><a href="#" class="text-muted">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">About</a></li>
+                        <li><a href="#" class="text-muted">Contact</a></li>
+                        <li><a href="#" class="text-muted">Privacy</a></li>
+                        <li><a href="#" class="text-muted">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 Go Models NYC. All rights reserved.</p>
+                <div class="mt-2">
+                    <a href="../index.html" class="btn btn-outline-light btn-sm">← Back to Demo Home</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Featured talent
+            const featuredTalents = [
+                { name: 'Emma Johnson', type: 'Fashion Model', tags: ['Runway', 'Editorial'], rate: '$500/hour', rating: '4.9' },
+                { name: 'John Smith', type: 'Photographer', tags: ['Fashion', 'Portrait'], rate: '$800/day', rating: '4.8' },
+                { name: 'Michael Chen', type: 'Fitness Model', tags: ['Athletic', 'Commercial'], rate: '$400/hour', rating: '4.7' },
+                { name: 'Sofia Rodriguez', type: 'Commercial Model', tags: ['TV', 'Print'], rate: '$450/hour', rating: '4.9' }
+            ];
+            
+            const talentHtml = featuredTalents.map(talent => createProfileCard(talent)).join('');
+            document.getElementById('featured-talent').innerHTML = talentHtml;
+        });
+    </script>
+</body>
+</html>

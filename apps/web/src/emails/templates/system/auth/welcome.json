@@ -1,0 +1,15 @@
+{
+  "subject": "Welcome to {{ tenantName or platformName }}! 🎉",
+  "preheader": "Your account has been successfully created. Let's get you started!",
+  "category": "authentication",
+  "layout": "base",
+  "variables": {
+    "userName": "User's full name",
+    "userEmail": "User's email address", 
+    "userType": "Type of user: model, photographer, agency, client",
+    "verificationRequired": "Boolean - whether email verification is needed",
+    "tenantName": "Name of the tenant/platform",
+    "tenantDomain": "Custom domain for tenant (optional)"
+  },
+  "description": "Welcome email sent when a new user creates an account"
+}

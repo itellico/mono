@@ -1,0 +1,52 @@
+{
+  "platform": "21st.dev",
+  "tagline": "Discover, share & remix the best UI components",
+  "description": "Ship polished UIs faster with ready-to-use React Tailwind components inspired by shadcn/ui",
+  "type": "UI Component Marketplace",
+  "url": "https://21st.dev/",
+  "features": {
+    "core": [
+      "Browse and integrate UI components",
+      "AI-powered component generation",
+      "Open source platform",
+      "Design engineer optimized workflow"
+    ],
+    "offerings": [
+      "React Tailwind components",
+      "shadcn/ui inspired design system",
+      "VS Code Extension",
+      "Magic AI Agent for IDEs",
+      "Component discovery and sharing",
+      "Remix and customize components"
+    ]
+  },
+  "navigation": [
+    "Components",
+    "VS Code Extension", 
+    "Magic Agent",
+    "GitHub"
+  ],
+  "technology": {
+    "frontend": "React",
+    "styling": "Tailwind CSS",
+    "design_system": "shadcn/ui inspired",
+    "ai": "AI-assisted component generation"
+  },
+  "target_audience": [
+    "Design engineers",
+    "Frontend developers",
+    "UI/UX developers",
+    "Vibe coders"
+  ],
+  "community": {
+    "github": "github.com/serafimcloud/21st",
+    "discord": "Available",
+    "open_source": true
+  },
+  "value_proposition": "npm for design engineers - largest marketplace of shadcn/ui-based React Tailwind components, blocks and hooks",
+  "ai_features": {
+    "magic_agent": "Transform your IDE with AI agent that understands Modern Component Patterns",
+    "description": "Create production-ready UI components in seconds instead of hours",
+    "mcp_server": "Like v0 but in your Cursor/WindSurf/Cline"
+  }
+}

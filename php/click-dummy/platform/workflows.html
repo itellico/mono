@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Management - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .workflow-card { transition: all 0.3s; cursor: pointer; }
+        .workflow-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .status-running { border-left: 4px solid #28a745; }
+        .status-paused { border-left: 4px solid #ffc107; }
+        .status-failed { border-left: 4px solid #dc3545; }
+        .workflow-node { 
+            background: #f8f9fa; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 2px solid #e9ecef;
+            position: relative;
+        }
+        .workflow-node::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: #dee2e6;
+        }
+        .workflow-node:last-child::after { display: none; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                
+                <!-- Hero Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card overflow-hidden">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&h=300&fit=crop" 
+                                     class="w-100" style="height: 200px; object-fit: cover;" alt="Workflow Automation">
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center">
+                                    <div class="container text-white">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h1 class="h3 mb-2">Workflow Management</h1>
+                                                <p class="mb-0">N8N automation workflows for the itellico Mono platform</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <a href="http://localhost:5678" target="_blank" class="btn btn-light">
+                                                    <i class="fas fa-external-link-alt me-2"></i> N8N Dashboard
+                                                </a>
+                                                <button class="btn btn-success">
+                                                    <i class="fas fa-play me-2"></i> All Running
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Workflow Stats -->
+                <div class="row mb-4" id="workflow-stats"></div>
+                
+                <!-- Active Workflows -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card workflow-card status-running h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=60&h=60&fit=crop" 
+                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Documentation">
+                                    <div>
+                                        <h6 class="mb-1">Documentation Processor</h6>
+                                        <small class="text-success"><i class="fas fa-circle"></i> Running</small>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-3">Processes Claude-generated documentation, sends Mattermost notifications, and manages approval workflow.</p>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Executions Today</small>
+                                        <strong>47</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Success Rate</small>
+                                        <span class="text-success"><strong>98.7%</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small>Last Run</small>
+                                        <small class="text-muted">2 minutes ago</small>
+                                    </div>
+                                </div>
+                                <div class="btn-group btn-group-sm w-100">
+                                    <button class="btn btn-outline-primary">View</button>
+                                    <button class="btn btn-outline-secondary">Edit</button>
+                                    <button class="btn btn-outline-warning">Pause</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card workflow-card status-running h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=60&h=60&fit=crop" 
+                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Notifications">
+                                    <div>
+                                        <h6 class="mb-1">User Onboarding</h6>
+                                        <small class="text-success"><i class="fas fa-circle"></i> Running</small>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-3">Automated welcome emails, account setup reminders, and onboarding task tracking for new users.</p>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Executions Today</small>
+                                        <strong>23</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Success Rate</small>
+                                        <span class="text-success"><strong>100%</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small>Last Run</small>
+                                        <small class="text-muted">15 minutes ago</small>
+                                    </div>
+                                </div>
+                                <div class="btn-group btn-group-sm w-100">
+                                    <button class="btn btn-outline-primary">View</button>
+                                    <button class="btn btn-outline-secondary">Edit</button>
+                                    <button class="btn btn-outline-warning">Pause</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card workflow-card status-running h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=60&h=60&fit=crop" 
+                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="Analytics">
+                                    <div>
+                                        <h6 class="mb-1">Analytics Aggregator</h6>
+                                        <small class="text-success"><i class="fas fa-circle"></i> Running</small>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-3">Collects usage metrics, generates daily reports, and updates Redis cache with aggregated data.</p>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Executions Today</small>
+                                        <strong>144</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small>Success Rate</small>
+                                        <span class="text-success"><strong>99.3%</strong></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small>Last Run</small>
+                                        <small class="text-muted">30 seconds ago</small>
+                                    </div>
+                                </div>
+                                <div class="btn-group btn-group-sm w-100">
+                                    <button class="btn btn-outline-primary">View</button>
+                                    <button class="btn btn-outline-secondary">Edit</button>
+                                    <button class="btn btn-outline-warning">Pause</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Workflow Builder Preview -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Documentation Processing Workflow</h5>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary">Edit in N8N</button>
+                                        <button class="btn btn-outline-success">Test Run</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop" 
+                                             class="img-fluid rounded mb-3" alt="Workflow">
+                                        <h6 class="fw-bold">Automated Documentation Flow</h6>
+                                        <p class="small text-muted mb-3">This workflow handles the complete documentation lifecycle from Claude generation to human approval.</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="workflow-node">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-robot text-primary me-2"></i>
+                                                <strong>Claude Webhook</strong>
+                                            </div>
+                                            <small class="text-muted">Receives documentation updates</small>
+                                        </div>
+                                        <div class="workflow-node">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-database text-success me-2"></i>
+                                                <strong>Validate & Store</strong>
+                                            </div>
+                                            <small class="text-muted">Validates YAML and stores in database</small>
+                                        </div>
+                                        <div class="workflow-node">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-comments text-info me-2"></i>
+                                                <strong>Mattermost Alert</strong>
+                                            </div>
+                                            <small class="text-muted">Sends notification to review channel</small>
+                                        </div>
+                                        <div class="workflow-node">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-check-circle text-warning me-2"></i>
+                                                <strong>Await Approval</strong>
+                                            </div>
+                                            <small class="text-muted">Waits for human approval</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Workflow Integration Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>N8N Server</span>
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Online</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Webhook Endpoints</span>
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Active</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Mattermost API</span>
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Connected</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Database Connection</span>
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Healthy</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Redis Cache</span>
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Online</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-plus me-2"></i> Create Workflow
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-download me-2"></i> Export All
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-sync me-2"></i> Sync with N8N
+                                    </button>
+                                    <a href="http://localhost:5678" target="_blank" class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-external-link-alt me-2"></i> Open N8N
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Workflows Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">All Workflows</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="workflows-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', active: true },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Workflows' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Active Workflows', '8', 'fas fa-play-circle', 'success'),
+                createStatCard('Total Executions', '2.3K', 'fas fa-bolt', 'primary'),
+                createStatCard('Success Rate', '98.9%', 'fas fa-check-circle', 'success'),
+                createStatCard('Failed Today', '3', 'fas fa-exclamation-triangle', 'warning')
+            ].join('');
+            document.getElementById('workflow-stats').innerHTML = statsHtml;
+            
+            // Workflows Table
+            const workflowHeaders = ['Workflow', 'Status', 'Executions', 'Success Rate', 'Last Run', 'Actions'];
+            const workflowRows = [
+                ['Documentation Processor', '<span class="badge bg-success">Running</span>', '47', '98.7%', '2 min ago'],
+                ['User Onboarding', '<span class="badge bg-success">Running</span>', '23', '100%', '15 min ago'],
+                ['Analytics Aggregator', '<span class="badge bg-success">Running</span>', '144', '99.3%', '30 sec ago'],
+                ['Email Notifications', '<span class="badge bg-success">Running</span>', '89', '97.8%', '5 min ago'],
+                ['Backup Scheduler', '<span class="badge bg-warning">Paused</span>', '24', '100%', '2 hours ago'],
+                ['Error Handler', '<span class="badge bg-success">Running</span>', '12', '100%', '1 hour ago'],
+                ['Cache Warmer', '<span class="badge bg-success">Running</span>', '288', '99.7%', '1 min ago'],
+                ['Health Checker', '<span class="badge bg-danger">Failed</span>', '0', '0%', '6 hours ago']
+            ];
+            document.getElementById('workflows-table').innerHTML = createDataTable('', workflowHeaders, workflowRows);
+        });
+    </script>
+</body>
+</html>

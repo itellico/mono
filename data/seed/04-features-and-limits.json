@@ -1,0 +1,384 @@
+{
+  "features": [
+    {
+      "id": "basic_profile",
+      "name": "Basic Profile",
+      "slug": "basic-profile",
+      "description": "Create and manage your professional profile",
+      "icon": "fas fa-user",
+      "category": "core",
+      "permissions": ["user.profile.read", "user.profile.update"],
+      "requiredLimits": ["storage", "images"],
+      "optionalLimits": [],
+      "dependencies": [],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "comp_cards",
+      "name": "Comp Cards",
+      "slug": "comp-cards",
+      "description": "Create professional digital comp cards",
+      "icon": "fas fa-id-card",
+      "category": "professional",
+      "permissions": [
+        "feature.comp_card.access",
+        "feature.comp_card.create",
+        "feature.comp_card.update",
+        "feature.comp_card.delete",
+        "feature.comp_card.share"
+      ],
+      "requiredLimits": ["comp_cards", "comp_card_images", "storage"],
+      "optionalLimits": ["comp_card_templates"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio Management",
+      "slug": "portfolio",
+      "description": "Showcase your work with professional portfolios",
+      "icon": "fas fa-images",
+      "category": "professional",
+      "permissions": [
+        "feature.portfolio.access",
+        "feature.portfolio.create",
+        "feature.portfolio.update",
+        "feature.portfolio.delete",
+        "feature.portfolio.analytics"
+      ],
+      "requiredLimits": ["portfolios", "portfolio_images", "storage"],
+      "optionalLimits": ["portfolio_videos", "portfolio_categories"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics Dashboard",
+      "slug": "analytics",
+      "description": "Track profile views, engagement, and performance",
+      "icon": "fas fa-chart-line",
+      "category": "insights",
+      "permissions": [
+        "feature.analytics.access",
+        "feature.analytics.export"
+      ],
+      "requiredLimits": ["analytics_retention_days"],
+      "optionalLimits": ["analytics_custom_reports"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "messaging",
+      "name": "Messaging System",
+      "slug": "messaging",
+      "description": "Communicate with clients and team members",
+      "icon": "fas fa-comments",
+      "category": "communication",
+      "permissions": [
+        "feature.messaging.access",
+        "feature.messaging.groups",
+        "feature.messaging.attachments"
+      ],
+      "requiredLimits": ["messages_per_day", "conversation_participants", "attachment_size"],
+      "optionalLimits": ["message_retention_days"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "calendar",
+      "name": "Availability Calendar",
+      "slug": "calendar",
+      "description": "Manage your availability and bookings",
+      "icon": "fas fa-calendar-alt",
+      "category": "scheduling",
+      "permissions": [
+        "feature.calendar.access",
+        "feature.calendar.sync"
+      ],
+      "requiredLimits": ["calendar_events", "calendar_sync_accounts"],
+      "optionalLimits": ["calendar_reminders"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "job_posting",
+      "name": "Job Posting",
+      "slug": "job-posting",
+      "description": "Post jobs and casting calls",
+      "icon": "fas fa-briefcase",
+      "category": "marketplace",
+      "permissions": [
+        "user.jobs.create",
+        "user.jobs.update",
+        "user.jobs.delete"
+      ],
+      "requiredLimits": ["active_job_posts", "job_applications_per_post"],
+      "optionalLimits": ["featured_job_posts", "job_boost_credits"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "api_access",
+      "name": "API Access",
+      "slug": "api-access",
+      "description": "Programmatic access to platform features",
+      "icon": "fas fa-code",
+      "category": "developer",
+      "permissions": [
+        "feature.api.access",
+        "feature.api.webhooks"
+      ],
+      "requiredLimits": ["api_calls_per_month", "api_keys"],
+      "optionalLimits": ["webhook_endpoints"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "team_management",
+      "name": "Team Management",
+      "slug": "team-management",
+      "description": "Manage team members and permissions",
+      "icon": "fas fa-users",
+      "category": "agency",
+      "permissions": [
+        "account.users.create",
+        "account.users.read",
+        "account.users.update",
+        "account.teams.create",
+        "account.teams.manage"
+      ],
+      "requiredLimits": ["team_members", "teams"],
+      "optionalLimits": ["sub_accounts"],
+      "dependencies": ["basic_profile"],
+      "conflictsWith": [],
+      "isActive": true
+    },
+    {
+      "id": "white_label",
+      "name": "White Label Branding",
+      "slug": "white-label",
+      "description": "Custom branding and domain",
+      "icon": "fas fa-palette",
+      "category": "enterprise",
+      "permissions": [
+        "tenant.branding.update",
+        "tenant.domain.manage"
+      ],
+      "requiredLimits": [],
+      "optionalLimits": ["custom_domains"],
+      "dependencies": [],
+      "conflictsWith": [],
+      "isActive": true
+    }
+  ],
+  "feature_sets": [
+    {
+      "id": "starter_bundle",
+      "name": "Starter Bundle",
+      "slug": "starter-bundle",
+      "description": "Essential features to get started",
+      "features": ["basic_profile", "search", "messaging"],
+      "icon": "fas fa-rocket"
+    },
+    {
+      "id": "professional_bundle",
+      "name": "Professional Bundle",
+      "slug": "professional-bundle",
+      "description": "Everything you need as a professional",
+      "features": ["basic_profile", "comp_cards", "portfolio", "analytics", "calendar", "messaging"],
+      "icon": "fas fa-briefcase"
+    },
+    {
+      "id": "agency_bundle",
+      "name": "Agency Bundle",
+      "slug": "agency-bundle",
+      "description": "Complete agency management toolkit",
+      "features": ["professional_bundle", "team_management", "job_posting", "api_access"],
+      "icon": "fas fa-building"
+    },
+    {
+      "id": "enterprise_bundle",
+      "name": "Enterprise Bundle",
+      "slug": "enterprise-bundle",
+      "description": "Full platform capabilities",
+      "features": ["agency_bundle", "white_label", "custom_integrations"],
+      "icon": "fas fa-globe"
+    }
+  ],
+  "limits": [
+    {
+      "id": "storage",
+      "name": "Storage Space",
+      "slug": "storage",
+      "description": "Total storage for all media files",
+      "category": "resources",
+      "unit": "GB",
+      "defaultValue": 1
+    },
+    {
+      "id": "bandwidth",
+      "name": "Monthly Bandwidth",
+      "slug": "bandwidth",
+      "description": "Data transfer per month",
+      "category": "resources",
+      "unit": "GB",
+      "defaultValue": 10
+    },
+    {
+      "id": "images",
+      "name": "Total Images",
+      "slug": "images",
+      "description": "Maximum number of images",
+      "category": "content",
+      "unit": "images",
+      "defaultValue": 100
+    },
+    {
+      "id": "comp_cards",
+      "name": "Comp Cards",
+      "slug": "comp-cards",
+      "description": "Number of comp cards you can create",
+      "category": "content",
+      "unit": "cards",
+      "defaultValue": 1
+    },
+    {
+      "id": "comp_card_images",
+      "name": "Images per Comp Card",
+      "slug": "comp-card-images",
+      "description": "Images allowed per comp card",
+      "category": "content",
+      "unit": "images",
+      "defaultValue": 8
+    },
+    {
+      "id": "portfolios",
+      "name": "Portfolios",
+      "slug": "portfolios",
+      "description": "Number of portfolio galleries",
+      "category": "content",
+      "unit": "portfolios",
+      "defaultValue": 3
+    },
+    {
+      "id": "portfolio_images",
+      "name": "Images per Portfolio",
+      "slug": "portfolio-images",
+      "description": "Images allowed per portfolio",
+      "category": "content",
+      "unit": "images",
+      "defaultValue": 50
+    },
+    {
+      "id": "active_job_posts",
+      "name": "Active Job Posts",
+      "slug": "active-job-posts",
+      "description": "Simultaneous active job postings",
+      "category": "marketplace",
+      "unit": "posts",
+      "defaultValue": 3
+    },
+    {
+      "id": "messages_per_day",
+      "name": "Messages per Day",
+      "slug": "messages-per-day",
+      "description": "Daily message sending limit",
+      "category": "communication",
+      "unit": "messages",
+      "defaultValue": 100
+    },
+    {
+      "id": "api_calls_per_month",
+      "name": "API Calls per Month",
+      "slug": "api-calls-per-month",
+      "description": "Monthly API request limit",
+      "category": "developer",
+      "unit": "calls",
+      "defaultValue": 10000
+    },
+    {
+      "id": "team_members",
+      "name": "Team Members",
+      "slug": "team-members",
+      "description": "Users in your account",
+      "category": "organization",
+      "unit": "users",
+      "defaultValue": 5
+    },
+    {
+      "id": "analytics_retention_days",
+      "name": "Analytics Retention",
+      "slug": "analytics-retention-days",
+      "description": "Days of analytics data retained",
+      "category": "insights",
+      "unit": "days",
+      "defaultValue": 30
+    }
+  ],
+  "limit_presets": {
+    "starter": {
+      "storage": 1,
+      "bandwidth": 10,
+      "images": 100,
+      "comp_cards": 1,
+      "comp_card_images": 8,
+      "portfolios": 3,
+      "portfolio_images": 50,
+      "active_job_posts": 3,
+      "messages_per_day": 100,
+      "api_calls_per_month": 0,
+      "team_members": 1,
+      "analytics_retention_days": 7
+    },
+    "professional": {
+      "storage": 50,
+      "bandwidth": 500,
+      "images": 1000,
+      "comp_cards": 5,
+      "comp_card_images": 20,
+      "portfolios": 10,
+      "portfolio_images": 100,
+      "active_job_posts": 10,
+      "messages_per_day": 500,
+      "api_calls_per_month": 50000,
+      "team_members": 5,
+      "analytics_retention_days": 90
+    },
+    "agency": {
+      "storage": 500,
+      "bandwidth": 5000,
+      "images": 10000,
+      "comp_cards": -1,
+      "comp_card_images": 50,
+      "portfolios": -1,
+      "portfolio_images": 500,
+      "active_job_posts": 50,
+      "messages_per_day": 2000,
+      "api_calls_per_month": 500000,
+      "team_members": 50,
+      "analytics_retention_days": 365
+    },
+    "enterprise": {
+      "storage": -1,
+      "bandwidth": -1,
+      "images": -1,
+      "comp_cards": -1,
+      "comp_card_images": -1,
+      "portfolios": -1,
+      "portfolio_images": -1,
+      "active_job_posts": -1,
+      "messages_per_day": -1,
+      "api_calls_per_month": -1,
+      "team_members": -1,
+      "analytics_retention_days": -1
+    }
+  }
+}

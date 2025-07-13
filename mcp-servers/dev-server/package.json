@@ -1,0 +1,22 @@
+{
+  "name": "@itellico/mono-dev-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for development tools and utilities",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "glob": "^10.3.10",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/glob": "^8.1.0"
+  }
+}

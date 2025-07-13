@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industry Templates - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .template-card { cursor: pointer; transition: all 0.3s; }
+        .template-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="h3 mb-0">Industry Templates</h1>
+                        <p class="text-muted">Pre-configured marketplace templates for different industries</p>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> Create Template
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-female fa-4x text-primary mb-3"></i>
+                                <h4 class="card-title">Fashion Modeling</h4>
+                                <p class="card-text">Complete setup for fashion model marketplaces with portfolios, sedcards, and agency management.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-primary me-1">Models</span>
+                                    <span class="badge bg-success me-1">Agencies</span>
+                                    <span class="badge bg-info me-1">Castings</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">3 tenants using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-dumbbell fa-4x text-success mb-3"></i>
+                                <h4 class="card-title">Fitness & Sports</h4>
+                                <p class="card-text">Fitness model and athlete marketplace with performance tracking and sponsorship management.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-success me-1">Athletes</span>
+                                    <span class="badge bg-warning me-1">Sponsors</span>
+                                    <span class="badge bg-info me-1">Events</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">2 tenants using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-child fa-4x text-warning mb-3"></i>
+                                <h4 class="card-title">Child Modeling</h4>
+                                <p class="card-text">Specialized platform for child models with guardian consent workflows and compliance features.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning me-1">Kids</span>
+                                    <span class="badge bg-info me-1">Guardians</span>
+                                    <span class="badge bg-secondary me-1">Compliance</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">1 tenant using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-paw fa-4x text-info mb-3"></i>
+                                <h4 class="card-title">Pet Modeling</h4>
+                                <p class="card-text">Animal talent marketplace with veterinary records, training certifications, and handler coordination.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-info me-1">Pets</span>
+                                    <span class="badge bg-success me-1">Handlers</span>
+                                    <span class="badge bg-warning me-1">Training</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">1 tenant using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-microphone fa-4x text-danger mb-3"></i>
+                                <h4 class="card-title">Voice Talent</h4>
+                                <p class="card-text">Voice actor marketplace with audio portfolios, language capabilities, and studio booking features.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-danger me-1">Voice Artists</span>
+                                    <span class="badge bg-primary me-1">Studios</span>
+                                    <span class="badge bg-success me-1">Audio</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">1 tenant using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card template-card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-camera fa-4x text-secondary mb-3"></i>
+                                <h4 class="card-title">Creative Services</h4>
+                                <p class="card-text">Photographers, videographers, and creative professionals marketplace with service packages and bookings.</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-secondary me-1">Creatives</span>
+                                    <span class="badge bg-primary me-1">Services</span>
+                                    <span class="badge bg-info me-1">Bookings</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">1 tenant using</small>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm">Preview</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Template Usage Analytics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="templates-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', active: true },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Industry Templates' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Templates Table
+            const templateHeaders = ['Template Name', 'Industry', 'Features', 'Tenants Using', 'Created', 'Status'];
+            const templateRows = [
+                ['Fashion Modeling', 'Fashion', '15 features', '3 tenants', 'Jan 2024', '<span class="badge bg-success">Active</span>'],
+                ['Fitness & Sports', 'Fitness', '12 features', '2 tenants', 'Feb 2024', '<span class="badge bg-success">Active</span>'],
+                ['Child Modeling', 'Entertainment', '18 features', '1 tenant', 'Mar 2024', '<span class="badge bg-success">Active</span>'],
+                ['Pet Modeling', 'Animals', '10 features', '1 tenant', 'May 2024', '<span class="badge bg-success">Active</span>'],
+                ['Voice Talent', 'Audio', '11 features', '1 tenant', 'Aug 2024', '<span class="badge bg-success">Active</span>'],
+                ['Creative Services', 'Photography', '13 features', '1 tenant', 'Dec 2024', '<span class="badge bg-warning">Beta</span>']
+            ];
+            document.getElementById('templates-table').innerHTML = createDataTable('', templateHeaders, templateRows);
+        });
+    </script>
+</body>
+</html>

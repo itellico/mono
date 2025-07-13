@@ -1,0 +1,1019 @@
+{
+  "roles": [
+    {
+      "name": "super_admin",
+      "description": "Full system access with no restrictions",
+      "tier": "platform",
+      "permissions": [
+        "*"
+      ],
+      "isSystem": true,
+      "priority": 1000
+    },
+    {
+      "name": "platform_admin",
+      "description": "Platform administration without system modifications",
+      "tier": "platform",
+      "permissions": [
+        "platform.tenants.*",
+        "platform.plans.*",
+        "platform.features.*",
+        "platform.monitoring.*",
+        "platform.analytics.*",
+        "platform.support.*",
+        "platform.api.*",
+        "platform.webhooks.*",
+        "platform.templates.*",
+        "platform.audit.*"
+      ],
+      "isSystem": true,
+      "priority": 900
+    },
+    {
+      "name": "tenant_admin",
+      "description": "Full tenant administration",
+      "tier": "tenant",
+      "permissions": [
+        "tenant.settings.*",
+        "tenant.accounts.*",
+        "tenant.users.*",
+        "tenant.billing.*",
+        "tenant.reports.*",
+        "tenant.integrations.*",
+        "tenant.customization.*",
+        "tenant.data.*"
+      ],
+      "isSystem": true,
+      "priority": 800
+    },
+    {
+      "name": "tenant_manager",
+      "description": "Tenant management without billing access",
+      "tier": "tenant",
+      "permissions": [
+        "tenant.settings.read",
+        "tenant.settings.update",
+        "tenant.accounts.*",
+        "tenant.users.*",
+        "tenant.reports.read",
+        "tenant.data.*"
+      ],
+      "isSystem": true,
+      "priority": 700
+    },
+    {
+      "name": "account_admin",
+      "description": "Full account administration",
+      "tier": "account",
+      "permissions": [
+        "account.settings.*",
+        "account.users.*",
+        "account.teams.*",
+        "account.projects.*",
+        "account.billing.*",
+        "account.integrations.*"
+      ],
+      "isSystem": true,
+      "priority": 600
+    },
+    {
+      "name": "account_manager",
+      "description": "Account management without billing",
+      "tier": "account",
+      "permissions": [
+        "account.settings.read",
+        "account.settings.update",
+        "account.users.*",
+        "account.teams.*",
+        "account.projects.*"
+      ],
+      "isSystem": true,
+      "priority": 500
+    },
+    {
+      "name": "user",
+      "description": "Standard user with personal access",
+      "tier": "user",
+      "permissions": [
+        "user.profile.*",
+        "user.preferences.*",
+        "user.notifications.*",
+        "user.content.create",
+        "user.content.read",
+        "user.content.update",
+        "user.content.delete"
+      ],
+      "isSystem": true,
+      "priority": 100
+    },
+    {
+      "name": "guest",
+      "description": "Limited public access",
+      "tier": "public",
+      "permissions": [
+        "public.content.read",
+        "public.search",
+        "public.register"
+      ],
+      "isSystem": true,
+      "priority": 10
+    }
+  ],
+  "permissions": [
+    {
+      "comment": "========== PLATFORM TIER PERMISSIONS (30+) ==========",
+      "permissions": []
+    },
+    {
+      "name": "platform.tenants.create",
+      "description": "Create new tenants",
+      "tier": "platform",
+      "resource": "tenants",
+      "action": "create"
+    },
+    {
+      "name": "platform.tenants.read",
+      "description": "View tenant information",
+      "tier": "platform",
+      "resource": "tenants",
+      "action": "read"
+    },
+    {
+      "name": "platform.tenants.update",
+      "description": "Update tenant settings",
+      "tier": "platform",
+      "resource": "tenants",
+      "action": "update"
+    },
+    {
+      "name": "platform.tenants.delete",
+      "description": "Delete tenants",
+      "tier": "platform",
+      "resource": "tenants",
+      "action": "delete"
+    },
+    {
+      "name": "platform.tenants.suspend",
+      "description": "Suspend tenant access",
+      "tier": "platform",
+      "resource": "tenants",
+      "action": "suspend"
+    },
+    {
+      "name": "platform.plans.create",
+      "description": "Create subscription plans",
+      "tier": "platform",
+      "resource": "plans",
+      "action": "create"
+    },
+    {
+      "name": "platform.plans.read",
+      "description": "View subscription plans",
+      "tier": "platform",
+      "resource": "plans",
+      "action": "read"
+    },
+    {
+      "name": "platform.plans.update",
+      "description": "Update subscription plans",
+      "tier": "platform",
+      "resource": "plans",
+      "action": "update"
+    },
+    {
+      "name": "platform.plans.delete",
+      "description": "Delete subscription plans",
+      "tier": "platform",
+      "resource": "plans",
+      "action": "delete"
+    },
+    {
+      "name": "platform.features.create",
+      "description": "Create platform features",
+      "tier": "platform",
+      "resource": "features",
+      "action": "create"
+    },
+    {
+      "name": "platform.features.read",
+      "description": "View platform features",
+      "tier": "platform",
+      "resource": "features",
+      "action": "read"
+    },
+    {
+      "name": "platform.features.update",
+      "description": "Update platform features",
+      "tier": "platform",
+      "resource": "features",
+      "action": "update"
+    },
+    {
+      "name": "platform.features.delete",
+      "description": "Delete platform features",
+      "tier": "platform",
+      "resource": "features",
+      "action": "delete"
+    },
+    {
+      "name": "platform.monitoring.read",
+      "description": "View system monitoring",
+      "tier": "platform",
+      "resource": "monitoring",
+      "action": "read"
+    },
+    {
+      "name": "platform.monitoring.configure",
+      "description": "Configure monitoring settings",
+      "tier": "platform",
+      "resource": "monitoring",
+      "action": "configure"
+    },
+    {
+      "name": "platform.analytics.read",
+      "description": "View platform analytics",
+      "tier": "platform",
+      "resource": "analytics",
+      "action": "read"
+    },
+    {
+      "name": "platform.analytics.export",
+      "description": "Export analytics data",
+      "tier": "platform",
+      "resource": "analytics",
+      "action": "export"
+    },
+    {
+      "name": "platform.support.read",
+      "description": "View support tickets",
+      "tier": "platform",
+      "resource": "support",
+      "action": "read"
+    },
+    {
+      "name": "platform.support.manage",
+      "description": "Manage support tickets",
+      "tier": "platform",
+      "resource": "support",
+      "action": "manage"
+    },
+    {
+      "name": "platform.api.manage",
+      "description": "Manage API configuration",
+      "tier": "platform",
+      "resource": "api",
+      "action": "manage"
+    },
+    {
+      "name": "platform.api.keys",
+      "description": "Manage API keys",
+      "tier": "platform",
+      "resource": "api",
+      "action": "keys"
+    },
+    {
+      "name": "platform.webhooks.create",
+      "description": "Create webhooks",
+      "tier": "platform",
+      "resource": "webhooks",
+      "action": "create"
+    },
+    {
+      "name": "platform.webhooks.manage",
+      "description": "Manage webhooks",
+      "tier": "platform",
+      "resource": "webhooks",
+      "action": "manage"
+    },
+    {
+      "name": "platform.templates.create",
+      "description": "Create templates",
+      "tier": "platform",
+      "resource": "templates",
+      "action": "create"
+    },
+    {
+      "name": "platform.templates.manage",
+      "description": "Manage templates",
+      "tier": "platform",
+      "resource": "templates",
+      "action": "manage"
+    },
+    {
+      "name": "platform.audit.read",
+      "description": "View audit logs",
+      "tier": "platform",
+      "resource": "audit",
+      "action": "read"
+    },
+    {
+      "name": "platform.audit.export",
+      "description": "Export audit logs",
+      "tier": "platform",
+      "resource": "audit",
+      "action": "export"
+    },
+    {
+      "name": "platform.system.config",
+      "description": "Configure system settings",
+      "tier": "platform",
+      "resource": "system",
+      "action": "config"
+    },
+    {
+      "name": "platform.system.maintenance",
+      "description": "Perform system maintenance",
+      "tier": "platform",
+      "resource": "system",
+      "action": "maintenance"
+    },
+    {
+      "name": "platform.revenue.read",
+      "description": "View platform revenue",
+      "tier": "platform",
+      "resource": "revenue",
+      "action": "read"
+    },
+    {
+      "comment": "========== TENANT TIER PERMISSIONS (40+) ==========",
+      "permissions": []
+    },
+    {
+      "name": "tenant.settings.read",
+      "description": "View tenant settings",
+      "tier": "tenant",
+      "resource": "settings",
+      "action": "read"
+    },
+    {
+      "name": "tenant.settings.update",
+      "description": "Update tenant settings",
+      "tier": "tenant",
+      "resource": "settings",
+      "action": "update"
+    },
+    {
+      "name": "tenant.accounts.create",
+      "description": "Create accounts",
+      "tier": "tenant",
+      "resource": "accounts",
+      "action": "create"
+    },
+    {
+      "name": "tenant.accounts.read",
+      "description": "View accounts",
+      "tier": "tenant",
+      "resource": "accounts",
+      "action": "read"
+    },
+    {
+      "name": "tenant.accounts.update",
+      "description": "Update accounts",
+      "tier": "tenant",
+      "resource": "accounts",
+      "action": "update"
+    },
+    {
+      "name": "tenant.accounts.delete",
+      "description": "Delete accounts",
+      "tier": "tenant",
+      "resource": "accounts",
+      "action": "delete"
+    },
+    {
+      "name": "tenant.accounts.suspend",
+      "description": "Suspend accounts",
+      "tier": "tenant",
+      "resource": "accounts",
+      "action": "suspend"
+    },
+    {
+      "name": "tenant.users.create",
+      "description": "Create users",
+      "tier": "tenant",
+      "resource": "users",
+      "action": "create"
+    },
+    {
+      "name": "tenant.users.read",
+      "description": "View users",
+      "tier": "tenant",
+      "resource": "users",
+      "action": "read"
+    },
+    {
+      "name": "tenant.users.update",
+      "description": "Update users",
+      "tier": "tenant",
+      "resource": "users",
+      "action": "update"
+    },
+    {
+      "name": "tenant.users.delete",
+      "description": "Delete users",
+      "tier": "tenant",
+      "resource": "users",
+      "action": "delete"
+    },
+    {
+      "name": "tenant.users.impersonate",
+      "description": "Impersonate users",
+      "tier": "tenant",
+      "resource": "users",
+      "action": "impersonate"
+    },
+    {
+      "name": "tenant.billing.read",
+      "description": "View billing information",
+      "tier": "tenant",
+      "resource": "billing",
+      "action": "read"
+    },
+    {
+      "name": "tenant.billing.manage",
+      "description": "Manage billing",
+      "tier": "tenant",
+      "resource": "billing",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.billing.invoices",
+      "description": "Manage invoices",
+      "tier": "tenant",
+      "resource": "billing",
+      "action": "invoices"
+    },
+    {
+      "name": "tenant.reports.read",
+      "description": "View reports",
+      "tier": "tenant",
+      "resource": "reports",
+      "action": "read"
+    },
+    {
+      "name": "tenant.reports.create",
+      "description": "Create reports",
+      "tier": "tenant",
+      "resource": "reports",
+      "action": "create"
+    },
+    {
+      "name": "tenant.reports.export",
+      "description": "Export reports",
+      "tier": "tenant",
+      "resource": "reports",
+      "action": "export"
+    },
+    {
+      "name": "tenant.integrations.read",
+      "description": "View integrations",
+      "tier": "tenant",
+      "resource": "integrations",
+      "action": "read"
+    },
+    {
+      "name": "tenant.integrations.manage",
+      "description": "Manage integrations",
+      "tier": "tenant",
+      "resource": "integrations",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.customization.theme",
+      "description": "Customize tenant theme",
+      "tier": "tenant",
+      "resource": "customization",
+      "action": "theme"
+    },
+    {
+      "name": "tenant.customization.branding",
+      "description": "Manage tenant branding",
+      "tier": "tenant",
+      "resource": "customization",
+      "action": "branding"
+    },
+    {
+      "name": "tenant.data.import",
+      "description": "Import data",
+      "tier": "tenant",
+      "resource": "data",
+      "action": "import"
+    },
+    {
+      "name": "tenant.data.export",
+      "description": "Export data",
+      "tier": "tenant",
+      "resource": "data",
+      "action": "export"
+    },
+    {
+      "name": "tenant.data.backup",
+      "description": "Backup tenant data",
+      "tier": "tenant",
+      "resource": "data",
+      "action": "backup"
+    },
+    {
+      "name": "tenant.roles.create",
+      "description": "Create custom roles",
+      "tier": "tenant",
+      "resource": "roles",
+      "action": "create"
+    },
+    {
+      "name": "tenant.roles.manage",
+      "description": "Manage roles",
+      "tier": "tenant",
+      "resource": "roles",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.permissions.assign",
+      "description": "Assign permissions",
+      "tier": "tenant",
+      "resource": "permissions",
+      "action": "assign"
+    },
+    {
+      "name": "tenant.api.access",
+      "description": "Access tenant API",
+      "tier": "tenant",
+      "resource": "api",
+      "action": "access"
+    },
+    {
+      "name": "tenant.api.keys",
+      "description": "Manage API keys",
+      "tier": "tenant",
+      "resource": "api",
+      "action": "keys"
+    },
+    {
+      "name": "tenant.webhooks.create",
+      "description": "Create webhooks",
+      "tier": "tenant",
+      "resource": "webhooks",
+      "action": "create"
+    },
+    {
+      "name": "tenant.webhooks.manage",
+      "description": "Manage webhooks",
+      "tier": "tenant",
+      "resource": "webhooks",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.notifications.send",
+      "description": "Send notifications",
+      "tier": "tenant",
+      "resource": "notifications",
+      "action": "send"
+    },
+    {
+      "name": "tenant.notifications.manage",
+      "description": "Manage notifications",
+      "tier": "tenant",
+      "resource": "notifications",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.audit.read",
+      "description": "View audit logs",
+      "tier": "tenant",
+      "resource": "audit",
+      "action": "read"
+    },
+    {
+      "name": "tenant.security.manage",
+      "description": "Manage security settings",
+      "tier": "tenant",
+      "resource": "security",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.workflows.create",
+      "description": "Create workflows",
+      "tier": "tenant",
+      "resource": "workflows",
+      "action": "create"
+    },
+    {
+      "name": "tenant.workflows.manage",
+      "description": "Manage workflows",
+      "tier": "tenant",
+      "resource": "workflows",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.categories.manage",
+      "description": "Manage categories",
+      "tier": "tenant",
+      "resource": "categories",
+      "action": "manage"
+    },
+    {
+      "name": "tenant.tags.manage",
+      "description": "Manage tags",
+      "tier": "tenant",
+      "resource": "tags",
+      "action": "manage"
+    },
+    {
+      "comment": "========== ACCOUNT TIER PERMISSIONS (25+) ==========",
+      "permissions": []
+    },
+    {
+      "name": "account.settings.read",
+      "description": "View account settings",
+      "tier": "account",
+      "resource": "settings",
+      "action": "read"
+    },
+    {
+      "name": "account.settings.update",
+      "description": "Update account settings",
+      "tier": "account",
+      "resource": "settings",
+      "action": "update"
+    },
+    {
+      "name": "account.users.create",
+      "description": "Create users in account",
+      "tier": "account",
+      "resource": "users",
+      "action": "create"
+    },
+    {
+      "name": "account.users.read",
+      "description": "View account users",
+      "tier": "account",
+      "resource": "users",
+      "action": "read"
+    },
+    {
+      "name": "account.users.update",
+      "description": "Update account users",
+      "tier": "account",
+      "resource": "users",
+      "action": "update"
+    },
+    {
+      "name": "account.users.delete",
+      "description": "Remove users from account",
+      "tier": "account",
+      "resource": "users",
+      "action": "delete"
+    },
+    {
+      "name": "account.teams.create",
+      "description": "Create teams",
+      "tier": "account",
+      "resource": "teams",
+      "action": "create"
+    },
+    {
+      "name": "account.teams.read",
+      "description": "View teams",
+      "tier": "account",
+      "resource": "teams",
+      "action": "read"
+    },
+    {
+      "name": "account.teams.update",
+      "description": "Update teams",
+      "tier": "account",
+      "resource": "teams",
+      "action": "update"
+    },
+    {
+      "name": "account.teams.delete",
+      "description": "Delete teams",
+      "tier": "account",
+      "resource": "teams",
+      "action": "delete"
+    },
+    {
+      "name": "account.projects.create",
+      "description": "Create projects",
+      "tier": "account",
+      "resource": "projects",
+      "action": "create"
+    },
+    {
+      "name": "account.projects.read",
+      "description": "View projects",
+      "tier": "account",
+      "resource": "projects",
+      "action": "read"
+    },
+    {
+      "name": "account.projects.update",
+      "description": "Update projects",
+      "tier": "account",
+      "resource": "projects",
+      "action": "update"
+    },
+    {
+      "name": "account.projects.delete",
+      "description": "Delete projects",
+      "tier": "account",
+      "resource": "projects",
+      "action": "delete"
+    },
+    {
+      "name": "account.billing.read",
+      "description": "View account billing",
+      "tier": "account",
+      "resource": "billing",
+      "action": "read"
+    },
+    {
+      "name": "account.billing.manage",
+      "description": "Manage account billing",
+      "tier": "account",
+      "resource": "billing",
+      "action": "manage"
+    },
+    {
+      "name": "account.integrations.manage",
+      "description": "Manage account integrations",
+      "tier": "account",
+      "resource": "integrations",
+      "action": "manage"
+    },
+    {
+      "name": "account.data.export",
+      "description": "Export account data",
+      "tier": "account",
+      "resource": "data",
+      "action": "export"
+    },
+    {
+      "name": "account.reports.read",
+      "description": "View account reports",
+      "tier": "account",
+      "resource": "reports",
+      "action": "read"
+    },
+    {
+      "name": "account.reports.create",
+      "description": "Create account reports",
+      "tier": "account",
+      "resource": "reports",
+      "action": "create"
+    },
+    {
+      "name": "account.notifications.manage",
+      "description": "Manage account notifications",
+      "tier": "account",
+      "resource": "notifications",
+      "action": "manage"
+    },
+    {
+      "name": "account.audit.read",
+      "description": "View account audit logs",
+      "tier": "account",
+      "resource": "audit",
+      "action": "read"
+    },
+    {
+      "name": "account.api.access",
+      "description": "Access account API",
+      "tier": "account",
+      "resource": "api",
+      "action": "access"
+    },
+    {
+      "name": "account.storage.manage",
+      "description": "Manage account storage",
+      "tier": "account",
+      "resource": "storage",
+      "action": "manage"
+    },
+    {
+      "name": "account.workflows.use",
+      "description": "Use account workflows",
+      "tier": "account",
+      "resource": "workflows",
+      "action": "use"
+    },
+    {
+      "comment": "========== USER TIER PERMISSIONS (20+) ==========",
+      "permissions": []
+    },
+    {
+      "name": "user.profile.read",
+      "description": "View own profile",
+      "tier": "user",
+      "resource": "profile",
+      "action": "read"
+    },
+    {
+      "name": "user.profile.update",
+      "description": "Update own profile",
+      "tier": "user",
+      "resource": "profile",
+      "action": "update"
+    },
+    {
+      "name": "user.profile.delete",
+      "description": "Delete own profile",
+      "tier": "user",
+      "resource": "profile",
+      "action": "delete"
+    },
+    {
+      "name": "user.preferences.read",
+      "description": "View preferences",
+      "tier": "user",
+      "resource": "preferences",
+      "action": "read"
+    },
+    {
+      "name": "user.preferences.update",
+      "description": "Update preferences",
+      "tier": "user",
+      "resource": "preferences",
+      "action": "update"
+    },
+    {
+      "name": "user.notifications.read",
+      "description": "View notifications",
+      "tier": "user",
+      "resource": "notifications",
+      "action": "read"
+    },
+    {
+      "name": "user.notifications.manage",
+      "description": "Manage notification settings",
+      "tier": "user",
+      "resource": "notifications",
+      "action": "manage"
+    },
+    {
+      "name": "user.content.create",
+      "description": "Create content",
+      "tier": "user",
+      "resource": "content",
+      "action": "create"
+    },
+    {
+      "name": "user.content.read",
+      "description": "View own content",
+      "tier": "user",
+      "resource": "content",
+      "action": "read"
+    },
+    {
+      "name": "user.content.update",
+      "description": "Update own content",
+      "tier": "user",
+      "resource": "content",
+      "action": "update"
+    },
+    {
+      "name": "user.content.delete",
+      "description": "Delete own content",
+      "tier": "user",
+      "resource": "content",
+      "action": "delete"
+    },
+    {
+      "name": "user.files.upload",
+      "description": "Upload files",
+      "tier": "user",
+      "resource": "files",
+      "action": "upload"
+    },
+    {
+      "name": "user.files.read",
+      "description": "View own files",
+      "tier": "user",
+      "resource": "files",
+      "action": "read"
+    },
+    {
+      "name": "user.files.delete",
+      "description": "Delete own files",
+      "tier": "user",
+      "resource": "files",
+      "action": "delete"
+    },
+    {
+      "name": "user.messages.send",
+      "description": "Send messages",
+      "tier": "user",
+      "resource": "messages",
+      "action": "send"
+    },
+    {
+      "name": "user.messages.read",
+      "description": "Read messages",
+      "tier": "user",
+      "resource": "messages",
+      "action": "read"
+    },
+    {
+      "name": "user.api.access",
+      "description": "Access user API",
+      "tier": "user",
+      "resource": "api",
+      "action": "access"
+    },
+    {
+      "name": "user.sessions.manage",
+      "description": "Manage own sessions",
+      "tier": "user",
+      "resource": "sessions",
+      "action": "manage"
+    },
+    {
+      "name": "user.security.manage",
+      "description": "Manage own security settings",
+      "tier": "user",
+      "resource": "security",
+      "action": "manage"
+    },
+    {
+      "name": "user.data.export",
+      "description": "Export own data",
+      "tier": "user",
+      "resource": "data",
+      "action": "export"
+    },
+    {
+      "comment": "========== PUBLIC TIER PERMISSIONS (10+) ==========",
+      "permissions": []
+    },
+    {
+      "name": "public.content.read",
+      "description": "View public content",
+      "tier": "public",
+      "resource": "content",
+      "action": "read"
+    },
+    {
+      "name": "public.search",
+      "description": "Search public content",
+      "tier": "public",
+      "resource": "search",
+      "action": "perform"
+    },
+    {
+      "name": "public.register",
+      "description": "Register new account",
+      "tier": "public",
+      "resource": "auth",
+      "action": "register"
+    },
+    {
+      "name": "public.login",
+      "description": "Login to system",
+      "tier": "public",
+      "resource": "auth",
+      "action": "login"
+    },
+    {
+      "name": "public.password.reset",
+      "description": "Reset password",
+      "tier": "public",
+      "resource": "auth",
+      "action": "reset"
+    },
+    {
+      "name": "public.docs.read",
+      "description": "View documentation",
+      "tier": "public",
+      "resource": "docs",
+      "action": "read"
+    },
+    {
+      "name": "public.api.docs",
+      "description": "View API documentation",
+      "tier": "public",
+      "resource": "api",
+      "action": "docs"
+    },
+    {
+      "name": "public.contact",
+      "description": "Contact support",
+      "tier": "public",
+      "resource": "support",
+      "action": "contact"
+    },
+    {
+      "name": "public.status",
+      "description": "View system status",
+      "tier": "public",
+      "resource": "system",
+      "action": "status"
+    },
+    {
+      "name": "public.plans.view",
+      "description": "View available plans",
+      "tier": "public",
+      "resource": "plans",
+      "action": "view"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "title": "User Management",
+  "subtitle": "Manage platform users, applications, and permissions",
+  "tabs": {
+    "allUsers": "All Users",
+    "pendingApplications": "Pending Applications", 
+    "approvedModels": "Approved Models",
+    "suspendedUsers": "Suspended Users",
+    "adminUsers": "Admin Users"
+  },
+  "filters": {
+    "userType": "User Type",
+    "accountStatus": "Account Status",
+    "registrationDate": "Registration Date",
+    "lastActivity": "Last Activity",
+    "country": "Country",
+    "language": "Language"
+  },
+  "userTypes": {
+    "regular": "Regular User",
+    "model": "Model",
+    "photographer": "Photographer",
+    "agency": "Agency",
+    "admin": "Administrator"
+  },
+  "applicationStatus": {
+    "pending": "Pending Review",
+    "underReview": "Under Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "resubmitted": "Resubmitted"
+  },
+  "actions": {
+    "viewProfile": "View Profile",
+    "viewApplication": "View Application",
+    "approveApplication": "Approve Application",
+    "rejectApplication": "Reject Application", 
+    "suspendUser": "Suspend User",
+    "activateUser": "Activate User",
+    "resetPassword": "Reset Password",
+    "sendMessage": "Send Message",
+    "viewActivity": "View Activity Log",
+    "editPermissions": "Edit Permissions"
+  },
+  "modals": {
+    "approveApplication": {
+      "title": "Approve Model Application",
+      "message": "Are you sure you want to approve this model application?",
+      "note": "This will grant the user model privileges and access to model features.",
+      "approveButton": "Approve Application",
+      "cancelButton": "Cancel"
+    },
+    "rejectApplication": {
+      "title": "Reject Model Application", 
+      "message": "Are you sure you want to reject this model application?",
+      "reasonLabel": "Rejection Reason",
+      "reasonPlaceholder": "Please provide a reason for rejection...",
+      "rejectButton": "Reject Application",
+      "cancelButton": "Cancel"
+    },
+    "suspendUser": {
+      "title": "Suspend User Account",
+      "message": "Are you sure you want to suspend this user account?",
+      "reasonLabel": "Suspension Reason",
+      "reasonPlaceholder": "Please provide a reason for suspension...",
+      "durationLabel": "Suspension Duration",
+      "suspendButton": "Suspend User",
+      "cancelButton": "Cancel"
+    }
+  },
+  "forms": {
+    "editUser": {
+      "title": "Edit User Information",
+      "personalInfo": "Personal Information",
+      "accountSettings": "Account Settings",
+      "permissions": "Permissions",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "country": "Country",
+      "language": "Preferred Language",
+      "timezone": "Timezone",
+      "accountType": "Account Type",
+      "isActive": "Account Active",
+      "isVerified": "Email Verified",
+      "emailNotifications": "Email Notifications",
+      "smsNotifications": "SMS Notifications"
+    }
+  },
+  "statistics": {
+    "totalUsers": "Total Users",
+    "activeUsers": "Active Users",
+    "pendingApplications": "Pending Applications",
+    "approvedModels": "Approved Models",
+    "suspendedUsers": "Suspended Users",
+    "newRegistrations": "New Registrations (24h)",
+    "recentActivity": "Recent Activity"
+  }
+} 

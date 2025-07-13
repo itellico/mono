@@ -1,0 +1,59 @@
+<!-- 
+  Reusable Button Component
+  Usage: {% include "components/button.mjml" with { url: "https://example.com", text: "Click Here", style: "primary" } %}
+-->
+
+{% set buttonUrl = url or "#" %}
+{% set buttonText = text or "Click Here" %}
+{% set buttonStyle = style or "primary" %}
+
+{% if buttonStyle == "primary" %}
+  <mj-button 
+    background-color="{{ tenantBranding.primaryColor or '#4F46E5' }}" 
+    color="white"
+    font-size="16px"
+    font-weight="600"
+    border-radius="6px"
+    padding="12px 24px"
+    href="{{ buttonUrl }}"
+  >
+    {{ buttonText }}
+  </mj-button>
+{% elif buttonStyle == "secondary" %}
+  <mj-button 
+    background-color="white" 
+    color="{{ tenantBranding.primaryColor or '#4F46E5' }}"
+    border="2px solid {{ tenantBranding.primaryColor or '#4F46E5' }}"
+    font-size="16px"
+    font-weight="600"
+    border-radius="6px"
+    padding="12px 24px"
+    href="{{ buttonUrl }}"
+  >
+    {{ buttonText }}
+  </mj-button>
+{% elif buttonStyle == "danger" %}
+  <mj-button 
+    background-color="#dc2626" 
+    color="white"
+    font-size="16px"
+    font-weight="600"
+    border-radius="6px"
+    padding="12px 24px"
+    href="{{ buttonUrl }}"
+  >
+    {{ buttonText }}
+  </mj-button>
+{% else %}
+  <mj-button 
+    background-color="#6b7280" 
+    color="white"
+    font-size="16px"
+    font-weight="600"
+    border-radius="6px"
+    padding="12px 24px"
+    href="{{ buttonUrl }}"
+  >
+    {{ buttonText }}
+  </mj-button>
+{% endif %}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "itellico-mono-docs": {
+      "command": "node",
+      "args": ["./dist/server.js"],
+      "cwd": "/Users/mm2/dev_mm/mono/mcp-servers/docs-server",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

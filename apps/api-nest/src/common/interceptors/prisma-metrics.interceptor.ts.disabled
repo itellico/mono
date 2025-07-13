@@ -1,0 +1,113 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { MetricsService } from '../metrics/metrics.service';
+
+@Injectable()
+export class PrismaMetricsService implements OnModuleInit {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly metricsService: MetricsService,
+  ) {}
+
+  onModuleInit() {
+    // Monkey patch Prisma client to collect metrics
+    this.instrumentPrismaClient();
+  }
+
+  private instrumentPrismaClient() {
+    const originalQuery = this.prisma.$queryRaw;
+    const originalExecuteRaw = this.prisma.$executeRaw;
+    const metricsService = this.metricsService;
+
+    // Intercept $queryRaw
+    this.prisma.$queryRaw = new Proxy(originalQuery, {
+      apply(target, thisArg, argArray) {
+        const startTime = Date.now();
+        const result = target.apply(thisArg, argArray);
+        
+        if (result instanceof Promise) {
+          return result
+            .then((data) => {
+              const duration = Date.now() - startTime;
+              metricsService.incrementDatabaseQueries('query', 'raw', true);
+              return data;
+            })
+            .catch((error) => {
+              const duration = Date.now() - startTime;
+              metricsService.incrementDatabaseQueries('query', 'raw', false);
+              throw error;
+            });
+        }
+        
+        return result;
+      },
+    });
+
+    // Intercept $executeRaw
+    this.prisma.$executeRaw = new Proxy(originalExecuteRaw, {
+      apply(target, thisArg, argArray) {
+        const startTime = Date.now();
+        const result = target.apply(thisArg, argArray);
+        
+        if (result instanceof Promise) {
+          return result
+            .then((data) => {
+              const duration = Date.now() - startTime;
+              metricsService.incrementDatabaseQueries('execute', 'raw', true);
+              return data;
+            })
+            .catch((error) => {
+              const duration = Date.now() - startTime;
+              metricsService.incrementDatabaseQueries('execute', 'raw', false);
+              throw error;
+            });
+        }
+        
+        return result;
+      },
+    });
+
+    // Instrument model operations
+    const models = ['tenant', 'account', 'user', 'role', 'permission'] as const;
+    
+    models.forEach((modelName) => {
+      const model = this.prisma[modelName] as any;
+      if (model) {
+        this.instrumentModelOperations(model, modelName);
+      }
+    });
+  }
+
+  private instrumentModelOperations(model: any, modelName: string) {
+    const operations = ['findMany', 'findFirst', 'findUnique', 'create', 'update', 'delete', 'upsert', 'count'] as const;
+    
+    operations.forEach((operation) => {
+      if (typeof model[operation] === 'function') {
+        const originalOperation = model[operation];
+        
+        model[operation] = new Proxy(originalOperation, {
+          apply: (target, thisArg, argArray) => {
+            const startTime = Date.now();
+            const result = target.apply(thisArg, argArray);
+            
+            if (result instanceof Promise) {
+              return result
+                .then((data) => {
+                  const duration = Date.now() - startTime;
+                  this.metricsService.incrementDatabaseQueries(operation, modelName, true);
+                  return data;
+                })
+                .catch((error) => {
+                  const duration = Date.now() - startTime;
+                  this.metricsService.incrementDatabaseQueries(operation, modelName, false);
+                  throw error;
+                });
+            }
+            
+            return result;
+          },
+        });
+      }
+    });
+  }
+}

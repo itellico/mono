@@ -1,0 +1,1 @@
+export const useUnifiedTranslations = () => { return { t: (key: string) => key }; };

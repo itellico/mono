@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mono-staging
+
+resources:
+  - ../base
+  - namespace.yaml
+
+images:
+  - name: nestjs-api
+    newName: ghcr.io/itellico/mono-nestjs-api
+    newTag: latest
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - configmap-patch.yaml
+
+commonLabels:
+  environment: staging
+  version: v1
+
+configMapGenerator:
+  - name: nestjs-staging-config
+    literals:
+      - NODE_ENV=staging
+      - LOG_LEVEL=debug
+      - METRICS_ENABLED=true
+
+secretGenerator:
+  - name: nestjs-staging-secrets
+    literals:
+      - JWT_SECRET=staging-jwt-secret
+      - COOKIE_SECRET=staging-cookie-secret

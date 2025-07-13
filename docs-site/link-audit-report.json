@@ -1,0 +1,494 @@
+{
+  "timestamp": "2025-07-09T16:44:16.849Z",
+  "total": 81,
+  "working": 1,
+  "broken": 80,
+  "results": [
+    {
+      "url": "http://localhost:3005/platform/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/tenant/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/account/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/user/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/public/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/architecture/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/development/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/reference/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3000",
+      "status": 200,
+      "working": false,
+      "error": "Page Not Found"
+    },
+    {
+      "url": "http://localhost:3001/docs",
+      "status": "ERROR",
+      "working": false,
+      "error": ""
+    },
+    {
+      "url": "http://localhost:5005",
+      "status": 200,
+      "working": true,
+      "error": null
+    },
+    {
+      "url": "https://github.com/itellico/mono",
+      "status": 404,
+      "working": false,
+      "error": "Page Not Found"
+    },
+    {
+      "url": "http://localhost:3005/docs/KANBOARD_SETUP",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/account/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/account/feature-system/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/account/real-world-scenarios/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/account/templates/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/api-design/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/data-models/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/performance/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/performance/caching-strategy",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/performance/react-patterns",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/performance/storage-strategy",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/performance/three-layer-caching",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/security/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/security/authentication",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/architecture/system-design/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/AUTOMATED_BACKUP_SYSTEM",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/deployment/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/deployment/docker/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/deployment/docker/volume-persistence",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/getting-started/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/getting-started/developer-guide",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/testing/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/testing/methodology",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/testing/types-and-coverage",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/tools/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/tools/mcp-server-integration",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/workflows/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/workflows/complete-workflow",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/development/workflows/intelligent-auto-coding",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/kanboard-mcp-setup",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/kanboard-setup",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/access-control/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/access-control/permission-matrix",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/access-control/rbac-system",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/content-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/content-management/translation-system",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/developer-tools/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/developer-tools/kanboard-api",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/features-limits/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/global-resources/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/global-resources/option-sets",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/global-resources/tagging-system",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/industry-templates/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/subscription-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/subscription-management/overview",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/subscription-management/seeding",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/system-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/system-management/audit-system",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/platform/tenant-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/public/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/public/discovery/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/public/information/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/public/marketplaces/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/reference/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/reference/glossary/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/reference/quick-start/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/reference/troubleshooting/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/tenant/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/tenant/administration/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/tenant/content-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/tenant/core-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/user/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/user/account-management/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/user/content-media/",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/user/content-media/blog-system",
+      "status": 404,
+      "working": false,
+      "error": null
+    },
+    {
+      "url": "http://localhost:3005/docs/user/core-functions/",
+      "status": 404,
+      "working": false,
+      "error": null
+    }
+  ]
+}

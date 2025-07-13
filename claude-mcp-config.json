@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "docs-mcp": {
+      "command": "node",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "/Users/mm2/dev_mm/mono/mcp-servers/docs-server/dist/server.js"
+      ]
+    },
+    "click-dummy-mcp": {
+      "command": "node",
+      "args": [
+        "--experimental-specifier-resolution=node",
+        "/Users/mm2/dev_mm/mono/mcp-servers/click-dummy/dist/server.js"
+      ]
+    },
+    "kanboard-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/mm2/dev_mm/mono/mcp-servers/kanboard/index.js"
+      ],
+      "env": {
+        "KANBOARD_USERNAME": "jsonrpc",
+        "KANBOARD_API_TOKEN": "ad2d87eaa6de90d0bce2f26d0ee79279a0f7f608cf18d05f3a4556eb60ad",
+        "KANBOARD_API_ENDPOINT": "http://192.168.178.94:4041/jsonrpc.php"
+      }
+    },
+    "sequential-thinking": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "puppeteer": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+# Minimal dynamic configuration for Temporal development
+# This file provides basic runtime configuration
+
+# Frontend service
+frontend.enableClientVersionCheck:
+  - value: false
+    constraints: {}
+
+# System configuration  
+system.enableActivityLocalDispatchByDomain:
+  - value: true
+    constraints: {}
+
+# Matching service
+matching.numTaskqueueWritePartitions:
+  - value: 1
+    constraints: {}
+
+matching.numTaskqueueReadPartitions:
+  - value: 1
+    constraints: {}
+
+# Persistence
+persistence.numHistoryShards:
+  - value: 1
+    constraints: {}
+
+# Worker configuration
+worker.taskWorkerFactory.maxWorkersPerHost:
+  - value: 100
+    constraints: {}
+
+# Limits for development
+limit.maxIDLength:
+  - value: 1000
+    constraints: {}
+
+# Disable archival for development
+archival.state:
+  - value: "disabled"
+    constraints: {}
+
+# Enable Prometheus metrics
+metrics.prometheus.timerType:
+  - value: "histogram"
+    constraints: {}
+
+metrics.prometheus.listenAddress:
+  - value: "0.0.0.0:9091"
+    constraints: {}
+
+# Enable detailed metrics
+metrics.tags.environment:
+  - value: "development"
+    constraints: {}
+
+metrics.tags.instance:
+  - value: "mono-temporal"
+    constraints: {}

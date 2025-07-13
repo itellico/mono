@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Tickets - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .ticket-card { transition: all 0.3s; cursor: pointer; }
+        .ticket-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .priority-high { border-left: 4px solid #dc3545; }
+        .priority-medium { border-left: 4px solid #ffc107; }
+        .priority-low { border-left: 4px solid #28a745; }
+        .agent-avatar { width: 32px; height: 32px; object-fit: cover; }
+        .chat-message { background: #f8f9fa; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+        .chat-message.user { background: #e3f2fd; margin-left: 40px; }
+        .chat-message.agent { background: #f3e5f5; margin-right: 40px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                
+                <!-- Hero Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card overflow-hidden">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1553484771-371a605b060b?w=1200&h=300&fit=crop" 
+                                     class="w-100" style="height: 200px; object-fit: cover;" alt="Customer Support">
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center">
+                                    <div class="container text-white">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h1 class="h3 mb-2">Support Ticket Management</h1>
+                                                <p class="mb-0">Platform-wide customer support and issue tracking</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-light">
+                                                    <i class="fas fa-plus me-2"></i> New Ticket
+                                                </button>
+                                                <button class="btn btn-danger">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i> 5 Urgent
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Support Stats -->
+                <div class="row mb-4" id="support-stats"></div>
+                
+                <!-- Urgent Tickets -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Urgent Tickets Requiring Immediate Attention
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card ticket-card priority-high">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="User">
+                                                    <div>
+                                                        <h6 class="mb-0">#T-2024-0156</h6>
+                                                        <small class="text-muted">Go Models NYC</small>
+                                                    </div>
+                                                    <span class="badge bg-danger ms-auto">HIGH</span>
+                                                </div>
+                                                <h6 class="fw-bold">Payment Gateway Down</h6>
+                                                <p class="small text-muted mb-3">Stripe payment processing failing for all transactions. Multiple customers unable to complete purchases.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">45 minutes ago</small>
+                                                    <button class="btn btn-outline-danger btn-sm">Take Action</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card ticket-card priority-high">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="User">
+                                                    <div>
+                                                        <h6 class="mb-0">#T-2024-0157</h6>
+                                                        <small class="text-muted">Pet Stars Pro</small>
+                                                    </div>
+                                                    <span class="badge bg-danger ms-auto">HIGH</span>
+                                                </div>
+                                                <h6 class="fw-bold">Database Performance Issue</h6>
+                                                <p class="small text-muted mb-3">Severe slowdown affecting all tenant operations. Query response times > 10 seconds.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">1 hour ago</small>
+                                                    <button class="btn btn-outline-danger btn-sm">Take Action</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card ticket-card priority-high">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=40&h=40&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="User">
+                                                    <div>
+                                                        <h6 class="mb-0">#T-2024-0158</h6>
+                                                        <small class="text-muted">Voice Talent Hub</small>
+                                                    </div>
+                                                    <span class="badge bg-danger ms-auto">HIGH</span>
+                                                </div>
+                                                <h6 class="fw-bold">File Upload Service Down</h6>
+                                                <p class="small text-muted mb-3">AWS S3 integration broken. Users cannot upload portfolio images or audio files.</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">2 hours ago</small>
+                                                    <button class="btn btn-outline-danger btn-sm">Take Action</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Support Team Performance -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Support Team Performance</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=250&fit=crop" 
+                                             class="img-fluid rounded mb-3" alt="Support Team">
+                                        <h6 class="fw-bold">24/7 Support Coverage</h6>
+                                        <p class="small text-muted">Our dedicated support team provides round-the-clock assistance across all time zones with specialized expertise in marketplace operations.</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3">Agent Performance (This Week)</h6>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=30&h=30&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="Sarah">
+                                                    <span class="small">Sarah Chen</span>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge bg-success">47 Resolved</span>
+                                                    <small class="text-muted d-block">4.9★ Rating</small>
+                                                </div>
+                                            </div>
+                                            <div class="progress" style="height: 4px;">
+                                                <div class="progress-bar bg-success" style="width: 94%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=30&h=30&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="Mike">
+                                                    <span class="small">Mike Rodriguez</span>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge bg-primary">42 Resolved</span>
+                                                    <small class="text-muted d-block">4.8★ Rating</small>
+                                                </div>
+                                            </div>
+                                            <div class="progress" style="height: 4px;">
+                                                <div class="progress-bar bg-primary" style="width: 89%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=30&h=30&fit=crop&crop=face" 
+                                                         class="rounded-circle agent-avatar me-2" alt="Emma">
+                                                    <span class="small">Emma Thompson</span>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge bg-info">38 Resolved</span>
+                                                    <small class="text-muted d-block">4.7★ Rating</small>
+                                                </div>
+                                            </div>
+                                            <div class="progress" style="height: 4px;">
+                                                <div class="progress-bar bg-info" style="width: 86%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Response Time Metrics</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <h2 class="text-success">2m 34s</h2>
+                                    <small class="text-muted">Average First Response</small>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">High Priority</span>
+                                        <span class="text-success fw-bold">47s</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-success" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Medium Priority</span>
+                                        <span class="text-primary fw-bold">2m 15s</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-primary" style="width: 88%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Low Priority</span>
+                                        <span class="text-info fw-bold">5m 42s</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-info" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Ticket Categories</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Technical Issues</span>
+                                        <span class="fw-bold">34%</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-danger" style="width: 34%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Account Management</span>
+                                        <span class="fw-bold">28%</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-warning" style="width: 28%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Billing Questions</span>
+                                        <span class="fw-bold">22%</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-success" style="width: 22%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small">Feature Requests</span>
+                                        <span class="fw-bold">16%</span>
+                                    </div>
+                                    <div class="progress mb-2" style="height: 4px;">
+                                        <div class="progress-bar bg-info" style="width: 16%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Tickets Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Support Tickets</h5>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                    Filter by Status
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">All Tickets</a></li>
+                                    <li><a class="dropdown-item" href="#">Open</a></li>
+                                    <li><a class="dropdown-item" href="#">In Progress</a></li>
+                                    <li><a class="dropdown-item" href="#">Resolved</a></li>
+                                    <li><a class="dropdown-item" href="#">Closed</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="tickets-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', active: true },
+                { label: 'Platform Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Support Tickets' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Open Tickets', '23', 'fas fa-ticket-alt', 'primary'),
+                createStatCard('Urgent', '5', 'fas fa-exclamation-triangle', 'danger'),
+                createStatCard('Avg Response', '2m 34s', 'fas fa-clock', 'success'),
+                createStatCard('Satisfaction', '4.8★', 'fas fa-star', 'warning')
+            ].join('');
+            document.getElementById('support-stats').innerHTML = statsHtml;
+            
+            // Tickets Table
+            const ticketHeaders = ['Ticket ID', 'Subject', 'Tenant', 'Priority', 'Status', 'Agent', 'Created', 'Last Update'];
+            const ticketRows = [
+                ['#T-2024-0156', 'Payment Gateway Down', 'Go Models NYC', '<span class="badge bg-danger">HIGH</span>', '<span class="badge bg-warning">Open</span>', 'Sarah Chen', '45 min ago', '2 min ago'],
+                ['#T-2024-0157', 'Database Performance Issue', 'Pet Stars Pro', '<span class="badge bg-danger">HIGH</span>', '<span class="badge bg-info">In Progress</span>', 'Mike Rodriguez', '1 hour ago', '15 min ago'],
+                ['#T-2024-0158', 'File Upload Service Down', 'Voice Talent Hub', '<span class="badge bg-danger">HIGH</span>', '<span class="badge bg-warning">Open</span>', 'Emma Thompson', '2 hours ago', '1 hour ago'],
+                ['#T-2024-0155', 'API Rate Limit Questions', 'Elite Models', '<span class="badge bg-warning">MEDIUM</span>', '<span class="badge bg-info">In Progress</span>', 'Sarah Chen', '3 hours ago', '30 min ago'],
+                ['#T-2024-0154', 'Portfolio Upload Slow', 'Kids Talent Hub', '<span class="badge bg-success">LOW</span>', '<span class="badge bg-success">Resolved</span>', 'Mike Rodriguez', '4 hours ago', '1 hour ago'],
+                ['#T-2024-0153', 'Email Notifications Not Working', 'Go Models NYC', '<span class="badge bg-warning">MEDIUM</span>', '<span class="badge bg-success">Resolved</span>', 'Emma Thompson', '6 hours ago', '2 hours ago']
+            ];
+            document.getElementById('tickets-table').innerHTML = createDataTable('', ticketHeaders, ticketRows);
+        });
+    </script>
+</body>
+</html>

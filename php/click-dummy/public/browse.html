@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Talent - Go Models NYC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .filter-sidebar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .talent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-star text-primary me-2"></i>
+                Go Models NYC
+            </a>
+            
+            <div class="d-flex">
+                <a href="index.html" class="btn btn-outline-secondary me-2">← Back</a>
+                <a href="login.html" class="btn btn-outline-primary me-2">Login</a>
+                <a href="register.html" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Search Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="fw-bold">Browse Talent</h1>
+                <p class="text-muted">Discover professional models, photographers, and creatives</p>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search by name, skills, or location...">
+                            <button class="btn btn-primary" type="button">Search</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select">
+                            <option>Sort by: Featured</option>
+                            <option>Sort by: Rating</option>
+                            <option>Sort by: Price (Low to High)</option>
+                            <option>Sort by: Price (High to Low)</option>
+                            <option>Sort by: Recently Added</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-md-3">
+                <div class="filter-sidebar">
+                    <h5 class="mb-3">Filters</h5>
+                    
+                    <!-- Category Filter -->
+                    <div class="mb-4">
+                        <h6 class="small text-muted mb-2">CATEGORY</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fashion" checked>
+                            <label class="form-check-label" for="fashion">Fashion Models (234)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="photographers">
+                            <label class="form-check-label" for="photographers">Photographers (156)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fitness">
+                            <label class="form-check-label" for="fitness">Fitness Models (89)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="voice">
+                            <label class="form-check-label" for="voice">Voice Talent (67)</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div class="mb-4">
+                        <h6 class="small text-muted mb-2">LOCATION</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="manhattan" checked>
+                            <label class="form-check-label" for="manhattan">Manhattan (456)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="brooklyn">
+                            <label class="form-check-label" for="brooklyn">Brooklyn (234)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="queens">
+                            <label class="form-check-label" for="queens">Queens (123)</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Range -->
+                    <div class="mb-4">
+                        <h6 class="small text-muted mb-2">PRICE RANGE</h6>
+                        <input type="range" class="form-range" min="100" max="2000" id="priceRange">
+                        <div class="d-flex justify-content-between">
+                            <small>$100</small>
+                            <small>$2000+</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Availability -->
+                    <div class="mb-4">
+                        <h6 class="small text-muted mb-2">AVAILABILITY</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="available">
+                            <label class="form-check-label" for="available">Available Now</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="travel">
+                            <label class="form-check-label" for="travel">Available for Travel</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Experience -->
+                    <div class="mb-4">
+                        <h6 class="small text-muted mb-2">EXPERIENCE</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="beginner">
+                            <label class="form-check-label" for="beginner">Beginner (0-2 years)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="intermediate">
+                            <label class="form-check-label" for="intermediate">Intermediate (2-5 years)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="expert">
+                            <label class="form-check-label" for="expert">Expert (5+ years)</label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                    <button class="btn btn-outline-secondary w-100 mt-2">Clear All</button>
+                </div>
+            </div>
+            
+            <!-- Results -->
+            <div class="col-md-9">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="mb-0 text-muted">Showing 234 results</p>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary active"><i class="fas fa-th"></i></button>
+                        <button class="btn btn-outline-secondary"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+                
+                <div class="talent-grid" id="talent-results"></div>
+                
+                <!-- Pagination -->
+                <div class="mt-5" id="pagination"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample talent data
+            const talents = [
+                { name: 'Emma Johnson', type: 'Fashion Model', tags: ['Runway', 'Editorial', 'Commercial'], description: 'Professional fashion model with 5 years experience', rate: '$500/hour', rating: '4.9' },
+                { name: 'John Smith', type: 'Fashion Photographer', tags: ['Fashion', 'Portrait', 'Editorial'], description: 'Award-winning fashion photographer', rate: '$800/day', rating: '4.8' },
+                { name: 'Michael Chen', type: 'Fitness Model', tags: ['Athletic', 'Commercial', 'Supplements'], description: 'Certified personal trainer and fitness model', rate: '$400/hour', rating: '4.7' },
+                { name: 'Sofia Rodriguez', type: 'Commercial Model', tags: ['TV', 'Print', 'Lifestyle'], description: 'Versatile commercial model and actress', rate: '$450/hour', rating: '4.9' },
+                { name: 'David Kim', type: 'Runway Model', tags: ['Runway', 'High Fashion', 'Editorial'], description: 'International runway model', rate: '$600/hour', rating: '4.6' },
+                { name: 'Maria Garcia', type: 'Beauty Model', tags: ['Beauty', 'Skincare', 'Cosmetics'], description: 'Specialized in beauty and cosmetics modeling', rate: '$350/hour', rating: '4.8' },
+                { name: 'Alex Thompson', type: 'Portrait Photographer', tags: ['Portrait', 'Headshots', 'Corporate'], description: 'Professional portrait photographer', rate: '$300/session', rating: '4.7' },
+                { name: 'Lisa Wang', type: 'Voice Talent', tags: ['Commercial', 'Narration', 'Multi-lingual'], description: 'Professional voice over artist', rate: '$200/hour', rating: '4.9' },
+                { name: 'Carlos Mendez', type: 'Makeup Artist', tags: ['Fashion', 'Editorial', 'Bridal'], description: 'Celebrity makeup artist', rate: '$400/day', rating: '4.8' },
+                { name: 'Nina Petrov', type: 'Child Model', tags: ['Kids', 'Commercial', 'Print'], description: 'Experienced child model (age 12)', rate: '$250/hour', rating: '4.6' },
+                { name: 'James Wilson', type: 'Commercial Photographer', tags: ['Product', 'Advertising', 'Brand'], description: 'Commercial and product photographer', rate: '$600/day', rating: '4.7' },
+                { name: 'Zoe Martinez', type: 'Pet Model Handler', tags: ['Dogs', 'Cats', 'Animal Training'], description: 'Professional animal handler and trainer', rate: '$150/hour', rating: '4.8' }
+            ];
+            
+            // Render talent cards
+            const talentHtml = talents.map(talent => createProfileCard(talent)).join('');
+            document.getElementById('talent-results').innerHTML = talentHtml;
+            
+            // Render pagination
+            document.getElementById('pagination').innerHTML = createPagination(1, 12);
+        });
+    </script>
+</body>
+</html>

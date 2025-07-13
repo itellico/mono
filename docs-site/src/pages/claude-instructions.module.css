@@ -1,0 +1,173 @@
+/**
+ * Styles for the Claude Instructions page
+ */
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  background: var(--ifm-color-emphasis-100);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.metaItem strong {
+  color: var(--ifm-color-primary);
+}
+
+.metaItem code {
+  background: var(--ifm-color-emphasis-200);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.contentWrapper {
+  margin-bottom: 3rem;
+}
+
+.markdownContent {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.markdownContent pre {
+  margin: 0;
+  max-height: 800px;
+  overflow-y: auto;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--ifm-color-emphasis-200);
+  border-top: 3px solid var(--ifm-color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alert {
+  margin-bottom: 2rem;
+}
+
+.infoSection {
+  background: var(--ifm-color-emphasis-100);
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.infoSection h2 {
+  margin-top: 0;
+}
+
+.infoSection ul {
+  margin-bottom: 1rem;
+}
+
+.infoSection code {
+  background: var(--ifm-color-emphasis-200);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.changeDetection {
+  background: var(--ifm-color-secondary-lightest);
+  padding: 2rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--ifm-color-secondary);
+}
+
+.changeDetection h2 {
+  margin-top: 0;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .metadata {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .metaItem code {
+  background: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .markdownContent {
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .infoSection {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .infoSection code {
+  background: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .changeDetection {
+  background: var(--ifm-color-emphasis-200);
+  border-left-color: var(--ifm-color-secondary-darker);
+}
+
+.additionalInfo {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--ifm-color-info-lightest);
+  border-radius: 8px;
+  border-left: 4px solid var(--ifm-color-info);
+}
+
+.additionalInfo h2 {
+  margin-top: 0;
+}
+
+/* Dark mode for additional info */
+[data-theme='dark'] .additionalInfo {
+  background: var(--ifm-color-emphasis-200);
+  border-left-color: var(--ifm-color-info-darker);
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  .metadata {
+    font-size: 0.85rem;
+  }
+  
+  .metaItem {
+    width: 100%;
+  }
+  
+  .markdownContent pre {
+    font-size: 0.75rem;
+  }
+}

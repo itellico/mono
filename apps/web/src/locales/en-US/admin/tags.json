@@ -1,0 +1,116 @@
+{
+  "title": "Tags Management",
+  "description": "Manage and organize tags with efficient component-level loading",
+  "stats": {
+    "total": "Total Tags",
+    "totalDescription": "All tags in system",
+    "active": "Active",
+    "activeDescription": "Currently active tags",
+    "inactive": "Inactive",
+    "inactiveDescription": "Disabled tags",
+    "system": "System",
+    "systemDescription": "System-managed tags",
+    "user": "User",
+    "userDescription": "User-created tags"
+  },
+  "table": {
+    "title": "Tags",
+    "description": "Manage all tags in the system",
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "type": "Type",
+      "scope": "Scope",
+      "actions": "Actions"
+    },
+    "noTags": "No tags found",
+    "noResults": "No tags match your search"
+  },
+  "actions": {
+    "create": "Create Tag",
+    "edit": "Edit",
+    "delete": "Delete",
+    "retry": "Retry"
+  },
+  "forms": {
+    "name": {
+      "label": "Tag Name",
+      "placeholder": "Enter tag name",
+      "required": "Tag name is required"
+    },
+    "category": {
+      "label": "Category",
+      "placeholder": "Select category (optional)",
+      "none": "No category"
+    },
+    "color": {
+      "label": "Color",
+      "placeholder": "Select tag color"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Enter tag description"
+    },
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "colors": {
+    "blue": "Blue",
+    "green": "Green",
+    "red": "Red",
+    "yellow": "Yellow",
+    "purple": "Purple",
+    "orange": "Orange",
+    "pink": "Pink",
+    "gray": "Gray"
+  },
+  "messages": {
+    "createSuccess": "Tag created successfully",
+    "updateSuccess": "Tag updated successfully",
+    "deleteSuccess": "Tag deleted successfully",
+    "deleteConfirm": "Are you sure you want to delete this tag?",
+    "deleteWarning": "This tag is used in {count} items. Deleting it will remove it from all associated content.",
+    "statusChanged": "Tag status updated successfully",
+    "mergeSuccess": "Tags merged successfully",
+    "mergeConfirm": "Merge selected tags into one tag?"
+  },
+  "errors": {
+    "loadFailed": "Failed to load tags",
+    "createFailed": "Failed to create tag",
+    "updateFailed": "Failed to update tag",
+    "deleteFailed": "Failed to delete tag",
+    "mergeFailed": "Failed to merge tags",
+    "duplicateName": "A tag with this name already exists",
+    "inUse": "Cannot delete tag that is currently in use"
+  },
+  "filters": {
+    "title": "Filters",
+    "searchPlaceholder": "Search tags...",
+    "allStatus": "All Status",
+    "activeOnly": "Active Only",
+    "inactiveOnly": "Inactive Only"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "type": {
+    "system": "System",
+    "user": "User"
+  },
+  "scope": {
+    "global": "Global",
+    "tenant": "Tenant"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Create New Tag",
+      "description": "Add a new tag to organize content",
+      "placeholder": "Create tag form will be implemented here"
+    }
+  }
+} 

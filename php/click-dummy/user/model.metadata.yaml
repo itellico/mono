@@ -1,0 +1,51 @@
+path: user/model.php
+tier: user
+title: Model Dashboard
+description: Individual model's dashboard with portfolio, bookings, and analytics
+features:
+  - portfolio-management
+  - booking-calendar
+  - earnings-tracking
+  - profile-editor
+  - availability-management
+  - performance-analytics
+components:
+  - dashboard-widgets
+  - portfolio-gallery
+  - calendar-view
+  - earnings-chart
+  - profile-form
+  - stats-cards
+implementation_status: in_progress
+related_docs:
+  - /docs/user/core-functions/model-dashboard.md
+  - /docs/user/content-media/portfolio-management.md
+related_tasks:
+  - USER-100: Model dashboard layout
+  - USER-101: Portfolio upload system
+  - USER-102: Booking calendar integration
+  - API-050: Model analytics endpoints
+permissions:
+  - user.profile.view
+  - user.profile.update
+  - user.portfolio.manage
+  - user.bookings.view
+  - user.earnings.view
+api_endpoints:
+  - /api/v1/user/profile
+  - /api/v1/user/portfolio
+  - /api/v1/user/bookings
+  - /api/v1/user/earnings
+  - /api/v1/user/analytics
+implementation_files:
+  frontend:
+    - apps/web/src/pages/dashboard/model/
+    - apps/web/src/components/user/portfolio/
+    - apps/web/src/components/user/calendar/
+    - apps/web/src/components/user/earnings/
+  api:
+    - apps/api/src/routes/user/profile/
+    - apps/api/src/routes/user/portfolio/
+    - apps/api/src/services/user-dashboard-service.ts
+  database:
+    - prisma/schema.prisma (User, Portfolio, Booking models)

@@ -1,0 +1,1358 @@
+// Complete Prisma Schema for itellico Mono Platform
+// This schema includes all entities from the click-dummy prototype
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== CORE ENTITIES ====================
+
+model Platform {
+  id        String   @id @default(uuid())
+  name      String
+  version   String   @default("1.0.0")
+  settings  Json     @default("{}")
+  features  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenants           Tenant[]
+  industryTemplates IndustryTemplate[]
+  globalFeatures    Feature[]
+  globalLimits      Limit[]
+}
+
+model Tenant {
+  id            String   @id @default(uuid())
+  platformId    String
+  name          String
+  slug          String   @unique
+  domain        String?  @unique
+  logo          String?
+  favicon       String?
+  primaryColor  String   @default("#0066cc")
+  secondaryColor String  @default("#6c757d")
+  settings      Json     @default("{}")
+  features      Json     @default("{}")
+  status        TenantStatus @default(ACTIVE)
+  trial         Boolean  @default(false)
+  trialEndsAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  platform      Platform @relation(fields: [platformId], references: [id])
+  accounts      Account[]
+  plans         Plan[]
+  templates     Template[]
+  optionSets    OptionSet[]
+  schemas       Schema[]
+  categories    Category[]
+  tags          Tag[]
+  customFields  CustomField[]
+  emailTemplates EmailTemplate[]
+  pages         Page[]
+  blogPosts     BlogPost[]
+  
+  @@index([slug])
+  @@index([domain])
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+  ARCHIVED
+}
+
+model Account {
+  id             String   @id @default(uuid())
+  tenantId       String
+  name           String
+  type           AccountType
+  parentAccountId String?
+  logo           String?
+  website        String?
+  description    String?
+  settings       Json     @default("{}")
+  metadata       Json     @default("{}")
+  status         AccountStatus @default(ACTIVE)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  parentAccount  Account? @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+  childAccounts  Account[] @relation("AccountHierarchy")
+  users          User[]
+  subscriptions  Subscription[]
+  
+  @@index([tenantId])
+  @@index([parentAccountId])
+}
+
+enum AccountType {
+  INDIVIDUAL
+  AGENCY
+  COMPANY
+  ENTERPRISE
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+  ARCHIVED
+}
+
+model User {
+  id               String   @id @default(uuid())
+  accountId        String
+  email            String   @unique
+  passwordHash     String
+  firstName        String
+  lastName         String
+  displayName      String?
+  avatar           String?
+  phone            String?
+  emailVerified    Boolean  @default(false)
+  phoneVerified    Boolean  @default(false)
+  twoFactorEnabled Boolean  @default(false)
+  twoFactorSecret  String?
+  settings         Json     @default("{}")
+  preferences      Json     @default("{}")
+  lastLoginAt      DateTime?
+  lastLoginIp      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  account          Account  @relation(fields: [accountId], references: [id])
+  roles            UserRole[]
+  profiles         Profile[]
+  sessions         Session[]
+  notifications    Notification[]
+  activities       UserActivity[]
+  savedSearches    SavedSearch[]
+  collections      Collection[]
+  
+  @@index([email])
+  @@index([accountId])
+}
+
+// ==================== AUTH & PERMISSIONS ====================
+
+model Role {
+  id          String   @id @default(uuid())
+  tenantId    String?
+  name        String
+  slug        String
+  description String?
+  permissions String[]
+  tier        RoleTier
+  isSystem    Boolean  @default(false)
+  isCustom    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  users       UserRole[]
+  
+  @@unique([tenantId, slug])
+  @@index([tier])
+}
+
+enum RoleTier {
+  PLATFORM
+  TENANT
+  ACCOUNT
+  USER
+  PUBLIC
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  grantedBy String?
+  reason    String?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+  
+  @@unique([userId, roleId])
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  category    String
+  tier        RoleTier
+  isSystem    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  @@index([category])
+  @@index([tier])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  token        String   @unique
+  refreshToken String   @unique
+  ipAddress    String?
+  userAgent    String?
+  location     String?
+  deviceInfo   Json?
+  lastActivity DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  
+  user         User     @relation(fields: [userId], references: [id])
+  
+  @@index([token])
+  @@index([refreshToken])
+  @@index([userId])
+}
+
+// ==================== SUBSCRIPTIONS & BILLING ====================
+
+model Plan {
+  id              String   @id @default(uuid())
+  tenantId        String
+  name            String
+  slug            String
+  description     String?
+  tagline         String?
+  icon            String?
+  color           String   @default("#0066cc")
+  price           Decimal  @db.Decimal(10, 2)
+  currency        String   @default("EUR")
+  interval        PlanInterval @default(MONTHLY)
+  trialDays       Int      @default(0)
+  features        String[]
+  highlights      String[]
+  limits          Json
+  permissions     String[]
+  settings        Json     @default("{}")
+  isActive        Boolean  @default(true)
+  isPopular       Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  subscriptions   Subscription[]
+  planFeatures    PlanFeature[]
+  
+  @@unique([tenantId, slug])
+  @@index([isActive])
+}
+
+enum PlanInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  LIFETIME
+}
+
+model Feature {
+  id              String   @id @default(uuid())
+  platformId      String?
+  name            String
+  slug            String   @unique
+  description     String?
+  icon            String?
+  category        String
+  permissions     String[]
+  requiredLimits  String[]
+  optionalLimits  String[]
+  dependencies    String[] // Other feature slugs
+  conflictsWith   String[] // Feature slugs that conflict
+  settings        Json     @default("{}")
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  platform        Platform? @relation(fields: [platformId], references: [id])
+  featureSets     FeatureSetItem[]
+  planFeatures    PlanFeature[]
+  
+  @@index([category])
+  @@index([isActive])
+}
+
+model FeatureSet {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  category    String
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  features    FeatureSetItem[]
+  
+  @@index([category])
+}
+
+model FeatureSetItem {
+  id           String     @id @default(uuid())
+  featureSetId String
+  featureId    String
+  sortOrder    Int        @default(0)
+  
+  featureSet   FeatureSet @relation(fields: [featureSetId], references: [id])
+  feature      Feature    @relation(fields: [featureId], references: [id])
+  
+  @@unique([featureSetId, featureId])
+}
+
+model Limit {
+  id           String   @id @default(uuid())
+  platformId   String?
+  name         String
+  slug         String   @unique
+  description  String?
+  category     String
+  unit         String   // "GB", "users", "projects", etc
+  defaultValue Int      @default(0)
+  settings     Json     @default("{}")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  platform     Platform? @relation(fields: [platformId], references: [id])
+  
+  @@index([category])
+}
+
+model PlanFeature {
+  id          String   @id @default(uuid())
+  planId      String
+  featureId   String
+  isIncluded  Boolean  @default(true)
+  customLimits Json?   // Override default limits for this plan
+  
+  plan        Plan     @relation(fields: [planId], references: [id])
+  feature     Feature  @relation(fields: [featureId], references: [id])
+  
+  @@unique([planId, featureId])
+}
+
+model Subscription {
+  id                 String   @id @default(uuid())
+  accountId          String
+  planId             String
+  status             SubscriptionStatus @default(ACTIVE)
+  startDate          DateTime @default(now())
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  trialStart         DateTime?
+  trialEnd           DateTime?
+  canceledAt         DateTime?
+  cancelReason       String?
+  pausedAt           DateTime?
+  resumeAt           DateTime?
+  metadata           Json     @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  account            Account  @relation(fields: [accountId], references: [id])
+  plan               Plan     @relation(fields: [planId], references: [id])
+  usageRecords       UsageRecord[]
+  addOns             SubscriptionAddOn[]
+  invoices           Invoice[]
+  
+  @@index([accountId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  EXPIRED
+  PAUSED
+}
+
+model SubscriptionAddOn {
+  id             String   @id @default(uuid())
+  subscriptionId String
+  name           String
+  price          Decimal  @db.Decimal(10, 2)
+  quantity       Int      @default(1)
+  createdAt      DateTime @default(now())
+  
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+}
+
+model UsageRecord {
+  id             String   @id @default(uuid())
+  subscriptionId String
+  metric         String
+  quantity       Int
+  unit           String
+  timestamp      DateTime @default(now())
+  metadata       Json?
+  
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  
+  @@index([subscriptionId, metric])
+  @@index([timestamp])
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  subscriptionId String
+  number         String   @unique
+  status         InvoiceStatus @default(DRAFT)
+  amount         Decimal  @db.Decimal(10, 2)
+  currency       String   @default("EUR")
+  dueDate        DateTime
+  paidAt         DateTime?
+  items          Json
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELED
+}
+
+// ==================== PROFILES & CONTENT ====================
+
+model Profile {
+  id            String   @id @default(uuid())
+  userId        String
+  type          ProfileType
+  slug          String
+  displayName   String
+  stageName     String?
+  bio           String?
+  about         String?
+  data          Json     // JSONB for flexible profile data
+  measurements  Json?    // Structured measurements data
+  media         Json     @default("{}")
+  socialLinks   Json?
+  visibility    ProfileVisibility @default(PUBLIC)
+  isVerified    Boolean  @default(false)
+  isPremium     Boolean  @default(false)
+  completeness  Int      @default(0) // 0-100 percentage
+  viewCount     Int      @default(0)
+  likeCount     Int      @default(0)
+  lastActiveAt  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id])
+  compCards     CompCard[]
+  portfolios    Portfolio[]
+  experiences   Experience[]
+  skills        ProfileSkill[]
+  languages     ProfileLanguage[]
+  locations     ProfileLocation[]
+  availability  Availability[]
+  rates         Rate[]
+  reviews       Review[]
+  jobApplications Application[]
+  gigOfferings  GigOffering[]
+  
+  @@unique([userId, type])
+  @@unique([slug])
+  @@index([type, visibility])
+  @@index([isVerified])
+}
+
+enum ProfileType {
+  MODEL
+  PHOTOGRAPHER
+  AGENCY
+  CLIENT
+  ARTIST
+  INFLUENCER
+  STYLIST
+  MAKEUP_ARTIST
+  HAIR_STYLIST
+  PRODUCER
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+  NETWORK
+  HIDDEN
+}
+
+model CompCard {
+  id          String   @id @default(uuid())
+  profileId   String
+  name        String
+  template    String   @default("standard")
+  layout      Json     // Layout configuration
+  images      Json     // Array of image objects with positions
+  stats       Json     @default("{}")
+  qrCode      String?
+  isActive    Boolean  @default(true)
+  isPrimary   Boolean  @default(false)
+  viewCount   Int      @default(0)
+  shareCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+  @@index([isActive])
+}
+
+model Portfolio {
+  id          String   @id @default(uuid())
+  profileId   String
+  title       String
+  description String?
+  type        PortfolioType
+  coverImage  String?
+  images      Json     // Array of image objects
+  videos      Json?    // Array of video objects
+  category    String?
+  tags        String[]
+  credits     Json?    // Photographer, stylist, etc credits
+  location    String?
+  date        DateTime?
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  isPublished Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+  @@index([isPublished])
+  @@index([type])
+}
+
+enum PortfolioType {
+  EDITORIAL
+  COMMERCIAL
+  RUNWAY
+  BEAUTY
+  FITNESS
+  LIFESTYLE
+  ARTISTIC
+  BEHIND_SCENES
+  OTHER
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  profileId   String
+  title       String
+  company     String
+  type        String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  description String?
+  media       Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+}
+
+// ==================== MARKETPLACE ====================
+
+model JobPosting {
+  id               String   @id @default(uuid())
+  tenantId         String
+  postedById       String
+  title            String
+  description      String
+  type             JobType
+  category         String
+  subcategory      String?
+  location         String?
+  locationLat      Float?
+  locationLng      Float?
+  remote           Boolean  @default(false)
+  travelRequired   Boolean  @default(false)
+  startDate        DateTime?
+  endDate          DateTime?
+  duration         String?
+  budget           Decimal? @db.Decimal(10, 2)
+  budgetCurrency   String   @default("EUR")
+  budgetType       BudgetType?
+  requirements     Json     @default("{}")
+  preferences      Json?
+  benefits         String[]
+  tags             String[]
+  attachments      Json?
+  status           JobStatus @default(DRAFT)
+  visibility       JobVisibility @default(PUBLIC)
+  featuredUntil    DateTime?
+  publishedAt      DateTime?
+  expiresAt        DateTime?
+  viewCount        Int      @default(0)
+  applicationCount Int      @default(0)
+  savedCount       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  applications     Application[]
+  savedJobs        SavedJob[]
+  
+  @@index([tenantId, status])
+  @@index([category])
+  @@index([postedById])
+  @@index([publishedAt])
+}
+
+enum JobType {
+  CASTING
+  PHOTOSHOOT
+  CAMPAIGN
+  RUNWAY
+  COMMERCIAL
+  EDITORIAL
+  CATALOG
+  LOOKBOOK
+  MUSIC_VIDEO
+  FILM
+  TV
+  EVENT
+  TRADE_SHOW
+  OTHER
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  COMPLETED
+  CANCELED
+  ARCHIVED
+}
+
+enum JobVisibility {
+  PUBLIC
+  PRIVATE
+  INVITE_ONLY
+}
+
+enum BudgetType {
+  HOURLY
+  DAILY
+  PROJECT
+  NEGOTIABLE
+}
+
+model GigOffering {
+  id              String   @id @default(uuid())
+  profileId       String
+  title           String
+  description     String
+  category        String
+  serviceType     String
+  packages        Json     // Array of package options
+  basePrice       Decimal  @db.Decimal(10, 2)
+  currency        String   @default("EUR")
+  deliveryTime    String
+  revisions       Int      @default(1)
+  extras          Json?    // Additional services
+  requirements    Json?
+  gallery         Json?    // Sample work
+  tags            String[]
+  status          GigStatus @default(DRAFT)
+  isActive        Boolean  @default(true)
+  viewCount       Int      @default(0)
+  orderCount      Int      @default(0)
+  avgRating       Decimal? @db.Decimal(3, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  profile         Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+  @@index([category])
+  @@index([isActive])
+}
+
+enum GigStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+model Application {
+  id            String   @id @default(uuid())
+  jobPostingId  String
+  applicantId   String
+  profileId     String
+  coverLetter   String?
+  proposedRate  Decimal? @db.Decimal(10, 2)
+  availability  Json?
+  portfolio     Json?    // Selected portfolio items
+  attachments   Json?
+  answers       Json?    // Answers to job-specific questions
+  status        ApplicationStatus @default(PENDING)
+  isShortlisted Boolean  @default(false)
+  reviewedAt    DateTime?
+  reviewedBy    String?
+  feedback      String?
+  interviewDate DateTime?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  jobPosting    JobPosting @relation(fields: [jobPostingId], references: [id])
+  profile       Profile    @relation(fields: [profileId], references: [id])
+  messages      Message[]
+  
+  @@unique([jobPostingId, applicantId])
+  @@index([applicantId])
+  @@index([status])
+  @@index([profileId])
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  SHORTLISTED
+  INTERVIEWING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  HIRED
+}
+
+// ==================== COMMUNICATION ====================
+
+model Conversation {
+  id           String   @id @default(uuid())
+  type         ConversationType
+  subject      String?
+  participants String[] // User IDs
+  metadata     Json?
+  lastMessageAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  messages     Message[]
+  
+  @@index([lastMessageAt])
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+  JOB_APPLICATION
+  SUPPORT
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  senderId       String
+  applicationId  String?
+  content        String
+  type           MessageType @default(TEXT)
+  attachments    Json?
+  metadata       Json?
+  isRead         Boolean  @default(false)
+  readAt         DateTime?
+  editedAt       DateTime?
+  deletedAt      DateTime?
+  createdAt      DateTime @default(now())
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  application    Application? @relation(fields: [applicationId], references: [id])
+  
+  @@index([conversationId])
+  @@index([senderId])
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+  NOTIFICATION
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  type       NotificationType
+  title      String
+  message    String
+  data       Json?
+  actionUrl  String?
+  isRead     Boolean  @default(false)
+  readAt     DateTime?
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  SYSTEM
+  JOB_MATCH
+  APPLICATION_UPDATE
+  MESSAGE
+  PROFILE_VIEW
+  REVIEW
+  SUBSCRIPTION
+  GENERAL
+}
+
+// ==================== CONTENT MANAGEMENT ====================
+
+model Category {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  slug        String
+  description String?
+  icon        String?
+  image       String?
+  parentId    String?
+  metadata    Json?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  
+  @@unique([tenantId, slug])
+  @@index([parentId])
+}
+
+model Tag {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  slug        String
+  category    String?
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug])
+  @@index([category])
+  @@index([usageCount])
+}
+
+model OptionSet {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  slug        String
+  description String?
+  category    String?
+  options     Json     // Array of {value, label, metadata, order}
+  settings    Json?
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug])
+  @@index([category])
+}
+
+model Schema {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  slug        String
+  type        String   // profile_type or form_type
+  description String?
+  definition  Json     // Complete form schema with tabs, fields, validation
+  version     Int      @default(1)
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug, version])
+  @@index([type])
+}
+
+model CustomField {
+  id          String   @id @default(uuid())
+  tenantId    String
+  entityType  String   // "profile", "job", "application", etc
+  name        String
+  slug        String
+  type        FieldType
+  label       String
+  placeholder String?
+  helpText    String?
+  validation  Json?
+  options     Json?    // For select/multiselect
+  settings    Json?
+  isRequired  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, entityType, slug])
+  @@index([entityType])
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  EMAIL
+  PHONE
+  URL
+  DATE
+  DATETIME
+  SELECT
+  MULTISELECT
+  CHECKBOX
+  RADIO
+  FILE
+  IMAGE
+  MEASUREMENT
+  LOCATION
+  PRICE
+  JSON
+}
+
+// ==================== TEMPLATES & AUTOMATION ====================
+
+model Template {
+  id          String   @id @default(uuid())
+  tenantId    String?
+  name        String
+  slug        String
+  type        TemplateType
+  category    String
+  description String?
+  thumbnail   String?
+  content     String?  // For email/page templates
+  config      Json?    // For complex templates
+  variables   Json?    // Available variables
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, type, slug])
+  @@index([type, category])
+}
+
+enum TemplateType {
+  INDUSTRY
+  EMAIL
+  PAGE
+  WORKFLOW
+  CONTRACT
+  INVOICE
+  REPORT
+}
+
+model IndustryTemplate {
+  id             String   @id @default(uuid())
+  platformId     String
+  name           String
+  slug           String   @unique
+  description    String
+  icon           String?
+  coverImage     String?
+  category       String   // "fashion", "fitness", "entertainment", etc
+  features       String[]
+  defaultPlans   Json     // Plan configurations
+  defaultSchemas Json     // Form schemas
+  optionSets     Json     // Dropdown options
+  settings       Json?
+  demoUrl        String?
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  platform       Platform @relation(fields: [platformId], references: [id])
+  
+  @@index([category])
+  @@index([isActive])
+}
+
+model EmailTemplate {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  slug        String
+  subject     String
+  htmlContent String
+  textContent String?
+  category    String
+  variables   Json     // Required variables
+  attachments Json?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug])
+  @@index([category])
+}
+
+// ==================== CMS & PAGES ====================
+
+model Page {
+  id          String   @id @default(uuid())
+  tenantId    String
+  title       String
+  slug        String
+  content     Json     // Block-based content
+  template    String?
+  metadata    Json?
+  seo         Json?
+  status      PageStatus @default(DRAFT)
+  visibility  PageVisibility @default(PUBLIC)
+  publishedAt DateTime?
+  publishedBy String?
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug])
+  @@index([status])
+}
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+enum PageVisibility {
+  PUBLIC
+  PRIVATE
+  MEMBERS_ONLY
+}
+
+model BlogPost {
+  id           String   @id @default(uuid())
+  tenantId     String
+  authorId     String
+  title        String
+  slug         String
+  excerpt      String?
+  content      String
+  featuredImage String?
+  category     String
+  tags         String[]
+  seo          Json?
+  status       BlogStatus @default(DRAFT)
+  publishedAt  DateTime?
+  viewCount    Int      @default(0)
+  likeCount    Int      @default(0)
+  commentCount Int      @default(0)
+  readTime     Int?     // minutes
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, slug])
+  @@index([status, publishedAt])
+  @@index([category])
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+// ==================== ANALYTICS & TRACKING ====================
+
+model UserActivity {
+  id          String   @id @default(uuid())
+  userId      String
+  tenantId    String
+  action      String
+  category    String
+  entityType  String?
+  entityId    String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  sessionId   String?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, createdAt])
+  @@index([tenantId, action])
+  @@index([entityType, entityId])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  tenantId    String
+  userId      String?
+  action      String
+  entity      String
+  entityId    String?
+  oldValues   Json?
+  newValues   Json?
+  changes     Json?
+  reason      String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+  
+  @@index([tenantId, entity, timestamp])
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+// ==================== USER PREFERENCES & COLLECTIONS ====================
+
+model SavedSearch {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  type        String   // "job", "profile", "gig"
+  filters     Json
+  sortBy      String?
+  alertsEnabled Boolean @default(false)
+  lastAlertAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@index([userId, type])
+}
+
+model Collection {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  type        CollectionType
+  privacy     CollectionPrivacy @default(PRIVATE)
+  items       Json     // Array of {type, id, addedAt, notes}
+  coverImage  String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+}
+
+enum CollectionType {
+  PROFILES
+  JOBS
+  PORTFOLIOS
+  MIXED
+}
+
+enum CollectionPrivacy {
+  PRIVATE
+  PUBLIC
+  SHARED
+}
+
+model SavedJob {
+  id          String   @id @default(uuid())
+  userId      String
+  jobPostingId String
+  notes       String?
+  createdAt   DateTime @default(now())
+  
+  jobPosting  JobPosting @relation(fields: [jobPostingId], references: [id])
+  
+  @@unique([userId, jobPostingId])
+  @@index([userId])
+}
+
+// ==================== RATINGS & REVIEWS ====================
+
+model Review {
+  id          String   @id @default(uuid())
+  profileId   String
+  reviewerId  String
+  jobId       String?
+  rating      Int      // 1-5
+  title       String?
+  comment     String
+  response    String?
+  respondedAt DateTime?
+  isVerified  Boolean  @default(false)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId, rating])
+  @@index([reviewerId])
+}
+
+// ==================== ADDITIONAL PROFILE ENTITIES ====================
+
+model ProfileSkill {
+  id          String   @id @default(uuid())
+  profileId   String
+  skill       String
+  level       SkillLevel?
+  yearsOfExperience Int?
+  endorsed    Boolean  @default(false)
+  endorsedBy  String[]
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@unique([profileId, skill])
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model ProfileLanguage {
+  id          String   @id @default(uuid())
+  profileId   String
+  language    String
+  proficiency LanguageProficiency
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@unique([profileId, language])
+}
+
+enum LanguageProficiency {
+  BASIC
+  CONVERSATIONAL
+  FLUENT
+  NATIVE
+}
+
+model ProfileLocation {
+  id          String   @id @default(uuid())
+  profileId   String
+  type        LocationType
+  city        String
+  state       String?
+  country     String
+  latitude    Float?
+  longitude   Float?
+  isPrimary   Boolean  @default(false)
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+}
+
+enum LocationType {
+  BASE
+  AVAILABLE
+  PREFERRED
+}
+
+model Availability {
+  id          String   @id @default(uuid())
+  profileId   String
+  startDate   DateTime
+  endDate     DateTime
+  type        AvailabilityType
+  notes       String?
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId, startDate])
+}
+
+enum AvailabilityType {
+  AVAILABLE
+  BUSY
+  VACATION
+  TENTATIVE
+}
+
+model Rate {
+  id          String   @id @default(uuid())
+  profileId   String
+  service     String
+  amount      Decimal  @db.Decimal(10, 2)
+  currency    String   @default("EUR")
+  unit        RateUnit
+  description String?
+  minDuration Int?     // minimum hours/days
+  
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  @@index([profileId])
+}
+
+enum RateUnit {
+  HOUR
+  HALF_DAY
+  FULL_DAY
+  PROJECT
+  IMAGE
+  LOOK
+}

@@ -1,0 +1,40 @@
+{
+  "text": "📚 **New Documentation Update Proposed**",
+  "channel": "mono-docs",
+  "username": "Documentation Bot",
+  "icon_emoji": ":book:",
+  "attachments": [
+    {
+      "fallback": "New documentation update: {{$json.title}}",
+      "color": "#0066cc",
+      "pretext": ":bell: Documentation update requires review",
+      "title": "{{$json.title}}",
+      "title_link": "{{$json.reviewUrl}}",
+      "text": "{{$json.description}}",
+      "fields": [
+        {
+          "title": "Proposed By",
+          "value": "{{$json.proposedBy === 'claude' ? '🤖 Claude AI' : $json.proposedBy}}",
+          "short": true
+        },
+        {
+          "title": "Files Affected",
+          "value": "{{$json.filesCount}} file(s)",
+          "short": true
+        },
+        {
+          "title": "Update ID",
+          "value": "{{$json.updateId}}",
+          "short": true
+        },
+        {
+          "title": "Status",
+          "value": "⏳ Pending Review",
+          "short": true
+        }
+      ],
+      "footer": "itellico Mono Documentation System",
+      "ts": "{{Math.floor(Date.now() / 1000)}}"
+    }
+  ]
+}

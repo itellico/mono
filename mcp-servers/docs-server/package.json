@@ -1,0 +1,31 @@
+{
+  "name": "itellico-mono-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for itellico Mono documentation and project knowledge",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "test": "tsx test-server.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@types/node": "^20.0.0",
+    "yaml": "^2.3.4",
+    "fuse.js": "^7.0.0",
+    "glob": "^10.3.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "keywords": [
+    "mcp",
+    "documentation",
+    "itellico-mono",
+    "claude-code"
+  ]
+}

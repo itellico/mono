@@ -1,0 +1,15 @@
+# Test environment persistent storage
+
+services:
+  postgres:
+    volumes:
+      - ${DOCKER_DATA_ROOT:-./docker-data}/test/databases/postgres/data:/var/lib/postgresql/data
+      - ./docker/configs/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+  redis:
+    volumes:
+      - ${DOCKER_DATA_ROOT:-./docker-data}/test/cache/redis/data:/data
+      - ./docker/configs/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf

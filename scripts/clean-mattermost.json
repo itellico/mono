@@ -1,0 +1,32 @@
+{
+  "text": "New Documentation Update Proposed",
+  "channel": "mono-docs",
+  "username": "Documentation Bot",
+  "icon_emoji": ":book:",
+  "attachments": [
+    {
+      "fallback": "New documentation update requires review",
+      "color": "#0066cc",
+      "title": "Documentation Update",
+      "text": "A new documentation update has been proposed and requires review",
+      "fields": [
+        {
+          "title": "Proposed By",
+          "value": "Claude AI",
+          "short": true
+        },
+        {
+          "title": "Files Affected",
+          "value": "Multiple files",
+          "short": true
+        },
+        {
+          "title": "Status",
+          "value": "Pending Review",
+          "short": true
+        }
+      ],
+      "footer": "itellico Mono Documentation System"
+    }
+  ]
+}

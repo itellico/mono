@@ -1,0 +1,16 @@
+# Grafana Dashboard Provisioning Configuration
+# Automatically loads Mono Platform dashboards
+
+apiVersion: 1
+
+providers:
+  - name: 'Mono Platform Dashboards'
+    orgId: 1
+    folder: 'Mono Platform'
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

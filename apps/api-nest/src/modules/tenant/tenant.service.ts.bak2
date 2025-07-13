@@ -1,0 +1,284 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { LoggerService } from '@common/logging/logger.service';
+import { RedisService } from '@common/redis/redis.service';
+
+@Injectable()
+export class TenantService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: LoggerService,
+    private readonly redis: RedisService,
+  ) {}
+  async getAccounts(tenantId: string, query: any) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    this.logger.logBusiness('Fetching accounts for tenant', { tenant_id, page, limit });
+
+    const [accounts, total] = await Promise.all([
+      this.prisma.account.findMany({
+        where: { tenant_id: parseInt(tenantId) },
+        skip,
+        take: limit,
+        include: {
+          _count: {
+            select: { users: true },
+          },
+        },
+      }),
+      this.prisma.account.count({
+        where: { tenant_id: parseInt(tenantId) },
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        items: accounts.map(account => ({
+          id: account.id.toString(),
+          name: account.name,
+          email: account.email,
+          users: account._count.users,
+          status: account.isActive ? 'active' : 'inactive',
+          created_at: account.createdAt,
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async createAccount(tenantId: string, accountData: any) {
+    this.logger.logBusiness('Creating account for tenant', { tenant_id, accountName: accountData.name });
+
+    const account = await this.prisma.account.create({
+      data: {
+        tenant_id: parseInt(tenantId),
+        name: accountData.name,
+        email: accountData.email,
+        password_hash: accountData.passwordHash || '',
+        is_active: true,
+      },
+    });
+
+    // Invalidate tenant accounts cache
+    await this.redis.del(`tenant:${tenant_id}:accounts:*`);
+
+    return {
+      success: true,
+      data: {
+        id: account.id.toString(),
+        tenant_id: account.tenantId.toString(),
+        name: account.name,
+        email: account.email,
+        created_at: account.createdAt,
+      },
+    };
+  }
+
+  async getUsers(tenantId: string, query: any) {
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    this.logger.logBusiness('Fetching users for tenant', { tenant_id, page, limit });
+
+    // Get all accounts for this tenant first
+    const accounts = await this.prisma.account.findMany({
+      where: { tenant_id: parseInt(tenantId) },
+      select: { id: true },
+    });
+
+    const accountIds = accounts.map(a => a.id);
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where: { account_id: { in: accountIds } },
+        skip,
+        take: limit,
+        include: {
+          account: true,
+          userRoles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      }),
+      this.prisma.user.count({
+        where: { account_id: { in: accountIds } },
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        items: users.map(user => ({
+          id: user.id.toString(),
+          name: user.name,
+          email: user.account.email,
+          account_id: user.accountId.toString(),
+          accountName: user.account.name,
+          roles: user.userRoles.map(ur => ur.role.name),
+          status: user.isActive ? 'active' : 'inactive',
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async getSettings(tenantId: string) {
+    const cacheKey = `tenant:${tenant_id}:settings`;
+    
+    // Check cache first
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      return { success: true, data: JSON.parse(cached) };
+    }
+
+    this.logger.logBusiness('Fetching settings for tenant', { tenant_id });
+
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: parseInt(tenant_id) },
+      include: {
+        tenantSettings: true,
+      },
+    });
+
+    if (!tenant) {
+      throw new Error('Tenant not found');
+    }
+
+    const settings = {
+      tenant_id: tenant.id.toString(),
+      name: tenant.name,
+      domain: tenant.domain,
+      features: tenant.tenantSettings?.features || [],
+      tier: 'tenant',
+      maxAccounts: tenant.tenantSettings?.maxAccounts || 10,
+      maxUsers: tenant.tenantSettings?.maxUsers || 100,
+      storageQuotaMB: tenant.tenantSettings?.storageQuotaMB || 10240,
+    };
+
+    // Cache for 1 hour
+    await this.redis.set(cacheKey, JSON.stringify(settings), 3600);
+
+    return { success: true, data: settings };
+  }
+
+  async updateSettings(tenantId: string, settings: any) {
+    this.logger.logBusiness('Updating settings for tenant', { tenant_id });
+
+    await this.prisma.$transaction(async (tx) => {
+      // Update tenant
+      if (settings.name || settings.domain) {
+        await tx.tenant.update({
+          where: { id: parseInt(tenant_id) },
+          data: {
+            name: settings.name,
+            domain: settings.domain,
+          },
+        });
+      }
+
+      // Update or create tenant settings
+      if (settings.features || settings.maxAccounts || settings.maxUsers || settings.storageQuotaMB) {
+        await tx.tenantSetting.upsert({
+          where: { tenant_id: parseInt(tenantId) },
+          update: {
+            features: settings.features,
+            maxAccounts: settings.maxAccounts,
+            maxUsers: settings.maxUsers,
+            storageQuotaMB: settings.storageQuotaMB,
+          },
+          create: {
+            tenant_id: parseInt(tenantId),
+            features: settings.features || [],
+            maxAccounts: settings.maxAccounts || 10,
+            maxUsers: settings.maxUsers || 100,
+            storageQuotaMB: settings.storageQuotaMB || 10240,
+          },
+        });
+      }
+    });
+
+    // Invalidate cache
+    await this.redis.del(`tenant:${tenant_id}:settings`);
+
+    return this.getSettings(tenantId);
+  }
+
+  async getAnalytics(tenantId: string) {
+    const cacheKey = `tenant:${tenant_id}:analytics`;
+    
+    // Check cache first (short TTL for analytics)
+    const cached = await this.redis.get(cacheKey);
+    if (cached) {
+      return { success: true, data: JSON.parse(cached) };
+    }
+
+    this.logger.logBusiness('Calculating analytics for tenant', { tenant_id });
+
+    // Get all accounts for this tenant
+    const accounts = await this.prisma.account.findMany({
+      where: { tenant_id: parseInt(tenantId) },
+      select: { id: true },
+    });
+
+    const accountIds = accounts.map(a => a.id);
+
+    // Get analytics data in parallel
+    const [totalAccounts, totalUsers, activeUsers, auditLogs] = await Promise.all([
+      this.prisma.account.count({
+        where: { tenant_id: parseInt(tenantId) },
+      }),
+      this.prisma.user.count({
+        where: { account_id: { in: accountIds } },
+      }),
+      this.prisma.user.count({
+        where: {
+          account_id: { in: accountIds },
+          is_active: true,
+        },
+      }),
+      // this.prisma.auditLog.count({
+        where: {
+          user_id: {
+            in: await this.prisma.user.findMany({
+              where: { account_id: { in: accountIds } },
+              select: { id: true },
+            }).then(users => users.map(u => u.id)),
+          },
+          action: { startsWith: 'api.' },
+          created_at: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }, // Last 30 days
+        },
+      }),
+    ]);
+
+    const analytics = {
+      tenant_id,
+      totalAccounts,
+      totalUsers,
+      activeUsers,
+      storage: '1.2GB', // TODO: Calculate actual storage usage
+      apiCalls: auditLogs,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    // Cache for 5 minutes
+    await this.redis.set(cacheKey, JSON.stringify(analytics), 300);
+
+    return { success: true, data: analytics };
+  }
+}

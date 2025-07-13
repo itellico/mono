@@ -1,0 +1,581 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Database enums
+enum gender_enum {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum user_type_enum {
+  INDIVIDUAL
+  COMPANY
+  ORGANIZATION
+}
+
+enum application_status_enum {
+  PENDING
+  APPROVED
+  REJECTED
+  DRAFT
+}
+
+enum account_type_enum {
+  PERSONAL
+  BUSINESS
+  ORGANIZATION
+}
+
+enum marketplace_side_enum {
+  BUYER
+  SELLER
+  BOTH
+}
+
+enum cache_status_enum {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum theme_enum {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum time_format_enum {
+  @@map("time_format_enum")
+  TWELVE_H @map("12H")
+  TWENTY_FOUR_H @map("24H")
+}
+
+enum currency_position_enum {
+  BEFORE
+  AFTER
+}
+
+enum date_format_enum {
+  YYYY_MM_DD @map("YYYY-MM-DD")
+  DD_MM_YYYY @map("DD/MM/YYYY")
+  MM_DD_YYYY @map("MM/DD/YYYY")
+  DD_MM_YYYY_DOTS @map("DD.MM.YYYY")
+}
+
+model Tenant {
+  uuid                    String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                      Int                        @unique @default(autoincrement())
+  domain                  String                     @unique
+  name                    String
+  slug                    String?
+  description             Json?
+  features                Json?
+  settings                Json?
+  categories              Json?
+  allowed_countries       Json?                      @map("allowed_countries") // DEPRECATED: Use tenant_allowed_countries table
+  country_id              Int?                       @map("country_id") // Primary country for tenant operations
+  default_currency        String?                    @map("default_currency")
+  is_active               Boolean                    @default(true) @map("is_active")
+  created_at              DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at              DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  accounts                Account[]
+  cacheConfigurations     CacheConfiguration[]
+  cacheWarmupQueues       CacheWarmupQueue[]
+  permissionCaches        PermissionCache[]
+  permissions             Permission[]
+  roles                   Role[]
+  country                 Country?                   @relation(fields: [country_id], references: [id])
+  allowedCountries        TenantAllowedCountry[]
+
+  @@index([country_id], map: "idx_tenants_country_id")
+  @@map("tenants")
+}
+
+model Account {
+  uuid                     String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                       Int                     @unique @default(autoincrement())
+  tenant_id                Int                     @map("tenant_id")
+  email                    String                  @unique
+  email_verified           Boolean                 @default(false) @map("email_verified")
+  password_hash            String?                 @map("password_hash")
+  account_type             account_type_enum       @default(PERSONAL) @map("account_type")
+  phone                    String?                 @db.VarChar(30)
+  country_code             String?                 @map("country_code") @db.VarChar(2) // DEPRECATED: Use country_id
+  country_id               Int?                    @map("country_id") // Account country reference
+  city                     String?                 @db.VarChar(100)
+  account_capabilities     Json?                   @map("account_capabilities")
+  primary_marketplace_side marketplace_side_enum? @map("primary_marketplace_side")
+  allow_dual_side          Boolean                 @default(false) @map("allow_dual_side")
+  is_active                Boolean                 @default(true) @map("is_active")
+  is_verified              Boolean                 @default(false) @map("is_verified")
+  last_login_at            DateTime?               @map("last_login_at") @db.Timestamptz(6)
+  created_at               DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at               DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+  tenant                   Tenant                  @relation(fields: [tenant_id], references: [id])
+  country                  Country?                @relation(fields: [country_id], references: [id])
+  users                    User[]
+
+  @@index([country_id], map: "idx_accounts_country_id")
+  @@map("accounts")
+}
+
+model User {
+  uuid                               String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                                 Int                       @unique @default(autoincrement())
+  account_id                         Int                       @map("account_id")
+  first_name                         String                    @map("first_name")
+  last_name                          String                    @map("last_name")
+  username                           String                    @unique
+  user_type                          user_type_enum            @default(INDIVIDUAL) @map("user_type")
+  profile_photo_url                  String?                   @map("profile_photo_url")
+  bio                                String?
+  website                            String?
+  date_of_birth                      DateTime?                 @map("date_of_birth")
+  gender                             gender_enum?
+  profile_application_status         application_status_enum?  @map("profile_application_status")
+  profile_approved_at                DateTime?            @map("profile_approved_at")
+  profile_rejected_at                DateTime?            @map("profile_rejected_at")
+  total_applications                 Int?                 @map("total_applications")
+  last_application_at                DateTime?            @map("last_application_at")
+  user_hash                          String?              @map("user_hash")
+  is_active                          Boolean              @default(true) @map("is_active")
+  is_verified                        Boolean              @default(false) @map("is_verified")
+  created_at                         DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at                         DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  emergency_until                    DateTime?            @map("emergency_until")
+  account_role_id                    Int
+  cacheConfigurations                CacheConfiguration[]
+  cacheWarmupQueues                  CacheWarmupQueue[]
+  permissionCaches                   PermissionCache[]
+  createdPermissions                 Permission[]         @relation("PermissionCreatedBy")
+  deletedPermissions                 Permission[]         @relation("PermissionDeletedBy")
+  updatedPermissions                 Permission[]         @relation("PermissionUpdatedBy")
+  createdRoles                       Role[]               @relation("RoleCreatedBy")
+  deletedRoles                       Role[]               @relation("RoleDeletedBy")
+  updatedRoles                       Role[]               @relation("RoleUpdatedBy")
+  userPermissions                    UserPermission[]
+  user_preferences                   user_preferences?
+  userRoles                          UserRole[]
+  roles_users_account_role_idToroles Role                 @relation("users_account_role_idToroles", fields: [account_role_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_users_account_role")
+  account                            Account              @relation(fields: [account_id], references: [id])
+
+  @@index([account_role_id], map: "idx_users_account_role_id")
+  @@map("users")
+}
+
+model Permission {
+  uuid            String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              Int              @unique @default(autoincrement())
+  name            String           @unique
+  module          String?          @db.VarChar(50)
+  resource        String?          @db.VarChar(50)
+  action          String?          @db.VarChar(50)
+  scope           String?          @db.VarChar(20)
+  pattern         String?          @db.VarChar(100)
+  context         String?          @db.VarChar(50)
+  condition       Json             @default("{}")
+  metadata        Json             @default("{}")
+  description     String?
+  is_wildcard     Boolean          @default(false) @map("is_wildcard")
+  is_system       Boolean          @default(false) @map("is_system")
+  priority        Int              @default(100)
+  tenant_id       Int?             @map("tenant_id")
+  created_by      Int?             @map("created_by")
+  updated_by      Int?             @map("updated_by")
+  deleted_by      Int?             @map("deleted_by")
+  created_at      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deleted_at      DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  createdBy       User?            @relation("PermissionCreatedBy", fields: [created_by], references: [id])
+  deletedBy       User?            @relation("PermissionDeletedBy", fields: [deleted_by], references: [id])
+  tenant          Tenant?          @relation(fields: [tenant_id], references: [id])
+  updatedBy       User?            @relation("PermissionUpdatedBy", fields: [updated_by], references: [id])
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@index([priority], map: "idx_permissions_priority")
+  @@map("permissions")
+}
+
+model Role {
+  uuid                               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                                 Int              @unique @default(autoincrement())
+  tenant_id                          Int?             @map("tenant_id")
+  name                               String
+  code                               String           @unique @db.VarChar(50)
+  description                        String?
+  module                             String?          @db.VarChar(50)
+  level                              Int              @default(0)
+  inherit_from                       Int?             @map("inherit_from")
+  metadata                           Json             @default("{}")
+  is_system                          Boolean          @default(false) @map("is_system")
+  is_default                         Boolean          @default(false) @map("is_default")
+  is_active                          Boolean          @default(true) @map("is_active")
+  created_by                         Int?             @map("created_by")
+  updated_by                         Int?             @map("updated_by")
+  deleted_by                         Int?             @map("deleted_by")
+  created_at                         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at                         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deleted_at                         DateTime?        @map("deleted_at") @db.Timestamptz(6)
+  rolePermissions                    RolePermission[]
+  createdBy                          User?            @relation("RoleCreatedBy", fields: [created_by], references: [id])
+  deletedBy                          User?            @relation("RoleDeletedBy", fields: [deleted_by], references: [id])
+  inheritFrom                        Role?            @relation("RoleInheritance", fields: [inherit_from], references: [id])
+  childRoles                         Role[]           @relation("RoleInheritance")
+  tenant                             Tenant?          @relation(fields: [tenant_id], references: [id])
+  updatedBy                          User?            @relation("RoleUpdatedBy", fields: [updated_by], references: [id])
+  userRoles                          UserRole[]
+  users_users_account_role_idToroles User[]           @relation("users_account_role_idToroles")
+
+  @@map("roles")
+}
+
+model UserRole {
+  uuid        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int       @unique @default(autoincrement())
+  user_id     Int       @map("user_id")
+  role_id     Int       @map("role_id")
+  assigned_by Int?      @map("assigned_by")
+  assigned_at DateTime  @default(now()) @map("assigned_at") @db.Timestamptz(6)
+  expires_at  DateTime? @map("expires_at") @db.Timestamptz(6)
+  is_active   Boolean   @default(true) @map("is_active")
+  metadata    Json      @default("{}")
+  created_at  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  role        Role      @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, role_id])
+  @@map("user_roles")
+}
+
+model UserPermission {
+  uuid          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int        @unique @default(autoincrement())
+  user_id       Int        @map("user_id")
+  permission_id Int        @map("permission_id")
+  granted_by    Int?       @map("granted_by")
+  granted_at    DateTime   @default(now()) @map("granted_at") @db.Timestamptz(6)
+  expires_at    DateTime?  @map("expires_at") @db.Timestamptz(6)
+  is_denied     Boolean    @default(false) @map("is_denied")
+  condition     Json       @default("{}")
+  metadata      Json       @default("{}")
+  created_at    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  permission    Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, permission_id])
+  @@index([permission_id], map: "idx_user_permissions_permission_id")
+  @@index([user_id], map: "idx_user_permissions_user_id")
+  @@map("user_permissions")
+}
+
+model RolePermission {
+  uuid          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int        @unique @default(autoincrement())
+  role_id       Int        @map("role_id")
+  permission_id Int        @map("permission_id")
+  granted_by    Int?       @map("granted_by")
+  granted_at    DateTime   @default(now()) @map("granted_at") @db.Timestamptz(6)
+  expires_at    DateTime?  @map("expires_at") @db.Timestamptz(6)
+  is_denied     Boolean    @default(false) @map("is_denied")
+  condition     Json       @default("{}")
+  metadata      Json       @default("{}")
+  created_at    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  permission    Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+  role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@map("role_permissions")
+}
+
+model PermissionCache {
+  uuid          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            Int      @unique @default(autoincrement())
+  cache_key     String   @unique @map("cache_key") @db.VarChar(255)
+  namespace     String   @default("permissions") @db.VarChar(50)
+  user_id       Int      @map("user_id")
+  tenant_id     Int      @map("tenant_id")
+  context       String   @db.VarChar(50)
+  permissions   String[]
+  roles         Int[]
+  metadata      Json     @default("{}")
+  computed_at   DateTime @default(now()) @map("computed_at") @db.Timestamptz(6)
+  expires_at    DateTime @map("expires_at") @db.Timestamptz(6)
+  access_count  Int      @default(0) @map("access_count")
+  last_accessed DateTime @default(now()) @map("last_accessed") @db.Timestamptz(6)
+  version       Int      @default(1)
+  hash          String   @db.VarChar(64)
+  in_redis      Boolean  @default(false) @map("in_redis")
+  redis_key     String?  @map("redis_key") @db.VarChar(255)
+  redis_ttl     Int?     @map("redis_ttl")
+  tenant        Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("permission_cache")
+}
+
+model CacheInvalidationLog {
+  uuid             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               BigInt    @unique @default(autoincrement())
+  target_type      String    @map("target_type") @db.VarChar(50)
+  target_id        String    @map("target_id") @db.VarChar(255)
+  pattern          String?   @db.VarChar(255)
+  reason           String
+  invalidated_by   Int?      @map("invalidated_by")
+  invalidated_at   DateTime  @default(now()) @map("invalidated_at") @db.Timestamptz(6)
+  processed        Boolean   @default(false)
+  processed_at     DateTime? @map("processed_at") @db.Timestamptz(6)
+  keys_invalidated Int       @default(0) @map("keys_invalidated")
+
+  @@map("cache_invalidation_log")
+}
+
+model CacheWarmupQueue {
+  uuid         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           Int       @unique @default(autoincrement())
+  user_id      Int       @map("user_id")
+  tenant_id    Int       @map("tenant_id")
+  priority     Int       @default(0)
+  status       cache_status_enum @default(PENDING)
+  attempts     Int       @default(0)
+  scheduled_at DateTime  @default(now()) @map("scheduled_at") @db.Timestamptz(6)
+  started_at   DateTime? @map("started_at") @db.Timestamptz(6)
+  completed_at DateTime? @map("completed_at") @db.Timestamptz(6)
+  last_error   String?   @map("last_error")
+  tenant       Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("cache_warmup_queue")
+}
+
+model CacheConfiguration {
+  uuid              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                Int      @unique @default(autoincrement())
+  entity_type       String   @map("entity_type") @db.VarChar(50)
+  entity_id         Int?     @map("entity_id")
+  tenant_id         Int?     @map("tenant_id")
+  l1_ttl            Int      @default(60) @map("l1_ttl")
+  l2_ttl            Int      @default(3600) @map("l2_ttl")
+  l3_ttl            Int      @default(86400) @map("l3_ttl")
+  max_permissions   Int      @default(1000) @map("max_permissions")
+  max_cache_size_kb Int      @default(1024) @map("max_cache_size_kb")
+  auto_warm         Boolean  @default(true) @map("auto_warm")
+  compress_data     Boolean  @default(false) @map("compress_data")
+  is_active         Boolean  @default(true) @map("is_active")
+  created_at        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  created_by        Int?     @map("created_by")
+  createdBy         User?    @relation(fields: [created_by], references: [id])
+  tenant            Tenant?  @relation(fields: [tenant_id], references: [id])
+
+  @@unique([entity_type, entity_id, tenant_id])
+  @@map("cache_configuration")
+}
+
+model CacheMetrics {
+  uuid           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  metric_date    DateTime @map("metric_date") @db.Date
+  hour           Int
+  cache_level    String   @map("cache_level") @db.VarChar(10)
+  operation      String   @db.VarChar(50)
+  request_count  BigInt   @default(0) @map("request_count")
+  hit_count      BigInt   @default(0) @map("hit_count")
+  miss_count     BigInt   @default(0) @map("miss_count")
+  error_count    BigInt   @default(0) @map("error_count")
+  avg_latency_ms Float?   @map("avg_latency_ms")
+  p95_latency_ms Float?   @map("p95_latency_ms")
+  p99_latency_ms Float?   @map("p99_latency_ms")
+  keys_count     Int?     @map("keys_count")
+  memory_bytes   BigInt?  @map("memory_bytes")
+  created_at     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([metric_date, hour, cache_level, operation])
+  @@map("cache_metrics")
+}
+
+model database_backups {
+  id            Int       @id @default(autoincrement())
+  backup_name   String?   @db.VarChar(255)
+  backup_date   DateTime? @default(now()) @db.Timestamp(6)
+  backup_reason String?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user_preferences {
+  id                       Int       @id @default(autoincrement())
+  uuid                     String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                  Int       @unique
+  date_format              date_format_enum?         @default(YYYY_MM_DD)
+  time_format              time_format_enum?         @default(TWENTY_FOUR_H)
+  number_format            String?                   @default("1,234.56") @db.VarChar(50)
+  first_day_of_week        Int?                      @default(0)
+  language_locale          String?                   @default("en-US") @db.VarChar(10) // DEPRECATED: Use language_id
+  language_id              Int?                      @map("language_id") // User preferred language reference
+  timezone                 String?                   @default("UTC") @db.VarChar(100) // DEPRECATED: Use timezone_id
+  timezone_id              Int?                      @map("timezone_id") // User preferred timezone reference
+  currency_code            String?                   @default("USD") @db.VarChar(3) // DEPRECATED: Use currency_id
+  currency_id              Int?                      @map("currency_id") // User preferred currency reference
+  country_id               Int?                      @map("country_id") // User preferred country reference
+  currency_position        currency_position_enum?   @default(BEFORE)
+  currency_space           Boolean?                  @default(false)
+  decimal_separator        String?                   @default(".") @db.VarChar(1)
+  thousands_separator      String?                   @default(",") @db.VarChar(1)
+  theme_preference         theme_enum?               @default(SYSTEM)
+  compact_mode             Boolean?  @default(false)
+  show_seconds             Boolean?  @default(false)
+  show_timezone            Boolean?  @default(false)
+  use_relative_time        Boolean?  @default(true)
+  relative_time_threshold  Int?      @default(24)
+  relative_time_style      String?   @default("long") @db.VarChar(20)
+  notification_time_format String?   @default("12h") @db.VarChar(10)
+  email_notifications      Boolean?  @default(true)
+  sms_notifications        Boolean?  @default(false)
+  created_at               DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime? @default(now()) @db.Timestamptz(6)
+  users                    User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  country                  Country?  @relation(fields: [country_id], references: [id])
+  language                 Language? @relation(fields: [language_id], references: [id])
+  timezoneRef              Timezone? @relation(fields: [timezone_id], references: [id])
+  currency                 Currency? @relation(fields: [currency_id], references: [id])
+
+  @@index([language_locale], map: "idx_user_preferences_language_locale") // DEPRECATED
+  @@index([timezone], map: "idx_user_preferences_timezone") // DEPRECATED
+  @@index([user_id], map: "idx_user_preferences_user_id")
+  @@index([country_id], map: "idx_user_preferences_country_id")
+  @@index([language_id], map: "idx_user_preferences_language_id")
+  @@index([timezone_id], map: "idx_user_preferences_timezone_id")
+  @@index([currency_id], map: "idx_user_preferences_currency_id")
+}
+
+// Junction table for many-to-many relationship between tenants and allowed countries
+model TenantAllowedCountry {
+  id         Int      @id @default(autoincrement())
+  tenant_id  Int      @map("tenant_id")
+  country_id Int      @map("country_id")
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  country    Country  @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  
+  @@unique([tenant_id, country_id])
+  @@index([tenant_id], map: "idx_tenant_allowed_countries_tenant_id")
+  @@index([country_id], map: "idx_tenant_allowed_countries_country_id")
+  @@map("tenant_allowed_countries")
+}
+
+// International Reference Data Tables
+// Following NestJS best practices with integer primary keys (no UUID for reference data)
+
+model Country {
+  id             Int                       @id @default(autoincrement())
+  code           String                    @unique @db.VarChar(2) // ISO 3166-1 alpha-2
+  alpha3         String                    @unique @db.VarChar(3) // ISO 3166-1 alpha-3
+  name           String                    @db.VarChar(100)
+  native_name    String?                   @map("native_name") @db.VarChar(100)
+  phone_code     String?                   @map("phone_code") @db.VarChar(10)
+  flag_emoji     String?                   @map("flag_emoji") @db.VarChar(10)
+  region         String?                   @db.VarChar(50)
+  subregion      String?                   @db.VarChar(50)
+  is_active      Boolean                   @default(true) @map("is_active")
+  display_order  Int                       @default(0) @map("display_order")
+  created_at     DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at     DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  tenants               Tenant[]                   // Tenants with this as primary country
+  accounts              Account[]                  // Accounts in this country
+  userPreferences       user_preferences[]         // Users with this as preferred country
+  tenantAllowedCountries TenantAllowedCountry[]    // Tenants that allow this country
+
+  @@index([code], map: "idx_countries_code")
+  @@index([alpha3], map: "idx_countries_alpha3")
+  @@index([is_active], map: "idx_countries_active")
+  @@index([region], map: "idx_countries_region")
+  @@map("countries")
+}
+
+model Language {
+  id             Int                 @id @default(autoincrement())
+  code           String              @unique @db.VarChar(10) // ISO 639-1 or locale code
+  iso639_1       String?             @map("iso639_1") @db.VarChar(2)
+  iso639_2       String?             @map("iso639_2") @db.VarChar(3)
+  name           String              @db.VarChar(100)
+  native_name    String?             @map("native_name") @db.VarChar(100)
+  direction      String              @default("ltr") @db.VarChar(3) // 'ltr' or 'rtl'
+  family         String?             @db.VarChar(50)
+  speakers       Int?
+  is_active      Boolean             @default(true) @map("is_active")
+  display_order  Int                 @default(0) @map("display_order")
+  created_at     DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at     DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  userPreferences user_preferences[] // Users with this as preferred language
+
+  @@index([code], map: "idx_languages_code")
+  @@index([iso639_1], map: "idx_languages_iso639_1")
+  @@index([is_active], map: "idx_languages_active")
+  @@index([direction], map: "idx_languages_direction")
+  @@map("languages")
+}
+
+model Timezone {
+  id           Int                 @id @default(autoincrement())
+  name         String              @unique @db.VarChar(100) // IANA timezone name
+  label        String              @db.VarChar(150) // Human readable label
+  region       String?             @db.VarChar(50)
+  city         String?             @db.VarChar(100)
+  utc_offset   Int                 @map("utc_offset") // UTC offset in seconds
+  dst_offset   Int?                @map("dst_offset") // DST offset in seconds
+  has_dst      Boolean             @default(false) @map("has_dst")
+  abbreviation String?             @db.VarChar(10)
+  is_active    Boolean             @default(true) @map("is_active")
+  display_order Int                @default(0) @map("display_order")
+  created_at   DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at   DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  userPreferences user_preferences[] // Users with this as preferred timezone
+
+  @@index([name], map: "idx_timezones_name")
+  @@index([region], map: "idx_timezones_region")
+  @@index([is_active], map: "idx_timezones_active")
+  @@index([utc_offset], map: "idx_timezones_utc_offset")
+  @@map("timezones")
+}
+
+model Currency {
+  id                   Int                 @id @default(autoincrement())
+  code                 String              @unique @db.VarChar(3) // ISO 4217 code
+  numeric_code         String?             @map("numeric_code") @db.VarChar(3)
+  name                 String              @db.VarChar(100)
+  symbol               String?             @db.VarChar(10)
+  symbol_position      String              @default("before") @map("symbol_position") @db.VarChar(10)
+  decimal_places       Int                 @default(2) @map("decimal_places")
+  decimal_separator    String              @default(".") @map("decimal_separator") @db.VarChar(1)
+  thousands_separator  String              @default(",") @map("thousands_separator") @db.VarChar(1)
+  is_active            Boolean             @default(true) @map("is_active")
+  display_order        Int                 @default(0) @map("display_order")
+  created_at           DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at           DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  userPreferences      user_preferences[] // Users with this as preferred currency
+
+  @@index([code], map: "idx_currencies_code")
+  @@index([is_active], map: "idx_currencies_active")
+  @@map("currencies")
+}

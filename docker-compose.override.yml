@@ -1,0 +1,107 @@
+version: '3.8'
+
+# This override file adds persistent volumes for Kanboard data
+# It ensures your Kanboard configuration and data persist across container restarts
+
+services:
+  # PHP-FPM with persistent Kanboard volumes
+  php:
+    volumes:
+      # Original volumes
+      - ./php:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      
+      # Persistent Kanboard data volume
+      - kanboard_data:/var/www/html/kanboard/data
+      - kanboard_plugins:/var/www/html/kanboard/plugins
+      
+      # Persistent Kanboard config (using bind mount for easy editing)
+      - ./docker/kanboard/config.php:/var/www/html/kanboard/config.php
+
+  # PostgreSQL with explicit database initialization
+  postgres:
+    volumes:
+      # Original volume
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+      
+      # Add init script for Kanboard database
+      - ./docker/postgres/init-kanboard.sql:/docker-entrypoint-initdb.d/02-init-kanboard.sql:ro
+
+# Named volumes with proper configuration
+volumes:
+  # PostgreSQL data - persists all databases
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/postgres
+
+  # Kanboard specific volumes
+  kanboard_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/kanboard/data
+
+  kanboard_plugins:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/kanboard/plugins
+
+  # Redis data
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/redis
+
+  # Grafana data
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/grafana
+
+  # Prometheus data
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/prometheus
+
+  # Other service volumes
+  redisinsight_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/redisinsight
+
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/rabbitmq
+
+  n8n_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/n8n
+
+  temporal_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/docker/volumes/temporal

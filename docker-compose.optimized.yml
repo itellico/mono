@@ -1,0 +1,468 @@
+version: '3.8'
+
+# Optimized Docker Compose for itellico Mono
+# This configuration includes resource limits, health checks, and performance optimizations
+
+services:
+  # PostgreSQL Database - Optimized
+  postgres:
+    image: postgres:15-alpine
+    container_name: mono-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mono
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: developer
+      POSTGRES_MULTIPLE_DATABASES: mono,temporal,n8n
+      # Performance tuning
+      POSTGRES_SHARED_BUFFERS: 256MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
+      POSTGRES_MAINTENANCE_WORK_MEM: 64MB
+      POSTGRES_CHECKPOINT_COMPLETION_TARGET: 0.9
+      POSTGRES_WAL_BUFFERS: 16MB
+      POSTGRES_DEFAULT_STATISTICS_TARGET: 100
+      POSTGRES_RANDOM_PAGE_COST: 1.1
+      POSTGRES_EFFECTIVE_IO_CONCURRENCY: 200
+      POSTGRES_WORK_MEM: 4MB
+      POSTGRES_MIN_WAL_SIZE: 1GB
+      POSTGRES_MAX_WAL_SIZE: 4GB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developer -d mono"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Redis Cache & Sessions - Optimized
+  redis:
+    image: redis:7-alpine
+    container_name: mono-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --replica-read-only no
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    volumes:
+      - redis_data:/data
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 768M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # RabbitMQ - Message Queue - Optimized
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: mono-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI port
+      - "15692:15692" # Prometheus metrics port
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_NODENAME: rabbit@mono-rabbitmq
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit log_levels [{connection,error},{default,info}] disk_free_limit 2147483648
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.4
+      RABBITMQ_DISK_FREE_LIMIT: 2GB
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  # RedisInsight - Official Redis GUI - Optimized
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: mono-redisinsight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - mono-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+
+  # Mailpit - Email Testing - Optimized
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mono-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      MP_DATA_FILE: /data/mailpit.db
+      MP_MAX_MESSAGES: 5000
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  # N8N - Workflow Automation - Optimized
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: mono-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=developer
+      - DB_POSTGRESDB_PASSWORD=developer
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=UTC
+      - N8N_SECURE_COOKIE=false
+      - EXECUTIONS_PROCESS=main
+      - N8N_METRICS=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./docker/n8n/workflows:/home/node/.n8n/workflows
+    networks:
+      - mono-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5678/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  # Temporal Server - Optimized
+  temporal:
+    image: temporalio/auto-setup:1.22.4
+    container_name: mono-temporal
+    restart: unless-stopped
+    ports:
+      - "7233:7233"  # Temporal Server
+      - "8233:8233"  # Temporal Web UI
+      - "9091:9091"  # Temporal Prometheus metrics
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=developer
+      - POSTGRES_PWD=developer
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig/development.yaml
+      - ENABLE_ES=false
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+      - PROMETHEUS_ENDPOINT=0.0.0.0:9091
+      - NUM_HISTORY_SHARDS=4
+      - LOG_LEVEL=warn
+    volumes:
+      - temporal_data:/etc/temporal
+      - ./docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - mono-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "tctl", "--address", "temporal:7233", "cluster", "health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Temporal Web UI - Optimized
+  temporal-web:
+    image: temporalio/ui:latest
+    container_name: mono-temporal-web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:8080
+      - TEMPORAL_PERMIT_WRITE_API=true
+    networks:
+      - mono-network
+    depends_on:
+      temporal:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  # Prometheus - Metrics Collection - Optimized
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: mono-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus/rules:/etc/prometheus/rules
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--storage.tsdb.retention.size=10GB'
+    networks:
+      - mono-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  # Grafana - Visualization - Optimized
+  grafana:
+    image: grafana/grafana:latest
+    container_name: mono-grafana
+    restart: unless-stopped
+    ports:
+      - "5005:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
+      - GF_SERVER_ROUTER_LOGGING=true
+      - GF_DATABASE_TYPE=sqlite3
+      - GF_DATABASE_WAL=true
+    volumes:
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources
+      - grafana_data:/var/lib/grafana
+    networks:
+      - mono-network
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+
+  # Node Exporter - System Metrics - Optimized
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: mono-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - mono-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+  # cAdvisor - Container Metrics - Optimized
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: mono-cadvisor
+    restart: unless-stopped
+    ports:
+      - "8081:8080"  # Changed from 8080 to avoid conflict
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - mono-network
+    command:
+      - '--housekeeping_interval=30s'
+      - '--docker_only=true'
+      - '--store_container_labels=false'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  # Docusaurus - Documentation (if using Docker)
+  docusaurus:
+    build:
+      context: ./docker/docusaurus
+      dockerfile: Dockerfile
+    container_name: mono-docusaurus
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    volumes:
+      - ./docs:/app/docs:ro
+      - ./mcp-servers/docs-server/src/data:/app/mcp-docs:ro
+      - docusaurus_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=production
+      - DOCUSAURUS_URL=http://localhost:3005
+    networks:
+      - mono-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+    profiles:
+      - docs
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  redisinsight_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  mailpit_data:
+    driver: local
+  n8n_data:
+    driver: local
+  temporal_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  docusaurus_node_modules:
+    driver: local
+
+networks:
+  mono-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+    driver_opts:
+      com.docker.driver.mtu: 1450  # Optimize for Docker Desktop

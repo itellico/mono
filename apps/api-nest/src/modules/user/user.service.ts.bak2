@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class UserService {
+  getProfile(user_id: string) {
+    return {
+      success: true,
+      data: {
+        id: user_id,
+        email: 'user@example.com',
+        name: 'Test User',
+        tier: 'user',
+      },
+    };
+  }
+
+  updateProfile(userId: string, updateData: any) {
+    return {
+      success: true,
+      data: {
+        id: user_id,
+        ...updateData,
+        updated_at: new Date().toISOString(),
+      },
+    };
+  }
+
+  getSettings(user_id: string) {
+    return {
+      success: true,
+      data: {
+        user_id,
+        notifications: true,
+        theme: 'light',
+        language: 'en',
+      },
+    };
+  }
+}

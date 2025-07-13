@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Search - Vogue Fashion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .talent-card { transition: all 0.3s; cursor: pointer; }
+        .talent-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .talent-image { height: 280px; object-fit: cover; }
+        .search-filters { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+        .filter-section { margin-bottom: 20px; }
+        .availability-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .available { background-color: #28a745; }
+        .busy { background-color: #dc3545; }
+        .tentative { background-color: #ffc107; }
+        .rate-badge { background: linear-gradient(45deg, #007bff, #0056b3); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Search Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2>Find Perfect Talent</h2>
+                                <p class="text-muted">Search through thousands of verified professionals</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-save me-2"></i>Save Search
+                                </button>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-heart me-2"></i>View Favorites
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Search Bar -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="Search by name, skills, or keywords...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option>All Types</option>
+                                            <option>Fashion Models</option>
+                                            <option>Commercial Models</option>
+                                            <option>Fitness Models</option>
+                                            <option>Photographers</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option>All Locations</option>
+                                            <option>New York, NY</option>
+                                            <option>Los Angeles, CA</option>
+                                            <option>Chicago, IL</option>
+                                            <option>Miami, FL</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option>Available Now</option>
+                                            <option>This Week</option>
+                                            <option>This Month</option>
+                                            <option>Next Month</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary w-100">
+                                            <i class="fas fa-search me-2"></i>Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Filters Sidebar -->
+                    <div class="col-md-3">
+                        <div class="search-filters sticky-top">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-filter me-2"></i>Filters
+                                </h6>
+                                <button class="btn btn-link btn-sm p-0">Clear All</button>
+                            </div>
+                            
+                            <!-- Professional Type -->
+                            <div class="filter-section">
+                                <h6 class="fw-bold mb-2">Professional Type</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fashion-models" checked>
+                                    <label class="form-check-label" for="fashion-models">Fashion Models (1,234)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="commercial-models">
+                                    <label class="form-check-label" for="commercial-models">Commercial Models (856)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fitness-models">
+                                    <label class="form-check-label" for="fitness-models">Fitness Models (423)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="photographers">
+                                    <label class="form-check-label" for="photographers">Photographers (567)</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Availability -->
+                            <div class="filter-section">
+                                <h6 class="fw-bold mb-2">Availability</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="available-now" checked>
+                                    <label class="form-check-label" for="available-now">
+                                        <span class="availability-dot available me-2"></span>Available Now (892)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="this-week">
+                                    <label class="form-check-label" for="this-week">
+                                        <span class="availability-dot tentative me-2"></span>This Week (456)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="travel-ready">
+                                    <label class="form-check-label" for="travel-ready">Travel Ready (234)</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Experience Level -->
+                            <div class="filter-section">
+                                <h6 class="fw-bold mb-2">Experience Level</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="entry-level">
+                                    <label class="form-check-label" for="entry-level">Entry Level (0-2 years)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="experienced">
+                                    <label class="form-check-label" for="experienced">Experienced (3-5 years)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="veteran">
+                                    <label class="form-check-label" for="veteran">Veteran (5+ years)</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Rate Range -->
+                            <div class="filter-section">
+                                <h6 class="fw-bold mb-2">Daily Rate Range</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rate-500">
+                                    <label class="form-check-label" for="rate-500">Under $500</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rate-1000">
+                                    <label class="form-check-label" for="rate-1000">$500 - $1,000</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rate-2000">
+                                    <label class="form-check-label" for="rate-2000">$1,000 - $2,000</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rate-2000plus">
+                                    <label class="form-check-label" for="rate-2000plus">$2,000+</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Rating -->
+                            <div class="filter-section">
+                                <h6 class="fw-bold mb-2">Minimum Rating</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating-4">
+                                    <label class="form-check-label" for="rating-4">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="far fa-star text-warning"></i> & up
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating-45">
+                                    <label class="form-check-label" for="rating-45">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star-half-alt text-warning"></i> & up
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div class="col-md-9">
+                        <!-- Results Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h5>Search Results</h5>
+                                <p class="text-muted mb-0">Showing 24 of 1,234 professionals</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="text-muted">Sort by:</span>
+                                <select class="form-select form-select-sm" style="width: auto;">
+                                    <option>Relevance</option>
+                                    <option>Rating (Highest)</option>
+                                    <option>Rate (Lowest)</option>
+                                    <option>Experience</option>
+                                    <option>Availability</option>
+                                </select>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary active">
+                                        <i class="fas fa-th"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Talent Grid -->
+                        <div class="row" id="talent-results">
+                            <!-- Results will be populated here -->
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="mt-4" id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar for Client Talent Search
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'client.html' },
+                { label: 'Search Talent', icon: 'fas fa-search', active: true },
+                { label: 'Projects', icon: 'fas fa-project-diagram', href: 'projects.html' },
+                { label: 'Saved Searches', icon: 'fas fa-bookmark', href: 'saved-searches.html' },
+                { label: 'Collections', icon: 'fas fa-folder', href: 'collections.html' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Messages', icon: 'fas fa-envelope', href: 'messages.html' },
+                { label: 'Contracts', icon: 'fas fa-file-contract', href: 'contracts.html' },
+                { label: 'Company Profile', icon: 'fas fa-building', href: 'company-profile.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Vogue Fashion', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Anna Client', 'Creative Director', 'Account');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Account', href: 'index.html' },
+                { label: 'Client Dashboard', href: 'client.html' },
+                { label: 'Talent Search' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Sample talent data with Unsplash images
+            const talents = [
+                {
+                    name: 'Emma Johnson',
+                    type: 'Fashion Model',
+                    location: 'New York, NY',
+                    rate: '$2,500/day',
+                    rating: '4.9',
+                    bookings: 156,
+                    experience: '5 years',
+                    availability: 'available',
+                    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Fashion', 'Editorial', 'Runway'],
+                    verified: true
+                },
+                {
+                    name: 'Michael Chen',
+                    type: 'Fitness Model',
+                    location: 'Los Angeles, CA',
+                    rate: '$2,000/day',
+                    rating: '4.8',
+                    bookings: 89,
+                    experience: '3 years',
+                    availability: 'busy',
+                    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Fitness', 'Commercial', 'Sports'],
+                    verified: true
+                },
+                {
+                    name: 'Sofia Rodriguez',
+                    type: 'Commercial Model',
+                    location: 'Miami, FL',
+                    rate: '$1,800/day',
+                    rating: '4.7',
+                    bookings: 234,
+                    experience: '4 years',
+                    availability: 'available',
+                    image: 'https://images.unsplash.com/photo-1494790108755-2616b612b29c?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Commercial', 'Lifestyle', 'Family'],
+                    verified: true
+                },
+                {
+                    name: 'David Kim',
+                    type: 'Fashion Model',
+                    location: 'New York, NY',
+                    rate: '$3,000/day',
+                    rating: '4.9',
+                    bookings: 67,
+                    experience: '2 years',
+                    availability: 'tentative',
+                    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Fashion', 'Runway', 'Editorial'],
+                    verified: true
+                },
+                {
+                    name: 'Isabella Martinez',
+                    type: 'Beauty Model',
+                    location: 'Chicago, IL',
+                    rate: '$2,200/day',
+                    rating: '4.8',
+                    bookings: 123,
+                    experience: '3 years',
+                    availability: 'available',
+                    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Beauty', 'Skincare', 'Commercial'],
+                    verified: true
+                },
+                {
+                    name: 'James Wilson',
+                    type: 'Commercial Model',
+                    location: 'Dallas, TX',
+                    rate: '$1,500/day',
+                    rating: '4.6',
+                    bookings: 178,
+                    experience: '6 years',
+                    availability: 'available',
+                    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Commercial', 'Corporate', 'Mature'],
+                    verified: true
+                },
+                {
+                    name: 'Aisha Patel',
+                    type: 'Fashion Model',
+                    location: 'Los Angeles, CA',
+                    rate: '$2,800/day',
+                    rating: '4.9',
+                    bookings: 145,
+                    experience: '4 years',
+                    availability: 'available',
+                    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Fashion', 'Luxury', 'International'],
+                    verified: true
+                },
+                {
+                    name: 'Ryan Thompson',
+                    type: 'Fitness Model',
+                    location: 'Miami, FL',
+                    rate: '$1,900/day',
+                    rating: '4.7',
+                    bookings: 98,
+                    experience: '3 years',
+                    availability: 'busy',
+                    image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=400&fit=crop&crop=faces',
+                    tags: ['Fitness', 'Athletic', 'Wellness'],
+                    verified: true
+                }
+            ];
+            
+            // Create talent cards
+            function createTalentCards(talents) {
+                return talents.map(talent => `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card talent-card h-100" onclick="viewTalentProfile('${talent.name}')">
+                            <div class="position-relative">
+                                <img src="${talent.image}" class="card-img-top talent-image" alt="${talent.name}">
+                                <div class="position-absolute top-0 start-0 p-2">
+                                    <span class="availability-dot ${talent.availability}"></span>
+                                    ${talent.verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Verified"></i>' : ''}
+                                </div>
+                                <div class="position-absolute top-0 end-0 p-2">
+                                    <button class="btn btn-light btn-sm rounded-circle" onclick="event.stopPropagation(); toggleFavorite('${talent.name}')">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 p-2">
+                                    <span class="badge rate-badge text-white">${talent.rate}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">${talent.name}</h5>
+                                    <div class="text-end">
+                                        <div class="text-warning">
+                                            <i class="fas fa-star"></i>
+                                            <span class="ms-1">${talent.rating}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-2">${talent.type}</p>
+                                <p class="small text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i> ${talent.location}
+                                </p>
+                                <div class="mb-3">
+                                    ${talent.tags.map(tag => `<span class="badge bg-light text-dark me-1">${tag}</span>`).join('')}
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span><i class="fas fa-briefcase me-1"></i> ${talent.bookings} jobs</span>
+                                    <span><i class="fas fa-clock me-1"></i> ${talent.experience}</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="event.stopPropagation(); contactTalent('${talent.name}')">
+                                        <i class="fas fa-envelope me-1"></i> Contact
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); bookTalent('${talent.name}')">
+                                        <i class="fas fa-calendar me-1"></i> Book
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Populate talent results
+            document.getElementById('talent-results').innerHTML = createTalentCards(talents);
+            
+            // Pagination
+            document.getElementById('pagination').innerHTML = createPagination(1, 52);
+        });
+        
+        function viewTalentProfile(talentName) {
+            alert('Opening profile for: ' + talentName);
+        }
+        
+        function toggleFavorite(talentName) {
+            alert('Toggling favorite for: ' + talentName);
+        }
+        
+        function contactTalent(talentName) {
+            alert('Opening message composer for: ' + talentName);
+        }
+        
+        function bookTalent(talentName) {
+            alert('Opening booking form for: ' + talentName);
+        }
+    </script>
+</body>
+</html>

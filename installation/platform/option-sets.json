@@ -1,0 +1,163 @@
+{
+  "optionSets": [
+    {
+      "name": "Countries",
+      "slug": "countries",
+      "description": "ISO 3166-1 country codes",
+      "type": "system",
+      "values": [
+        { "code": "AT", "name": "Austria", "native": "Österreich", "phone": "+43", "currency": "EUR", "emoji": "🇦🇹" },
+        { "code": "DE", "name": "Germany", "native": "Deutschland", "phone": "+49", "currency": "EUR", "emoji": "🇩🇪" },
+        { "code": "CH", "name": "Switzerland", "native": "Schweiz", "phone": "+41", "currency": "CHF", "emoji": "🇨🇭" },
+        { "code": "US", "name": "United States", "native": "United States", "phone": "+1", "currency": "USD", "emoji": "🇺🇸" },
+        { "code": "GB", "name": "United Kingdom", "native": "United Kingdom", "phone": "+44", "currency": "GBP", "emoji": "🇬🇧" },
+        { "code": "FR", "name": "France", "native": "France", "phone": "+33", "currency": "EUR", "emoji": "🇫🇷" },
+        { "code": "IT", "name": "Italy", "native": "Italia", "phone": "+39", "currency": "EUR", "emoji": "🇮🇹" },
+        { "code": "ES", "name": "Spain", "native": "España", "phone": "+34", "currency": "EUR", "emoji": "🇪🇸" },
+        { "code": "PT", "name": "Portugal", "native": "Portugal", "phone": "+351", "currency": "EUR", "emoji": "🇵🇹" },
+        { "code": "NL", "name": "Netherlands", "native": "Nederland", "phone": "+31", "currency": "EUR", "emoji": "🇳🇱" },
+        { "code": "BE", "name": "Belgium", "native": "België", "phone": "+32", "currency": "EUR", "emoji": "🇧🇪" },
+        { "code": "SE", "name": "Sweden", "native": "Sverige", "phone": "+46", "currency": "SEK", "emoji": "🇸🇪" },
+        { "code": "DK", "name": "Denmark", "native": "Danmark", "phone": "+45", "currency": "DKK", "emoji": "🇩🇰" },
+        { "code": "NO", "name": "Norway", "native": "Norge", "phone": "+47", "currency": "NOK", "emoji": "🇳🇴" },
+        { "code": "FI", "name": "Finland", "native": "Suomi", "phone": "+358", "currency": "EUR", "emoji": "🇫🇮" },
+        { "code": "PL", "name": "Poland", "native": "Polska", "phone": "+48", "currency": "PLN", "emoji": "🇵🇱" },
+        { "code": "CZ", "name": "Czech Republic", "native": "Česká republika", "phone": "+420", "currency": "CZK", "emoji": "🇨🇿" },
+        { "code": "HU", "name": "Hungary", "native": "Magyarország", "phone": "+36", "currency": "HUF", "emoji": "🇭🇺" },
+        { "code": "RO", "name": "Romania", "native": "România", "phone": "+40", "currency": "RON", "emoji": "🇷🇴" },
+        { "code": "BG", "name": "Bulgaria", "native": "България", "phone": "+359", "currency": "BGN", "emoji": "🇧🇬" }
+      ]
+    },
+    {
+      "name": "Currencies",
+      "slug": "currencies",
+      "description": "ISO 4217 currency codes",
+      "type": "system",
+      "values": [
+        { "code": "EUR", "symbol": "€", "name": "Euro", "decimal": 2 },
+        { "code": "USD", "symbol": "$", "name": "US Dollar", "decimal": 2 },
+        { "code": "GBP", "symbol": "£", "name": "British Pound", "decimal": 2 },
+        { "code": "CHF", "symbol": "Fr.", "name": "Swiss Franc", "decimal": 2 },
+        { "code": "SEK", "symbol": "kr", "name": "Swedish Krona", "decimal": 2 },
+        { "code": "DKK", "symbol": "kr", "name": "Danish Krone", "decimal": 2 },
+        { "code": "NOK", "symbol": "kr", "name": "Norwegian Krone", "decimal": 2 },
+        { "code": "PLN", "symbol": "zł", "name": "Polish Zloty", "decimal": 2 },
+        { "code": "CZK", "symbol": "Kč", "name": "Czech Koruna", "decimal": 2 },
+        { "code": "HUF", "symbol": "Ft", "name": "Hungarian Forint", "decimal": 0 },
+        { "code": "RON", "symbol": "lei", "name": "Romanian Leu", "decimal": 2 },
+        { "code": "BGN", "symbol": "лв", "name": "Bulgarian Lev", "decimal": 2 },
+        { "code": "JPY", "symbol": "¥", "name": "Japanese Yen", "decimal": 0 },
+        { "code": "CNY", "symbol": "¥", "name": "Chinese Yuan", "decimal": 2 },
+        { "code": "AUD", "symbol": "A$", "name": "Australian Dollar", "decimal": 2 },
+        { "code": "CAD", "symbol": "C$", "name": "Canadian Dollar", "decimal": 2 },
+        { "code": "BRL", "symbol": "R$", "name": "Brazilian Real", "decimal": 2 },
+        { "code": "MXN", "symbol": "$", "name": "Mexican Peso", "decimal": 2 },
+        { "code": "ARS", "symbol": "$", "name": "Argentine Peso", "decimal": 2 },
+        { "code": "INR", "symbol": "₹", "name": "Indian Rupee", "decimal": 2 }
+      ]
+    },
+    {
+      "name": "Languages",
+      "slug": "languages",
+      "description": "ISO 639-1 language codes",
+      "type": "system",
+      "values": [
+        { "code": "en-US", "name": "English (US)", "native": "English (US)", "rtl": false },
+        { "code": "en-GB", "name": "English (UK)", "native": "English (UK)", "rtl": false },
+        { "code": "de-DE", "name": "German (Germany)", "native": "Deutsch (Deutschland)", "rtl": false },
+        { "code": "de-AT", "name": "German (Austria)", "native": "Deutsch (Österreich)", "rtl": false },
+        { "code": "de-CH", "name": "German (Switzerland)", "native": "Deutsch (Schweiz)", "rtl": false },
+        { "code": "fr-FR", "name": "French (France)", "native": "Français (France)", "rtl": false },
+        { "code": "fr-CH", "name": "French (Switzerland)", "native": "Français (Suisse)", "rtl": false },
+        { "code": "it-IT", "name": "Italian", "native": "Italiano", "rtl": false },
+        { "code": "es-ES", "name": "Spanish (Spain)", "native": "Español (España)", "rtl": false },
+        { "code": "pt-PT", "name": "Portuguese (Portugal)", "native": "Português (Portugal)", "rtl": false },
+        { "code": "pt-BR", "name": "Portuguese (Brazil)", "native": "Português (Brasil)", "rtl": false },
+        { "code": "nl-NL", "name": "Dutch", "native": "Nederlands", "rtl": false },
+        { "code": "sv-SE", "name": "Swedish", "native": "Svenska", "rtl": false },
+        { "code": "da-DK", "name": "Danish", "native": "Dansk", "rtl": false },
+        { "code": "no-NO", "name": "Norwegian", "native": "Norsk", "rtl": false },
+        { "code": "fi-FI", "name": "Finnish", "native": "Suomi", "rtl": false },
+        { "code": "pl-PL", "name": "Polish", "native": "Polski", "rtl": false },
+        { "code": "cs-CZ", "name": "Czech", "native": "Čeština", "rtl": false },
+        { "code": "hu-HU", "name": "Hungarian", "native": "Magyar", "rtl": false },
+        { "code": "ro-RO", "name": "Romanian", "native": "Română", "rtl": false }
+      ]
+    },
+    {
+      "name": "Timezones",
+      "slug": "timezones",
+      "description": "IANA timezone database",
+      "type": "system",
+      "values": [
+        { "value": "Europe/Vienna", "name": "Vienna (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Berlin", "name": "Berlin (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Zurich", "name": "Zurich (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/London", "name": "London (GMT/BST)", "offset": "+00:00", "dst": true },
+        { "value": "Europe/Paris", "name": "Paris (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Rome", "name": "Rome (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Madrid", "name": "Madrid (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Amsterdam", "name": "Amsterdam (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Brussels", "name": "Brussels (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Stockholm", "name": "Stockholm (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Copenhagen", "name": "Copenhagen (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Oslo", "name": "Oslo (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "Europe/Helsinki", "name": "Helsinki (EET/EEST)", "offset": "+02:00", "dst": true },
+        { "value": "Europe/Warsaw", "name": "Warsaw (CET/CEST)", "offset": "+01:00", "dst": true },
+        { "value": "America/New_York", "name": "New York (EST/EDT)", "offset": "-05:00", "dst": true },
+        { "value": "America/Los_Angeles", "name": "Los Angeles (PST/PDT)", "offset": "-08:00", "dst": true },
+        { "value": "America/Chicago", "name": "Chicago (CST/CDT)", "offset": "-06:00", "dst": true },
+        { "value": "Asia/Tokyo", "name": "Tokyo (JST)", "offset": "+09:00", "dst": false },
+        { "value": "Asia/Shanghai", "name": "Shanghai (CST)", "offset": "+08:00", "dst": false },
+        { "value": "UTC", "name": "UTC", "offset": "+00:00", "dst": false }
+      ]
+    },
+    {
+      "name": "Date Formats",
+      "slug": "date-formats",
+      "description": "Common date format patterns",
+      "type": "system",
+      "values": [
+        { "value": "DD.MM.YYYY", "name": "31.12.2024 (Europe)", "example": "31.12.2024" },
+        { "value": "MM/DD/YYYY", "name": "12/31/2024 (US)", "example": "12/31/2024" },
+        { "value": "DD/MM/YYYY", "name": "31/12/2024 (UK)", "example": "31/12/2024" },
+        { "value": "YYYY-MM-DD", "name": "2024-12-31 (ISO)", "example": "2024-12-31" },
+        { "value": "DD MMM YYYY", "name": "31 Dec 2024", "example": "31 Dec 2024" },
+        { "value": "MMMM DD, YYYY", "name": "December 31, 2024", "example": "December 31, 2024" }
+      ]
+    },
+    {
+      "name": "Time Formats",
+      "slug": "time-formats",
+      "description": "Time format preferences",
+      "type": "system",
+      "values": [
+        { "value": "24h", "name": "24-hour (14:30)", "example": "14:30" },
+        { "value": "12h", "name": "12-hour (2:30 PM)", "example": "2:30 PM" }
+      ]
+    },
+    {
+      "name": "Industries",
+      "slug": "industries",
+      "description": "Business industry types",
+      "type": "business",
+      "values": [
+        { "value": "modeling", "name": "Modeling & Fashion", "icon": "user" },
+        { "value": "photography", "name": "Photography", "icon": "camera" },
+        { "value": "film", "name": "Film & Video", "icon": "film" },
+        { "value": "music", "name": "Music & Audio", "icon": "music" },
+        { "value": "arts", "name": "Arts & Design", "icon": "palette" },
+        { "value": "technology", "name": "Technology", "icon": "code" },
+        { "value": "consulting", "name": "Consulting", "icon": "briefcase" },
+        { "value": "education", "name": "Education", "icon": "graduation-cap" },
+        { "value": "healthcare", "name": "Healthcare", "icon": "heart" },
+        { "value": "finance", "name": "Finance", "icon": "dollar-sign" },
+        { "value": "retail", "name": "Retail", "icon": "shopping-cart" },
+        { "value": "hospitality", "name": "Hospitality", "icon": "home" },
+        { "value": "sports", "name": "Sports & Fitness", "icon": "activity" },
+        { "value": "events", "name": "Events", "icon": "calendar" },
+        { "value": "other", "name": "Other", "icon": "grid" }
+      ]
+    }
+  ]
+}

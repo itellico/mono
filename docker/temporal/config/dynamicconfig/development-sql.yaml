@@ -1,0 +1,85 @@
+# Temporal Dynamic Configuration for Development with PostgreSQL
+# This file contains runtime configuration that can be changed without restarting the server
+
+# Worker configuration
+worker.taskWorkerFactory.maxWorkersPerHost:
+  - value: 500
+    constraints: {}
+
+# Archival configuration (disabled for development)
+archival.state:
+  - value: "disabled"
+    constraints: {}
+
+# History service configuration
+history.maxAutoResetPoints:
+  - value: 20
+    constraints: {}
+
+# Matching service configuration
+matching.numTaskqueueWritePartitions:
+  - value: 4
+    constraints: {}
+
+matching.numTaskqueueReadPartitions:
+  - value: 4
+    constraints: {}
+
+# Frontend service configuration
+frontend.enableClientVersionCheck:
+  - value: true
+    constraints: {}
+
+# Persistence configuration
+persistence.numHistoryShards:
+  - value: 4
+    constraints: {}
+
+# Visibility configuration
+visibility.validSearchAttributes:
+  - value:
+      BinaryChecksums: "Keyword"
+      BuildIds: "Keyword"
+      CloseTime: "Datetime"
+      CustomBoolField: "Bool"
+      CustomDatetimeField: "Datetime"
+      CustomDoubleField: "Double"
+      CustomIntField: "Int"
+      CustomKeywordField: "Keyword"
+      CustomStringField: "Text"
+      ExecutionDuration: "Int"
+      ExecutionStatus: "Keyword"
+      ExecutionTime: "Datetime"
+      HistoryLength: "Int"
+      RunId: "Keyword"
+      StartTime: "Datetime"
+      TaskQueue: "Keyword"
+      TemporalChangeVersion: "Keyword"
+      WorkflowId: "Keyword"
+      WorkflowType: "Keyword"
+    constraints: {}
+
+# Development-specific settings
+system.enableActivityLocalDispatchByDomain:
+  - value: true
+    constraints: {}
+
+# Metrics configuration
+system.metrics.perUnitLimit:
+  - value: 100
+    constraints: {}
+
+# Namespace configuration
+system.namespaceDefaultRetentionDays:
+  - value: 3
+    constraints: {}
+
+# Limit configuration for development
+limit.maxIDLength:
+  - value: 1000
+    constraints: {}
+
+# Search attributes configuration
+searchattributes.mapper.customFieldMaxLength:
+  - value: 2048
+    constraints: {}

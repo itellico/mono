@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "name": "itellico Mono Installation",
+  "description": "Complete installation configuration for itellico Mono",
+  "lastUpdated": "2025-01-13",
+  "industries": [
+    "modeling",
+    "photography",
+    "film",
+    "casting",
+    "creative"
+  ],
+  "dataFiles": {
+    "systemTags": "./data/system-tags.json",
+    "industryTemplates": "./data/industry-templates.json",
+    "jobCategories": "./data/job-categories.json",
+    "gigCategories": "./data/gig-categories.json",
+    "modelSchemas": "./data/model-schemas.json",
+    "optionSets": "./data/option-sets.json",
+    "permissions": "./data/permissions.json",
+    "roles": "./data/roles.json",
+    "emailTemplates": "./data/email-templates.json",
+    "workflowTemplates": "./data/workflow-templates.json"
+  },
+  "seedingOrder": [
+    "roles",
+    "permissions",
+    "systemTags",
+    "optionSets",
+    "modelSchemas",
+    "industryTemplates",
+    "jobCategories",
+    "gigCategories",
+    "emailTemplates",
+    "workflowTemplates"
+  ],
+  "tenantDefaults": {
+    "defaultIndustry": "modeling",
+    "defaultSubscription": "professional",
+    "defaultFeatures": [
+      "basic_messaging",
+      "media_upload",
+      "profile_management"
+    ]
+  }
+}

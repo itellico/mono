@@ -1,0 +1,66 @@
+# Test Infrastructure Docker Compose
+# This file sets up isolated test databases and services
+
+services:
+  # Test PostgreSQL Database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: mono-test-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mono_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: testpass123
+    volumes:
+      # Use tmpfs for speed (data stored in RAM)
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Test Redis
+  redis-test:
+    image: redis:7-alpine
+    container_name: mono-test-redis
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+      --appendonly no
+      --save ""
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Test Mailpit (for email testing)
+  mailpit-test:
+    image: axllent/mailpit:latest
+    container_name: mono-test-mailpit
+    ports:
+      - "4026:8025"  # Web UI (moved from 8026 to avoid 8000 range)
+      - "1026:1025"  # SMTP
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  # OWASP ZAP for security testing (optional)
+  zap-test:
+    image: owasp/zap2docker-stable
+    container_name: mono-test-zap
+    ports:
+      - "4090:8080"  # Moved from 8090 to avoid 8000 range
+    command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=testkey123
+    profiles:
+      - security
+
+networks:
+  default:
+    name: mono-test-network

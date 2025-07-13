@@ -1,0 +1,46 @@
+{
+  "tenant": {
+    "name": "Main Platform",
+    "domain": "localhost",
+    "slug": "main",
+    "description": "Primary platform tenant for development and administration",
+    "is_active": true,
+    "tier": "platform",
+    "features": [
+      "user_management",
+      "tenant_management",
+      "rbac",
+      "audit_logs",
+      "api_access",
+      "webhooks",
+      "analytics",
+      "notifications",
+      "file_storage",
+      "cache_management"
+    ],
+    "settings": {
+      "allowRegistration": true,
+      "requireEmailVerification": true,
+      "allowPasswordReset": true,
+      "defaultCurrency": "EUR",
+      "defaultLanguage": "en-US",
+      "defaultTimezone": "Europe/Vienna",
+      "dateFormat": "DD.MM.YYYY",
+      "timeFormat": "24h",
+      "maxUsers": -1,
+      "maxStorage": -1,
+      "enableAPI": true,
+      "enableWebhooks": true,
+      "theme": {
+        "primaryColor": "#1a73e8",
+        "secondaryColor": "#ea4335",
+        "mode": "light"
+      }
+    },
+    "metadata": {
+      "industry": "platform",
+      "size": "enterprise",
+      "type": "saas"
+    }
+  }
+}

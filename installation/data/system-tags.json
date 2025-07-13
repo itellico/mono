@@ -1,0 +1,537 @@
+{
+  "version": "1.0.0",
+  "description": "System-wide tags available across all tenants",
+  "tags": {
+    "profile": {
+      "skills": [
+        {
+          "name": "Runway",
+          "slug": "runway",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Experience in runway modeling and fashion shows"
+        },
+        {
+          "name": "Editorial",
+          "slug": "editorial",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Magazine and editorial photography experience"
+        },
+        {
+          "name": "Commercial",
+          "slug": "commercial",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Commercial advertising and product modeling"
+        },
+        {
+          "name": "Fitness",
+          "slug": "fitness",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Athletic and fitness modeling"
+        },
+        {
+          "name": "Beauty",
+          "slug": "beauty",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Beauty, skincare, and cosmetics modeling"
+        },
+        {
+          "name": "Lingerie",
+          "slug": "lingerie",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Lingerie and intimate apparel modeling"
+        },
+        {
+          "name": "Plus Size",
+          "slug": "plus-size",
+          "category": "skills",
+          "isSystem": true,
+          "description": "Plus size and curve modeling"
+        }
+      ],
+      "experience": [
+        {
+          "name": "New Face",
+          "slug": "new-face",
+          "category": "experience",
+          "isSystem": true,
+          "description": "Brand new to modeling industry"
+        },
+        {
+          "name": "Beginner",
+          "slug": "beginner",
+          "category": "experience",
+          "isSystem": true,
+          "description": "Less than 1 year experience"
+        },
+        {
+          "name": "Intermediate",
+          "slug": "intermediate",
+          "category": "experience",
+          "isSystem": true,
+          "description": "1-3 years professional experience"
+        },
+        {
+          "name": "Professional",
+          "slug": "professional",
+          "category": "experience",
+          "isSystem": true,
+          "description": "3+ years professional experience"
+        },
+        {
+          "name": "Expert",
+          "slug": "expert",
+          "category": "experience",
+          "isSystem": true,
+          "description": "Industry veteran with extensive portfolio"
+        }
+      ],
+      "style": [
+        {
+          "name": "High Fashion",
+          "slug": "high-fashion",
+          "category": "style",
+          "isSystem": true,
+          "description": "Haute couture and luxury fashion"
+        },
+        {
+          "name": "Streetwear",
+          "slug": "streetwear",
+          "category": "style",
+          "isSystem": true,
+          "description": "Urban and street fashion"
+        },
+        {
+          "name": "Classic",
+          "slug": "classic",
+          "category": "style",
+          "isSystem": true,
+          "description": "Timeless, elegant style"
+        },
+        {
+          "name": "Avant-garde",
+          "slug": "avant-garde",
+          "category": "style",
+          "isSystem": true,
+          "description": "Experimental and artistic fashion"
+        },
+        {
+          "name": "Natural",
+          "slug": "natural",
+          "category": "style",
+          "isSystem": true,
+          "description": "Natural, minimal makeup looks"
+        },
+        {
+          "name": "Glamour",
+          "slug": "glamour",
+          "category": "style",
+          "isSystem": true,
+          "description": "Glamorous and sophisticated style"
+        }
+      ],
+      "availability": [
+        {
+          "name": "Available Now",
+          "slug": "available-now",
+          "category": "availability",
+          "isSystem": true,
+          "description": "Currently available for bookings"
+        },
+        {
+          "name": "Weekends Only",
+          "slug": "weekends-only",
+          "category": "availability",
+          "isSystem": true,
+          "description": "Available on weekends"
+        },
+        {
+          "name": "Flexible",
+          "slug": "flexible",
+          "category": "availability",
+          "isSystem": true,
+          "description": "Flexible availability with notice"
+        },
+        {
+          "name": "Traveling",
+          "slug": "traveling",
+          "category": "availability",
+          "isSystem": true,
+          "description": "Currently traveling, limited availability"
+        },
+        {
+          "name": "Local Only",
+          "slug": "local-only",
+          "category": "availability",
+          "isSystem": true,
+          "description": "Available for local jobs only"
+        }
+      ]
+    },
+    "job": {
+      "urgency": [
+        {
+          "name": "Urgent",
+          "slug": "urgent",
+          "category": "urgency",
+          "isSystem": true,
+          "description": "Needs immediate attention"
+        },
+        {
+          "name": "ASAP",
+          "slug": "asap",
+          "category": "urgency",
+          "isSystem": true,
+          "description": "As soon as possible"
+        },
+        {
+          "name": "Flexible",
+          "slug": "flexible",
+          "category": "urgency",
+          "isSystem": true,
+          "description": "Flexible timeline"
+        },
+        {
+          "name": "Planned",
+          "slug": "planned",
+          "category": "urgency",
+          "isSystem": true,
+          "description": "Scheduled in advance"
+        },
+        {
+          "name": "Last Minute",
+          "slug": "last-minute",
+          "category": "urgency",
+          "isSystem": true,
+          "description": "Very short notice"
+        }
+      ],
+      "type": [
+        {
+          "name": "Paid",
+          "slug": "paid",
+          "category": "type",
+          "isSystem": true,
+          "description": "Paid job opportunity"
+        },
+        {
+          "name": "TFP",
+          "slug": "tfp",
+          "category": "type",
+          "isSystem": true,
+          "description": "Time for Print - portfolio building"
+        },
+        {
+          "name": "Volunteer",
+          "slug": "volunteer",
+          "category": "type",
+          "isSystem": true,
+          "description": "Volunteer/charity work"
+        },
+        {
+          "name": "Internship",
+          "slug": "internship",
+          "category": "type",
+          "isSystem": true,
+          "description": "Learning opportunity"
+        },
+        {
+          "name": "Test Shoot",
+          "slug": "test-shoot",
+          "category": "type",
+          "isSystem": true,
+          "description": "Test or practice shoot"
+        }
+      ],
+      "duration": [
+        {
+          "name": "Half Day",
+          "slug": "half-day",
+          "category": "duration",
+          "isSystem": true,
+          "description": "4 hours or less"
+        },
+        {
+          "name": "Full Day",
+          "slug": "full-day",
+          "category": "duration",
+          "isSystem": true,
+          "description": "8 hour day"
+        },
+        {
+          "name": "Multi-Day",
+          "slug": "multi-day",
+          "category": "duration",
+          "isSystem": true,
+          "description": "Multiple days"
+        },
+        {
+          "name": "Week Long",
+          "slug": "week-long",
+          "category": "duration",
+          "isSystem": true,
+          "description": "Full week engagement"
+        },
+        {
+          "name": "Ongoing",
+          "slug": "ongoing",
+          "category": "duration",
+          "isSystem": true,
+          "description": "Long-term or recurring"
+        }
+      ]
+    },
+    "gig": {
+      "service": [
+        {
+          "name": "Portfolio",
+          "slug": "portfolio",
+          "category": "service",
+          "isSystem": true,
+          "description": "Portfolio development shoots"
+        },
+        {
+          "name": "Headshots",
+          "slug": "headshots",
+          "category": "service",
+          "isSystem": true,
+          "description": "Professional headshots"
+        },
+        {
+          "name": "Comp Cards",
+          "slug": "comp-cards",
+          "category": "service",
+          "isSystem": true,
+          "description": "Composite card creation"
+        },
+        {
+          "name": "Lifestyle",
+          "slug": "lifestyle",
+          "category": "service",
+          "isSystem": true,
+          "description": "Lifestyle photography"
+        },
+        {
+          "name": "Product",
+          "slug": "product",
+          "category": "service",
+          "isSystem": true,
+          "description": "Product photography with model"
+        },
+        {
+          "name": "Fashion",
+          "slug": "fashion",
+          "category": "service",
+          "isSystem": true,
+          "description": "Fashion photography services"
+        }
+      ],
+      "delivery": [
+        {
+          "name": "Instant",
+          "slug": "instant",
+          "category": "delivery",
+          "isSystem": true,
+          "description": "Same day delivery"
+        },
+        {
+          "name": "24 Hours",
+          "slug": "24-hours",
+          "category": "delivery",
+          "isSystem": true,
+          "description": "Next day delivery"
+        },
+        {
+          "name": "3 Days",
+          "slug": "3-days",
+          "category": "delivery",
+          "isSystem": true,
+          "description": "3 day turnaround"
+        },
+        {
+          "name": "1 Week",
+          "slug": "1-week",
+          "category": "delivery",
+          "isSystem": true,
+          "description": "1 week delivery"
+        },
+        {
+          "name": "Flexible",
+          "slug": "flexible",
+          "category": "delivery",
+          "isSystem": true,
+          "description": "Flexible delivery time"
+        }
+      ],
+      "level": [
+        {
+          "name": "Budget",
+          "slug": "budget",
+          "category": "level",
+          "isSystem": true,
+          "description": "Budget-friendly option"
+        },
+        {
+          "name": "Standard",
+          "slug": "standard",
+          "category": "level",
+          "isSystem": true,
+          "description": "Standard service level"
+        },
+        {
+          "name": "Premium",
+          "slug": "premium",
+          "category": "level",
+          "isSystem": true,
+          "description": "Premium quality service"
+        },
+        {
+          "name": "Luxury",
+          "slug": "luxury",
+          "category": "level",
+          "isSystem": true,
+          "description": "Luxury service with extras"
+        },
+        {
+          "name": "VIP",
+          "slug": "vip",
+          "category": "level",
+          "isSystem": true,
+          "description": "VIP treatment and priority"
+        }
+      ]
+    },
+    "media": {
+      "type": [
+        {
+          "name": "Portfolio",
+          "slug": "portfolio",
+          "category": "type",
+          "isSystem": true,
+          "description": "Portfolio images"
+        },
+        {
+          "name": "Test Shoot",
+          "slug": "test-shoot",
+          "category": "type",
+          "isSystem": true,
+          "description": "Test shoot images"
+        },
+        {
+          "name": "Campaign",
+          "slug": "campaign",
+          "category": "type",
+          "isSystem": true,
+          "description": "Campaign photography"
+        },
+        {
+          "name": "Editorial",
+          "slug": "editorial",
+          "category": "type",
+          "isSystem": true,
+          "description": "Editorial images"
+        },
+        {
+          "name": "Behind the Scenes",
+          "slug": "behind-scenes",
+          "category": "type",
+          "isSystem": true,
+          "description": "BTS content"
+        },
+        {
+          "name": "Polaroid",
+          "slug": "polaroid",
+          "category": "type",
+          "isSystem": true,
+          "description": "Polaroid/instant photos"
+        }
+      ],
+      "style": [
+        {
+          "name": "Color",
+          "slug": "color",
+          "category": "style",
+          "isSystem": true,
+          "description": "Color photography"
+        },
+        {
+          "name": "Black & White",
+          "slug": "black-white",
+          "category": "style",
+          "isSystem": true,
+          "description": "Black and white photography"
+        },
+        {
+          "name": "Film",
+          "slug": "film",
+          "category": "style",
+          "isSystem": true,
+          "description": "Shot on film"
+        },
+        {
+          "name": "Digital",
+          "slug": "digital",
+          "category": "style",
+          "isSystem": true,
+          "description": "Digital photography"
+        },
+        {
+          "name": "Retouched",
+          "slug": "retouched",
+          "category": "style",
+          "isSystem": true,
+          "description": "Professionally retouched"
+        },
+        {
+          "name": "Raw",
+          "slug": "raw",
+          "category": "style",
+          "isSystem": true,
+          "description": "Unedited/raw images"
+        }
+      ],
+      "usage": [
+        {
+          "name": "Web",
+          "slug": "web",
+          "category": "usage",
+          "isSystem": true,
+          "description": "Web usage rights"
+        },
+        {
+          "name": "Print",
+          "slug": "print",
+          "category": "usage",
+          "isSystem": true,
+          "description": "Print usage rights"
+        },
+        {
+          "name": "Social Media",
+          "slug": "social-media",
+          "category": "usage",
+          "isSystem": true,
+          "description": "Social media usage"
+        },
+        {
+          "name": "Billboard",
+          "slug": "billboard",
+          "category": "usage",
+          "isSystem": true,
+          "description": "Billboard/outdoor advertising"
+        },
+        {
+          "name": "Exclusive",
+          "slug": "exclusive",
+          "category": "usage",
+          "isSystem": true,
+          "description": "Exclusive usage rights"
+        }
+      ]
+    }
+  }
+}

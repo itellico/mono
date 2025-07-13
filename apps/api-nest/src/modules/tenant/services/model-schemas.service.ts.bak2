@@ -1,0 +1,544 @@
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { RedisService } from '@common/redis/redis.service';
+import { CreateModelSchemaDto } from '../dto/create-model-schema.dto';
+import { UpdateModelSchemaDto } from '../dto/update-model-schema.dto';
+import { BulkOperationDto } from '../dto/bulk-operation.dto';
+import { randomUUID } from 'crypto';
+
+@Injectable()
+export class ModelSchemasService {
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
+
+  async getModelSchemas(tenantId: string, query: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    type?: string;
+    status?: string;
+  }) {
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
+    const where: any = { tenant_id };
+
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { description: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (query.type) {
+      where.type = query.type;
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    const [schemas, total] = await Promise.all([
+      // this.prisma.modelSchema.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+        include: {
+          _count: {
+            select: { instances: true },
+          },
+        },
+      }),
+      0,
+    ]);
+
+    return {
+      success: true,
+      data: {
+        items: schemas,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async getModelSchema(tenantId: string, schemaId: string) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+      include: {
+        fields: true,
+        versions: {
+          take: 5,
+          orderBy: { created_at: 'desc' },
+        },
+        _count: {
+          select: { instances: true },
+        },
+      },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    return {
+      success: true,
+      data: schema,
+    };
+  }
+
+  async createModelSchema(
+    tenant_id: string, 
+    user_id: string, 
+    createModelSchemaDto: CreateModelSchemaDto
+  ) {
+    // Check for duplicate name
+    const existing = await // this.prisma.modelSchema.findFirst({
+      where: {
+        tenant_id,
+        name: createModelSchemaDto.name,
+      },
+    });
+
+    if (existing) {
+      throw new BadRequestException('Schema with this name already exists');
+    }
+
+    const schema = await // this.prisma.modelSchema.create({
+      data: {
+        id: randomUUID(),
+        tenant_id,
+        name: createModelSchemaDto.name,
+        description: createModelSchemaDto.description,
+        type: createModelSchemaDto.type,
+        category: createModelSchemaDto.category,
+        fields: {
+          create: createModelSchemaDto.fields.map((field, index) => ({
+            ...field,
+            order: index,
+          })),
+        },
+        settings: createModelSchemaDto.settings || {},
+        tags: createModelSchemaDto.tags || [],
+        metadata: createModelSchemaDto.metadata || {},
+        createdBy: user_id,
+        version: 1,
+      },
+      include: { fields: true },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:schemas`);
+
+    return {
+      success: true,
+      data: schema,
+    };
+  }
+
+  async updateModelSchema(
+    tenant_id: string,
+    schemaId: string,
+    user_id: string,
+    updateModelSchemaDto: UpdateModelSchemaDto
+  ) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    if (schema.isLocked) {
+      throw new BadRequestException('Schema is locked and cannot be modified');
+    }
+
+    // Create version backup
+    await this.prisma.schemaVersion.create({
+      data: {
+        schemaId,
+        version: schema.version,
+        data: schema as any,
+        createdBy: user_id,
+      },
+    });
+
+    // Update schema
+    const updated = await // this.prisma.modelSchema.update({
+      where: { id: schemaId },
+      data: {
+        ...updateModelSchemaDto,
+        version: { increment: 1 },
+        updatedBy: user_id,
+      },
+      include: { fields: true },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:schemas`);
+    await this.redis.del(`schema:${schemaId}`);
+
+    return {
+      success: true,
+      data: updated,
+    };
+  }
+
+  async deleteModelSchema(tenantId: string, schemaId: string) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+      include: {
+        _count: {
+          select: { instances: true },
+        },
+      },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    if (schema._count.instances > 0) {
+      throw new BadRequestException('Cannot delete schema with existing instances');
+    }
+
+    await // this.prisma.modelSchema.delete({
+      where: { id: schemaId },
+    });
+
+    // Clear cache
+    await this.redis.del(`tenant:${tenant_id}:schemas`);
+    await this.redis.del(`schema:${schemaId}`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Schema deleted successfully',
+      },
+    };
+  }
+
+  async bulkCreateSchemas(
+    tenant_id: string,
+    user_id: string,
+    schemas: CreateModelSchemaDto[]
+  ) {
+    const created = await Promise.all(
+      schemas.map(schema => 
+        this.createModelSchema(tenantId, userId, schema)
+      )
+    );
+
+    return {
+      success: true,
+      data: {
+        created: created.length,
+        schemas: created.map(r => r.data),
+      },
+    };
+  }
+
+  async bulkUpdateSchemas(
+    tenant_id: string,
+    user_id: string,
+    updates: BulkOperationDto<UpdateModelSchemaDto>
+  ) {
+    const updated = await Promise.all(
+      updates.ids.map(id => 
+        this.updateModelSchema(tenantId, id, userId, updates.data)
+      )
+    );
+
+    return {
+      success: true,
+      data: {
+        updated: updated.length,
+        schemas: updated.map(r => r.data),
+      },
+    };
+  }
+
+  async bulkDeleteSchemas(tenantId: string, ids: string[]) {
+    const deleted = await Promise.all(
+      ids.map(id => this.deleteModelSchema(tenantId, id))
+    );
+
+    return {
+      success: true,
+      data: {
+        deleted: deleted.length,
+      },
+    };
+  }
+
+  async bulkUpsertSchemas(
+    tenant_id: string,
+    user_id: string,
+    schemas: CreateModelSchemaDto[]
+  ) {
+    const results = await Promise.all(
+      schemas.map(async (schema) => {
+        const existing = await // this.prisma.modelSchema.findFirst({
+          where: {
+            tenant_id,
+            name: schema.name,
+          },
+        });
+
+        if (existing) {
+          return this.updateModelSchema(
+            tenantId, 
+            existing.id, 
+            userId, 
+            schema as UpdateModelSchemaDto
+          );
+        } else {
+          return this.createModelSchema(tenantId, userId, schema);
+        }
+      })
+    );
+
+    return {
+      success: true,
+      data: {
+        processed: results.length,
+        schemas: results.map(r => r.data),
+      },
+    };
+  }
+
+  async exportSchemas(tenantId: string, query: {
+    format?: 'json' | 'csv' | 'yaml';
+    ids?: string[];
+  }) {
+    const where: any = { tenant_id };
+    
+    if (query.ids && query.ids.length > 0) {
+      where.id = { in: query.ids };
+    }
+
+    const schemas = await // this.prisma.modelSchema.findMany({
+      where,
+      include: { fields: true },
+    });
+
+    // TODO: Format data based on requested format
+    
+    return {
+      success: true,
+      data: {
+        format: query.format || 'json',
+        schemas,
+      },
+    };
+  }
+
+  async getImportTemplate(tenantId: string) {
+    return {
+      success: true,
+      data: {
+        template: {
+          name: 'string (required)',
+          description: 'string (optional)',
+          type: 'entity | form | report | workflow | integration',
+          category: 'string (optional)',
+          fields: [
+            {
+              name: 'string (required)',
+              type: 'string | number | boolean | date | etc.',
+              label: 'string (optional)',
+              required: 'boolean (optional)',
+              unique: 'boolean (optional)',
+              defaultValue: 'any (optional)',
+              validation: {
+                min: 'number (optional)',
+                max: 'number (optional)',
+                pattern: 'string (optional)',
+                enum: 'array (optional)',
+              },
+            },
+          ],
+          settings: {
+            searchable: 'boolean (optional)',
+            versionable: 'boolean (optional)',
+            auditable: 'boolean (optional)',
+            softDelete: 'boolean (optional)',
+          },
+          tags: ['string array (optional)'],
+        },
+      },
+    };
+  }
+
+  async importAppend(tenantId: string, user_id: string, data: {
+    schemas: any[];
+    format: 'json' | 'csv' | 'yaml';
+  }) {
+    // TODO: Parse data based on format
+    const schemas = data.schemas as CreateModelSchemaDto[];
+    
+    return this.bulkCreateSchemas(tenantId, userId, schemas);
+  }
+
+  async importReplace(tenantId: string, user_id: string, data: {
+    schemas: any[];
+    format: 'json' | 'csv' | 'yaml';
+  }) {
+    // Delete existing schemas
+    const existing = await // this.prisma.modelSchema.findMany({
+      where: { tenant_id },
+      select: { id: true },
+    });
+
+    if (existing.length > 0) {
+      await this.bulkDeleteSchemas(tenantId, existing.map(s => s.id));
+    }
+
+    // Import new schemas
+    return this.importAppend(tenantId, userId, data);
+  }
+
+  async validateAgainstSchema(tenantId: string, schemaId: string, data: any) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+      include: { fields: true },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    // TODO: Implement validation logic based on schema fields
+    const errors: any[] = [];
+
+    return {
+      success: true,
+      data: {
+        valid: errors.length === 0,
+        errors,
+      },
+    };
+  }
+
+  async generateSampleData(tenantId: string, schemaId: string, count: number) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+      include: { fields: true },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    // TODO: Implement sample data generation based on field types
+    const samples = [];
+
+    for (let i = 0; i < count; i++) {
+      const sample: any = {};
+      
+      for (const field of schema.fields) {
+        // Generate sample data based on field type
+        switch (field.type) {
+          case 'string':
+            sample[field.name] = `Sample ${field.name} ${i + 1}`;
+            break;
+          case 'number':
+            sample[field.name] = Math.floor(Math.random() * 100);
+            break;
+          case 'boolean':
+            sample[field.name] = Math.random() > 0.5;
+            break;
+          case 'date':
+            sample[field.name] = new Date().toISOString();
+            break;
+          default:
+            sample[field.name] = null;
+        }
+      }
+      
+      samples.push(sample);
+    }
+
+    return {
+      success: true,
+      data: samples,
+    };
+  }
+
+  async getSchemaVersions(tenantId: string, schemaId: string) {
+    const schema = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+    });
+
+    if (!schema) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    const versions = await this.prisma.schemaVersion.findMany({
+      where: { schemaId },
+      orderBy: { created_at: 'desc' },
+      select: {
+        id: true,
+        version: true,
+        created_at: true,
+        createdBy: true,
+      },
+    });
+
+    return {
+      success: true,
+      data: versions,
+    };
+  }
+
+  async cloneSchema(
+    tenant_id: string,
+    schemaId: string,
+    user_id: string,
+    data: { name: string; description?: string }
+  ) {
+    const source = await // this.prisma.modelSchema.findFirst({
+      where: { id: schemaId, tenantId },
+      include: { fields: true },
+    });
+
+    if (!source) {
+      throw new NotFoundException('Model schema not found');
+    }
+
+    const clone = await this.createModelSchema(tenantId, userId, {
+      name: data.name,
+      description: data.description || `Clone of ${source.name}`,
+      type: source.type,
+      category: source.category,
+      fields: source.fields.map(f => ({
+        name: f.name,
+        type: f.type as any,
+        label: f.label,
+        required: f.required,
+        unique: f.unique,
+        defaultValue: f.defaultValue,
+        validation: f.validation as any,
+        metadata: f.metadata as any,
+      })),
+      settings: source.settings as any,
+      tags: [...source.tags, 'cloned'],
+      metadata: {
+        ...source.metadata as any,
+        clonedFrom: schemaId,
+        clonedAt: new Date().toISOString(),
+      },
+    });
+
+    return clone;
+  }
+}

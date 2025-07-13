@@ -1,0 +1,50 @@
+<!-- 
+  Reusable Alert Component
+  Usage: {% include "components/alert.mjml" with { type: "info", title: "Important", message: "This is important information" } %}
+-->
+
+{% set alertType = type or "info" %}
+{% set alertTitle = title %}
+{% set alertMessage = message %}
+
+{% if alertType == "success" %}
+  {% set bgColor = "#f0fdf4" %}
+  {% set borderColor = "#16a34a" %}
+  {% set textColor = "#15803d" %}
+  {% set icon = "✓" %}
+{% elif alertType == "warning" %}
+  {% set bgColor = "#fffbeb" %}
+  {% set borderColor = "#f59e0b" %}
+  {% set textColor = "#d97706" %}
+  {% set icon = "⚠" %}
+{% elif alertType == "error" %}
+  {% set bgColor = "#fef2f2" %}
+  {% set borderColor = "#dc2626" %}
+  {% set textColor = "#dc2626" %}
+  {% set icon = "✕" %}
+{% else %}
+  {% set bgColor = "#f0f9ff" %}
+  {% set borderColor = "#3b82f6" %}
+  {% set textColor = "#1d4ed8" %}
+  {% set icon = "ℹ" %}
+{% endif %}
+
+<mj-section 
+  background-color="{{ bgColor }}" 
+  border-left="4px solid {{ borderColor }}"
+  padding="20px"
+>
+  <mj-column>
+    {% if alertTitle %}
+    <mj-text color="{{ textColor }}" font-size="16px" font-weight="600">
+      {{ icon }} {{ alertTitle }}
+    </mj-text>
+    {% endif %}
+    
+    {% if alertMessage %}
+    <mj-text color="{{ textColor }}" font-size="14px" padding-top="{% if alertTitle %}8px{% else %}0{% endif %}">
+      {{ alertMessage }}
+    </mj-text>
+    {% endif %}
+  </mj-column>
+</mj-section>

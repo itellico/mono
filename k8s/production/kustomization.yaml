@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mono-production
+
+resources:
+  - ../base
+  - namespace.yaml
+  - hpa.yaml
+  - network-policy.yaml
+
+images:
+  - name: nestjs-api
+    newName: ghcr.io/itellico/mono-nestjs-api
+    newTag: latest
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - service-patch.yaml
+
+commonLabels:
+  environment: production
+  version: v1
+
+configMapGenerator:
+  - name: nestjs-production-config
+    literals:
+      - NODE_ENV=production
+      - LOG_LEVEL=warn
+      - METRICS_ENABLED=true
+
+secretGenerator:
+  - name: nestjs-production-secrets
+    literals:
+      - JWT_SECRET=production-jwt-secret-replace-with-real
+      - COOKIE_SECRET=production-cookie-secret-replace-with-real

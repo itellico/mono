@@ -1,0 +1,510 @@
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { RedisService } from '@common/redis/redis.service';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { InviteUserDto } from '../dto/invite-user.dto';
+import { UpdatePermissionsDto } from '../dto/update-permissions.dto';
+import { randomBytes } from 'crypto';
+import { EmailService } from '@modules/shared/email.service';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+    private emailService: EmailService,
+  ) {}
+
+  async getAccountUsers(accountId: string, query: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      accounts: {
+        some: {
+          account_id,
+        },
+      },
+    };
+
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { email: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          is_active: true,
+          created_at: true,
+          accounts: {
+            where: { account_id },
+            select: {
+              role: true,
+              joinedAt: true,
+            },
+          },
+        },
+        orderBy: { created_at: 'desc' },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        items: users.map(user => ({
+          ...user,
+          role: user.accounts[0]?.role,
+          joinedAt: user.accounts[0]?.joinedAt,
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    };
+  }
+
+  async getAccountUser(accountId: string, user_id: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: user_id,
+        accounts: {
+          some: { account_id },
+        },
+      },
+      include: {
+        accounts: {
+          where: { account_id },
+          include: {
+            permissions: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found in this account');
+    }
+
+    return {
+      success: true,
+      data: {
+        ...user,
+        role: user.accounts[0]?.role,
+        permissions: user.accounts[0]?.permissions || [],
+      },
+    };
+  }
+
+  async createAccountUser(accountId: string, createdBy: string, createUserDto: CreateUserDto) {
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
+      // Check if already in account
+      const inAccount = await this.prisma.accountUser.findUnique({
+        where: {
+          userId_account_id: {
+            user_id: existingUser.id,
+            account_id,
+          },
+        },
+      });
+
+      if (inAccount) {
+        throw new ConflictException('User already exists in this account');
+      }
+
+      // Add existing user to account
+      await this.prisma.accountUser.create({
+        data: {
+          user_id: existingUser.id,
+          account_id,
+          role: createUserDto.role,
+        },
+      });
+
+      return {
+        success: true,
+        data: {
+          message: 'Existing user added to account',
+          user_id: existingUser.id,
+        },
+      };
+    }
+
+    // Create new user
+    const temporaryPassword = randomBytes(16).toString('hex');
+    
+    const user = await this.prisma.user.create({
+      data: {
+        email: createUserDto.email,
+        name: createUserDto.name,
+        password: temporaryPassword, // Should be hashed in real implementation
+        accounts: {
+          create: {
+            account_id,
+            role: createUserDto.role,
+          },
+        },
+      },
+    });
+
+    // Send invitation email
+    await this.emailService.sendAccountInvitation({
+      email: user.email,
+      name: user.name,
+      accountName: 'Account Name', // Get from account
+      invitedBy: createdBy,
+      temporaryPassword,
+    });
+
+    return {
+      success: true,
+      data: {
+        message: 'User created and invitation sent',
+        user_id: user.id,
+      },
+    };
+  }
+
+  async updateAccountUser(accountId: string, user_id: string, updateUserDto: UpdateUserDto) {
+    const accountUser = await this.prisma.accountUser.findUnique({
+      where: {
+        userId_account_id: {
+          user_id,
+          account_id,
+        },
+      },
+    });
+
+    if (!accountUser) {
+      throw new NotFoundException('User not found in this account');
+    }
+
+    await this.prisma.accountUser.update({
+      where: {
+        userId_account_id: {
+          user_id,
+          account_id,
+        },
+      },
+      data: {
+        role: updateUserDto.role,
+      },
+    });
+
+    // Update user details if provided
+    const userData: any = {};
+    if (updateUserDto.name) userData.name = updateUserDto.name;
+    if (updateUserDto.isActive !== undefined) userData.isActive = updateUserDto.isActive;
+
+    if (Object.keys(userData).length > 0) {
+      await this.prisma.user.update({
+        where: { id: parseInt(user_id) },
+        data: userData,
+      });
+    }
+
+    // Clear cache
+    await this.redis.del(`user:${user_id}`);
+    await this.redis.delPattern(`permissions:${userId}:*`);
+
+    return {
+      success: true,
+      data: {
+        message: 'User updated successfully',
+      },
+    };
+  }
+
+  async removeAccountUser(accountId: string, user_id: string) {
+    const accountUser = await this.prisma.accountUser.findUnique({
+      where: {
+        userId_account_id: {
+          user_id,
+          account_id,
+        },
+      },
+    });
+
+    if (!accountUser) {
+      throw new NotFoundException('User not found in this account');
+    }
+
+    // Check if user is the last owner
+    const owners = await this.prisma.accountUser.count({
+      where: {
+        account_id,
+        role: 'owner',
+      },
+    });
+
+    if (accountUser.role === 'owner' && owners === 1) {
+      throw new BadRequestException('Cannot remove the last owner from the account');
+    }
+
+    await this.prisma.accountUser.delete({
+      where: {
+        userId_account_id: {
+          user_id,
+          account_id,
+        },
+      },
+    });
+
+    // Clear cache
+    await this.redis.del(`user:${user_id}`);
+    await this.redis.delPattern(`permissions:${userId}:*`);
+
+    return {
+      success: true,
+      data: {
+        message: 'User removed from account',
+      },
+    };
+  }
+
+  async getInvitations(accountId: string, query: { status?: string }) {
+    const where: any = { account_id };
+    
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    const invitations = await // this.prisma.invitation.findMany({
+      where,
+      orderBy: { created_at: 'desc' },
+    });
+
+    return {
+      success: true,
+      data: invitations,
+    };
+  }
+
+  async createInvitation(accountId: string, invitedBy: string, inviteUserDto: InviteUserDto) {
+    // Check if user already invited
+    const existingInvitation = await // this.prisma.invitation.findFirst({
+      where: {
+        email: inviteUserDto.email,
+        account_id,
+        status: 'pending',
+      },
+    });
+
+    if (existingInvitation) {
+      throw new ConflictException('User already has a pending invitation');
+    }
+
+    const invitation = await // this.prisma.invitation.create({
+      data: {
+        email: inviteUserDto.email,
+        name: inviteUserDto.name,
+        account_id,
+        invitedBy,
+        role: inviteUserDto.role,
+        permissions: inviteUserDto.permissions || [],
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
+    });
+
+    // Send invitation email
+    await this.emailService.sendInvitation({
+      email: invitation.email,
+      name: invitation.name,
+      invitationId: invitation.id,
+      message: inviteUserDto.message,
+    });
+
+    return {
+      success: true,
+      data: invitation,
+    };
+  }
+
+  async cancelInvitation(accountId: string, invitationId: string) {
+    const invitation = await // this.prisma.invitation.findFirst({
+      where: {
+        id: invitationId,
+        account_id,
+      },
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Invitation not found');
+    }
+
+    await // this.prisma.invitation.delete({
+      where: { id: invitationId },
+    });
+
+    return {
+      success: true,
+      data: {
+        message: 'Invitation cancelled',
+      },
+    };
+  }
+
+  async resendInvitation(accountId: string, invitationId: string) {
+    const invitation = await // this.prisma.invitation.findFirst({
+      where: {
+        id: invitationId,
+        account_id,
+        status: 'pending',
+      },
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Invitation not found or already accepted');
+    }
+
+    // Update expiration
+    await // this.prisma.invitation.update({
+      where: { id: invitationId },
+      data: {
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    // Resend email
+    await this.emailService.sendInvitation({
+      email: invitation.email,
+      name: invitation.name,
+      invitationId: invitation.id,
+    });
+
+    return {
+      success: true,
+      data: {
+        message: 'Invitation resent',
+      },
+    };
+  }
+
+  async getUserPermissions(accountId: string, user_id: string) {
+    const accountUser = await this.prisma.accountUser.findUnique({
+      where: {
+        userId_account_id: {
+          user_id,
+          account_id,
+        },
+      },
+      include: {
+        permissions: true,
+      },
+    });
+
+    if (!accountUser) {
+      throw new NotFoundException('User not found in this account');
+    }
+
+    return {
+      success: true,
+      data: {
+        user_id,
+        role: accountUser.role,
+        permissions: accountUser.permissions || [],
+      },
+    };
+  }
+
+  async updateUserPermissions(accountId: string, updatePermissionsDto: UpdatePermissionsDto) {
+    const accountUser = await this.prisma.accountUser.findUnique({
+      where: {
+        userId_account_id: {
+          user_id: updatePermissionsDto.user_id,
+          account_id,
+        },
+      },
+    });
+
+    if (!accountUser) {
+      throw new NotFoundException('User not found in this account');
+    }
+
+    // Update permissions
+    await this.prisma.accountUser.update({
+      where: {
+        userId_account_id: {
+          user_id: updatePermissionsDto.user_id,
+          account_id,
+        },
+      },
+      data: {
+        permissions: updatePermissionsDto.permissions,
+      },
+    });
+
+    // Clear permission cache
+    await this.redis.delPattern(`permissions:${updatePermissionsDto.userId}:*`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Permissions updated successfully',
+      },
+    };
+  }
+
+  async bulkUpdatePermissions(accountId: string, bulkUpdate: { 
+    userIds: string[]; 
+    permissions: string[] 
+  }) {
+    // Verify all users belong to account
+    const users = await this.prisma.accountUser.findMany({
+      where: {
+        account_id,
+        user_id: { in: bulkUpdate.userIds },
+      },
+    });
+
+    if (users.length !== bulkUpdate.userIds.length) {
+      throw new BadRequestException('Some users not found in this account');
+    }
+
+    // Update permissions for all users
+    await this.prisma.accountUser.updateMany({
+      where: {
+        account_id,
+        user_id: { in: bulkUpdate.userIds },
+      },
+      data: {
+        permissions: bulkUpdate.permissions,
+      },
+    });
+
+    // Clear cache for all users
+    for (const userId of bulkUpdate.userIds) {
+      await this.redis.delPattern(`permissions:${userId}:*`);
+    }
+
+    return {
+      success: true,
+      data: {
+        message: `Permissions updated for ${bulkUpdate.userIds.length} users`,
+      },
+    };
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "platform": {
+    "name": "itellico Mono",
+    "version": "1.0.0",
+    "url": "https://itellico.ai",
+    "adminEmail": "admin@itellico.ai",
+    "supportEmail": "support@itellico.ai",
+    "defaultLocale": "en-US",
+    "defaultTimezone": "Europe/Vienna",
+    "supportedLocales": [
+      "en-US",
+      "en-GB",
+      "de-DE",
+      "de-AT",
+      "es-ES",
+      "fr-FR",
+      "it-IT",
+      "pt-BR",
+      "nl-NL",
+      "sv-SE",
+      "da-DK",
+      "no-NO",
+      "fi-FI",
+      "pl-PL"
+    ],
+    "features": {
+      "multiTenant": true,
+      "rbac": true,
+      "audit": true,
+      "cache": true,
+      "workflows": true,
+      "api": true,
+      "webhooks": true,
+      "analytics": true,
+      "notifications": true,
+      "search": true
+    },
+    "security": {
+      "passwordMinLength": 8,
+      "passwordRequireUppercase": true,
+      "passwordRequireLowercase": true,
+      "passwordRequireNumbers": true,
+      "passwordRequireSpecialChars": true,
+      "sessionTimeout": 86400,
+      "maxLoginAttempts": 5,
+      "lockoutDuration": 900,
+      "requireEmailVerification": true,
+      "enableTwoFactor": true
+    },
+    "api": {
+      "version": "v1",
+      "rateLimit": {
+        "windowMs": 900000,
+        "maxRequests": 1000
+      },
+      "cors": {
+        "enabled": true,
+        "origins": ["http://localhost:3000", "http://192.168.178.94:3000"]
+      }
+    },
+    "database": {
+      "type": "postgresql",
+      "ssl": false,
+      "poolSize": 20,
+      "idleTimeout": 10000,
+      "connectionTimeout": 5000
+    },
+    "cache": {
+      "type": "redis",
+      "ttl": 3600,
+      "maxSize": 1000
+    },
+    "storage": {
+      "type": "local",
+      "maxFileSize": 52428800,
+      "allowedFileTypes": [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "application/pdf",
+        "video/mp4",
+        "video/quicktime"
+      ]
+    },
+    "email": {
+      "provider": "smtp",
+      "from": "noreply@itellico.ai",
+      "fromName": "itellico Mono"
+    },
+    "monitoring": {
+      "enabled": true,
+      "providers": ["prometheus", "grafana"]
+    }
+  }
+}

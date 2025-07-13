@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Tests
+coverage/
+.nyc_output/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+*.md

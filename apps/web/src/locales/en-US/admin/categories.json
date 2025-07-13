@@ -1,0 +1,71 @@
+{
+  "title": "Category Management",
+  "description": "Manage content categories and hierarchies",
+  "stats": {
+    "total": "Total Categories",
+    "active": "Active Categories",
+    "inactive": "Inactive Categories",
+    "totalDescription": "Total number of categories in the system",
+    "activeDescription": "Categories currently active and visible",
+    "inactiveDescription": "Categories that are disabled or hidden"
+  },
+  "table": {
+    "title": "Categories",
+    "description": "Manage and organize content categories",
+    "columns": {
+      "name": "Category Name",
+      "parent": "Parent Category",
+      "status": "Status",
+      "itemCount": "Items",
+      "actions": "Actions"
+    }
+  },
+  "actions": {
+    "create": "Create Category",
+    "edit": "Edit Category",
+    "delete": "Delete Category",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down"
+  },
+  "forms": {
+    "name": {
+      "label": "Category Name",
+      "placeholder": "Enter category name",
+      "required": "Category name is required"
+    },
+    "parent": {
+      "label": "Parent Category",
+      "placeholder": "Select parent category (optional)",
+      "none": "No parent (root category)"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Enter category description"
+    },
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "messages": {
+    "createSuccess": "Category created successfully",
+    "updateSuccess": "Category updated successfully",
+    "deleteSuccess": "Category deleted successfully",
+    "deleteConfirm": "Are you sure you want to delete this category?",
+    "deleteWarning": "This action cannot be undone. All subcategories will also be affected.",
+    "moveSuccess": "Category moved successfully",
+    "statusChanged": "Category status updated successfully"
+  },
+  "errors": {
+    "loadFailed": "Failed to load categories",
+    "createFailed": "Failed to create category",
+    "updateFailed": "Failed to update category",
+    "deleteFailed": "Failed to delete category",
+    "moveFailed": "Failed to move category",
+    "duplicateName": "A category with this name already exists",
+    "circularReference": "Cannot set parent category that would create a circular reference"
+  }
+} 

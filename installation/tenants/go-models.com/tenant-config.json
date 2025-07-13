@@ -1,0 +1,73 @@
+{
+  "tenant": {
+    "name": "GoModels",
+    "domain": "go-models.com",
+    "slug": "go-models",
+    "description": "Professional modeling and talent marketplace connecting models, photographers, agencies, and brands worldwide",
+    "industry": "modeling",
+    "is_active": true,
+    "tier": "professional",
+    "settings": {
+      "defaultCurrency": "EUR",
+      "supportedCurrencies": ["EUR", "USD", "GBP", "CHF"],
+      "defaultLanguage": "en-US",
+      "supportedLanguages": ["en-US", "de-DE", "de-AT", "fr-FR", "it-IT", "es-ES"],
+      "defaultTimezone": "Europe/Vienna",
+      "dateFormat": "DD.MM.YYYY",
+      "timeFormat": "24h",
+      "enablePortfolios": true,
+      "requirePortfolioApproval": true,
+      "enablePhotoVerification": true,
+      "allowDirectBooking": true,
+      "escrowRequired": true,
+      "disputeResolution": "mediation",
+      "commissionRate": 15,
+      "minimumBookingValue": 100,
+      "enableMeasurements": true,
+      "enableExperienceLevel": true,
+      "enableLocationServices": true,
+      "requireBackgroundChecks": false,
+      "enableInstantMessaging": true,
+      "allowVideoPortfolios": true,
+      "enableCastingCallAlerts": true,
+      "portfolioImagesLimit": 50,
+      "portfolioVideosLimit": 10,
+      "watermarkPortfolios": true,
+      "ageVerificationRequired": true,
+      "parentalConsentAge": 18
+    },
+    "features": [
+      "user_management",
+      "rbac",
+      "file_storage",
+      "search",
+      "notifications",
+      "api_access",
+      "audit_logs",
+      "two_factor_auth",
+      "webhooks",
+      "analytics",
+      "billing",
+      "workflows",
+      "cache_management"
+    ],
+    "branding": {
+      "logo": "/assets/go-models-logo.svg",
+      "favicon": "/assets/go-models-favicon.ico",
+      "primaryColor": "#E91E63",
+      "secondaryColor": "#F48FB1",
+      "accentColor": "#FF5722",
+      "darkMode": true,
+      "customCSS": "",
+      "emailLogo": "/assets/go-models-email-logo.png",
+      "emailFooter": "© 2024 GoModels. Professional Modeling Platform."
+    },
+    "metadata": {
+      "foundedYear": 2024,
+      "headquarters": "Vienna, Austria",
+      "markets": ["Europe", "North America", "Asia"],
+      "certifications": ["ISO 27001", "GDPR Compliant"],
+      "partnerships": ["Major Fashion Weeks", "Top Agencies", "Brand Networks"]
+    }
+  }
+}

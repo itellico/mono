@@ -1,0 +1,185 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ========================================
+# Dependencies
+# ========================================
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+**/node_modules/
+
+# ========================================
+# Testing
+# ========================================
+/coverage
+*.lcov
+.nyc_output
+
+# ========================================
+# Next.js
+# ========================================
+/.next/
+/out/
+.next/
+next-env.d.ts
+
+# ========================================
+# Production Builds
+# ========================================
+/build
+/dist
+**/dist/
+/apps/api/dist/
+
+# ========================================
+# Environment Variables
+# ========================================
+.env*
+!.env.example
+!.env.docker
+!.env.services
+!.env.production.example
+!**/.env.example
+
+# ========================================
+# IDE and Editor Files
+# ========================================
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ========================================
+# Logs
+# ========================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+*.log
+/logs/*
+!/logs/.gitkeep
+/apps/api/*.log
+
+# ========================================
+# Database
+# ========================================
+*.sqlite
+*.sqlite3
+*.db
+dump.rdb
+/prisma/migrations/dev/
+/backup/*
+!/backup/.gitkeep
+
+# ========================================
+# Uploads and Media
+# ========================================
+/uploads/*
+!/uploads/.gitkeep
+/public/uploads/
+/storage/*
+!/storage/.gitkeep
+
+# ========================================
+# Temporary Files
+# ========================================
+*.tmp
+*.temp
+*.cache
+.cache/
+tmp/
+temp/
+
+# ========================================
+# Security
+# ========================================
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+.ssh/
+secrets/
+
+# ========================================
+# OS Files
+# ========================================
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ========================================
+# Debug Files
+# ========================================
+/debug/*
+!/debug/.gitkeep
+core.*
+heapdump-*
+
+# ========================================
+# Package Manager
+# ========================================
+.pnpm-store/
+.yarn-integrity
+.npm/
+
+# ========================================
+# TypeScript
+# ========================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+/src/generated/
+
+# ========================================
+# Monitoring & Analytics
+# ========================================
+/grafana-storage/
+/prometheus-data/
+
+# ========================================
+# Misc
+# ========================================
+.vercel
+.turbo
+.docusaurus
+.cache-loader/
+
+# ========================================
+# Test Artifacts
+# ========================================
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/test/*.html
+/test/*.txt
+!/test/*.ts
+!/test/*.js
+
+# ========================================
+# Platform Specific
+# ========================================
+/src/generated/prisma
+
+# ========================================
+# Docker Persistent Data
+# ========================================
+/docker-data/

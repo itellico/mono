@@ -1,0 +1,119 @@
+.navbar__search {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__search-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifm-navbar-link-color);
+  transition: color 0.2s;
+}
+
+.navbar__search-button:hover {
+  color: var(--ifm-navbar-link-hover-color);
+}
+
+.search-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.search-modal {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+}
+
+.search-modal-content {
+  padding: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  background: transparent;
+  font-size: 18px;
+  outline: none;
+  color: var(--ifm-font-color-base);
+}
+
+.search-results {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-result {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  transition: background-color 0.2s;
+}
+
+.search-result:hover,
+.search-result-selected {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.search-result-selected {
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.search-result-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--ifm-font-color-base);
+}
+
+.search-result-content {
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.search-result-path {
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-600);
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.search-no-results {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.search-footer {
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-600);
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.search-footer kbd {
+  background: var(--ifm-color-emphasis-200);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}

@@ -1,0 +1,130 @@
+{
+  "page": {
+    "title": "Model Schemas",
+    "description": "Manage dynamic form schemas and validation rules for user-generated content"
+  },
+  "stats": {
+    "totalSchemas": "Total Schemas",
+    "activeSchemas": "Active Schemas",
+    "inactiveSchemas": "Inactive Schemas",
+    "newSchemasToday": "New Today"
+  },
+  "filters": {
+    "title": "Filters",
+    "search": "Search",
+    "searchPlaceholder": "Search by name or type...",
+    "type": "Type",
+    "subType": "Sub Type",
+    "status": "Status"
+  },
+  "list": {
+    "title": "Model Schemas List",
+    "results": "schemas found",
+    "columns": {
+      "name": "Name",
+      "type": "Type",
+      "subType": "Sub Type",
+      "status": "Status",
+      "fields": "Fields",
+      "created": "Created",
+      "actions": "Actions"
+    }
+  },
+  "types": {
+    "profile": "Profile",
+    "application": "Application",
+    "job": "Job",
+    "search": "Search",
+    "listing": "Listing"
+  },
+  "subtypes": {
+    "model": "Model",
+    "client": "Client",
+    "agency": "Agency",
+    "casting": "Casting",
+    "photographer": "Photographer"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "draft": "Draft"
+  },
+  "fields": {
+    "name": "Name",
+    "displayName": "Display Name",
+    "type": "Type",
+    "subType": "Sub Type",
+    "description": "Description",
+    "schema": "Schema",
+    "isActive": "Active",
+    "metadata": "Metadata",
+    "created": "Created",
+    "updated": "Updated"
+  },
+  "actions": {
+    "createNew": "Create Schema",
+    "editSchema": "Edit Schema",
+    "cloneSchema": "Clone Schema",
+    "deleteSchema": "Delete Schema",
+    "activateSchema": "Activate",
+    "deactivateSchema": "Deactivate",
+    "exportSchema": "Export",
+    "importSchema": "Import",
+    "validateSchema": "Validate",
+    "previewSchema": "Preview"
+  },
+  "messages": {
+    "loadingSchemas": "Loading schemas...",
+    "noSchemas": "No schemas found",
+    "errorLoading": "Error loading schemas",
+    "schemaCreated": "Schema created successfully",
+    "schemaUpdated": "Schema updated successfully",
+    "schemaDeleted": "Schema deleted successfully",
+    "schemaActivated": "Schema activated successfully",
+    "schemaDeactivated": "Schema deactivated successfully",
+    "validationPassed": "Schema validation passed",
+    "validationFailed": "Schema validation failed",
+    "retry": "Retry",
+    "error_loading_schemas": "Failed to load model schemas",
+    "validation_coming_soon": "Schema validation coming soon"
+  },
+  "validation": {
+    "nameRequired": "Schema name is required",
+    "typeRequired": "Schema type is required",
+    "subTypeRequired": "Schema sub-type is required",
+    "schemaRequired": "Schema definition is required",
+    "invalidJson": "Invalid JSON format",
+    "duplicateName": "Schema name already exists"
+  },
+  "modals": {
+    "create": {
+      "title": "Create New Schema",
+      "description": "Define a new dynamic form schema"
+    },
+    "edit": {
+      "title": "Edit Schema",
+      "description": "Modify the selected schema"
+    },
+    "delete": {
+      "title": "Delete Schema",
+      "description": "Are you sure you want to delete this schema?",
+      "warning": "This action cannot be undone."
+    },
+    "clone": {
+      "title": "Clone Schema",
+      "description": "Create a copy of the selected schema"
+    }
+  },
+  "placeholders": {
+    "name": "Enter schema name...",
+    "description": "Enter schema description...",
+    "searchSchemas": "Search schemas..."
+  },
+  "schemas_list": "Schemas List",
+  "schema_templates": "Schema Templates",
+  "validation_rules": "Validation Rules",
+  "schema_templates_description": "Pre-built schema templates for common use cases",
+  "templates_coming_soon": "Schema templates coming soon",
+  "validation_rules_description": "Define validation rules and constraints",
+  "validation_coming_soon": "Schema validation coming soon"
+} 

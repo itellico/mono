@@ -1,0 +1,65 @@
+{
+  "title": "Dashboard",
+  "welcome": "Willkommen zurück, {{name}}!",
+  "navigation": {
+    "dashboard": "Dashboard",
+    "profile": "Profil", 
+    "applications": "Bewerbungen",
+    "messages": "Nachrichten",
+    "settings": "Einstellungen",
+    "help": "Hilfe"
+  },
+  "stats": {
+    "applications": "Bewerbungen",
+    "messages": "Nachrichten",
+    "earnings": "Verdienst",
+    "profileViews": "Profilaufrufe",
+    "totalApplications": "Bewerbungen gesamt",
+    "activeApplications": "Aktive Bewerbungen",
+    "approvedApplications": "Genehmigt",
+    "pendingApplications": "Ausstehend"
+  },
+  "recent": {
+    "applications": "Neueste Bewerbungen",
+    "messages": "Neueste Nachrichten", 
+    "activities": "Neueste Aktivitäten",
+    "notifications": "Neueste Benachrichtigungen"
+  },
+  "quickActions": {
+    "title": "Schnellaktionen",
+    "applyToJob": "Für Job bewerben",
+    "updateProfile": "Profil aktualisieren",
+    "viewMessages": "Nachrichten anzeigen",
+    "uploadPhotos": "Fotos hochladen",
+    "viewEarnings": "Verdienst anzeigen"
+  },
+  "overview": {
+    "title": "Übersicht",
+    "thisMonth": "Diesen Monat",
+    "lastMonth": "Letzten Monat",
+    "change": "{{value}}% vom letzten Monat",
+    "increase": "Steigerung",
+    "decrease": "Rückgang"
+  },
+  "applications": {
+    "title": "Meine Bewerbungen",
+    "viewAll": "Alle Bewerbungen anzeigen",
+    "noApplications": "Noch keine Bewerbungen",
+    "startApplying": "Bewerben Sie sich für Jobs, um sie hier zu sehen"
+  },
+  "messages": {
+    "title": "Nachrichten",
+    "viewAll": "Alle Nachrichten anzeigen",
+    "noMessages": "Noch keine Nachrichten",
+    "unread": "{{count}} ungelesene Nachricht",
+    "unread_plural": "{{count}} ungelesene Nachrichten"
+  },
+  "profile": {
+    "completionTitle": "Profilvollständigkeit",
+    "completion": "{{percentage}}% vollständig",
+    "addPhotos": "Weitere Fotos hinzufügen",
+    "updateBio": "Ihre Biographie aktualisieren",
+    "addExperience": "Erfahrung hinzufügen",
+    "verifyProfile": "Profil verifizieren"
+  }
+} 

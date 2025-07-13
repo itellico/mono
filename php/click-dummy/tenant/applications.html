@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Review - Go Models NYC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .application-card { transition: all 0.2s; border-left: 4px solid #dee2e6; }
+        .application-card:hover { transform: translateY(-1px); }
+        .application-card.new { border-left-color: #0d6efd; }
+        .application-card.reviewed { border-left-color: #ffc107; }
+        .application-card.approved { border-left-color: #198754; }
+        .application-card.rejected { border-left-color: #dc3545; }
+        .portfolio-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+        .rating-stars { color: #ffc107; }
+        .application-actions { opacity: 0; transition: opacity 0.2s; }
+        .application-card:hover .application-actions { opacity: 1; }
+        .quick-view-panel { background: #f8f9fa; border-radius: 10px; padding: 20px; position: sticky; top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">Application Review</h2>
+                        <p class="text-muted">Review and manage talent applications</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="bulkApprove()">
+                            <i class="fas fa-check-double me-2"></i> Bulk Approve
+                        </button>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewCriteriaModal">
+                            <i class="fas fa-list-check me-2"></i> Review Criteria
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-download me-2"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4" id="stats-row"></div>
+                
+                <!-- Filters and Search -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div id="search-bar"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select class="form-select" id="castingFilter">
+                                    <option value="">All Casting Calls</option>
+                                    <option value="summer-campaign">Summer Fashion Campaign</option>
+                                    <option value="nike-commercial">Nike Commercial</option>
+                                    <option value="rolex-campaign">Luxury Watch Campaign</option>
+                                    <option value="marc-jacobs-runway">Marc Jacobs Runway</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="new">New</option>
+                                    <option value="reviewed">Under Review</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Applications List -->
+                    <div class="col-md-8">
+                        <!-- Quick Action Bar -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllApplications">
+                                <label class="form-check-label" for="selectAllApplications">
+                                    Select All (127 applications)
+                                </label>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary active">
+                                    <i class="fas fa-list"></i> List View
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-th"></i> Grid View
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Applications List -->
+                        <div id="applications-list"></div>
+                        
+                        <!-- Pagination -->
+                        <div class="mt-4" id="pagination"></div>
+                    </div>
+                    
+                    <!-- Quick Review Panel -->
+                    <div class="col-md-4">
+                        <div class="quick-view-panel">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-eye me-2"></i> Quick Review
+                            </h6>
+                            <div id="quick-review-content">
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-hand-pointer fa-2x mb-3"></i>
+                                    <p>Select an application to view details</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Review Statistics -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Review Progress</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>Reviewed</small>
+                                        <small>73%</small>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar" role="progressbar" style="width: 73%"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between text-center">
+                                    <div>
+                                        <div class="text-success fw-bold">45</div>
+                                        <small class="text-muted">Approved</small>
+                                    </div>
+                                    <div>
+                                        <div class="text-warning fw-bold">48</div>
+                                        <small class="text-muted">Under Review</small>
+                                    </div>
+                                    <div>
+                                        <div class="text-danger fw-bold">19</div>
+                                        <small class="text-muted">Rejected</small>
+                                    </div>
+                                    <div>
+                                        <div class="text-primary fw-bold">15</div>
+                                        <small class="text-muted">New</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Criteria Modal -->
+    <div id="reviewCriteriaModal"></div>
+    
+    <!-- Application Details Modal -->
+    <div id="applicationDetailsModal"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar items
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Talent Database', icon: 'fas fa-users', href: 'talent-database.html' },
+                { label: 'Casting Calls', icon: 'fas fa-bullhorn', href: 'casting-calls.html' },
+                { label: 'Applications', icon: 'fas fa-clipboard-list', active: true },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Categories & Tags', icon: 'fas fa-tags', href: 'categories.html' },
+                { label: 'Blog System', icon: 'fas fa-blog', href: 'blog.html' },
+                { label: 'Academy', icon: 'fas fa-graduation-cap', href: 'academy.html' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-pie', href: 'financial.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Go Models NYC', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Sarah Admin', 'Tenant Administrator', 'Application Review');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Dashboard', href: 'index.html' },
+                { label: 'Application Review' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Total Applications', '127', 'fas fa-clipboard-list', 'primary'),
+                createStatCard('Pending Review', '15', 'fas fa-clock', 'warning'),
+                createStatCard('Approved Today', '8', 'fas fa-check-circle', 'success'),
+                createStatCard('Response Rate', '89%', 'fas fa-chart-line', 'info')
+            ].join('');
+            document.getElementById('stats-row').innerHTML = statsHtml;
+            
+            // Search Bar
+            document.getElementById('search-bar').innerHTML = createSearchBar('Search by applicant name, skills, or casting...');
+            
+            // Generate Applications List
+            document.getElementById('applications-list').innerHTML = generateApplicationsList();
+            
+            // Pagination
+            document.getElementById('pagination').innerHTML = createPagination(1, 13);
+            
+            // Review Criteria Modal
+            const reviewCriteriaModalBody = `
+                <div class="mb-4">
+                    <h6>Standard Review Criteria</h6>
+                    <p class="text-muted">Define the criteria used for evaluating applications</p>
+                </div>
+                
+                <form id="reviewCriteriaForm">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Physical Requirements</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="heightReq" checked>
+                                    <label class="form-check-label" for="heightReq">Height requirements</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="ageReq" checked>
+                                    <label class="form-check-label" for="ageReq">Age range compliance</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="bodyTypeReq">
+                                    <label class="form-check-label" for="bodyTypeReq">Body type matching</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="appearanceReq" checked>
+                                    <label class="form-check-label" for="appearanceReq">Overall appearance</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fitnessReq">
+                                    <label class="form-check-label" for="fitnessReq">Fitness level</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tattooReq">
+                                    <label class="form-check-label" for="tattooReq">Tattoo/piercing policy</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Experience & Skills</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="experienceReq" checked>
+                                    <label class="form-check-label" for="experienceReq">Minimum experience</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="portfolioReq" checked>
+                                    <label class="form-check-label" for="portfolioReq">Portfolio quality</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialSkillsReq">
+                                    <label class="form-check-label" for="specialSkillsReq">Special skills match</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="languageReq">
+                                    <label class="form-check-label" for="languageReq">Language requirements</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="trainingReq">
+                                    <label class="form-check-label" for="trainingReq">Professional training</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="agencyReq">
+                                    <label class="form-check-label" for="agencyReq">Agency representation</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Availability & Logistics</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="availabilityReq" checked>
+                                    <label class="form-check-label" for="availabilityReq">Date availability</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="locationReq" checked>
+                                    <label class="form-check-label" for="locationReq">Location accessibility</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="travelReq">
+                                    <label class="form-check-label" for="travelReq">Travel willingness</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rateReq">
+                                    <label class="form-check-label" for="rateReq">Rate compatibility</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="additionalNotes" class="form-label fw-bold">Additional Review Notes</label>
+                        <textarea class="form-control" id="additionalNotes" rows="3" placeholder="Any additional criteria or notes for reviewers..."></textarea>
+                    </div>
+                </form>
+            `;
+            
+            const reviewCriteriaModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="reviewCriteriaForm" class="btn btn-primary">Save Criteria</button>
+            `;
+            
+            document.getElementById('reviewCriteriaModal').innerHTML = createModal(
+                'reviewCriteriaModal',
+                'Review Criteria Settings',
+                reviewCriteriaModalBody,
+                reviewCriteriaModalFooter
+            );
+        });
+        
+        function generateApplicationsList() {
+            const applications = [
+                {
+                    id: 'app-001',
+                    name: 'Emma Thompson',
+                    casting: 'Summer Fashion Campaign',
+                    client: 'Vogue NYC',
+                    appliedDate: '2 hours ago',
+                    status: 'new',
+                    rating: 4.8,
+                    experience: '5 years',
+                    location: 'New York, NY',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 95,
+                    notes: 'Perfect fit for editorial work, strong portfolio'
+                },
+                {
+                    id: 'app-002',
+                    name: 'Marcus Johnson',
+                    casting: 'Nike Commercial',
+                    client: 'Nike',
+                    appliedDate: '4 hours ago',
+                    status: 'reviewed',
+                    rating: 4.6,
+                    experience: '3 years',
+                    location: 'Los Angeles, CA',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 88,
+                    notes: 'Great athletic build, needs more commercial experience'
+                },
+                {
+                    id: 'app-003',
+                    name: 'Sofia Martinez',
+                    casting: 'Luxury Watch Campaign',
+                    client: 'Rolex',
+                    appliedDate: '6 hours ago',
+                    status: 'approved',
+                    rating: 4.9,
+                    experience: '7 years',
+                    location: 'Miami, FL',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 97,
+                    notes: 'Excellent luxury brand experience, approved for callback'
+                },
+                {
+                    id: 'app-004',
+                    name: 'David Kim',
+                    casting: 'Summer Fashion Campaign',
+                    client: 'Vogue NYC',
+                    appliedDate: '8 hours ago',
+                    status: 'rejected',
+                    rating: 4.2,
+                    experience: '2 years',
+                    location: 'Chicago, IL',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 65,
+                    notes: 'Height requirements not met, referred to other projects'
+                },
+                {
+                    id: 'app-005',
+                    name: 'Isabella Rodriguez',
+                    casting: 'Marc Jacobs Runway',
+                    client: 'Marc Jacobs',
+                    appliedDate: '1 day ago',
+                    status: 'reviewed',
+                    rating: 4.7,
+                    experience: '4 years',
+                    location: 'New York, NY',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 92,
+                    notes: 'Strong runway experience, under final consideration'
+                },
+                {
+                    id: 'app-006',
+                    name: 'James Wilson',
+                    casting: 'Fitness App Campaign',
+                    client: 'FitTech',
+                    appliedDate: '1 day ago',
+                    status: 'approved',
+                    rating: 4.5,
+                    experience: '6 years',
+                    location: 'Austin, TX',
+                    portfolio: 'https://via.placeholder.com/60x60',
+                    matchScore: 94,
+                    notes: 'Perfect fitness background, social media following strong'
+                }
+            ];
+            
+            return applications.map(app => `
+                <div class="card application-card ${app.status} mb-3" data-app-id="${app.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-1">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="app-${app.id}">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="d-flex align-items-center">
+                                    <img src="${app.portfolio}" alt="${app.name}" class="portfolio-thumb me-2">
+                                    <div>
+                                        <div class="fw-bold">${app.name}</div>
+                                        <small class="text-muted">${app.location}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold text-primary">${app.casting}</div>
+                                <small class="text-muted">${app.client}</small>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="rating-stars me-2">
+                                        ${generateStars(app.rating)}
+                                    </div>
+                                    <small>${app.rating}</small>
+                                </div>
+                                <small class="text-muted">${app.experience} experience</small>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="text-center">
+                                    <div class="fw-bold text-${app.matchScore >= 90 ? 'success' : app.matchScore >= 75 ? 'warning' : 'danger'}">${app.matchScore}%</div>
+                                    <small class="text-muted">Match Score</small>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span class="badge ${getStatusBadgeClass(app.status)}">${app.status.toUpperCase()}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <small class="text-muted">${app.appliedDate}</small>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="btn-group-vertical application-actions">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="quickView('${app.id}')" title="Quick View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm" onclick="approveApplication('${app.id}')" title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="rejectApplication('${app.id}')" title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <small class="text-muted">${app.notes}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            return stars;
+        }
+        
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'new': 'bg-primary',
+                'reviewed': 'bg-warning',
+                'approved': 'bg-success',
+                'rejected': 'bg-danger'
+            };
+            return classes[status] || 'bg-secondary';
+        }
+        
+        function quickView(appId) {
+            // In a real app, this would load application details into the quick view panel
+            console.log('Quick viewing application:', appId);
+            
+            const quickReviewContent = `
+                <div class="text-center mb-3">
+                    <img src="https://via.placeholder.com/120x150" alt="Portfolio" class="img-fluid rounded">
+                </div>
+                <h6 class="fw-bold">Emma Thompson</h6>
+                <p class="text-muted small">Applied 2 hours ago</p>
+                
+                <div class="mb-3">
+                    <strong>Match Score: </strong>
+                    <span class="badge bg-success">95%</span>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="small fw-bold">Key Details:</h6>
+                    <ul class="small list-unstyled">
+                        <li><i class="fas fa-ruler-vertical me-2"></i> 5'9" (175cm)</li>
+                        <li><i class="fas fa-calendar me-2"></i> 24 years old</li>
+                        <li><i class="fas fa-star me-2"></i> 4.8/5 rating</li>
+                        <li><i class="fas fa-map-marker me-2"></i> New York, NY</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="small fw-bold">Experience:</h6>
+                    <p class="small">5 years professional modeling, strong editorial portfolio, worked with major fashion brands.</p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-sm">
+                        <i class="fas fa-check me-2"></i> Approve
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-eye me-2"></i> Full Details
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-times me-2"></i> Reject
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('quick-review-content').innerHTML = quickReviewContent;
+        }
+        
+        function approveApplication(appId) {
+            console.log('Approving application:', appId);
+            // In a real app, this would update the application status
+        }
+        
+        function rejectApplication(appId) {
+            console.log('Rejecting application:', appId);
+            // In a real app, this would update the application status
+        }
+        
+        function bulkApprove() {
+            console.log('Bulk approving selected applications');
+            // In a real app, this would approve all selected applications
+        }
+    </script>
+</body>
+</html>

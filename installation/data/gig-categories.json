@@ -1,0 +1,297 @@
+{
+  "version": "1.0.0",
+  "description": "Gig service categories for talent offerings",
+  "categories": {
+    "photography": {
+      "name": "Photography Services",
+      "slug": "photography",
+      "description": "Professional photography services",
+      "subcategories": {
+        "portfolio": {
+          "name": "Portfolio Development",
+          "slug": "portfolio",
+          "services": [
+            {
+              "name": "Model Portfolio",
+              "slug": "model-portfolio",
+              "description": "Complete model portfolio package",
+              "typicalPackages": ["5 looks", "10 looks", "Full day"],
+              "deliverables": ["Edited photos", "Web resolution", "Print resolution"]
+            },
+            {
+              "name": "Actor Headshots",
+              "slug": "actor-headshots",
+              "description": "Professional actor headshots",
+              "typicalPackages": ["2 looks", "4 looks", "6 looks"],
+              "deliverables": ["Retouched headshots", "Multiple expressions", "B&W options"]
+            },
+            {
+              "name": "Comp Card Package",
+              "slug": "comp-card",
+              "description": "Complete comp card creation",
+              "typicalPackages": ["Basic", "Standard", "Premium"],
+              "deliverables": ["Comp card design", "Print-ready files", "Digital versions"]
+            }
+          ]
+        },
+        "commercial": {
+          "name": "Commercial Photography",
+          "slug": "commercial",
+          "services": [
+            {
+              "name": "Product Photography",
+              "slug": "product-photography",
+              "description": "E-commerce and product shots",
+              "typicalPackages": ["10 products", "25 products", "50 products"],
+              "deliverables": ["White background", "Lifestyle shots", "360° views"]
+            },
+            {
+              "name": "Brand Content",
+              "slug": "brand-content",
+              "description": "Social media and marketing content",
+              "typicalPackages": ["Half day", "Full day", "Campaign"],
+              "deliverables": ["Social media ready", "Various formats", "Usage rights"]
+            }
+          ]
+        },
+        "creative": {
+          "name": "Creative Photography",
+          "slug": "creative",
+          "services": [
+            {
+              "name": "Editorial Shoot",
+              "slug": "editorial",
+              "description": "Magazine-style editorial photography",
+              "typicalPackages": ["4 hours", "8 hours", "Multi-day"],
+              "deliverables": ["High-res images", "Artistic editing", "Publication ready"]
+            },
+            {
+              "name": "Fine Art",
+              "slug": "fine-art",
+              "description": "Artistic and conceptual photography",
+              "typicalPackages": ["Session", "Project", "Exhibition"],
+              "deliverables": ["Gallery prints", "Limited editions", "Certificates"]
+            }
+          ]
+        }
+      }
+    },
+    "modeling": {
+      "name": "Modeling Services",
+      "slug": "modeling",
+      "description": "Professional modeling services",
+      "subcategories": {
+        "fashion": {
+          "name": "Fashion Modeling",
+          "slug": "fashion",
+          "services": [
+            {
+              "name": "Runway Modeling",
+              "slug": "runway",
+              "description": "Fashion show and runway services",
+              "typicalPackages": ["Per show", "Full day", "Fashion week"],
+              "deliverables": ["Professional walk", "Multiple outfits", "Backstage availability"]
+            },
+            {
+              "name": "Showroom Modeling",
+              "slug": "showroom",
+              "description": "Showroom and presentation modeling",
+              "typicalPackages": ["2 hours", "4 hours", "Full day"],
+              "deliverables": ["Client interaction", "Garment presentation", "Sales support"]
+            }
+          ]
+        },
+        "commercial": {
+          "name": "Commercial Modeling",
+          "slug": "commercial",
+          "services": [
+            {
+              "name": "Product Modeling",
+              "slug": "product-modeling",
+              "description": "Product demonstration and modeling",
+              "typicalPackages": ["2 hours", "Half day", "Full day"],
+              "deliverables": ["Product interaction", "Multiple poses", "Usage rights"]
+            },
+            {
+              "name": "Lifestyle Modeling",
+              "slug": "lifestyle",
+              "description": "Lifestyle and real-people modeling",
+              "typicalPackages": ["Half day", "Full day", "Multi-day"],
+              "deliverables": ["Natural poses", "Various scenarios", "Authentic expressions"]
+            }
+          ]
+        },
+        "specialty": {
+          "name": "Specialty Modeling",
+          "slug": "specialty",
+          "services": [
+            {
+              "name": "Fit Modeling",
+              "slug": "fit-modeling",
+              "description": "Garment fitting and sizing",
+              "typicalPackages": ["Per session", "Weekly", "Monthly retainer"],
+              "deliverables": ["Size consistency", "Fit feedback", "Movement testing"]
+            },
+            {
+              "name": "Parts Modeling",
+              "slug": "parts-modeling",
+              "description": "Hand, foot, or other parts modeling",
+              "typicalPackages": ["2 hours", "Half day", "Full day"],
+              "deliverables": ["Specific poses", "Product interaction", "Close-up ready"]
+            }
+          ]
+        }
+      }
+    },
+    "creative": {
+      "name": "Creative Services",
+      "slug": "creative",
+      "description": "Various creative industry services",
+      "subcategories": {
+        "styling": {
+          "name": "Styling Services",
+          "slug": "styling",
+          "services": [
+            {
+              "name": "Fashion Styling",
+              "slug": "fashion-styling",
+              "description": "Complete fashion styling services",
+              "typicalPackages": ["Per look", "Half day", "Full production"],
+              "deliverables": ["Look creation", "Wardrobe sourcing", "On-set styling"]
+            },
+            {
+              "name": "Personal Styling",
+              "slug": "personal-styling",
+              "description": "Individual wardrobe consultation",
+              "typicalPackages": ["Consultation", "Shopping day", "Complete makeover"],
+              "deliverables": ["Style guide", "Shopping list", "Outfit combinations"]
+            }
+          ]
+        },
+        "makeup": {
+          "name": "Makeup & Hair",
+          "slug": "makeup-hair",
+          "services": [
+            {
+              "name": "Editorial Makeup",
+              "slug": "editorial-makeup",
+              "description": "High-fashion and editorial makeup",
+              "typicalPackages": ["Per look", "Half day", "Full day"],
+              "deliverables": ["Creative looks", "Touch-ups", "Product list"]
+            },
+            {
+              "name": "Commercial Makeup",
+              "slug": "commercial-makeup",
+              "description": "Natural and commercial makeup",
+              "typicalPackages": ["Basic", "Standard", "Premium"],
+              "deliverables": ["Natural enhancement", "Long-wearing", "Camera-ready"]
+            }
+          ]
+        },
+        "production": {
+          "name": "Production Support",
+          "slug": "production",
+          "services": [
+            {
+              "name": "Art Direction",
+              "slug": "art-direction",
+              "description": "Creative direction and concept development",
+              "typicalPackages": ["Consultation", "Project", "Campaign"],
+              "deliverables": ["Mood boards", "Shot lists", "Creative brief"]
+            },
+            {
+              "name": "Location Scouting",
+              "slug": "location-scouting",
+              "description": "Finding and securing shoot locations",
+              "typicalPackages": ["Local", "Regional", "International"],
+              "deliverables": ["Location options", "Permits", "Logistics plan"]
+            }
+          ]
+        }
+      }
+    },
+    "digital": {
+      "name": "Digital Services",
+      "slug": "digital",
+      "description": "Online and digital content services",
+      "subcategories": {
+        "content": {
+          "name": "Content Creation",
+          "slug": "content",
+          "services": [
+            {
+              "name": "Social Media Content",
+              "slug": "social-media",
+              "description": "Content for social platforms",
+              "typicalPackages": ["5 posts", "15 posts", "Monthly package"],
+              "deliverables": ["Platform-optimized", "Captions included", "Hashtag research"]
+            },
+            {
+              "name": "Influencer Collaboration",
+              "slug": "influencer",
+              "description": "Brand partnership content",
+              "typicalPackages": ["Single post", "Campaign", "Ambassador"],
+              "deliverables": ["Authentic content", "Brand integration", "Engagement metrics"]
+            }
+          ]
+        },
+        "video": {
+          "name": "Video Services",
+          "slug": "video",
+          "services": [
+            {
+              "name": "Video Modeling",
+              "slug": "video-modeling",
+              "description": "Video and motion content",
+              "typicalPackages": ["Short form", "Long form", "Campaign"],
+              "deliverables": ["HD/4K video", "Multiple formats", "Usage rights"]
+            },
+            {
+              "name": "Live Streaming",
+              "slug": "live-streaming",
+              "description": "Live event and streaming services",
+              "typicalPackages": ["1 hour", "Half day", "Full event"],
+              "deliverables": ["Live presence", "Audience interaction", "Recording rights"]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "packageStructure": {
+    "description": "Standard package structure for all gigs",
+    "tiers": [
+      {
+        "name": "Basic",
+        "description": "Entry-level service package",
+        "typical_features": [
+          "Minimum deliverables",
+          "Standard turnaround",
+          "Basic revisions",
+          "Digital delivery only"
+        ]
+      },
+      {
+        "name": "Standard",
+        "description": "Most popular package option",
+        "typical_features": [
+          "Enhanced deliverables",
+          "Faster turnaround",
+          "More revisions",
+          "Additional formats"
+        ]
+      },
+      {
+        "name": "Premium",
+        "description": "Complete service package",
+        "typical_features": [
+          "Maximum deliverables",
+          "Priority turnaround",
+          "Unlimited revisions",
+          "All formats included",
+          "Extended usage rights"
+        ]
+      }
+    ]
+  }
+}

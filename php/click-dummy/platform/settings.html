@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Settings - Platform Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .settings-section { border-left: 4px solid #007bff; }
+        .setting-item { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 24px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .integration-card { transition: all 0.3s; }
+        .integration-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div id="sidebar"></div>
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            <div class="container-fluid">
+                <div id="breadcrumb"></div>
+                
+                <!-- Hero Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card overflow-hidden">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&h=300&fit=crop" 
+                                     class="w-100" style="height: 200px; object-fit: cover;" alt="Platform Settings">
+                                <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center">
+                                    <div class="container text-white">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h1 class="h3 mb-2">Platform Settings</h1>
+                                                <p class="mb-0">Configure system-wide settings and integrations</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-light">
+                                                    <i class="fas fa-save me-2"></i> Save All Changes
+                                                </button>
+                                                <button class="btn btn-outline-light">
+                                                    <i class="fas fa-undo me-2"></i> Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Navigation -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <nav class="nav nav-pills nav-fill">
+                            <a class="nav-link active" href="#general">General</a>
+                            <a class="nav-link" href="#security">Security</a>
+                            <a class="nav-link" href="#integrations">Integrations</a>
+                            <a class="nav-link" href="#performance">Performance</a>
+                            <a class="nav-link" href="#notifications">Notifications</a>
+                            <a class="nav-link" href="#maintenance">Maintenance</a>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- General Settings -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card settings-section">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cog me-2"></i> General Platform Settings
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Platform Name</h6>
+                                            <small class="text-muted">The display name for your platform</small>
+                                        </div>
+                                        <input type="text" class="form-control" style="width: 250px;" value="itellico Mono Platform">
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Default Timezone</h6>
+                                            <small class="text-muted">Used for system timestamps and scheduling</small>
+                                        </div>
+                                        <select class="form-select" style="width: 250px;">
+                                            <option selected>UTC (Coordinated Universal Time)</option>
+                                            <option>EST (Eastern Standard Time)</option>
+                                            <option>PST (Pacific Standard Time)</option>
+                                            <option>CET (Central European Time)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">New Tenant Registration</h6>
+                                            <small class="text-muted">Allow new tenants to register automatically</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Maintenance Mode</h6>
+                                            <small class="text-muted">Put the platform into maintenance mode</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Debug Mode</h6>
+                                            <small class="text-muted">Enable detailed error logging (performance impact)</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">System Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong class="d-block">Platform Version</strong>
+                                    <span class="text-muted">v2.1.0</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Node.js Version</strong>
+                                    <span class="text-muted">v18.17.0</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Database Version</strong>
+                                    <span class="text-muted">PostgreSQL 15.3</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Redis Version</strong>
+                                    <span class="text-muted">7.0.11</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block">Uptime</strong>
+                                    <span class="text-success">47 days, 12 hours</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Recent Changes</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong class="d-block small">Security Update</strong>
+                                    <small class="text-muted">Enhanced JWT token validation</small>
+                                    <br><small class="text-muted">2 hours ago</small>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block small">Feature Toggle</strong>
+                                    <small class="text-muted">Enabled voice talent marketplace</small>
+                                    <br><small class="text-muted">1 day ago</small>
+                                </div>
+                                <div class="mb-3">
+                                    <strong class="d-block small">Integration Update</strong>
+                                    <small class="text-muted">N8N workflow automation enabled</small>
+                                    <br><small class="text-muted">3 days ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i> Security & Authentication
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Two-Factor Authentication</h6>
+                                            <small class="text-muted">Require 2FA for all admin accounts</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Password Strength Requirements</h6>
+                                            <small class="text-muted">Enforce strong password policies</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Session Timeout</h6>
+                                            <small class="text-muted">Auto-logout after inactivity (minutes)</small>
+                                        </div>
+                                        <input type="number" class="form-control" style="width: 100px;" value="30">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">IP Whitelist</h6>
+                                            <small class="text-muted">Restrict admin access to specific IPs</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Rate Limiting</h6>
+                                            <small class="text-muted">API request rate limits per tenant</small>
+                                        </div>
+                                        <input type="number" class="form-control" style="width: 100px;" value="1000">
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Audit Logging</h6>
+                                            <small class="text-muted">Log all admin actions and changes</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Integration Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plug me-2"></i> Third-Party Integrations
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="AWS">
+                                        <h6 class="card-title">AWS Services</h6>
+                                        <p class="small text-muted">S3, SES, CloudFront</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Connected</span>
+                                            <button class="btn btn-outline-secondary btn-sm">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Stripe">
+                                        <h6 class="card-title">Stripe Payments</h6>
+                                        <p class="small text-muted">Payment processing</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Connected</span>
+                                            <button class="btn btn-outline-secondary btn-sm">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="N8N">
+                                        <h6 class="card-title">N8N Workflows</h6>
+                                        <p class="small text-muted">Automation platform</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Connected</span>
+                                            <button class="btn btn-outline-secondary btn-sm">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Mattermost">
+                                        <h6 class="card-title">Mattermost</h6>
+                                        <p class="small text-muted">Team notifications</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Connected</span>
+                                            <button class="btn btn-outline-secondary btn-sm">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Grafana">
+                                        <h6 class="card-title">Grafana</h6>
+                                        <p class="small text-muted">Monitoring dashboards</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Connected</span>
+                                            <button class="btn btn-outline-secondary btn-sm">Configure</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card integration-card h-100">
+                                    <div class="card-body text-center">
+                                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=80&h=80&fit=crop" 
+                                             class="rounded mb-3" style="width: 60px; height: 60px; object-fit: cover;" alt="OpenAI">
+                                        <h6 class="card-title">OpenAI API</h6>
+                                        <p class="small text-muted">AI content generation</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-warning">Disabled</span>
+                                            <button class="btn btn-outline-primary btn-sm">Setup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance & Maintenance -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-tachometer-alt me-2"></i> Performance Settings
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Redis Cache TTL</h6>
+                                            <small class="text-muted">Default cache expiration (seconds)</small>
+                                        </div>
+                                        <input type="number" class="form-control" style="width: 100px;" value="300">
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Image Optimization</h6>
+                                            <small class="text-muted">Auto-compress uploaded images</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">CDN Acceleration</h6>
+                                            <small class="text-muted">Use CloudFront for static assets</small>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-tools me-2"></i> Maintenance
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-broom me-2"></i> Clear All Caches
+                                    </button>
+                                    <button class="btn btn-outline-warning">
+                                        <i class="fas fa-database me-2"></i> Optimize Database
+                                    </button>
+                                    <button class="btn btn-outline-info">
+                                        <i class="fas fa-download me-2"></i> Download System Logs
+                                    </button>
+                                    <button class="btn btn-outline-success">
+                                        <i class="fas fa-sync me-2"></i> Sync All Integrations
+                                    </button>
+                                    <button class="btn btn-outline-danger">
+                                        <i class="fas fa-power-off me-2"></i> Restart Services
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'index.html' },
+                { label: 'Tenant Management', icon: 'fas fa-building', href: 'tenants.html' },
+                { label: 'Revenue Analytics', icon: 'fas fa-chart-line', href: 'revenue.html' },
+                { label: 'Subscription Plans', icon: 'fas fa-tags', href: 'plans.html' },
+                { label: 'Feature Sets', icon: 'fas fa-puzzle-piece', href: 'features.html' },
+                { label: 'Industry Templates', icon: 'fas fa-layer-group', href: 'templates.html' },
+                { label: 'Schema Builder', icon: 'fas fa-database', href: 'schemas.html' },
+                { label: 'API Management', icon: 'fas fa-plug', href: 'api.html' },
+                { label: 'System Monitoring', icon: 'fas fa-heartbeat', href: 'monitoring.html' },
+                { label: 'Documentation', icon: 'fas fa-book', href: 'docs.html' },
+                { label: 'Workflows', icon: 'fas fa-project-diagram', href: 'workflows.html' },
+                { label: 'Support Tickets', icon: 'fas fa-ticket-alt', href: 'support.html' },
+                { label: 'Platform Settings', icon: 'fas fa-cog', active: true }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Platform', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('Admin User', 'Super Admin', 'Platform');
+            
+            const breadcrumbItems = [
+                { label: 'Platform', href: 'index.html' },
+                { label: 'Settings' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+        });
+    </script>
+</body>
+</html>

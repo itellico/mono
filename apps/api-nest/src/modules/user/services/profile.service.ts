@@ -1,0 +1,193 @@
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '@common/prisma/prisma.service';
+import { RedisService } from '@common/redis/redis.service';
+import { AuthService } from '@modules/auth/auth.service';
+import * as bcrypt from 'bcrypt';
+
+@Injectable()
+export class ProfileService {
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+    private authService: AuthService,
+  ) {}
+
+  async getProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      select: {
+        id: true,
+        uuid: true,
+        first_name: true,
+        last_name: true,
+        bio: true,
+        profile_photo_url: true,
+        website: true,
+        created_at: true,
+        updated_at: true,
+        account: {
+          select: {
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      success: true,
+      data: {
+        ...user,
+        name: `${user.first_name} ${user.last_name}`,
+        email: user.account.email,
+        phone: user.account.phone,
+        avatar: user.profile_photo_url,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+      },
+    };
+  }
+
+  async updateProfile(userId: string, updateData: any) {
+    // Validate that email is unique if being changed
+    if (updateData.email) {
+      const existingAccount = await this.prisma.account.findFirst({
+        where: {
+          email: updateData.email,
+          NOT: { users: { some: { id: parseInt(userId) } } },
+        },
+      });
+
+      if (existingAccount) {
+        throw new BadRequestException('Email already in use');
+      }
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: parseInt(userId) },
+      data: {
+        first_name: updateData.name?.split(' ')[0] || updateData.firstName,
+        last_name: updateData.name?.split(' ').slice(1).join(' ') || updateData.lastName,
+        bio: updateData.bio,
+        website: updateData.website,
+      },
+      include: {
+        account: {
+          select: {
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    // Update account email/phone if provided
+    if (updateData.email || updateData.phone) {
+      await this.prisma.account.update({
+        where: { id: updatedUser.account_id },
+        data: {
+          ...(updateData.email && { email: updateData.email }),
+          ...(updateData.phone && { phone: updateData.phone }),
+        },
+      });
+    }
+
+    // Clear user cache
+    await this.redis.del(`user:${userId}`);
+
+    return {
+      success: true,
+      data: {
+        ...updatedUser,
+        name: `${updatedUser.first_name} ${updatedUser.last_name}`,
+        email: updatedUser.account.email,
+        phone: updatedUser.account.phone,
+        avatar: updatedUser.profile_photo_url,
+      },
+    };
+  }
+
+  async changePassword(userId: string, changePasswordDto: {
+    currentPassword: string;
+    newPassword: string;
+  }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      include: {
+        account: {
+          select: {
+            password_hash: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.account.password_hash,
+    );
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    // Hash new password
+    const hashedPassword = await this.authService.hashPassword(
+      changePasswordDto.newPassword,
+    );
+
+    // Update password
+    await this.prisma.account.update({
+      where: { id: user.account_id },
+      data: { password_hash: hashedPassword },
+    });
+
+    // Clear user sessions
+    await this.redis.del(`session:${userId}`);
+
+    return {
+      success: true,
+      data: {
+        message: 'Password changed successfully. Please sign in again.',
+      },
+    };
+  }
+
+  async getPublicProfile(uuid: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { uuid },
+      select: {
+        uuid: true,
+        first_name: true,
+        last_name: true,
+        bio: true,
+        profile_photo_url: true,
+        website: true,
+        created_at: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      success: true,
+      data: {
+        ...user,
+        name: `${user.first_name} ${user.last_name}`,
+        avatar: user.profile_photo_url,
+        created_at: user.created_at,
+      },
+    };
+  }
+}

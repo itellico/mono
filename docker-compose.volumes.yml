@@ -1,0 +1,281 @@
+version: '3.8'
+
+# Comprehensive persistent volume configuration for all services
+# Best practice: Central mount point with organized folder structure
+
+services:
+  # PostgreSQL Database - Main data store
+  postgres:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_config:/etc/postgresql
+      - postgres_backup:/backups
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+
+  # Redis - Cache & Sessions
+  redis:
+    volumes:
+      - redis_data:/data
+      - redis_config:/usr/local/etc/redis
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+
+  # RabbitMQ - Message Queue
+  rabbitmq:
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_config:/etc/rabbitmq
+      - rabbitmq_logs:/var/log/rabbitmq
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+
+  # RedisInsight - Redis GUI
+  redisinsight:
+    volumes:
+      - redisinsight_data:/data
+
+  # Mailpit - Email Testing
+  mailpit:
+    volumes:
+      - mailpit_data:/data
+
+  # N8N - Workflow Automation
+  n8n:
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - n8n_workflows:/home/node/.n8n/workflows
+      - n8n_custom:/home/node/.n8n/custom
+
+  # Temporal Server - Workflow Engine
+  temporal:
+    volumes:
+      - temporal_data:/etc/temporal
+      - temporal_config:/etc/temporal/config
+      - ./docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig:ro
+
+  # Prometheus - Metrics Collection
+  prometheus:
+    volumes:
+      - prometheus_data:/prometheus
+      - prometheus_config:/etc/prometheus
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/prometheus/rules:/etc/prometheus/rules:ro
+
+  # Grafana - Monitoring Dashboard
+  grafana:
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - grafana_config:/etc/grafana
+      - grafana_plugins:/var/lib/grafana/plugins
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+
+  # PHP-FPM - Application Server
+  php:
+    volumes:
+      - ./php:/var/www/html
+      - php_sessions:/var/lib/php/sessions
+      - php_logs:/var/log/php
+      - kanboard_data:/var/www/html/kanboard/data
+      - kanboard_plugins:/var/www/html/kanboard/plugins
+      - clickdummy_data:/var/www/html/click-dummy/data
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      - ./docker/kanboard/config.php:/var/www/html/kanboard/config.php:ro
+
+  # Nginx - Web Servers
+  nginx-clickdummy:
+    volumes:
+      - ./php/click-dummy:/var/www/html:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d/clickdummy-root.conf:/etc/nginx/conf.d/default.conf:ro
+
+  nginx-kanboard:
+    volumes:
+      - ./php/kanboard:/var/www/html:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d/kanboard-root.conf:/etc/nginx/conf.d/default.conf:ro
+
+# Volume definitions with best practice folder structure
+volumes:
+  # Database volumes
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/databases/postgres/data
+
+  postgres_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/databases/postgres/config
+
+  postgres_backup:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/databases/postgres/backup
+
+  # Cache volumes
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/cache/redis/data
+
+  redis_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/cache/redis/config
+
+  # Message Queue volumes
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/messaging/rabbitmq/data
+
+  rabbitmq_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/messaging/rabbitmq/config
+
+  rabbitmq_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/messaging/rabbitmq/logs
+
+  # Application volumes
+  kanboard_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/apps/kanboard/data
+
+  kanboard_plugins:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/apps/kanboard/plugins
+
+  clickdummy_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/apps/clickdummy/data
+
+  # Workflow volumes
+  n8n_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/workflows/n8n/data
+
+  n8n_workflows:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/workflows/n8n/workflows
+
+  n8n_custom:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/workflows/n8n/custom
+
+  temporal_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/workflows/temporal/data
+
+  temporal_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/workflows/temporal/config
+
+  # Monitoring volumes
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/monitoring/prometheus/data
+
+  prometheus_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/monitoring/prometheus/config
+
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/monitoring/grafana/data
+
+  grafana_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/monitoring/grafana/config
+
+  grafana_plugins:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/monitoring/grafana/plugins
+
+  # Tool volumes
+  redisinsight_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/tools/redisinsight/data
+
+  mailpit_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/tools/mailpit/data
+
+  # Runtime volumes
+  php_sessions:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/runtime/php/sessions
+
+  php_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DOCKER_DATA_ROOT:-./docker-data}/runtime/php/logs
+

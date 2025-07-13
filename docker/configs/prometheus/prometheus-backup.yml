@@ -1,0 +1,58 @@
+# Prometheus Configuration for NestJS Monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # NestJS API metrics
+  - job_name: 'nestjs-api'
+    static_configs:
+      - targets: ['api-nest:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Redis metrics (if redis_exporter is available)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # PostgreSQL metrics (if postgres_exporter is available)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # RabbitMQ metrics (if rabbitmq_prometheus plugin is enabled)
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Node.js process metrics from NestJS
+  - job_name: 'nestjs-nodejs'
+    static_configs:
+      - targets: ['api-nest:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    params:
+      collect:
+        - 'nodejs'

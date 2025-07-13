@@ -1,0 +1,129 @@
+# Route Compliance Report
+
+## Summary
+- **Total Routes**: 111
+- **Compliant**: 6 (5%)
+- **Violations**: 105
+
+## By Tier
+- **unknown**: 1/1 (100%)
+- **public**: 1/7 (14%)
+- **tenant**: 1/22 (5%)
+- **user**: 0/30 (0%)
+- **account**: 0/27 (0%)
+- **platform**: 3/24 (13%)
+
+## Violations
+- tenant/index.ts: Missing tenant isolation
+- user/index.ts: Missing tenant isolation
+- account/index.ts: Missing tenant isolation
+- public/jobs/index.ts: Missing UUID types, Exposing internal IDs
+- public/health/index.ts: Missing UUID types
+- public/professional-profiles/index.ts: Missing UUID types, Exposing internal IDs
+- public/auth/index.ts: Missing UUID types
+- public/gigs/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/workflows/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/monitoring/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/media/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/professional-profiles/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/jobs/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/forms/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/gigs/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/administration/index.ts: Missing tenant isolation
+- tenant/content/index.ts: Missing tenant isolation
+- tenant/data/index.ts: Missing tenant isolation
+- user/search/index.ts: Missing UUID types, Missing permission checks
+- user/subscriptions/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/saved-searches/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/professional-profiles/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/notifications/index.ts: Missing UUID types, Exposing internal IDs
+- user/messaging/index.ts: Missing UUID types, Exposing internal IDs
+- user/media/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- user/marketplace/index.ts: Missing tenant isolation
+- user/jobs/index.ts: Missing UUID types, Exposing internal IDs
+- user/profile/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- user/gigs/index.ts: Missing UUID types, Exposing internal IDs
+- user/settings/index.ts: Missing UUID types, Missing permission checks, Missing tenant isolation
+- user/content/index.ts: Missing tenant isolation
+- user/activity/index.ts: Missing tenant isolation
+- user/artwork/index.ts: Missing UUID types
+- account/users/index.ts: Missing tenant isolation
+- account/jobs/index.ts: Missing UUID types, Exposing internal IDs
+- account/professional-profiles/index.ts: Missing UUID types, Exposing internal IDs
+- account/invitations/index.ts: Missing UUID types, Exposing internal IDs
+- account/gigs/index.ts: Missing UUID types, Exposing internal IDs
+- account/configuration/index.ts: Missing tenant isolation
+- account/changes/index.ts: Missing UUID types, Missing permission checks, Missing tenant isolation
+- account/business/index.ts: Missing tenant isolation
+- account/billing/index.ts: Missing tenant isolation
+- account/analytics/index.ts: Missing tenant isolation
+- platform/webhooks/index.ts: Missing UUID types, Exposing internal IDs
+- platform/operations/index.ts: Missing UUID types, Exposing internal IDs
+- platform/monitoring/index.ts: Missing UUID types
+- platform/integrations/index.ts: Missing UUID types, Exposing internal IDs
+- platform/industry-templates/index.ts: Missing UUID types, Exposing internal IDs
+- platform/feature-sets/index.ts: Missing UUID types, Exposing internal IDs
+- platform/documentation/index.ts: Missing UUID types
+- platform/audit/index.ts: Missing UUID types
+- public/contact/emails/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/administration/users/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/administration/permissions/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/administration/accounts/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/content/templates/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/content/tags/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/content/media/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/data/schemas/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/data/option-sets/index.ts: Missing UUID types, Exposing internal IDs
+- user/search/saved/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- user/messaging/notifications/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- user/messaging/conversations/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/media/uploads/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/media/artwork/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/marketplace/jobs/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/marketplace/gigs/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/settings/preferences/index.ts: Missing UUID types, Missing permission checks, Missing tenant isolation
+- user/settings/notifications/index.ts: Missing UUID types, Missing permission checks, Missing tenant isolation
+- user/content/templates/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/content/tags/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/content/categories/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- user/activity/changes/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- user/activity/audit/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs, Missing tenant isolation
+- account/users/permissions/index.ts: Missing UUID types, Exposing internal IDs
+- account/users/management/index.ts: Missing UUID types, Exposing internal IDs
+- account/users/invitations/index.ts: Missing UUID types, Exposing internal IDs
+- account/configuration/settings/index.ts: Missing UUID types, Missing tenant isolation
+- account/configuration/roles/index.ts: Missing UUID types, Exposing internal IDs
+- account/configuration/api-keys/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/business/workflows/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/business/integrations/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/business/webhooks/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/business/forms/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/business/ai/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/billing/payment-methods/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/billing/subscriptions/index.ts: Missing UUID types, Exposing internal IDs
+- account/billing/invoices/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/analytics/overview/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- account/analytics/reports/index.ts: Missing UUID types, Exposing internal IDs, Missing tenant isolation
+- platform/system/tenants/index.ts: Missing UUID types, Exposing internal IDs
+- platform/ai/llm/index.ts: Missing UUID types, Exposing internal IDs
+- platform/admin/users/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- platform/admin/translations/index.ts: Missing UUID types
+- platform/admin/tenants/index.ts: Missing UUID types, Missing permission checks
+- platform/admin/settings/index.ts: Missing UUID types
+- platform/admin/queue/index.ts: Missing UUID types
+- platform/admin/integrations/index.ts: Missing UUID types, Exposing internal IDs
+- platform/admin/permissions/index.ts: Missing UUID types, Exposing internal IDs
+- platform/admin/platform-users/index.ts: Missing UUID types, Missing permission checks, Exposing internal IDs
+- platform/admin/emergency/index.ts: Missing UUID types, Exposing internal IDs
+- tenant/data/schemas/model-schemas/index.ts: Missing UUID types
+- tenant/data/option-sets/option-sets/index.ts: Missing UUID types
+- platform/admin/translations/languages/index.ts: Missing UUID types
+- platform/admin/translations/extract-strings/index.ts: Missing UUID types
+
+## Fixed Issues
+- ✅ Added UUID type imports
+- ✅ Fixed permission patterns to tier.resource.action
+- ✅ Added tenant isolation to database queries
+- ✅ Removed internal ID exposure
+- ✅ Updated tags to tier.resource format
+- ✅ Added missing permission checks

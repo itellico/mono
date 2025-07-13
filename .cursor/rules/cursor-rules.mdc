@@ -1,0 +1,424 @@
+---
+description: "Mono Platform comprehensive development rules and architecture requirements"
+globs: 
+alwaysApply: true
+---
+---
+description: Mono Platform
+globs: 
+alwaysApply: false
+---
+
+# 🌟 Core Principles (NON-NEGOTIABLE)
+
+**Priority Levels:**
+*   **P0: Critical** - Security, data integrity, and fundamental architectural requirements. Violations are showstoppers.
+*   **P1: Important** - Core architectural patterns, performance, and essential development practices. Violations impact stability or efficiency.
+*   **P2: Best Practice** - Code quality, maintainability, and consistency. Violations lead to technical debt or inconsistencies.
+
+!!!!!! YOU NEVER DO QUICK FIXES - ALL BEST PRACTICE !!!!!
+
+A "quick fix" is defined as any change that knowingly violates one of the other rules in this document for the sake of speed (e.g., using `console.log()` instead of the proper logging system).
+
+## 🔒 Security & Data Integrity (P0)
+
+*   **Multi-tenant**: ALL database operations MUST include `tenant_id` isolation.
+*   **Permissions**: ALL API routes MUST validate permissions before execution.
+*   **New Model Permissions**: When creating a new database model, permissions for this model MUST be automatically generated and assigned to the Super Admin role to ensure immediate testability and access.
+*   **Unified Permission System**: ALL API routes MUST use `canAccessAPI()` - NEVER hard-coded role checks. ALL UI components MUST use `PermissionGate` for role-based visibility.
+*   **Tenant Isolation Rules**:
+    *   **Database**: NEVER query without `tenant_id` filter.
+    *   **Cache Keys**: NEVER share Redis keys between tenants.
+    *   **API Routes**: ALWAYS validate tenant access before operations.
+    *   **Service Layer**: ALL methods must accept and validate `tenantId`.
+*   **Audit System Integration**:
+    *   ALWAYS integrate `useAuditTracking` in ALL user-facing components.
+    *   ALWAYS add `LockStatus` component to ALL editable entity forms/pages.
+    *   ALL entity mutations MUST log audit entries via `AuditService.logEntityChange()`.
+    *   IMPLEMENT entity locking via `useLocking` hook for concurrent editing protection.
+    *   ALL write operations MUST create audit logs and version snapshots.
+*   **Database Transactions**: For simple ORM queries, direct operations are fine. For complex or multi-table operations, ALWAYS use `db.transaction()` to ensure data integrity.
+
+## 🚀 Performance & Caching (P1)
+
+*   **Three-Layer Caching Stack**:
+    *   **Layer 1**: Next.js `unstable_cache` (React Server Components)
+    *   **Layer 2**: Redis with `getRedisClient()` from ` @/lib/redis`
+    *   **Layer 3**: TanStack Query (client-side state management)
+    *   **Coordination**: ALL layers must invalidate together on mutations. This ensures that a save operation (mutation) triggers immediate UI updates (via optimistic updates) and subsequent cache invalidation across all layers, guaranteeing that list views and other displays reflect the latest data instantly.
+*   **Service Layer**: ALL data access through service classes with Redis caching.
+
+## 📊 Observability & Logging (P1)
+
+*   **Dual Logging System**:
+    *   **Client**: `browserLogger` from ` @/lib/browser-logger` (ONLY in 'use client' components).
+    *   **Server**: `logger` from ` @/lib/logger` (API routes, server operations).
+    *   **NEVER**: `console.log()`, `console.error()` or any direct console methods.
+    *   **Environment**: Automatic detection - production silent, development full logging.
+    *   **Specialized Methods**: `userAction`, `apiRequest`, `apiResponse`, `formSubmit`, `navigation`, `performance` (browserLogger).
+    *   **Server Methods**: `logApiRequest`, `logApiResponse`, `logAuthEvent`, `logAdminAction`, `logSecurityEvent`, `logDatabaseQuery`, `withTiming`.
+
+## 🎨 UI & Development Standards (P1)
+
+## 🧪 Testing Standards (P1)
+
+**Testing Frameworks**:
+*   **Unit & Component Testing**: Jest + React Testing Library
+*   **End-to-End (E2E) Testing**: Playwright
+
+**Expectations**:
+*   **Unit Tests**: Focus on isolated functions, components (pure functions, hooks), and small modules.
+*   **Component Tests**: Verify UI components render correctly and respond to user interactions as expected, using React Testing Library to simulate user behavior.
+*   **Integration Tests**: Test the interaction between multiple units or components (e.g., a form interacting with an API service).
+*   **End-to-End Tests**: Cover critical user flows across the entire application to ensure the system works correctly from a user's perspective (e.g., user registration, marketplace listing creation, subscription purchase).
+*   **Test Coverage**: Aim for high test coverage, especially for critical business logic and user-facing features.
+*   **Test Naming**: Follow clear and consistent naming conventions for test files and test descriptions (e.g., `ComponentName.test.tsx`, `feature.e2e.spec.ts`).
+*   **Mocking**: Use mocking appropriately for external dependencies (APIs, third-party services) to ensure tests are fast and reliable.
+*   **CI/CD Integration**: Tests should be integrated into the CI/CD pipeline to run automatically on every pull request or commit.
+
+*   **Component Patterns**: ALWAYS use ShadCN UI components.
+*   **JSDoc**: ALWAYS add JSDoc comments to all exported components with `@param`, `@example`, `@component`.
+*   **String Handling**:
+    *   ❌ **NEVER** use raw apostrophes in JSX text (You're).
+    *   ✅ **ALWAYS** escape apostrophes as `&apos;` (You&apos;re).
+    *   ❌ **NEVER** hardcode text strings.
+    *   ✅ **ALWAYS** use `t()` function with translation keys.
+*   **Type Safety**:
+    *   ✅ **PREFER interfaces over types** for object shapes.
+    *   ✅ **NEVER use any type** - always define specific interfaces.
+*   **OpenAPI Documentation**: EVERY API endpoint must have complete OpenAPI 3.0.3 documentation.
+
+---
+
+# 🏗️ Platform Architecture (P1)
+
+**Schema-driven**: Use model schemas and option sets for USER-FACING dynamic forms/lists (NOT admin interfaces)
+**Translation**: ALL user-facing text MUST use `t()` function with translation keys
+**Type-safe**: Strict TypeScript with proper interfaces and API contracts
+
+# Admin Interface Patterns (P1)
+
+Admin interfaces (e.g., in `/src/app/admin/`) are built using standard, statically-defined React components. They leverage ShadCN UI components and utilize the provided `AdminEditPage` and `AdminListPage` components as foundational building blocks. These components are highly configurable via props and adhere to the platform's core principles for logging, permissions, and auditing, but are NOT driven by dynamic model schemas.
+
+# Model Schemas System (P1)
+
+**Dynamic schemas stored as JSONB** in `model_schemas` table
+**Multi-tenant**: Platform-wide + tenant-specific schemas (tenantId UUID/null)
+**Structure**: Properties (id, tenantId, type, subType), displayName (JSONB i18n), schema (JSONB fields), isActive
+**Query Pattern**: ALWAYS query by `type` and `subType` with tenant isolation
+**Validation**: ALWAYS validate against schema before saving data
+**Caching**: Cache schemas aggressively (they change infrequently)
+**Use Cases**: User profiles, job applications, search forms, user-generated content
+**NOT For**: Admin interfaces (/admin/*), system dashboards, fixed database views
+
+# Option Sets System (P1)
+
+**Reusable dropdown/selection options** with regional mapping support
+**Structure**: OptionSet (id, slug, label, tenantId), OptionValue (id, optionSetId, label, value, order, canonicalRegion, regionalMappings JSONB, metadata JSONB)
+**Resolution**: ALWAYS resolve by slug + tenantId with regional mappings
+**Conversion**: Use conversion factors for automatic unit calculations
+**Fallback**: Fallback to canonical region if user region not mapped
+**Use Cases**: User-facing dropdowns, regional variations, tenant-configurable values
+**NOT For**: System enums (active/inactive), admin interface dropdowns, fixed technical values
+
+# Module System (P2)
+
+**Context-aware rendering**: form, search, list, card, detail contexts
+**Types**: Profile forms, Search interfaces, Detail pages, Listing pages, Application forms, Card components
+**Configuration**: id, tenantId, name, moduleType, modelSchemaId, configuration JSONB, status, version
+**React Integration**: FormRenderer, ListRenderer, SearchRenderer with role-based filtering
+
+# Translations System (P1)
+
+**JSON-First Approach**: JSON files are source of truth, NOT TSX files
+**Base Language**: en-US defines all keys, other languages inherit structure
+**TSX Usage**: ONLY `t('key')` calls, NEVER hardcoded strings
+**Validation**: Use `scripts/validate-translations.js` for structure integrity
+**API Route**: `/api/v1/admin/translations/extract-strings` validates JSON only
+**Parser Config**: NO code extraction (`lexers: { js: [], ts: [], jsx: [], tsx: [] }`)
+**Structure**: Hierarchical JSON with unique keys (no flat/nested conflicts)
+**Workflow**: Add to en-US JSON → Use `t('key')` in TSX → Validate → Translate manually
+**Multi-tenant**: id, tenantId, entityType, entityId, languageCode, key, value, context, isAutoTranslated, needsReview
+**Entity Types**: 'field', 'option', 'email_template', 'ui'
+
+# State Management Decision Tree (P1)
+
+**Server State (API data, cached data)**: TanStack Query + Redis
+**Authentication/Session**: NextAuth session (NEVER Zustand)
+**UI State (modals, forms, preferences)**: Zustand with proper middleware
+**URL/Route State**: Next.js searchParams or 'nuqs' library
+
+# TanStack Query Requirements (P1)
+
+**Query Keys**: Use factory pattern `['entity', 'list', filters]` structure
+**Cache Time**: `staleTime: 5 * 60 * 1000` (5 min), `gcTime: 10 * 60 * 1000` (10 min)
+**Error Handling**: Proper error boundaries with user-friendly fallbacks
+**Optimistic Updates**: Required for all mutations with rollback on failure
+**Prefetching**: Implement on hover/focus for instant navigation
+
+# Zustand Implementation (P1)
+
+**Store Structure**: Organize by domain `stores/{ui,forms,preferences,shared}`
+**Middleware Stack**: ALWAYS include `devtools + persist + immer`
+**Selectors**: Use `useShallow` for object/array selections (prevents re-renders)
+**Tenant Isolation**: Include `tenantId` in store state when applicable
+**TypeScript**: Define proper interfaces for all store states
+**Store Composition**: Split large stores into focused, single-responsibility stores
+
+# Redis Cache Keys (P1)
+
+**Tenant Data**: `cache:{tenant_id}:{entity}:{id}` - users, profiles, model_schemas, option_sets, translations, email_templates
+**Global Data**: `cache:global:{entity}:{id}` - site_settings, system_translations, platform_schemas
+**Search/Lists**: `cache:{tenant_id}:{entity}:search:{query_hash}` | `cache:{tenant_id}:{entity}:list:{filters_hash}`
+**Sessions**: `sessions:{session_id}` | `auth:tokens:{token_hash}` | `auth:rate_limit:{ip_address}`
+**Temporary**: `temp:uploads:{upload_id}` | `locks:entity:{entity_type}:{entity_id}`
+**Analytics**: `analytics:{tenant_id}:{date}:{metric}` | `audit:activity:{tenant_id}:{user_id}`
+
+# Entity Caching Requirements (P1)
+
+| Entity | Cache | TTL | Implementation |
+|--------|-------|-----|----------------|
+| **Users** | ✅ REQUIRED | 5-10 min | Basic metadata only |
+| **Profiles** | ✅ REQUIRED | 5-10 min | User profile data |
+| **Model Schemas** | ✅ REQUIRED | 30 min | Dynamic form structures |
+| **Option Sets** | ✅ REQUIRED | 1-24h | Dropdown values |
+| **Search Results** | ✅ REQUIRED | 1-3 min | Query snapshots |
+| **Site Settings** | ✅ REQUIRED | 10-30 min | Configuration data |
+| **Translations** | ✅ REQUIRED | 10-30 min | i18n content |
+| **Email Templates** | ✅ REQUIRED | 30 min | Messaging templates |
+
+# Business Hierarchy (P1)
+
+**Structure**: Platform → Tenant → Account → User → Profile
+**Permissions**: Super Admin > Tenant Admin > Content Moderator > Account Owner > User
+**Validation**: EVERY operation must include tenant isolation and permission validation
+
+# Performance Requirements (P1)
+
+**Background Sync**: Cache updates must be non-blocking
+**Graceful Degradation**: App MUST work if Redis fails (log errors, continue)
+**Invalidation**: ALL write operations MUST clear related cache keys
+
+# Database Connection (P2)
+
+**Configuration**: These values are used to construct the `DATABASE_URL` environment variable for Prisma.
+**Example DATABASE_URL**: `postgresql://developer:developer@localhost:5432/mono`
+
+**Database**: mono
+**User**: developer
+**Password**: developer
+**Host**: localhost
+**Port**: 5432
+**SSL**: false
+
+# Prisma Usage (P1)
+
+✅ **Prisma Client**: Always instantiate the Prisma Client as `prisma` from `@/lib/prisma` to ensure a single, shared instance.
+✅ **Tenant Isolation**: ALL Prisma queries MUST include `where: { tenantId: ... }` for multi-tenant data isolation, unless explicitly querying global data (e.g., `PlatformSettings`).
+✅ **Transactions**: Use `prisma.$transaction([])` for atomic operations involving multiple writes or reads that require strong consistency.
+✅ **Select & Include**: Explicitly define `select` clauses to fetch only necessary fields. Use `include` sparingly and only when related data is truly needed to avoid over-fetching.
+✅ **Error Handling**: Wrap Prisma queries in `try-catch` blocks and handle potential database errors gracefully, logging them via the `logger` service.
+✅ **Raw Queries**: Avoid raw SQL queries (`prisma.$queryRaw`) unless absolutely necessary for complex operations not easily expressed with Prisma Client, and ensure they are properly sanitized to prevent SQL injection.
+✅ **Schema Updates**: After modifying `prisma/schema.prisma`, always run `npx prisma migrate dev` to generate and apply new migrations, and `npx prisma generate` to update the Prisma Client.
+
+# Schema Import Patterns (P1)
+
+✅ **ALWAYS**: `import { table } from '@/lib/schemas'`
+
+**Organization**: Domain-based files in `src/lib/schemas/`
+**Relations**: Defined in index file to avoid circular dependencies
+
+# Temporal Workflows (P1)
+
+✅ Define workflows with step-by-step activities
+✅ Include retry policies with maximum attempts
+✅ Set appropriate timeouts (e.g., 10m for media processing)
+✅ Always update database status after workflow completion
+✅ Handle failures gracefully with rollback capabilities
+
+# Scripts Organization (P2)
+
+**Location**: `/scripts/` - Organized by topic with strict preservation rules. This directory is used for helper scripts such as database migrations, seeding, and other utility operations.
+**Script Rules**: NEVER delete scripts - organize them. Use naming conventions: `create-*`, `check-*`, `test-*`, `verify-*`
+
+# React 19 Patterns (P1)
+
+✅ **FAVOR React Server Components (RSC)** where possible
+✅ **MINIMIZE 'use client' directives** - only when absolutely necessary
+✅ **Use useActionState** instead of deprecated useFormState
+✅ **Handle async params**: `const params = await props.params`
+✅ **Handle async searchParams**: `const searchParams = await props.searchParams`
+✅ **Async APIs**: `await cookies()`, `await headers()`, `await draftMode()`
+
+# Component Patterns (P2)
+
+✅ **ALWAYS** use Skeleton components for loading states
+✅ **Filterable Lists**: Multi-select functionality, bulk actions, URL-based filter state
+✅ **Tabs**: Use ShadCN Tabs for complex forms/preferences with icons and logical grouping
+✅ **Error Boundaries**: Proper error boundaries for client components
+
+**Canonical Examples:** For comprehensive examples of component implementation adhering to all UI and development standards, refer to:
+*   `src/components/admin/AdminEditPage.tsx`
+*   `src/components/admin/AdminListPage.tsx`
+
+# API Response Types (P2)
+
+✅ Standardize all API responses with success/data/error fields
+✅ Include meta object with version, timestamp, and pagination
+✅ Define pagination meta with page, limit, total, totalPages
+✅ Use union types for permission actions and resources
+
+# Server Setup (P2)
+
+```bash
+# ALWAYS kill ports first - Mono development requirement
+lsof -ti:3000,3001,3002,3003,3004,3005 | xargs kill -9 2>/dev/null || true
+npm run dev
+```
+
+# Architecture Validation (P2)
+
+**Use**: `dev/scripts/` for database, admin, testing, and utility operations
+**Understand**: Platform architecture (model schemas, option sets, modules)
+**Verify**: All components follow model schema patterns
+**Confirm**: Translation keys used throughout
+
+# Development Scripts (P2)
+
+**Location**: `/dev/scripts/` - Organized by topic with strict preservation rules
+**Script Rules**: NEVER delete scripts - organize them. Use naming conventions: `create-*`, `check-*`, `test-*`, `verify-*`
+
+# Tech Stack (P2)
+
+**Database**: PostgreSQL + Prisma ORM + transactions
+**Frontend**: React 19 + Next.js 15 + ShadCN UI
+**State**: TanStack Query (server) + Zustand (client UI only)
+**Cache**: Redis (mandatory) + TanStack Query coordination
+**Workflows**: Temporal with retry policies and timeouts
+**Auth**: NextAuth.js with proper session management
+**API**: `/api/v1/` structure with OpenAPI documentation
+**Types**: TypeScript strict mode with interfaces over types
+
+# Essential Commands (P2)
+
+**Port cleanup**: `lsof -ti:3000,3001,3002,3003,3004,3005 | xargs kill -9 2>/dev/null || true`
+**Development server**: `npm run dev` (port 3000)
+**Database migrations**: `npx prisma migrate dev` (Generates new migrations based on schema changes and applies pending migrations.)
+**Seed data**: `npm run db:seed` (Executes `scripts/seed-tenant.ts` for comprehensive tenant setup and initial data population.)
+**API documentation**: `npm run docs:openapi`
+**OpenAPI watch**: `npm run docs:openapi:watch`
+**Database Export (pg_dump)**: Use `pg_dump` for database backups and exports. Ensure you use a compatible version (e.g., `postgresql@16`'s `pg_dump`). Example: `PGPASSWORD=developer /usr/local/opt/postgresql@16/bin/pg_dump -h localhost -p 5432 -U developer -Fc mono > mono_export.sql`
+**Database CLI (psql)**: For direct database interaction via command line. Example: `PGPASSWORD=developer psql -h localhost -p 5432 -U developer -d mono -c "\dt"` (for non-interactive commands).
+
+# Database History (P2)
+
+**Previous Database Schema**: The `mono_new_export.sql` file (located in the project root) contains the database schema from the prior project that utilized Drizzle ORM. This dump can be used as a reference for understanding the historical database structure.
+
+**Schema Analysis and Alignment**: A detailed analysis of `mono_new_export_plain.sql` reveals a strong alignment with the architectural principles and feature requirements outlined in `todo.md` and `GEMINI.md`. Key aspects supported by the schema include:
+*   **Multi-tenancy**: Consistently implemented with `tenant_id` across most tables.
+*   **Dynamic Content**: `model_schemas` and `modules` tables support dynamic forms and user-facing content.
+*   **Comprehensive Features**: Database structures are present for subscription management, audit logging, translation, media optimization, and various administrative functionalities.
+*   **Security & Data Integrity**: `record_locks` and `version_history` tables, along with numerous constraints, directly support P0 security and data integrity requirements.
+*   **Workflows & LLM Integration**: Extensive tables for workflow management (e.g., n8n integration) and LLM API/usage tracking are present.
+
+This schema provides a robust foundation that directly reflects the complex multi-tenant SaaS marketplace builder envisioned.
+
+# Required Implementations (P1)
+
+- [ ] Service layer classes with Redis caching
+- [ ] TanStack Query with proper cache keys
+- [ ] Zustand stores for UI state (with devtools + persist + immer)
+- [ ] Three-layer cache invalidation on mutations
+- [ ] Tenant isolation in ALL database operations
+- [ ] Permission validation in ALL API routes
+- [ ] Translation keys for ALL user-facing text
+- [ ] Proper logging (browserLogger/logger, no console)
+- [ ] useShallow selectors for Zustand object selections
+- [ ] Model schemas for USER-FACING dynamic forms/lists (not admin interfaces)
+- [ ] Option sets for USER-CONFIGURABLE dropdown values with regional mapping
+- [ ] FormRenderer/ListRenderer/SearchRenderer for user content (not admin tables)
+- [ ] Database transactions for multi-table operations
+- [ ] Temporal workflows with retry policies
+- [ ] OpenAPI documentation for all endpoints
+- [ ] JSDoc comments on all exported components
+- [ ] Proper schema imports from @/lib/schemas
+- [ ] Business hierarchy permission validation
+- [ ] Apostrophe escaping in JSX (&apos;)
+- [ ] TypeScript interfaces (not types) for object shapes
+- [ ] **useAuditTracking integration in ALL user-facing components**
+- [ ] **LockStatus components on ALL editable entity forms/pages**
+- [ ] **Audit logging in ALL entity mutation operations**
+- [ ] **Version snapshots for critical entity changes**
+- [ ] **Lock management for concurrent editing protection**
+- [ ] **Include usePageTracking for automatic navigation audit**
+
+# NEVER DO (P0 - Critical Anti-Patterns)
+
+❌ Use `console.log()`, `console.error()` - Use proper loggers
+❌ Query database without `tenant_id` - Security violation
+❌ Skip Redis caching in service layer - Performance requirement
+❌ **Implement custom Redis logic in services - Use TemplateCache/OptionSetCache patterns**
+❌ Use Zustand for server state - Use TanStack Query
+❌ Store authentication in Zustand - Use NextAuth session
+❌ Use direct object selections in Zustand - Use useShallow
+❌ Create monolithic Zustand stores - Split by domain
+❌ Hardcode text strings - Use translation keys
+❌ Use raw apostrophes in JSX - Use &apos;
+❌ Start dev server without port cleanup - Causes conflicts
+❌ Import from ` @/drizzle/schema` - Use ` @/lib/schemas`
+❌ Hardcode forms/lists - Use schema-driven rendering
+❌ Use types for object shapes - Use interfaces
+❌ Use enums - Use const maps instead
+❌ Multi-table operations without transactions - Data integrity risk
+❌ Missing OpenAPI documentation - Required for all endpoints
+❌ Use deprecated useFormState - Use useActionState
+❌ Sync runtime APIs - Use async versions
+❌ Missing JSDoc on exported components - Documentation requirement
+❌ **Skip user activity tracking in components - Compliance violation**
+❌ **Create editable forms without LockStatus - Concurrent editing risk**
+❌ **Mutate entities without audit logs - Accountability requirement**
+❌ **Skip version snapshots for critical changes - Data integrity risk**
+❌ **Allow concurrent editing without locking - Data conflict risk**
+❌ **Extract strings from TSX files - Use JSON-first approach**
+❌ **Hardcode strings in TSX components - Use t() function only**
+❌ **Create flat/nested key conflicts in JSON - Use hierarchical structure**
+❌ **Scan code files for translations - JSON files are source of truth**
+❌ **Skip translation validation - Always validate structure integrity**
+
+# ALWAYS DO (P0 - Required Patterns)
+
+✅ Implement all three caching layers together
+✅ Use service layer pattern with Redis integration
+✅ Validate tenant access before any operation
+✅ Include rich context in all log messages
+✅ Follow model schema patterns for forms/lists
+✅ Use proper error boundaries with user feedback
+✅ Use translation keys with proper context
+✅ Validate against model schemas before saving
+✅ Include regional mappings for option sets
+✅ Use database transactions for related operations
+✅ Document APIs with OpenAPI annotations
+✅ Add JSDoc comments to all exported components
+✅ Escape apostrophes in JSX text
+✅ Use interfaces for object type definitions
+✅ Include retry policies in Temporal workflows
+✅ **Integrate useAuditTracking in ALL user-facing components**
+✅ **Add LockStatus to ALL editable entity forms/pages**
+✅ **Create audit logs for ALL entity mutations**
+✅ **Generate version snapshots for critical entity changes**
+✅ **Implement entity locking for concurrent editing protection**
+✅ **Add translation keys to en-US JSON first**
+✅ **Use t() function for ALL user-facing text**
+✅ **Validate JSON structure with scripts/validate-translations.js**
+✅ **Maintain hierarchical JSON structure without conflicts**
+✅ **Follow JSON-first translation workflow consistently**
+
+# Quick Reference (P2)
+
+**Admin Access**: `1@1.com` / `123` (Super Admin), `2@2.com` / `123` (Moderator)
+**Dev Server**: Port 3000 (kill ports first)
+**Admin Panel**: http://localhost:3000/admin
+**Scripts**: `dev/scripts/` (database, testing, admin)
+**Database**: mono/developer/developer (localhost:5432)
+
+**Focus**: This file contains ONLY Mono-specific critical requirements. Standard React/TypeScript best practices are assumed to be followed naturally.

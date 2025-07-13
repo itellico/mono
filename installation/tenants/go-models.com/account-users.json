@@ -1,0 +1,327 @@
+{
+  "accountUsers": [
+    {
+      "comment": "========== ELITE MODEL MANAGEMENT VIENNA (AGENCY) ==========",
+      "users": []
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "email": "director@elite-vienna.com",
+      "username": "elite_director",
+      "password": "${ELITE_DIRECTOR_PASSWORD:-EliteDir2024!}",
+      "firstName": "Alexander",
+      "lastName": "Hartmann",
+      "displayName": "Alexander Hartmann",
+      "roles": ["account_admin"],
+      "jobTitle": "Managing Director",
+      "department": "Management",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.settings.*",
+        "account.users.*",
+        "account.billing.*",
+        "account.reports.*"
+      ]
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "email": "booking@elite-vienna.com",
+      "username": "elite_booking",
+      "password": "${ELITE_BOOKING_PASSWORD:-EliteBook2024!}",
+      "firstName": "Maria",
+      "lastName": "Schneider",
+      "displayName": "Maria Schneider",
+      "roles": ["account_manager"],
+      "jobTitle": "Senior Booking Agent",
+      "department": "Booking",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.projects.*",
+        "account.teams.read",
+        "account.reports.read"
+      ]
+    },
+    {
+      "accountSlug": "elite-vienna",
+      "email": "scout@elite-vienna.com",
+      "username": "elite_scout",
+      "password": "${ELITE_SCOUT_PASSWORD:-EliteScout2024!}",
+      "firstName": "Julia",
+      "lastName": "Weber",
+      "displayName": "Julia Weber",
+      "roles": ["user"],
+      "jobTitle": "Talent Scout",
+      "department": "Scouting",
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "user.content.create",
+        "user.content.read",
+        "user.messages.send"
+      ]
+    },
+    {
+      "comment": "========== STEFAN BERGER PHOTOGRAPHY (PHOTOGRAPHER) ==========",
+      "users": []
+    },
+    {
+      "accountSlug": "berger-photography",
+      "email": "stefan@stefanberger.com",
+      "username": "stefan_berger",
+      "password": "${STEFAN_PASSWORD:-Stefan2024!}",
+      "firstName": "Stefan",
+      "lastName": "Berger",
+      "displayName": "Stefan Berger",
+      "roles": ["account_admin"],
+      "jobTitle": "Owner & Lead Photographer",
+      "department": "Photography",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": ["account.*"],
+      "metadata": {
+        "verified": true,
+        "professional": true,
+        "yearsExperience": 15
+      }
+    },
+    {
+      "accountSlug": "berger-photography",
+      "email": "assistant@stefanberger.com",
+      "username": "photo_assistant",
+      "password": "${ASSISTANT_PASSWORD:-Assistant2024!}",
+      "firstName": "Lisa",
+      "lastName": "Novak",
+      "displayName": "Lisa Novak",
+      "roles": ["user"],
+      "jobTitle": "Photography Assistant",
+      "department": "Photography",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.projects.read",
+        "user.content.read",
+        "user.files.upload"
+      ]
+    },
+    {
+      "comment": "========== SOPHIE LAURENT (MODEL) ==========",
+      "users": []
+    },
+    {
+      "accountSlug": "sophie-laurent",
+      "email": "sophie@sophielaurent.com",
+      "username": "sophie_laurent",
+      "password": "${SOPHIE_PASSWORD:-Sophie2024!}",
+      "firstName": "Sophie",
+      "lastName": "Laurent",
+      "displayName": "Sophie Laurent",
+      "roles": ["account_admin"],
+      "jobTitle": "Professional Model",
+      "locale": "fr-FR",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": ["account.*", "user.*"],
+      "metadata": {
+        "verified": true,
+        "category": "fashion-model",
+        "representation": "Elite Model Management Vienna"
+      }
+    },
+    {
+      "accountSlug": "sophie-laurent",
+      "email": "manager@sophielaurent.com",
+      "username": "sophie_manager",
+      "password": "${MANAGER_PASSWORD:-Manager2024!}",
+      "firstName": "Claire",
+      "lastName": "Dubois",
+      "displayName": "Claire Dubois",
+      "roles": ["account_manager"],
+      "jobTitle": "Personal Manager",
+      "locale": "fr-FR",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.settings.read",
+        "account.projects.*",
+        "account.reports.*",
+        "user.messages.*"
+      ]
+    },
+    {
+      "comment": "========== MÜLLER FAMILY (GUARDIAN/PARENT) ==========",
+      "users": []
+    },
+    {
+      "accountSlug": "mueller-family",
+      "email": "mother@mueller.at",
+      "username": "sabine_mueller",
+      "password": "${SABINE_PASSWORD:-Sabine2024!}",
+      "firstName": "Sabine",
+      "lastName": "Müller",
+      "displayName": "Sabine Müller",
+      "roles": ["account_admin"],
+      "jobTitle": "Parent/Guardian",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": ["account.*"],
+      "metadata": {
+        "role": "mother",
+        "managingChildren": ["Emma Müller", "Max Müller"]
+      }
+    },
+    {
+      "accountSlug": "mueller-family",
+      "email": "father@mueller.at",
+      "username": "thomas_mueller",
+      "password": "${THOMAS_PASSWORD:-Thomas2024!}",
+      "firstName": "Thomas",
+      "lastName": "Müller",
+      "displayName": "Thomas Müller",
+      "roles": ["account_manager"],
+      "jobTitle": "Parent/Guardian",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.settings.read",
+        "account.projects.*",
+        "account.users.read",
+        "account.reports.read"
+      ],
+      "metadata": {
+        "role": "father",
+        "managingChildren": ["Emma Müller", "Max Müller"]
+      }
+    },
+    {
+      "accountSlug": "mueller-family",
+      "email": "emma@mueller.at",
+      "username": "emma_mueller",
+      "password": "${EMMA_PASSWORD:-Emma2024!}",
+      "firstName": "Emma",
+      "lastName": "Müller",
+      "displayName": "Emma Müller",
+      "roles": ["user"],
+      "jobTitle": "Child Model",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "user.profile.read",
+        "user.content.read"
+      ],
+      "metadata": {
+        "age": 8,
+        "category": "child-model",
+        "parentalConsent": true,
+        "guardians": ["sabine_mueller", "thomas_mueller"]
+      }
+    },
+    {
+      "accountSlug": "mueller-family",
+      "email": "max@mueller.at",
+      "username": "max_mueller",
+      "password": "${MAX_PASSWORD:-Max2024!}",
+      "firstName": "Max",
+      "lastName": "Müller",
+      "displayName": "Max Müller",
+      "roles": ["user"],
+      "jobTitle": "Child Model",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "user.profile.read",
+        "user.content.read"
+      ],
+      "metadata": {
+        "age": 10,
+        "category": "child-model",
+        "parentalConsent": true,
+        "guardians": ["sabine_mueller", "thomas_mueller"]
+      }
+    },
+    {
+      "comment": "========== MAKEUP & STYLE COLLECTIVE (CREATIVE PROFESSIONALS) ==========",
+      "users": []
+    },
+    {
+      "accountSlug": "makeup-style-collective",
+      "email": "founder@makeupstylecollective.com",
+      "username": "collective_founder",
+      "password": "${FOUNDER_PASSWORD:-Founder2024!}",
+      "firstName": "Isabella",
+      "lastName": "Romano",
+      "displayName": "Isabella Romano",
+      "roles": ["account_admin"],
+      "jobTitle": "Creative Director & Founder",
+      "department": "Creative",
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": ["account.*"]
+    },
+    {
+      "accountSlug": "makeup-style-collective",
+      "email": "makeup1@makeupstylecollective.com",
+      "username": "anna_makeup",
+      "password": "${ANNA_PASSWORD:-Anna2024!}",
+      "firstName": "Anna",
+      "lastName": "Kovač",
+      "displayName": "Anna Kovač",
+      "roles": ["user"],
+      "jobTitle": "Senior Makeup Artist",
+      "department": "Makeup",
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.projects.read",
+        "user.content.*",
+        "user.files.*"
+      ]
+    },
+    {
+      "accountSlug": "makeup-style-collective",
+      "email": "stylist1@makeupstylecollective.com",
+      "username": "peter_stylist",
+      "password": "${PETER_PASSWORD:-Peter2024!}",
+      "firstName": "Peter",
+      "lastName": "Wagner",
+      "displayName": "Peter Wagner",
+      "roles": ["user"],
+      "jobTitle": "Fashion Stylist",
+      "department": "Styling",
+      "locale": "de-AT",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "permissions": [
+        "account.projects.read",
+        "user.content.*",
+        "user.files.*"
+      ]
+    }
+  ]
+}

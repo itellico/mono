@@ -1,0 +1,19 @@
+{
+  "subject": "Scheduled Maintenance: {{ tenantName or platformName }} - {{ maintenanceDate }}",
+  "preheader": "Platform will be unavailable {{ maintenanceDate }} from {{ startTime }} to {{ endTime }}",
+  "category": "system",
+  "layout": "base",
+  "variables": {
+    "userName": "User's full name",
+    "maintenanceDate": "Date of maintenance (e.g., 'Sunday, January 15th')",
+    "startTime": "Maintenance start time (e.g., '2:00 AM')",
+    "endTime": "Maintenance end time (e.g., '5:00 AM')",
+    "timezone": "Timezone (e.g., 'PST', 'UTC')",
+    "duration": "Expected duration (e.g., '2-3 hours')",
+    "maintenanceType": "Type of maintenance: 'platform', 'database', 'security'",
+    "improvements": "Array of improvements/features being added",
+    "statusPageUrl": "URL to status page for real-time updates",
+    "tenantName": "Name of the tenant/platform"
+  },
+  "description": "Scheduled maintenance notification sent to all users"
+}

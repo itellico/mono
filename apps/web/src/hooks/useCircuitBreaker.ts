@@ -1,0 +1,1 @@
+export const useCircuitBreaker = () => { return { status: 'closed', open: () => {}, close: () => {} }; };

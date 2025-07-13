@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client-Side Auth Deduplication Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        #log { background: #f0f0f0; padding: 10px; margin-top: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Client-Side Auth Deduplication Test</h1>
+    <button onclick="testDeduplication()">Test Deduplication</button>
+    <button onclick="clearLog()">Clear Log</button>
+    <pre id="log"></pre>
+
+    <script type="module">
+        // Import the API client to test deduplication
+        window.testDeduplication = async function() {
+            const log = document.getElementById('log');
+            log.textContent = 'Testing client-side deduplication...\n\n';
+            
+            // Track network requests
+            let networkCalls = 0;
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                if (args[0]?.includes('/api/v1/auth/me')) {
+                    networkCalls++;
+                    log.textContent += `[Network] Call #${networkCalls} to ${args[0]}\n`;
+                }
+                return originalFetch.apply(this, args);
+            };
+            
+            try {
+                // First, login
+                log.textContent += '\n1. Logging in...\n';
+                const loginResponse = await fetch('http://localhost:3001/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: '1@1.com', password: '123' })
+                });
+                
+                const loginData = await loginResponse.json();
+                if (!loginData.success) {
+                    throw new Error('Login failed');
+                }
+                
+                log.textContent += '✓ Login successful\n\n';
+                
+                // Reset network call counter
+                networkCalls = 0;
+                
+                // Make 5 concurrent calls
+                log.textContent += '2. Making 5 concurrent auth/me calls...\n';
+                const startTime = performance.now();
+                
+                const promises = Array(5).fill(null).map((_, i) => {
+                    const callStart = performance.now();
+                    return fetch('http://localhost:3001/api/v1/auth/me', {
+                        credentials: 'include'
+                    }).then(async res => {
+                        const data = await res.json();
+                        const duration = performance.now() - callStart;
+                        return {
+                            id: i + 1,
+                            success: data.success,
+                            duration: duration.toFixed(2)
+                        };
+                    });
+                });
+                
+                const results = await Promise.all(promises);
+                const totalDuration = performance.now() - startTime;
+                
+                // Display results
+                log.textContent += '\nResults:\n';
+                results.forEach(r => {
+                    log.textContent += `  Call #${r.id}: ${r.success ? '✓' : '✗'} (${r.duration}ms)\n`;
+                });
+                
+                log.textContent += `\nTotal duration: ${totalDuration.toFixed(2)}ms\n`;
+                log.textContent += `Actual network calls made: ${networkCalls}\n`;
+                
+                if (networkCalls < 5) {
+                    log.textContent += '\n✓ Client-side deduplication is working!\n';
+                    log.textContent += `  (${5 - networkCalls} calls were deduplicated)\n`;
+                } else {
+                    log.textContent += '\n⚠️  No client-side deduplication detected\n';
+                }
+                
+            } catch (error) {
+                log.textContent += `\nError: ${error.message}\n`;
+            } finally {
+                // Restore original fetch
+                window.fetch = originalFetch;
+            }
+        };
+        
+        window.clearLog = function() {
+            document.getElementById('log').textContent = '';
+        };
+    </script>
+</body>
+</html>

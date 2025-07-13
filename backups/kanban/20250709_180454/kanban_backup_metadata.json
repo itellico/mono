@@ -1,0 +1,16 @@
+{
+  "timestamp": "20250709_180454",
+  "date": "Mi  9 Jul 2025 18:04:54 CEST",
+  "type": "kanban_backup",
+  "components": [
+    "database",
+    "files",
+    "configuration"
+  ],
+  "kanban_url": "http://localhost:4040/kanboard/",
+  "database": {
+    "container": "mono-postgres",
+    "database_name": "kanboard",
+    "user": "developer"
+  }
+}

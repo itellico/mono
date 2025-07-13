@@ -1,0 +1,85 @@
+<?php
+
+// Database configuration for PostgreSQL
+define('DB_DRIVER', 'postgres');
+define('DB_HOSTNAME', 'postgres');
+define('DB_PORT', 5432);
+define('DB_USERNAME', 'developer');
+define('DB_PASSWORD', 'developer');
+define('DB_NAME', 'kanboard');
+
+// Enable/disable debug
+define('DEBUG', false);
+
+// Plugins directory
+define('PLUGINS_DIR', __DIR__.'/plugins');
+
+// Enable/disable URL rewrite
+define('ENABLE_URL_REWRITE', true);
+
+// Enable hashed URL for public board
+define('ENABLE_HASHED_URLS', true);
+
+// Available cache drivers are "file" and "memory"
+define('CACHE_DRIVER', 'memory');
+
+// HTTP cache expiration time (5 minutes)
+define('HTTP_CACHE_TTL', 300);
+
+// Session duration in second (0 = until the browser is closed)
+// See http://php.net/manual/en/session.configuration.php#ini.session.cookie-lifetime
+define('SESSION_DURATION', 0);
+
+// HTTP Client
+define('HTTP_PROXY_HOSTNAME', '');
+define('HTTP_PROXY_PORT', '');
+define('HTTP_PROXY_USERNAME', '');
+define('HTTP_PROXY_PASSWORD', '');
+define('HTTP_PROXY_EXCLUDE', 'localhost');
+
+// LDAP configuration
+define('LDAP_AUTH', false);
+
+// Remember me authentication
+define('REMEMBER_ME_AUTH', true);
+
+// Enable captcha
+define('ENABLE_CAPTCHA', false);
+
+// Enable bruteforce protection
+define('BRUTEFORCE_CAPTCHA', 5);
+define('BRUTEFORCE_LOCKDOWN', 10);
+define('BRUTEFORCE_LOCKDOWN_DURATION', 1800);
+
+// Email configuration
+define('MAIL_CONFIGURATION', true);
+define('MAIL_FROM', 'kanboard@localhost');
+define('MAIL_TRANSPORT', 'smtp');
+define('MAIL_SMTP_HOSTNAME', 'mailpit');
+define('MAIL_SMTP_PORT', 1025);
+define('MAIL_SMTP_USERNAME', '');
+define('MAIL_SMTP_PASSWORD', '');
+define('MAIL_SMTP_HELO_NAME', null);
+define('MAIL_SMTP_ENCRYPTION', null);
+define('MAIL_SENDMAIL_COMMAND', '/usr/sbin/sendmail -bs');
+
+// Run automatically database migrations
+define('DB_RUN_MIGRATIONS', true);
+
+// Escape html inside markdown text
+define('MARKDOWN_ESCAPE_HTML', true);
+
+// API authentication token (can be regenerated in settings)
+define('API_AUTHENTICATION_TOKEN', '');
+
+// Enable/Disable plugin installer (disabled by default for security reasons)
+define('PLUGIN_INSTALLER', false);
+
+// Available log drivers: syslog, stderr, stdout, system or file
+define('LOG_DRIVER', 'stdout');
+
+// Filename to store file logs
+define('LOG_FILE', 'data/logs/app.log');
+
+// Logging level: DEBUG, INFO, WARNING, ERROR
+define('LOG_LEVEL', 'ERROR');

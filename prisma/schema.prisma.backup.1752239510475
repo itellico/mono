@@ -1,0 +1,1080 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id               Int                 @id @default(autoincrement())
+  uuid             String              @unique
+  name             String
+  domain           String              @unique
+  slug             String?
+  description      Json?
+  features         Json?
+  settings         Json?
+  categories       Json?
+  allowedCountries Json?
+  defaultCurrency  String?
+  isActive         Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  accounts         Account[]
+  conversations    Conversation[]
+  entityTags       EntityTag[]
+  gigOfferings     GigOffering[]
+  jobPostings      JobPosting[]
+  tags             Tag[]
+  subscriptions    TenantSubscription?
+  userCollections  UserCollection[]
+  changeSets       ChangeSet[]
+  site_settings    SiteSettings[]
+  versionHistories VersionHistory[]
+}
+
+model Account {
+  id                     Int       @id @default(autoincrement())
+  tenantId               Int
+  email                  String    @unique
+  emailVerified          Boolean   @default(false)
+  passwordHash           String?
+  accountType            String    @default("personal") @db.VarChar(20)
+  phone                  String?   @db.VarChar(30)
+  timezone               String?   @db.VarChar(50)
+  countryCode            String?   @db.VarChar(2)
+  languageLocale         String?   @db.VarChar(10)
+  currencyCode           String?   @default("EUR") @db.VarChar(3)
+  city                   String?   @db.VarChar(100)
+  dateFormat             String?   @db.VarChar(20)
+  timeFormat             String?   @db.VarChar(20)
+  numberFormat           String?   @db.VarChar(20)
+  emailNotifications     Boolean   @default(true)
+  smsNotifications       Boolean   @default(false)
+  themePreference        String    @default("system") @db.VarChar(20)
+  accountCapabilities    Json?
+  primaryMarketplaceSide String?   @db.VarChar(20)
+  allowDualSide          Boolean   @default(false)
+  isActive               Boolean   @default(true)
+  isVerified             Boolean   @default(false)
+  lastLoginAt            DateTime? @db.Timestamptz(6)
+  createdAt              DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime  @updatedAt @db.Timestamptz(6)
+  firstDayOfWeek         Int       @default(0)
+  decimalSeparator       String    @default(".") @db.VarChar(1)
+  thousandsSeparator     String    @default(",") @db.VarChar(1)
+  currencyPosition       String    @default("before") @db.VarChar(10)
+  currencySpace          Boolean   @default(false)
+  useRelativeTime        Boolean   @default(true)
+  relativeTimeThreshold  Int       @default(24)
+  relativeTimeStyle      String    @default("long") @db.VarChar(10)
+  compactMode            Boolean   @default(false)
+  showSeconds            Boolean   @default(false)
+  showTimezone           Boolean   @default(false)
+  notificationTimeFormat String    @default("12h") @db.VarChar(10)
+  uuid                   String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant                 Tenant    @relation(fields: [tenantId], references: [id])
+  users                  User[]
+}
+
+model User {
+  id                        Int                       @id @default(autoincrement())
+  uuid                      String
+  accountId                 Int
+  firstName                 String
+  lastName                  String
+  username                  String                    @unique
+  userType                  String                    @default("individual")
+  profilePhotoUrl           String?
+  bio                       String?
+  website                   String?
+  dateOfBirth               DateTime?
+  gender                    String?
+  accountRole               String                    @default("entity_viewer")
+  canCreateProfiles         Boolean                   @default(false)
+  canManageAllProfiles      Boolean                   @default(false)
+  canAccessBilling          Boolean                   @default(false)
+  canBookJobs               Boolean                   @default(false)
+  profileApplicationStatus  String?
+  profileApprovedAt         DateTime?
+  profileRejectedAt         DateTime?
+  totalApplications         Int                       @default(0)
+  lastApplicationAt         DateTime?
+  userHash                  String
+  isActive                  Boolean                   @default(true)
+  isVerified                Boolean                   @default(false)
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+  emergencyUntil            DateTime?                 @db.Timestamptz(6)
+  conversationParticipants  ConversationParticipant[]
+  entityTags                EntityTag[]               @relation("addedByUser")
+  gigBookings               GigBooking[]              @relation("client")
+  gigOfferings              GigOffering[]             @relation("talent")
+  jobApplications           JobApplication[]          @relation("applicant")
+  jobPostings               JobPosting[]              @relation("postedByUser")
+  messages                  Message[]                 @relation("sender")
+  createdTags               Tag[]
+  account                   Account                   @relation(fields: [accountId], references: [id])
+  userCollections           UserCollection[]
+  auditLogs                 AuditLog[]
+  changeConflictResolutions ChangeConflict[]
+  approvedChangeSets        ChangeSet[]               @relation("ChangeSetApprover")
+  rejectedChangeSets        ChangeSet[]               @relation("ChangeSetRejecter")
+  changeSets                ChangeSet[]
+  recordLocks               RecordLock[]
+  userActivityLogs          UserActivityLog[]
+  versionHistories          VersionHistory[]
+
+  @@index([emergencyUntil])
+}
+
+model Role {
+  uuid        String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  code        String?  @unique(map: "idx_role_code") @db.VarChar(50)
+  level       Int?     @default(0)
+  isSystem    Boolean? @default(false)
+  tenantId    Int?
+
+  @@index([level], map: "idx_role_level")
+  @@index([tenantId], map: "idx_role_tenant")
+}
+
+model Permission {
+  uuid        String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  pattern     String?  @db.VarChar(100)
+  resource    String?  @db.VarChar(50)
+  action      String?  @db.VarChar(50)
+  scope       String?  @db.VarChar(20)
+  isWildcard  Boolean? @default(false)
+  priority    Int?     @default(100)
+
+  @@index([resource, action, scope], map: "idx_permission_resource_action_scope")
+  @@index([isWildcard, priority], map: "idx_permission_wildcard_priority")
+}
+
+model RolePermission {
+  uuid         String @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  roleId       Int
+  permissionId Int
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  uuid        String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      Int
+  roleId      Int
+  validFrom   DateTime? @default(now()) @db.Timestamptz(6)
+  validUntil  DateTime? @db.Timestamptz(6)
+  grantedBy   Int?
+  grantReason String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@id([userId, roleId])
+  @@index([validUntil], map: "idx_user_role_valid_until")
+}
+
+model UserPermissionCache {
+  userId       Int      @id
+  permissions  Json
+  computedAt   DateTime @db.Timestamptz(6)
+  expiresAt    DateTime @db.Timestamptz(6)
+  cacheVersion Int?     @default(1)
+
+  @@index([expiresAt], map: "idx_user_permission_cache_expires")
+}
+
+model PermissionAudit {
+  uuid              String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                BigInt    @id @default(autoincrement())
+  userId            Int
+  permissionPattern String    @db.VarChar(100)
+  resource          String?   @db.VarChar(255)
+  action            String    @db.VarChar(50)
+  granted           Boolean
+  ipAddress         String?   @db.VarChar(45)
+  userAgent         String?
+  requestId         String?   @db.VarChar(36)
+  checkDurationMs   Int?
+  tenantId          Int?
+  timestamp         DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([granted], map: "idx_permission_audit_granted")
+  @@index([timestamp], map: "idx_permission_audit_timestamp")
+}
+
+model OptionSet {
+  id          Int      @id @default(autoincrement())
+  slug        String   @db.VarChar(100)
+  label       String   @db.VarChar(255)
+  tenantId    Int?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  uuid        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@unique([slug, tenantId])
+}
+
+model OptionValue {
+  id               Int      @id @default(autoincrement())
+  optionSetId      Int
+  value            String   @db.VarChar(255)
+  label            String   @db.VarChar(255)
+  order            Int      @default(0)
+  canonicalRegion  String?  @db.VarChar(10)
+  regionalMappings Json?
+  metadata         Json?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6)
+  uuid             String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@unique([optionSetId, value])
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique @db.VarChar(100)
+  name        String   @db.VarChar(255)
+  description String?
+  parentId    Int?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  uuid        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model Tag {
+  id          Int         @id @default(autoincrement())
+  uuid        String
+  slug        String      @unique
+  name        String
+  description String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  tenantId    Int?
+  category    String?     @db.VarChar(50)
+  usageCount  Int?        @default(0)
+  isSystem    Boolean?    @default(false)
+  createdBy   Int?
+  entityTags  EntityTag[]
+  creator     User?       @relation(fields: [createdBy], references: [id])
+  tenant      Tenant?     @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, category])
+  @@index([usageCount])
+}
+
+model CategoryTag {
+  categoryId Int
+  tagId      Int
+
+  @@id([categoryId, tagId])
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(3)
+  name      String   @db.VarChar(100)
+  symbol    String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(2)
+  name      String   @db.VarChar(100)
+  dialCode  String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model Language {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique @db.VarChar(10)
+  name       String   @db.VarChar(100)
+  nativeName String?  @db.VarChar(100)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model SubscriptionPlan {
+  id           Int                  @id @default(autoincrement())
+  uuid         String               @unique
+  name         String
+  description  String?
+  price        Float
+  currency     String
+  billingCycle String
+  isPublic     Boolean              @default(true)
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  tenants      TenantSubscription[]
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique @db.VarChar(50)
+  name        String   @db.VarChar(100)
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  uuid        String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model PlanFeatureLimit {
+  id        Int      @id @default(autoincrement())
+  planId    Int
+  featureId Int
+  limit     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, featureId])
+}
+
+model TenantSubscription {
+  id        Int              @id @default(autoincrement())
+  tenantId  Int              @unique
+  planId    Int
+  startDate DateTime
+  endDate   DateTime?
+  status    String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  tenant    Tenant           @relation(fields: [tenantId], references: [id])
+}
+
+model AuditLog {
+  uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         BigInt   @id @default(autoincrement())
+  tenantId   Int?
+  userId     Int?
+  action     String
+  entityType String?
+  entityId   String?
+  changes    Json?
+  context    Json?
+  timestamp  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model UserActivityLog {
+  uuid      String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        BigInt   @id @default(autoincrement())
+  tenantId  Int?
+  userId    Int?
+  action    String
+  component String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@map("user_activity_logs")
+}
+
+model RecordLock {
+  id         String    @id
+  entityType String
+  entityId   String
+  lockedBy   Int
+  lockedAt   DateTime  @default(now())
+  expiresAt  DateTime?
+  reason     String?
+  user       User      @relation(fields: [lockedBy], references: [id])
+
+  @@unique([entityType, entityId])
+  @@index([expiresAt])
+  @@index([lockedBy])
+  @@map("record_locks")
+}
+
+model ChangeSet {
+  id              String           @id @default(cuid())
+  entityType      String           @db.VarChar(50)
+  entityId        String           @db.VarChar(255)
+  level           ChangeLevel      @default(OPTIMISTIC)
+  status          ChangeStatus     @default(PENDING)
+  changes         Json
+  oldValues       Json?
+  newValues       Json?
+  metadata        Json?
+  conflictIds     String[]
+  userId          Int
+  tenantId        Int
+  approvedBy      Int?
+  approvedAt      DateTime?        @db.Timestamptz(6)
+  rejectedBy      Int?
+  rejectedAt      DateTime?        @db.Timestamptz(6)
+  rejectionReason String?
+  createdAt       DateTime         @default(now()) @db.Timestamptz(6)
+  appliedAt       DateTime?        @db.Timestamptz(6)
+  conflicts       ChangeConflict[]
+  approver        User?            @relation("ChangeSetApprover", fields: [approvedBy], references: [id])
+  rejecter        User?            @relation("ChangeSetRejecter", fields: [rejectedBy], references: [id])
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  user            User             @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([level])
+  @@map("change_sets")
+}
+
+model ChangeConflict {
+  id           String              @id @default(cuid())
+  changeSetId  String
+  conflictType ConflictType
+  conflictData Json?
+  resolution   ConflictResolution?
+  resolvedBy   Int?
+  resolvedAt   DateTime?           @db.Timestamptz(6)
+  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
+  changeSet    ChangeSet           @relation(fields: [changeSetId], references: [id], onDelete: Cascade)
+  resolver     User?               @relation(fields: [resolvedBy], references: [id])
+
+  @@index([changeSetId])
+  @@index([conflictType])
+  @@index([createdAt])
+  @@map("change_conflicts")
+}
+
+model VersionHistory {
+  id            String   @id @default(cuid())
+  entityType    String   @db.VarChar(50)
+  entityId      String   @db.VarChar(255)
+  versionNumber Int
+  data          Json
+  changeSetId   String?
+  createdBy     Int
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  tenantId      Int
+  creator       User     @relation(fields: [createdBy], references: [id])
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([entityType, entityId, versionNumber])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([tenantId])
+  @@map("version_history")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model SiteSettings {
+  id                  Int                @id @default(autoincrement())
+  uuid                String             @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id           Int?
+  user_id             BigInt?
+  category            SettingsCategory
+  key                 String             @db.VarChar(100)
+  level               SettingsLevel
+  governance          SettingsGovernance @default(tenant_admin)
+  value               Json
+  default_value       Json?
+  max_value           Json?
+  min_value           Json?
+  allowed_values      Json?
+  allowed_formats     Json?
+  validation_schema   Json?
+  parent_setting_id   Int?
+  overrides_global    Boolean?           @default(false)
+  display_name        String?            @db.VarChar(150)
+  description         String?
+  help_text           String?
+  is_required         Boolean?           @default(false)
+  is_secret           Boolean?           @default(false)
+  requires_restart    Boolean?           @default(false)
+  is_readonly         Boolean?           @default(false)
+  is_active           Boolean?           @default(true)
+  requires_approval   Boolean?           @default(false)
+  last_modified_by    BigInt?
+  approved_by         BigInt?
+  approved_at         DateTime?          @db.Timestamptz(6)
+  created_at          DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?          @default(now()) @db.Timestamptz(6)
+  site_settings       SiteSettings?      @relation("site_settingsTosite_settings", fields: [parent_setting_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_site_settings SiteSettings[]     @relation("site_settingsTosite_settings")
+  Tenant              Tenant?            @relation(fields: [tenant_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([category], map: "idx_site_settings_category")
+  @@index([key], map: "idx_site_settings_key")
+  @@map("site_settings")
+}
+
+model EntityTag {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    Int
+  tagId       Int
+  entityType  String   @db.VarChar(50)
+  entityId    String   @db.Uuid
+  addedBy     Int
+  addedAt     DateTime @default(now()) @db.Timestamptz(6)
+  addedByUser User     @relation("addedByUser", fields: [addedBy], references: [id])
+  tag         Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([tagId, entityType, entityId])
+  @@index([entityType, entityId])
+  @@index([tenantId, entityType])
+}
+
+model UserCollection {
+  id          Int              @id @default(autoincrement())
+  uuid        String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      Int
+  tenantId    Int
+  name        String           @db.VarChar(100)
+  type        String           @db.VarChar(50)
+  description String?
+  isPublic    Boolean          @default(false)
+  shareToken  String?          @unique @db.VarChar(100)
+  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  items       CollectionItem[]
+  tenant      Tenant           @relation(fields: [tenantId], references: [id])
+  user        User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+}
+
+model CollectionItem {
+  id           Int            @id @default(autoincrement())
+  uuid         String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  collectionId Int
+  entityType   String         @db.VarChar(50)
+  entityId     String         @db.Uuid
+  position     Int?
+  notes        String?
+  metadata     Json?
+  addedAt      DateTime       @default(now()) @db.Timestamptz(6)
+  collection   UserCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, entityType, entityId])
+  @@index([entityType, entityId])
+}
+
+model JobPosting {
+  id                   Int              @id @default(autoincrement())
+  uuid                 String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             Int
+  postedById           Int
+  profileId            String           @db.Uuid
+  profileType          String           @db.VarChar(20)
+  companyName          String?
+  verified             Boolean          @default(false)
+  title                String
+  category             String           @db.VarChar(50)
+  type                 String           @db.VarChar(50)
+  description          String
+  requirements         Json
+  targetProfiles       Json
+  applicationDeadline  DateTime         @db.Timestamptz(6)
+  maxApplications      Int?
+  autoCloseOnMax       Boolean          @default(false)
+  applicationQuestions Json?
+  jobDates             Json
+  compensation         Json
+  visibility           String           @default("public") @db.VarChar(20)
+  featured             Boolean          @default(false)
+  boost                Json?
+  status               String           @default("draft") @db.VarChar(20)
+  publishedAt          DateTime?        @db.Timestamptz(6)
+  filledAt             DateTime?        @db.Timestamptz(6)
+  stats                Json             @default("{\"saved\": 0, \"views\": 0, \"shares\": 0, \"applications\": 0}")
+  createdAt            DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  conversations        Conversation[]
+  applications         JobApplication[]
+  postedByUser         User             @relation("postedByUser", fields: [postedById], references: [id])
+  tenant               Tenant           @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([category])
+  @@index([publishedAt])
+}
+
+model JobApplication {
+  id            Int        @id @default(autoincrement())
+  uuid          String     @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobId         Int
+  applicantId   Int
+  profileId     String     @db.Uuid
+  coverLetter   String?
+  answers       Json?
+  portfolio     Json?
+  availability  Json?
+  proposedRate  Json?
+  status        String     @default("draft") @db.VarChar(20)
+  statusHistory Json       @default("[]")
+  appliedAt     DateTime   @default(now()) @db.Timestamptz(6)
+  viewedAt      DateTime?  @db.Timestamptz(6)
+  shortlistedAt DateTime?  @db.Timestamptz(6)
+  rejectedAt    DateTime?  @db.Timestamptz(6)
+  acceptedAt    DateTime?  @db.Timestamptz(6)
+  applicant     User       @relation("applicant", fields: [applicantId], references: [id])
+  jobPosting    JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  messages      Message[]
+
+  @@unique([jobId, applicantId])
+  @@index([status])
+  @@index([appliedAt])
+}
+
+model GigOffering {
+  id              Int            @id @default(autoincrement())
+  uuid            String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        Int
+  talentId        Int
+  profileId       String         @db.Uuid
+  title           String
+  category        String         @db.VarChar(50)
+  subcategory     String         @db.VarChar(50)
+  description     String
+  highlights      Json
+  requirements    Json
+  packages        Json
+  gallery         Json
+  availability    Json
+  serviceLocation Json
+  rating          Float          @default(0)
+  completedOrders Int            @default(0)
+  responseTime    String?        @db.VarChar(50)
+  completionRate  Float          @default(100)
+  status          String         @default("draft") @db.VarChar(20)
+  featured        Boolean        @default(false)
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  conversations   Conversation[]
+  bookings        GigBooking[]
+  talent          User           @relation("talent", fields: [talentId], references: [id])
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, status])
+  @@index([category])
+  @@index([talentId])
+}
+
+model GigBooking {
+  id              Int         @id @default(autoincrement())
+  uuid            String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  gigId           Int
+  clientId        Int
+  packageSelected String      @db.VarChar(20)
+  scheduledDate   DateTime    @db.Timestamptz(6)
+  duration        Json
+  requirements    String?
+  price           Json
+  status          String      @default("pending") @db.VarChar(20)
+  paymentStatus   String      @default("pending") @db.VarChar(20)
+  paymentId       String?     @db.Uuid
+  createdAt       DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+  client          User        @relation("client", fields: [clientId], references: [id])
+  gigOffering     GigOffering @relation(fields: [gigId], references: [id], onDelete: Cascade)
+  messages        Message[]
+
+  @@index([status])
+  @@index([scheduledDate])
+}
+
+model Conversation {
+  id               Int                       @id @default(autoincrement())
+  uuid             String                    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         Int
+  gigId            Int?
+  bookingId        Int?
+  projectId        String?                   @db.Uuid
+  jobId            Int?
+  allowFiles       Boolean                   @default(true)
+  maxFileSize      Int                       @default(10485760)
+  allowedFileTypes Json?
+  autoTranslate    Boolean                   @default(false)
+  primaryLanguage  String                    @default("en") @db.VarChar(5)
+  createdAt        DateTime                  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime                  @default(now()) @updatedAt @db.Timestamptz(6)
+  context          Json?
+  createdById      Int
+  lastMessageAt    DateTime?                 @db.Timestamptz(6)
+  lastMessageId    Int?
+  messageCount     Int                       @default(0)
+  settings         Json?
+  status           String                    @default("active") @db.VarChar(20)
+  subject          String?                   @db.VarChar(200)
+  type             String                    @default("direct") @db.VarChar(20)
+  gigOffering      GigOffering?              @relation(fields: [gigId], references: [id])
+  jobPosting       JobPosting?               @relation(fields: [jobId], references: [id])
+  tenant           Tenant                    @relation(fields: [tenantId], references: [id])
+  participants     ConversationParticipant[]
+  messages         Message[]
+
+  @@index([createdAt])
+}
+
+model ConversationParticipant {
+  id                Int          @id @default(autoincrement())
+  uuid              String       @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId    Int
+  userId            Int
+  role              String       @db.VarChar(20)
+  joinedAt          DateTime     @default(now()) @db.Timestamptz(6)
+  lastReadAt        DateTime?    @db.Timestamptz(6)
+  notificationPrefs Json?
+  conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user              User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id                 Int                 @id @default(autoincrement())
+  uuid               String              @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId     Int
+  senderId           Int
+  content            String
+  language           String              @db.VarChar(5)
+  translations       Json?
+  translationQuality Json?
+  richContent        Json?
+  gigMilestone       String?             @db.VarChar(50)
+  contractUpdate     Boolean             @default(false)
+  jobApplicationId   Int?
+  gigBookingId       Int?
+  sentAt             DateTime            @default(now()) @db.Timestamptz(6)
+  editedAt           DateTime?           @db.Timestamptz(6)
+  deletedAt          DateTime?           @db.Timestamptz(6)
+  conversation       Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  gigBooking         GigBooking?         @relation(fields: [gigBookingId], references: [id])
+  jobApplication     JobApplication?     @relation(fields: [jobApplicationId], references: [id])
+  sender             User                @relation("sender", fields: [senderId], references: [id])
+  attachments        MessageAttachment[]
+
+  @@index([conversationId, sentAt])
+  @@index([senderId])
+}
+
+model MessageAttachment {
+  id                Int                 @id @default(autoincrement())
+  uuid              String              @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  messageId         Int
+  type              String              @db.VarChar(20)
+  fileName          String
+  fileUrl           String
+  fileSize          Int
+  mimeType          String              @db.VarChar(100)
+  documentType      String?             @db.VarChar(20)
+  requiresSignature Boolean             @default(false)
+  signatureStatus   Json?
+  version           Int                 @default(1)
+  previousVersionId Int?
+  uploadedAt        DateTime            @default(now()) @db.Timestamptz(6)
+  message           Message             @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  previousVersion   MessageAttachment?  @relation("AttachmentVersions", fields: [previousVersionId], references: [id])
+  laterVersions     MessageAttachment[] @relation("AttachmentVersions")
+
+  @@index([messageId])
+}
+
+model EmergencyAccess {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  targetType    String    @db.VarChar(50)
+  targetId      String    @db.VarChar(255)
+  justification String
+  grantedAt     DateTime? @default(now()) @db.Timestamptz(6)
+  expiresAt     DateTime  @db.Timestamptz(6)
+  revokedAt     DateTime? @db.Timestamptz(6)
+  approvedBy    Int?
+  approvedAt    DateTime? @db.Timestamptz(6)
+
+  @@index([expiresAt], map: "idx_emergency_access_expires")
+  @@index([targetType, targetId], map: "idx_emergency_access_target")
+  @@index([userId], map: "idx_emergency_access_user")
+}
+
+model EmergencyAudit {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  type          String   @db.VarChar(50)
+  justification String?
+  actionDetails Json?
+  ipAddress     String?  @db.VarChar(45)
+  userAgent     String?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([userId])
+}
+
+model PermissionExpansion {
+  pattern          String   @id @db.VarChar(100)
+  expandedPatterns Json
+  computedAt       DateTime @db.Timestamptz(6)
+
+  @@index([computedAt], map: "idx_permission_expansion_computed")
+}
+
+model PermissionInheritance {
+  parentId Int
+  childId  Int
+
+  @@id([parentId, childId])
+  @@index([childId], map: "idx_permission_inheritance_child")
+}
+
+model PermissionSet {
+  uuid        String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String?
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model PermissionSetItem {
+  uuid         String @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  setId        Int
+  permissionId Int
+
+  @@id([setId, permissionId])
+  @@index([permissionId], map: "idx_permission_set_item_permission")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model RBACConfig {
+  id                     Int       @id @default(1)
+  enableWildcards        Boolean?  @default(true)
+  enableInheritance      Boolean?  @default(true)
+  enableCaching          Boolean?  @default(true)
+  cacheExpirationMinutes Int?      @default(15)
+  maxPermissionsPerUser  Int?      @default(1000)
+  enableAuditLog         Boolean?  @default(true)
+  auditRetentionDays     Int?      @default(90)
+  updatedAt              DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model RolePermissionSet {
+  roleId Int
+  setId  Int
+
+  @@id([roleId, setId])
+  @@index([setId], map: "idx_role_permission_set_set")
+}
+
+model UserPermission {
+  uuid         String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       Int
+  permissionId Int
+  granted      Boolean?  @default(true)
+  validFrom    DateTime? @default(now()) @db.Timestamptz(6)
+  validUntil   DateTime? @db.Timestamptz(6)
+  grantedBy    Int?
+  grantReason  String?
+  resourceType String?   @db.VarChar(50)
+  resourceId   String?   @db.VarChar(255)
+  conditions   Json?
+  createdAt    DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@id([userId, permissionId])
+  @@index([granted], map: "idx_user_permission_granted")
+  @@index([permissionId], map: "idx_user_permission_permission")
+  @@index([resourceType, resourceId], map: "idx_user_permission_resource")
+  @@index([validUntil], map: "idx_user_permission_valid_until")
+}
+
+enum ChangeLevel {
+  OPTIMISTIC
+  PROCESSING
+  COMMITTED
+}
+
+enum ChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  APPLIED
+  ROLLED_BACK
+  CONFLICTED
+}
+
+enum ConflictType {
+  CONCURRENT_EDIT
+  VALIDATION_FAILURE
+  DEPENDENCY_MISSING
+  PERMISSION_DENIED
+  BUSINESS_RULE
+  STALE_DATA
+}
+
+enum ConflictResolution {
+  ACCEPT_CURRENT
+  ACCEPT_INCOMING
+  MERGE
+  MANUAL
+  RETRY
+}
+
+enum SettingsCategory {
+  general
+  media
+  security
+  business
+  notification
+  integration
+  appearance
+  workflow
+
+  @@map("settings_category")
+}
+
+enum SettingsLevel {
+  global
+  tenant
+  user
+
+  @@map("settings_level")
+}
+
+enum SettingsGovernance {
+  super_admin_only
+  tenant_admin
+  user_managed
+
+  @@map("settings_governance")
+}
+
+enum SavedSearchScope {
+  SYSTEM
+  TENANT
+  USER
+}
+
+enum MessageContext {
+  DIRECT
+  PROJECT
+  GIG
+  BOOKING
+  JOB_APPLICATION
+}
+
+enum ProfileType {
+  MODEL        @map("model")
+  PHOTOGRAPHER @map("photographer")
+  AGENCY       @map("agency")
+  CLIENT       @map("client")
+
+  @@map("profile_type")
+}
+
+enum ProfileStatus {
+  DRAFT       @map("draft")
+  PENDING     @map("pending")
+  ACTIVE      @map("active")
+  SUSPENDED   @map("suspended")
+  DEACTIVATED @map("deactivated")
+
+  @@map("profile_status")
+}
+
+enum AvailabilityType {
+  FLEXIBLE @map("flexible")
+  WEEKDAYS @map("weekdays")
+  WEEKENDS @map("weekends")
+  EVENINGS @map("evenings")
+  CUSTOM   @map("custom")
+
+  @@map("availability_type")
+}
+
+enum VerificationStatus {
+  UNVERIFIED @map("unverified")
+  PENDING    @map("pending")
+  VERIFIED   @map("verified")
+  REJECTED   @map("rejected")
+
+  @@map("verification_status")
+}
+
+enum VerificationLevel {
+  BASIC        @map("basic")
+  PROFESSIONAL @map("professional")
+  PREMIUM      @map("premium")
+
+  @@map("verification_level")
+}
+
+enum MediaType {
+  HEADSHOT      @map("headshot")
+  PORTFOLIO     @map("portfolio")
+  BEHIND_SCENES @map("behind_scenes")
+  EQUIPMENT     @map("equipment")
+  RESUME        @map("resume")
+  CERTIFICATION @map("certification")
+  MOOD_BOARD    @map("mood_board")
+
+  @@map("media_type")
+}
+
+enum MediaStatus {
+  ACTIVE           @map("active")
+  PENDING_APPROVAL @map("pending_approval")
+  REJECTED         @map("rejected")
+  ARCHIVED         @map("archived")
+
+  @@map("media_status")
+}
+
+enum VerificationType {
+  IDENTITY         @map("identity")
+  PROFESSIONAL     @map("professional")
+  BACKGROUND_CHECK @map("background_check")
+  REFERENCE        @map("reference")
+  PORTFOLIO_REVIEW @map("portfolio_review")
+
+  @@map("verification_type")
+}
+
+enum VerificationRequestStatus {
+  PENDING   @map("pending")
+  IN_REVIEW @map("in_review")
+  APPROVED  @map("approved")
+  REJECTED  @map("rejected")
+  EXPIRED   @map("expired")
+
+  @@map("verification_request_status")
+}

@@ -1,0 +1,368 @@
+// Comprehensive Audit Trail Schema
+// Add these models to your main schema.prisma file
+
+// ==================== AUDIT MODELS ====================
+
+model AuditLog {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          BigInt   @unique @default(autoincrement())
+  
+  // Event Classification
+  category    AuditCategory @default(DATA_CHANGE)
+  eventType   String   @db.VarChar(50)
+  severity    AuditSeverity @default(INFO)
+  
+  // Entity Information
+  entityType  String   @db.VarChar(50)
+  entityId    String   @db.Uuid
+  entityName  String?  @db.VarChar(255)
+  
+  // Actor Information
+  actorType   ActorType @default(USER)
+  actorId     String?  @db.Uuid
+  userId      Int?
+  tenantId    Int
+  accountId   Int?
+  
+  // Request Context
+  ipAddress   String?  @db.Inet
+  userAgent   String?  @db.Text
+  sessionId   String?  @db.Uuid
+  requestId   String?  @db.Uuid
+  apiVersion  String?  @db.VarChar(20)
+  endpoint    String?  @db.VarChar(255)
+  httpMethod  String?  @db.VarChar(10)
+  
+  // Change Details
+  operation   String   @db.VarChar(100)
+  changes     Json?
+  metadata    Json?
+  
+  // Security Context
+  permissionUsed String? @db.VarChar(255)
+  mfaVerified Boolean  @default(false)
+  riskScore   Int?
+  
+  // Performance Metrics
+  duration    Int?
+  queryCount  Int?
+  
+  // Status
+  status      AuditStatus @default(COMPLETED)
+  errorCode   String?  @db.VarChar(50)
+  errorMessage String? @db.Text
+  
+  // Timestamp
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id])
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  account     Account? @relation(fields: [accountId], references: [id])
+  
+  // Indexes
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([entityType, entityId, createdAt(sort: Desc)])
+  @@index([category, eventType, createdAt(sort: Desc)])
+  @@index([createdAt])
+  @@index([requestId])
+  @@index([sessionId])
+  
+  @@map("audit_logs")
+}
+
+model DataAccessLog {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          BigInt   @unique @default(autoincrement())
+  
+  // Access Information
+  userId      Int
+  tenantId    Int
+  resourceType String  @db.VarChar(50)
+  resourceId  String?  @db.Uuid
+  
+  // Access Details
+  accessType  String   @db.VarChar(50)
+  recordCount Int?
+  fields      String[]
+  filters     Json?
+  
+  // Context
+  purpose     String?  @db.Text
+  authorized  Boolean  @default(true)
+  
+  // Performance
+  responseTime Int?
+  dataSize    BigInt?
+  
+  // Timestamp
+  accessedAt  DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  // Indexes
+  @@index([userId, accessedAt(sort: Desc)])
+  @@index([resourceType, accessedAt(sort: Desc)])
+  @@index([tenantId, accessedAt(sort: Desc)])
+  
+  @@map("data_access_logs")
+}
+
+model SecurityAuditLog {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          BigInt   @unique @default(autoincrement())
+  
+  // Event Information
+  eventType   SecurityEventType
+  severity    SecuritySeverity
+  
+  // Actor
+  userId      Int?
+  email       String?  @db.VarChar(255)
+  ipAddress   String   @db.Inet
+  
+  // Event Details
+  success     Boolean
+  failureReason String? @db.VarChar(255)
+  attempts    Int      @default(1)
+  
+  // Threat Detection
+  threatIndicators Json?
+  geoLocation Json?
+  deviceFingerprint String? @db.VarChar(255)
+  
+  // Response
+  actionTaken String?  @db.VarChar(255)
+  alertSent   Boolean  @default(false)
+  
+  // Timestamp
+  occurredAt  DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  // Indexes
+  @@index([userId, occurredAt(sort: Desc)])
+  @@index([eventType, occurredAt(sort: Desc)])
+  @@index([ipAddress])
+  @@index([severity, occurredAt(sort: Desc)])
+  
+  @@map("security_audit_logs")
+}
+
+model ComplianceAuditLog {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          BigInt   @unique @default(autoincrement())
+  
+  // Compliance Event
+  regulation  String   @db.VarChar(50)
+  requirement String   @db.VarChar(255)
+  eventType   String   @db.VarChar(100)
+  
+  // Subject
+  subjectType String   @db.VarChar(50)
+  subjectId   String   @db.Uuid
+  
+  // Action
+  action      String   @db.Text
+  outcome     ComplianceOutcome
+  evidence    Json?
+  
+  // Review
+  reviewRequired Boolean @default(false)
+  reviewedBy  Int?
+  reviewedAt  DateTime? @db.Timestamptz(6)
+  reviewNotes String?  @db.Text
+  
+  // Metadata
+  automatedCheck Boolean @default(true)
+  policyVersion String? @db.VarChar(20)
+  
+  // Timestamp
+  occurredAt  DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  reviewer    User?    @relation("ComplianceReviewer", fields: [reviewedBy], references: [id])
+  
+  // Indexes
+  @@index([regulation, occurredAt(sort: Desc)])
+  @@index([outcome, occurredAt(sort: Desc)])
+  @@index([reviewRequired])
+  
+  @@map("compliance_audit_logs")
+}
+
+model AuditMetrics {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  
+  // Dimensions
+  tenantId    Int
+  metricDate  DateTime @db.Date
+  category    AuditCategory
+  
+  // Metrics
+  totalEvents BigInt
+  uniqueUsers Int
+  failedOps   Int
+  avgDuration Float
+  
+  // Top Lists
+  topUsers    Json
+  topEntities Json
+  topOps      Json
+  
+  // Anomalies
+  anomalies   Json?
+  
+  // Metadata
+  computedAt  DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  // Indexes
+  @@unique([tenantId, metricDate, category])
+  @@index([metricDate])
+  
+  @@map("audit_metrics")
+}
+
+model AuditRetentionPolicy {
+  // Identifiers
+  uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          Int      @unique @default(autoincrement())
+  
+  // Policy Scope
+  tenantId    Int?
+  category    AuditCategory
+  
+  // Retention Rules
+  hotDays     Int      @default(30)
+  warmDays    Int      @default(365)
+  coldDays    Int      @default(2555)
+  
+  // Purge Rules
+  purgeEnabled Boolean @default(false)
+  purgeAfterDays Int?
+  
+  // Exceptions
+  legalHold   Boolean  @default(false)
+  exceptions  Json?
+  
+  // Status
+  isActive    Boolean  @default(true)
+  
+  // Audit
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  
+  // Relations
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  
+  // Indexes
+  @@unique([tenantId, category])
+  
+  @@map("audit_retention_policies")
+}
+
+// ==================== ENUMS ====================
+
+enum AuditCategory {
+  DATA_CHANGE  @map("data_change")
+  ACCESS       @map("access")
+  PERMISSION   @map("permission")
+  SYSTEM       @map("system")
+  SECURITY     @map("security")
+  COMPLIANCE   @map("compliance")
+  
+  @@map("audit_category")
+}
+
+enum AuditSeverity {
+  DEBUG     @map("debug")
+  INFO      @map("info")
+  WARN      @map("warn")
+  ERROR     @map("error")
+  CRITICAL  @map("critical")
+  
+  @@map("audit_severity")
+}
+
+enum AuditStatus {
+  PENDING    @map("pending")
+  COMPLETED  @map("completed")
+  FAILED     @map("failed")
+  PARTIAL    @map("partial")
+  
+  @@map("audit_status")
+}
+
+enum ActorType {
+  USER       @map("user")
+  SYSTEM     @map("system")
+  API        @map("api")
+  SCHEDULED  @map("scheduled")
+  EXTERNAL   @map("external")
+  
+  @@map("actor_type")
+}
+
+enum SecurityEventType {
+  LOGIN               @map("login")
+  LOGOUT              @map("logout")
+  FAILED_LOGIN        @map("failed_login")
+  PASSWORD_CHANGE     @map("password_change")
+  PASSWORD_RESET      @map("password_reset")
+  MFA_ENABLED         @map("mfa_enabled")
+  MFA_DISABLED        @map("mfa_disabled")
+  MFA_CHALLENGE       @map("mfa_challenge")
+  ACCOUNT_LOCKED      @map("account_locked")
+  SUSPICIOUS_ACTIVITY @map("suspicious_activity")
+  API_KEY_CREATED     @map("api_key_created")
+  API_KEY_REVOKED     @map("api_key_revoked")
+  
+  @@map("security_event_type")
+}
+
+enum SecuritySeverity {
+  LOW      @map("low")
+  MEDIUM   @map("medium")
+  HIGH     @map("high")
+  CRITICAL @map("critical")
+  
+  @@map("security_severity")
+}
+
+enum ComplianceOutcome {
+  COMPLIANT       @map("compliant")
+  NON_COMPLIANT   @map("non_compliant")
+  EXCEPTION       @map("exception")
+  PENDING_REVIEW  @map("pending_review")
+  
+  @@map("compliance_outcome")
+}
+
+// ==================== RELATIONS TO ADD TO EXISTING MODELS ====================
+
+// Add to User model:
+// auditLogs           AuditLog[]
+// dataAccessLogs      DataAccessLog[]
+// securityAuditLogs   SecurityAuditLog[]
+// reviewedCompliance  ComplianceAuditLog[] @relation("ComplianceReviewer")
+
+// Add to Tenant model:
+// auditLogs           AuditLog[]
+// dataAccessLogs      DataAccessLog[]
+// auditMetrics        AuditMetrics[]
+// retentionPolicies   AuditRetentionPolicy[]
+
+// Add to Account model:
+// auditLogs           AuditLog[]

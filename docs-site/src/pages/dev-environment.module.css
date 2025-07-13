@@ -1,0 +1,227 @@
+/**
+ * Styles for the Dev Environment page - Table format
+ */
+
+.tableSection {
+  margin-bottom: 3rem;
+}
+
+.envTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--ifm-color-primary);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.legendTitle {
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.categoryDot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+/* Table Styles */
+.tableWrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.servicesTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ifm-background-color);
+}
+
+.servicesTable thead {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.servicesTable th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-900);
+  border-bottom: 2px solid var(--ifm-color-emphasis-300);
+}
+
+.servicesTable tbody tr {
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  transition: background-color 0.2s ease;
+}
+
+.servicesTable tbody tr:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.servicesTable td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.servicesTable td:first-child {
+  font-weight: 500;
+}
+
+.description {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
+
+.port code {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.credentials code {
+  background: var(--ifm-color-warning-lightest);
+  color: var(--ifm-color-warning-darkest);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.action {
+  text-align: center;
+}
+
+.noLink {
+  color: var(--ifm-color-emphasis-400);
+}
+
+/* Command Cards */
+.commandsSection {
+  margin-top: 3rem;
+}
+
+.commandCard {
+  background: var(--ifm-color-emphasis-100);
+  padding: 1.5rem;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.commandCard h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.commandCard pre {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.commandCard code {
+  background: var(--ifm-background-color);
+  padding: 1rem;
+  border-radius: 4px;
+  display: block;
+}
+
+/* Dark Mode */
+[data-theme='dark'] .tableWrapper {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .servicesTable thead {
+  background: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .servicesTable tbody tr:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .legend {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .commandCard {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .commandCard code {
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .port code {
+  background: var(--ifm-color-primary-darker);
+  color: var(--ifm-color-primary-lighter);
+}
+
+[data-theme='dark'] .credentials code {
+  background: var(--ifm-color-warning-darker);
+  color: var(--ifm-color-warning-lighter);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .servicesTable {
+    font-size: 0.85rem;
+  }
+  
+  .servicesTable th,
+  .servicesTable td {
+    padding: 0.5rem;
+  }
+  
+  .legend {
+    font-size: 0.85rem;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+  
+  .categoryDot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .commandCard {
+    padding: 1rem;
+  }
+  
+  .commandCard pre {
+    font-size: 0.75rem;
+  }
+}
+
+/* Button styling */
+.servicesTable .button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* Alert styling */
+.alert {
+  margin-top: 2rem;
+}

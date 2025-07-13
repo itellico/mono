@@ -1,0 +1,217 @@
+{
+  "feature_configuration": {
+    "comp_card_management": {
+      "name": "Comp Card Management",
+      "description": "Digital comp card creation and management",
+      "permissions": {
+        "access": {
+          "key": "feature.comp_card.access",
+          "description": "Can view and use comp card feature",
+          "default": false
+        },
+        "create": {
+          "key": "feature.comp_card.create",
+          "description": "Can create new comp cards",
+          "default": false,
+          "requires": ["feature.comp_card.access"]
+        },
+        "update": {
+          "key": "feature.comp_card.update",
+          "description": "Can edit own comp cards",
+          "default": false,
+          "requires": ["feature.comp_card.access"]
+        },
+        "delete": {
+          "key": "feature.comp_card.delete",
+          "description": "Can delete comp cards",
+          "default": false,
+          "requires": ["feature.comp_card.access"]
+        },
+        "manage_others": {
+          "key": "feature.comp_card.manage_others",
+          "description": "Can manage other users' comp cards",
+          "default": false,
+          "requires": ["feature.comp_card.access", "admin.accounts.manage"]
+        }
+      },
+      "limits": {
+        "comp_cards": {
+          "description": "Maximum number of comp cards per user",
+          "type": "quantity",
+          "enforcement": "block"
+        },
+        "comp_card_images": {
+          "description": "Maximum images per comp card",
+          "type": "quantity",
+          "enforcement": "block"
+        },
+        "storage": {
+          "description": "Total storage for all comp card media",
+          "type": "size",
+          "enforcement": "hard"
+        }
+      }
+    },
+    "portfolio_management": {
+      "name": "Portfolio Management",
+      "description": "Professional portfolio creation and showcase",
+      "permissions": {
+        "access": {
+          "key": "feature.portfolio.access",
+          "description": "Can view and use portfolio feature",
+          "default": false
+        },
+        "create": {
+          "key": "feature.portfolio.create",
+          "description": "Can create portfolios",
+          "default": false,
+          "requires": ["feature.portfolio.access"]
+        },
+        "publish": {
+          "key": "feature.portfolio.publish",
+          "description": "Can make portfolios public",
+          "default": false,
+          "requires": ["feature.portfolio.create"]
+        },
+        "analytics": {
+          "key": "feature.portfolio.analytics",
+          "description": "Can view portfolio analytics",
+          "default": false,
+          "requires": ["feature.portfolio.access", "feature.analytics.access"]
+        }
+      },
+      "limits": {
+        "portfolios": {
+          "description": "Maximum number of portfolios",
+          "type": "quantity",
+          "enforcement": "block"
+        },
+        "media_files": {
+          "description": "Total media files across all portfolios",
+          "type": "quantity",
+          "enforcement": "block"
+        },
+        "storage": {
+          "description": "Total storage for portfolio media",
+          "type": "size",
+          "enforcement": "hard"
+        },
+        "bandwidth": {
+          "description": "Monthly bandwidth for portfolio views",
+          "type": "bandwidth",
+          "enforcement": "throttle"
+        }
+      }
+    }
+  },
+  "plan_configurations": {
+    "starter": {
+      "name": "Starter Plan",
+      "permissions": [
+        "feature.comp_card.access",
+        "feature.comp_card.create",
+        "feature.comp_card.update",
+        "feature.portfolio.access",
+        "data.users.read"
+      ],
+      "limits": {
+        "comp_cards": 1,
+        "comp_card_images": 5,
+        "portfolios": 1,
+        "media_files": 50,
+        "storage": "1GB",
+        "bandwidth": "10GB"
+      }
+    },
+    "professional": {
+      "name": "Professional Plan",
+      "permissions": [
+        "feature.comp_card.access",
+        "feature.comp_card.create",
+        "feature.comp_card.update",
+        "feature.comp_card.delete",
+        "feature.portfolio.access",
+        "feature.portfolio.create",
+        "feature.portfolio.publish",
+        "feature.portfolio.analytics",
+        "feature.analytics.access",
+        "data.users.read"
+      ],
+      "limits": {
+        "comp_cards": 5,
+        "comp_card_images": 20,
+        "portfolios": 10,
+        "media_files": 500,
+        "storage": "50GB",
+        "bandwidth": "250GB"
+      }
+    },
+    "agency": {
+      "name": "Agency Plan",
+      "permissions": [
+        "feature.comp_card.access",
+        "feature.comp_card.create",
+        "feature.comp_card.update",
+        "feature.comp_card.delete",
+        "feature.comp_card.manage_others",
+        "feature.portfolio.access",
+        "feature.portfolio.create",
+        "feature.portfolio.publish",
+        "feature.portfolio.analytics",
+        "feature.analytics.access",
+        "data.users.read",
+        "data.users.create",
+        "data.users.update",
+        "admin.accounts.manage"
+      ],
+      "limits": {
+        "comp_cards": -1,
+        "comp_card_images": 50,
+        "portfolios": -1,
+        "media_files": 10000,
+        "storage": "500GB",
+        "bandwidth": "1TB",
+        "users": 100,
+        "seats": 50,
+        "accounts": 10
+      }
+    }
+  },
+  "code_implementation_pattern": {
+    "frontend_check": {
+      "description": "React/Next.js component example",
+      "code": "// Check if user can create comp cards\nconst canCreateCompCard = \n  hasPermission('feature.comp_card.create') && \n  currentCompCards < limits.comp_cards;\n\n// Show/hide create button\n{canCreateCompCard && (\n  <Button onClick={createNewCompCard}>\n    Create Comp Card ({currentCompCards}/{limits.comp_cards})\n  </Button>\n)}"
+    },
+    "backend_check": {
+      "description": "Fastify API endpoint example",
+      "code": "// POST /api/v1/user/comp-cards\nfastify.post('/comp-cards', {\n  preHandler: [\n    fastify.authenticate,\n    fastify.requirePermission('feature.comp_card.create'),\n    fastify.checkLimit('comp_cards')\n  ],\n  async handler(request, reply) {\n    // Permission passed, limit not exceeded\n    const compCard = await createCompCard(request.body);\n    return { success: true, data: compCard };\n  }\n})"
+    },
+    "error_handling": {
+      "permission_denied": {
+        "code": "PERMISSION_DENIED",
+        "message": "You don't have permission to create comp cards",
+        "status": 403
+      },
+      "limit_exceeded": {
+        "code": "LIMIT_EXCEEDED", 
+        "message": "You've reached your comp card limit (5/5)",
+        "status": 429,
+        "details": {
+          "limit_type": "comp_cards",
+          "current": 5,
+          "maximum": 5,
+          "upgrade_required": true
+        }
+      }
+    }
+  },
+  "best_practices": {
+    "1_separation_of_concerns": "Always separate permissions (can I?) from limits (how many?)",
+    "2_explicit_permissions": "Never use limit=0 to deny access. Use explicit permissions.",
+    "3_permission_hierarchy": "Use 'requires' to create permission dependencies",
+    "4_meaningful_errors": "Provide clear error messages distinguishing permission vs limit issues",
+    "5_ui_clarity": "Show both permission state and limit usage in UI",
+    "6_audit_trail": "Log permission checks and limit usage for compliance",
+    "7_graceful_degradation": "Hide features without permission, show upgrade prompts for limits"
+  }
+}

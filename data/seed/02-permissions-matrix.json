@@ -1,0 +1,296 @@
+{
+  "permissions": {
+    "platform": {
+      "platform.*": "Full platform access",
+      "platform.manage": "Manage platform settings",
+      "platform.tenants.create": "Create new tenants",
+      "platform.tenants.read": "View all tenants",
+      "platform.tenants.update": "Update tenant settings",
+      "platform.tenants.delete": "Delete tenants",
+      "platform.tenants.suspend": "Suspend/activate tenants",
+      "platform.analytics.view": "View platform analytics",
+      "platform.analytics.export": "Export platform analytics",
+      "platform.billing.view": "View platform billing",
+      "platform.billing.manage": "Manage platform billing",
+      "platform.features.manage": "Manage platform features",
+      "platform.templates.create": "Create industry templates",
+      "platform.templates.manage": "Manage industry templates",
+      "platform.monitoring.view": "View system monitoring",
+      "platform.monitoring.manage": "Manage monitoring alerts",
+      "platform.api.manage": "Manage API configuration",
+      "platform.security.view": "View security logs",
+      "platform.security.manage": "Manage security settings"
+    },
+    "tenant": {
+      "tenant.*": "Full tenant access",
+      "tenant.manage": "Manage tenant settings",
+      "tenant.branding.update": "Update tenant branding",
+      "tenant.domain.manage": "Manage custom domain",
+      "tenant.accounts.create": "Create accounts in tenant",
+      "tenant.accounts.read": "View all tenant accounts",
+      "tenant.accounts.update": "Update account settings",
+      "tenant.accounts.delete": "Delete accounts",
+      "tenant.accounts.suspend": "Suspend/activate accounts",
+      "tenant.plans.create": "Create subscription plans",
+      "tenant.plans.read": "View subscription plans",
+      "tenant.plans.update": "Update subscription plans",
+      "tenant.plans.delete": "Delete subscription plans",
+      "tenant.features.manage": "Manage tenant features",
+      "tenant.templates.manage": "Manage tenant templates",
+      "tenant.schemas.create": "Create form schemas",
+      "tenant.schemas.manage": "Manage form schemas",
+      "tenant.optionsets.manage": "Manage option sets",
+      "tenant.categories.manage": "Manage categories",
+      "tenant.tags.manage": "Manage tags",
+      "tenant.analytics.view": "View tenant analytics",
+      "tenant.analytics.export": "Export tenant analytics",
+      "tenant.billing.view": "View tenant billing",
+      "tenant.billing.manage": "Manage tenant billing",
+      "tenant.emails.manage": "Manage email templates",
+      "tenant.pages.create": "Create CMS pages",
+      "tenant.pages.manage": "Manage CMS pages",
+      "tenant.blog.manage": "Manage blog system",
+      "tenant.jobs.moderate": "Moderate job postings",
+      "tenant.profiles.moderate": "Moderate profiles",
+      "tenant.reports.view": "View tenant reports",
+      "tenant.reports.export": "Export tenant reports",
+      "tenant.integrations.manage": "Manage integrations",
+      "tenant.api.view": "View API usage",
+      "tenant.api.manage": "Manage API keys",
+      "tenant.audit.view": "View audit logs",
+      "tenant.audit.export": "Export audit logs"
+    },
+    "account": {
+      "account.*": "Full account access",
+      "account.manage": "Manage account settings",
+      "account.billing.view": "View account billing",
+      "account.billing.manage": "Manage account billing",
+      "account.users.create": "Create users in account",
+      "account.users.read": "View account users",
+      "account.users.update": "Update user settings",
+      "account.users.delete": "Delete users",
+      "account.users.suspend": "Suspend/activate users",
+      "account.roles.assign": "Assign user roles",
+      "account.teams.create": "Create teams",
+      "account.teams.manage": "Manage teams",
+      "account.projects.create": "Create projects",
+      "account.projects.manage": "Manage projects",
+      "account.analytics.view": "View account analytics",
+      "account.reports.view": "View account reports",
+      "account.api.manage": "Manage account API keys",
+      "account.integrations.manage": "Manage account integrations"
+    },
+    "user": {
+      "user.profile.read": "View own profile",
+      "user.profile.update": "Update own profile",
+      "user.profile.delete": "Delete own profile",
+      "user.settings.read": "View own settings",
+      "user.settings.update": "Update own settings",
+      "user.password.change": "Change own password",
+      "user.2fa.manage": "Manage 2FA settings",
+      "user.sessions.view": "View active sessions",
+      "user.sessions.revoke": "Revoke sessions",
+      "user.notifications.read": "View notifications",
+      "user.notifications.manage": "Manage notification preferences",
+      "user.portfolio.create": "Create portfolios",
+      "user.portfolio.update": "Update own portfolios",
+      "user.portfolio.delete": "Delete own portfolios",
+      "user.compcard.create": "Create comp cards",
+      "user.compcard.update": "Update own comp cards",
+      "user.compcard.delete": "Delete own comp cards",
+      "user.jobs.create": "Create job postings",
+      "user.jobs.update": "Update own job postings",
+      "user.jobs.delete": "Delete own job postings",
+      "user.jobs.apply": "Apply to jobs",
+      "user.applications.view": "View own applications",
+      "user.applications.manage": "Manage own applications",
+      "user.gigs.create": "Create gig offerings",
+      "user.gigs.update": "Update own gigs",
+      "user.gigs.delete": "Delete own gigs",
+      "user.messages.send": "Send messages",
+      "user.messages.read": "Read messages",
+      "user.reviews.write": "Write reviews",
+      "user.reviews.respond": "Respond to reviews",
+      "user.collections.create": "Create collections",
+      "user.collections.manage": "Manage collections",
+      "user.searches.save": "Save searches",
+      "user.api.access": "Access API",
+      "user.api.keys": "Manage API keys"
+    },
+    "public": {
+      "public.browse": "Browse public content",
+      "public.search": "Search marketplace",
+      "public.profiles.view": "View public profiles",
+      "public.jobs.view": "View public jobs",
+      "public.gigs.view": "View public gigs",
+      "public.portfolios.view": "View public portfolios",
+      "public.blog.read": "Read blog posts",
+      "public.pages.view": "View public pages",
+      "public.register": "Register new account",
+      "public.login": "Login to account",
+      "public.password.reset": "Reset password",
+      "public.contact": "Submit contact form"
+    },
+    "features": {
+      "feature.comp_card.access": "Access comp card feature",
+      "feature.comp_card.create": "Create comp cards",
+      "feature.comp_card.update": "Update comp cards",
+      "feature.comp_card.delete": "Delete comp cards",
+      "feature.comp_card.share": "Share comp cards",
+      "feature.portfolio.access": "Access portfolio feature",
+      "feature.portfolio.create": "Create portfolios",
+      "feature.portfolio.update": "Update portfolios",
+      "feature.portfolio.delete": "Delete portfolios",
+      "feature.portfolio.analytics": "View portfolio analytics",
+      "feature.analytics.access": "Access analytics",
+      "feature.analytics.export": "Export analytics data",
+      "feature.messaging.access": "Access messaging",
+      "feature.messaging.groups": "Create group chats",
+      "feature.messaging.attachments": "Send attachments",
+      "feature.calendar.access": "Access calendar",
+      "feature.calendar.sync": "Sync external calendars",
+      "feature.api.access": "Access API",
+      "feature.api.webhooks": "Manage webhooks",
+      "feature.blog.write": "Write blog posts",
+      "feature.blog.moderate": "Moderate blog comments",
+      "feature.jobs.priority": "Priority job listing",
+      "feature.jobs.featured": "Featured job posts",
+      "feature.ai.search": "AI-powered search",
+      "feature.ai.matching": "AI job matching",
+      "feature.ai.recommendations": "AI recommendations"
+    }
+  },
+  "default_roles": {
+    "platform": [
+      {
+        "name": "Super Admin",
+        "slug": "super_admin",
+        "permissions": ["platform.*"],
+        "description": "Full platform access"
+      },
+      {
+        "name": "Platform Manager",
+        "slug": "platform_manager",
+        "permissions": [
+          "platform.tenants.read",
+          "platform.tenants.update",
+          "platform.analytics.view",
+          "platform.monitoring.view",
+          "platform.security.view"
+        ],
+        "description": "Manage platform operations"
+      }
+    ],
+    "tenant": [
+      {
+        "name": "Tenant Admin",
+        "slug": "tenant_admin",
+        "permissions": ["tenant.*"],
+        "description": "Full tenant access"
+      },
+      {
+        "name": "Tenant Manager",
+        "slug": "tenant_manager",
+        "permissions": [
+          "tenant.manage",
+          "tenant.accounts.read",
+          "tenant.accounts.update",
+          "tenant.analytics.view",
+          "tenant.reports.view"
+        ],
+        "description": "Manage tenant operations"
+      },
+      {
+        "name": "Content Manager",
+        "slug": "content_manager",
+        "permissions": [
+          "tenant.pages.create",
+          "tenant.pages.manage",
+          "tenant.blog.manage",
+          "tenant.categories.manage",
+          "tenant.tags.manage"
+        ],
+        "description": "Manage content and CMS"
+      }
+    ],
+    "account": [
+      {
+        "name": "Account Owner",
+        "slug": "account_owner",
+        "permissions": ["account.*"],
+        "description": "Full account access"
+      },
+      {
+        "name": "Account Manager",
+        "slug": "account_manager",
+        "permissions": [
+          "account.manage",
+          "account.users.read",
+          "account.users.update",
+          "account.teams.manage",
+          "account.analytics.view"
+        ],
+        "description": "Manage account and users"
+      },
+      {
+        "name": "Team Lead",
+        "slug": "team_lead",
+        "permissions": [
+          "account.users.read",
+          "account.teams.manage",
+          "account.projects.manage",
+          "account.reports.view"
+        ],
+        "description": "Manage teams and projects"
+      }
+    ],
+    "user": [
+      {
+        "name": "Professional",
+        "slug": "professional",
+        "permissions": [
+          "user.profile.*",
+          "user.settings.*",
+          "user.portfolio.*",
+          "user.compcard.*",
+          "user.jobs.create",
+          "user.jobs.update",
+          "user.jobs.delete",
+          "user.gigs.*",
+          "user.messages.*",
+          "user.reviews.*",
+          "user.collections.*",
+          "user.searches.*",
+          "feature.portfolio.access",
+          "feature.analytics.access",
+          "feature.messaging.access",
+          "feature.calendar.access"
+        ],
+        "description": "Professional user with full features"
+      },
+      {
+        "name": "Basic User",
+        "slug": "basic_user",
+        "permissions": [
+          "user.profile.read",
+          "user.profile.update",
+          "user.settings.*",
+          "user.jobs.apply",
+          "user.applications.view",
+          "user.messages.send",
+          "user.messages.read",
+          "public.*"
+        ],
+        "description": "Basic user with limited features"
+      },
+      {
+        "name": "Guest",
+        "slug": "guest",
+        "permissions": [
+          "public.*"
+        ],
+        "description": "Guest with public access only"
+      }
+    ]
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "title": "Tenant Management",
+  "description": "Manage and monitor all tenants in the itellico Mono",
+  "bulkActions": {
+    "selected": "{count} selected",
+    "execute": "Execute",
+    "executing": "Executing...",
+    "selectAction": "Select action...",
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate", 
+      "delete": "Delete"
+    },
+    "success": {
+      "title": "Bulk Action Completed",
+      "description": "Successfully {action} {count} tenant(s)"
+    },
+    "error": {
+      "title": "Bulk Action Failed",
+      "description": "An error occurred while performing the bulk action"
+    },
+    "confirmation": {
+      "message": "Are you sure you want to {action} {count} tenant(s)?"
+    },
+    "delete": "Delete Selected",
+    "activate": "Activate Selected",
+    "deactivate": "Deactivate Selected",
+    "export": "Export Selected",
+    "assignPlan": "Assign Plan",
+    "bulkOperations": "Bulk Operations",
+    "confirmDelete": "Are you sure you want to delete the selected tenants?",
+    "confirmActivate": "Are you sure you want to activate the selected tenants?",
+    "confirmDeactivate": "Are you sure you want to deactivate the selected tenants?"
+  },
+  "create": {
+    "title": "Create New Tenant",
+    "button": "Create Tenant",
+    "addTenant": "Add Tenant",
+    "newTenant": "New Tenant"
+  },
+  "stats": {
+    "total": "Total Tenants",
+    "totalDescription": "All registered tenants",
+    "active": "Active Tenants", 
+    "activeDescription": "Currently active tenants",
+    "inactive": "Inactive Tenants",
+    "inactiveDescription": "Currently inactive tenants",
+    "totalUsers": "Total Users",
+    "totalUsersDescription": "Users across all tenants",
+    "totalTenants": "Total Tenants",
+    "activeTenants": "Active Tenants",
+    "trialTenants": "Trial Tenants",
+    "newTenantsToday": "New Today"
+  },
+  "table": {
+    "title": "Tenants List",
+    "description": "Complete list of all tenants with their current status",
+    "name": "Name",
+    "domain": "Domain",
+    "status": "Status",
+    "userCount": "Users",
+    "currency": "Currency",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actions": "Actions"
+  },
+  "filters": {
+    "search_by_name": "Search by name...",
+    "search_by_domain": "Search by domain...", 
+    "all_statuses": "All statuses",
+    "minUsers": "Min users",
+    "allCurrencies": "All currencies",
+    "title": "Filters",
+    "search": "Search",
+    "searchPlaceholder": "Search by name or domain...",
+    "status": "Status",
+    "plan": "Plan",
+    "region": "Region"
+  },
+  "actions": {
+    "viewDetails": "View Details",
+    "editSettings": "Edit Settings",
+    "manageUsers": "Manage Users",
+    "exportData": "Export Data",
+    "suspend": "Suspend Tenant",
+    "exportAll": "Export All",
+    "createNew": "Create Tenant",
+    "editTenant": "Edit Tenant",
+    "suspendTenant": "Suspend Tenant",
+    "activateTenant": "Activate Tenant",
+    "deleteTenant": "Delete Tenant",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "manage": "Manage"
+  },
+  "permissions": {
+    "accessDenied": "Access denied to {resource}",
+    "insufficientPermissions": "You don't have permission to access this resource",
+    "adminRequired": "Administrator access required",
+    "superAdminRequired": "Super administrator access required"
+  },
+  "empty": {
+    "title": "No tenants found",
+    "description": "No tenants match your current filters",
+    "noData": "No tenant data available"
+  },
+  "errors": {
+    "failedToLoad": "Failed to load tenants",
+    "unknown": "An unknown error occurred",
+    "networkError": "Network error occurred",
+    "serverError": "Server error occurred",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access forbidden",
+    "notFound": "Resource not found"
+  },
+  "page": {
+    "title": "Tenant Management",
+    "description": "Manage tenant organizations and their configurations across the platform"
+  },
+  "list": {
+    "title": "Tenants List",
+    "results": "tenants found",
+    "columns": {
+      "name": "Name",
+      "domain": "Domain",
+      "status": "Status", 
+      "plan": "Plan",
+      "users": "Users",
+      "created": "Created",
+      "actions": "Actions"
+    }
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "trial": "Trial",
+    "suspended": "Suspended"
+  },
+  "plans": {
+    "free": "Free",
+    "basic": "Basic",
+    "pro": "Pro",
+    "enterprise": "Enterprise"
+  },
+  "messages": {
+    "loadingTenants": "Loading tenants...",
+    "noTenants": "No tenants found",
+    "errorLoading": "Error loading tenants",
+    "tenantCreated": "Tenant created successfully",
+    "tenantUpdated": "Tenant updated successfully",
+    "tenantDeleted": "Tenant deleted successfully"
+  }
+}

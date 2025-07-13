@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo "🔗 Redis Connection Information for RedisInsight"
+echo "=================================================="
+echo ""
+echo "1. Open RedisInsight: http://localhost:5540"
+echo ""
+echo "2. Click 'Add Redis Database' and use these settings:"
+echo "   ┌─────────────────────────────────────────┐"
+echo "   │ Host:     localhost                     │"
+echo "   │ Port:     6379                          │"
+echo "   │ Name:     mono-redis                    │"
+echo "   │ Username: (leave empty)                 │"
+echo "   │ Password: (leave empty)                 │"
+echo "   └─────────────────────────────────────────┘"
+echo ""
+echo "3. Test the connection and save"
+echo ""
+echo "🔍 Current Redis Status:"
+if redis-cli -h localhost -p 6379 ping > /dev/null 2>&1; then
+    echo "✅ Redis is accessible at localhost:6379"
+    echo "📊 Redis Info:"
+    echo "   Version: $(redis-cli -h localhost -p 6379 info server | grep redis_version | cut -d: -f2 | tr -d '\r')"
+    echo "   Memory:  $(redis-cli -h localhost -p 6379 info memory | grep used_memory_human | cut -d: -f2 | tr -d '\r')"
+    echo "   Keys:    $(redis-cli -h localhost -p 6379 dbsize) keys in database 0"
+else
+    echo "❌ Redis is not accessible"
+fi
+
+echo ""
+echo "💡 Alternative Connection (Docker Network):"
+echo "   Host: redis (use this if connecting from another container)"
+echo "   Port: 6379"
+echo ""
+echo "🗂️  Multiple Databases:"
+echo "   Redis supports databases 0-15"
+echo "   Default is database 0"
+echo "   Switch with: SELECT 1 (for database 1)"

@@ -1,0 +1,165 @@
+{
+  "version": "1.0.0",
+  "description": "Job categories and types for the platform",
+  "categories": {
+    "modeling": {
+      "name": "Modeling",
+      "slug": "modeling",
+      "description": "All modeling-related jobs",
+      "subcategories": {
+        "fashion": {
+          "name": "Fashion",
+          "slug": "fashion",
+          "types": [
+            { "name": "Runway", "slug": "runway", "description": "Fashion show runway modeling" },
+            { "name": "Editorial", "slug": "editorial", "description": "Magazine editorial shoots" },
+            { "name": "Catalog", "slug": "catalog", "description": "Catalog and e-commerce modeling" },
+            { "name": "Showroom", "slug": "showroom", "description": "Showroom and presentation modeling" },
+            { "name": "Lookbook", "slug": "lookbook", "description": "Brand lookbook shoots" }
+          ]
+        },
+        "commercial": {
+          "name": "Commercial",
+          "slug": "commercial",
+          "types": [
+            { "name": "Print Ad", "slug": "print-ad", "description": "Print advertising campaigns" },
+            { "name": "TV Commercial", "slug": "tv-commercial", "description": "Television commercials" },
+            { "name": "Online Ad", "slug": "online-ad", "description": "Digital advertising content" },
+            { "name": "Billboard", "slug": "billboard", "description": "Outdoor advertising campaigns" }
+          ]
+        },
+        "fitness": {
+          "name": "Fitness & Sports",
+          "slug": "fitness",
+          "types": [
+            { "name": "Athletic Wear", "slug": "athletic-wear", "description": "Sportswear modeling" },
+            { "name": "Gym Shoot", "slug": "gym-shoot", "description": "Fitness facility shoots" },
+            { "name": "Sports Brand", "slug": "sports-brand", "description": "Sports brand campaigns" },
+            { "name": "Yoga", "slug": "yoga", "description": "Yoga and wellness modeling" }
+          ]
+        },
+        "specialty": {
+          "name": "Specialty",
+          "slug": "specialty",
+          "types": [
+            { "name": "Hand Model", "slug": "hand-model", "description": "Hand modeling for jewelry, products" },
+            { "name": "Foot Model", "slug": "foot-model", "description": "Foot modeling for shoes, beauty" },
+            { "name": "Hair Model", "slug": "hair-model", "description": "Hair product and salon modeling" },
+            { "name": "Parts Model", "slug": "parts-model", "description": "Specific body parts modeling" }
+          ]
+        },
+        "lifestyle": {
+          "name": "Lifestyle",
+          "slug": "lifestyle",
+          "types": [
+            { "name": "Family", "slug": "family", "description": "Family lifestyle shoots" },
+            { "name": "Corporate", "slug": "corporate", "description": "Business and corporate imagery" },
+            { "name": "Travel", "slug": "travel", "description": "Travel and tourism campaigns" },
+            { "name": "Real People", "slug": "real-people", "description": "Authentic lifestyle content" }
+          ]
+        }
+      }
+    },
+    "photography": {
+      "name": "Photography",
+      "slug": "photography",
+      "description": "Photography services and jobs",
+      "subcategories": {
+        "portrait": {
+          "name": "Portrait",
+          "slug": "portrait",
+          "types": [
+            { "name": "Headshot", "slug": "headshot", "description": "Professional headshots" },
+            { "name": "Family", "slug": "family", "description": "Family portraits" },
+            { "name": "Professional", "slug": "professional", "description": "Business portraits" },
+            { "name": "Creative", "slug": "creative", "description": "Artistic portraits" }
+          ]
+        },
+        "event": {
+          "name": "Event",
+          "slug": "event",
+          "types": [
+            { "name": "Wedding", "slug": "wedding", "description": "Wedding photography" },
+            { "name": "Corporate", "slug": "corporate", "description": "Corporate events" },
+            { "name": "Party", "slug": "party", "description": "Private parties and celebrations" },
+            { "name": "Conference", "slug": "conference", "description": "Conference and trade shows" }
+          ]
+        },
+        "commercial": {
+          "name": "Commercial",
+          "slug": "commercial",
+          "types": [
+            { "name": "Product", "slug": "product", "description": "Product photography" },
+            { "name": "Real Estate", "slug": "real-estate", "description": "Property photography" },
+            { "name": "Food", "slug": "food", "description": "Food and beverage photography" },
+            { "name": "Architecture", "slug": "architecture", "description": "Architectural photography" }
+          ]
+        }
+      }
+    },
+    "production": {
+      "name": "Production",
+      "slug": "production",
+      "description": "Film and video production jobs",
+      "subcategories": {
+        "film": {
+          "name": "Film",
+          "slug": "film",
+          "types": [
+            { "name": "Feature Film", "slug": "feature", "description": "Feature film productions" },
+            { "name": "Short Film", "slug": "short", "description": "Short film projects" },
+            { "name": "Documentary", "slug": "documentary", "description": "Documentary productions" },
+            { "name": "Music Video", "slug": "music-video", "description": "Music video shoots" }
+          ]
+        },
+        "television": {
+          "name": "Television",
+          "slug": "television",
+          "types": [
+            { "name": "TV Series", "slug": "series", "description": "Television series" },
+            { "name": "Commercial", "slug": "commercial", "description": "TV commercials" },
+            { "name": "Reality TV", "slug": "reality", "description": "Reality television" },
+            { "name": "Talk Show", "slug": "talk-show", "description": "Talk show appearances" }
+          ]
+        },
+        "digital": {
+          "name": "Digital",
+          "slug": "digital",
+          "types": [
+            { "name": "YouTube", "slug": "youtube", "description": "YouTube content creation" },
+            { "name": "Social Media", "slug": "social-media", "description": "Social media content" },
+            { "name": "Web Series", "slug": "web-series", "description": "Online series production" },
+            { "name": "Streaming", "slug": "streaming", "description": "Streaming platform content" }
+          ]
+        }
+      }
+    },
+    "casting": {
+      "name": "Casting",
+      "slug": "casting",
+      "description": "Casting calls and auditions",
+      "subcategories": {
+        "acting": {
+          "name": "Acting",
+          "slug": "acting",
+          "types": [
+            { "name": "Lead Role", "slug": "lead-role", "description": "Main character roles" },
+            { "name": "Supporting Role", "slug": "supporting-role", "description": "Supporting character roles" },
+            { "name": "Extra", "slug": "extra", "description": "Background talent" },
+            { "name": "Voice Over", "slug": "voice-over", "description": "Voice acting roles" }
+          ]
+        },
+        "modeling": {
+          "name": "Model Casting",
+          "slug": "model-casting",
+          "types": [
+            { "name": "Fashion Show", "slug": "fashion-show", "description": "Runway show casting" },
+            { "name": "Campaign", "slug": "campaign", "description": "Advertising campaign casting" },
+            { "name": "Catalog", "slug": "catalog", "description": "Catalog shoot casting" },
+            { "name": "Fit Model", "slug": "fit-model", "description": "Clothing fit modeling" }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Dashboard - Elite Model Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .model-card { cursor: pointer; transition: all 0.3s; }
+        .model-card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Agency Stats -->
+                <div class="row mb-4" id="stats-row"></div>
+                
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body d-flex justify-content-around">
+                                <button class="btn btn-primary"><i class="fas fa-plus me-2"></i> Add New Talent</button>
+                                <button class="btn btn-outline-primary"><i class="fas fa-upload me-2"></i> Bulk Import</button>
+                                <button class="btn btn-outline-primary"><i class="fas fa-calendar me-2"></i> Update Availability</button>
+                                <button class="btn btn-outline-primary"><i class="fas fa-file-export me-2"></i> Export Roster</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Talent Roster -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Agency Talent Roster</h5>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary active"><i class="fas fa-th"></i></button>
+                                    <button class="btn btn-outline-secondary"><i class="fas fa-list"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="talent-roster"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Overview -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent Bookings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Model</th>
+                                                <th>Client</th>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Commission</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Emma Johnson</td>
+                                                <td>Vogue</td>
+                                                <td>Jun 10</td>
+                                                <td>$5,000</td>
+                                                <td>$1,000</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Michael Chen</td>
+                                                <td>Nike</td>
+                                                <td>Jun 9</td>
+                                                <td>$8,000</td>
+                                                <td>$1,600</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sofia Rodriguez</td>
+                                                <td>H&M</td>
+                                                <td>Jun 8</td>
+                                                <td>$3,500</td>
+                                                <td>$700</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Team Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-feed">
+                                    <div class="mb-3">
+                                        <small class="text-muted">2 hours ago</small><br>
+                                        <strong>Agent Sarah</strong> updated Emma Johnson's portfolio
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">4 hours ago</small><br>
+                                        <strong>Scout Mike</strong> added 3 new talent applications
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">Yesterday</small><br>
+                                        <strong>Agent John</strong> confirmed booking for Michael Chen
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar for Agency
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', active: true },
+                { label: 'Talent Roster', icon: 'fas fa-users', href: '#roster' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: '#bookings' },
+                { label: 'Applications', icon: 'fas fa-clipboard-list', href: '#applications' },
+                { label: 'Team Management', icon: 'fas fa-user-tie', href: '#team' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-line', href: '#finance' },
+                { label: 'Contracts', icon: 'fas fa-file-contract', href: '#contracts' },
+                { label: 'Messages', icon: 'fas fa-envelope', href: '#messages' },
+                { label: 'Agency Profile', icon: 'fas fa-building', href: '#profile' },
+                { label: 'Settings', icon: 'fas fa-cog', href: '#settings' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Elite Models', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('John Agent', 'Agency Manager', 'Account');
+            
+            // Stats
+            const statsHtml = [
+                createStatCard('Active Talents', '24', 'fas fa-users', 'primary'),
+                createStatCard('Monthly Bookings', '47', 'fas fa-calendar-check', 'success'),
+                createStatCard('Total Earnings', '$123,450', 'fas fa-dollar-sign', 'warning'),
+                createStatCard('Commission (20%)', '$24,690', 'fas fa-percentage', 'info')
+            ].join('');
+            document.getElementById('stats-row').innerHTML = statsHtml;
+            
+            // Talent Roster
+            const talents = [
+                { name: 'Emma Johnson', type: 'Fashion Model', status: 'Available', bookings: 12, earnings: '$45,000' },
+                { name: 'Michael Chen', type: 'Fitness Model', status: 'On Booking', bookings: 8, earnings: '$32,000' },
+                { name: 'Sofia Rodriguez', type: 'Commercial Model', status: 'Available', bookings: 15, earnings: '$28,500' },
+                { name: 'David Kim', type: 'Runway Model', status: 'Available', bookings: 6, earnings: '$18,000' }
+            ];
+            
+            const rosterHtml = talents.map(talent => `
+                <div class="col-md-6 mb-3">
+                    <div class="card model-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <img src="https://via.placeholder.com/60" class="rounded-circle me-3" alt="${talent.name}">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${talent.name}</h6>
+                                    <small class="text-muted">${talent.type}</small>
+                                </div>
+                                <span class="badge bg-${talent.status === 'Available' ? 'success' : 'warning'}">${talent.status}</span>
+                            </div>
+                            <div class="mt-3 d-flex justify-content-between">
+                                <small><i class="fas fa-calendar me-1"></i> ${talent.bookings} bookings</small>
+                                <small><i class="fas fa-dollar-sign me-1"></i> ${talent.earnings}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('talent-roster').innerHTML = rosterHtml;
+        });
+    </script>
+</body>
+</html>

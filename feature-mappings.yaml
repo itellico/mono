@@ -1,0 +1,121 @@
+# Feature Mappings: Click-Dummy to Implementation
+# This file maps click-dummy prototypes to their actual implementation files
+
+schema-builder:
+  clickDummy: platform/schemas/builder.php
+  implementation:
+    frontend:
+      - apps/web/src/components/platform/schema-builder/SchemaBuilder.tsx
+      - apps/web/src/components/platform/schema-builder/FieldTypeSelector.tsx
+      - apps/web/src/components/platform/schema-builder/RelationshipBuilder.tsx
+    api:
+      - apps/api/src/routes/platform/schemas/index.ts
+      - apps/api/src/services/schema-service.ts
+    database:
+      - prisma/schema.prisma
+    tests:
+      - apps/api/src/routes/platform/schemas/__tests__/
+      - apps/web/src/components/platform/schema-builder/__tests__/
+  status: not_implemented
+  kanbanTasks:
+    - "1" # Schema Builder UI Implementation
+
+talent-management:
+  clickDummy: tenant/talent/index.php
+  implementation:
+    frontend:
+      - apps/web/src/pages/tenant/talent/index.tsx
+      - apps/web/src/components/tenant/TalentTable.tsx
+      - apps/web/src/components/tenant/TalentFilters.tsx
+    api:
+      - apps/api/src/routes/tenant/talent/index.ts
+      - apps/api/src/services/talent-service.ts
+    database:
+      - prisma/schema.prisma
+  status: partial
+  kanbanTasks:
+    - "2" # Talent Search Implementation
+    - "3" # Bulk Operations API
+
+model-dashboard:
+  clickDummy: user/model.php
+  implementation:
+    frontend:
+      - apps/web/src/pages/dashboard/model/index.tsx
+      - apps/web/src/components/user/PortfolioGallery.tsx
+      - apps/web/src/components/user/BookingCalendar.tsx
+      - apps/web/src/components/user/EarningsChart.tsx
+    api:
+      - apps/api/src/routes/user/profile/index.ts
+      - apps/api/src/routes/user/portfolio/index.ts
+      - apps/api/src/services/user-dashboard-service.ts
+    database:
+      - prisma/schema.prisma
+  status: in_progress
+  kanbanTasks:
+    - "4" # Portfolio Upload System
+    - "5" # Booking Calendar Integration
+
+plan-builder:
+  clickDummy: platform/plans/builder.php
+  implementation:
+    frontend: []
+    api: []
+    database: []
+  status: not_implemented
+  kanbanTasks:
+    - "6" # Plan Builder UI
+    - "7" # Feature Set Management
+
+template-engine:
+  clickDummy: platform/templates/index.php
+  implementation:
+    frontend: []
+    api: []
+    database: []
+  status: not_implemented
+  kanbanTasks:
+    - "8" # Template Engine Implementation
+
+casting-management:
+  clickDummy: tenant/castings/index.php
+  implementation:
+    frontend:
+      - apps/web/src/pages/tenant/castings/
+    api:
+      - apps/api/src/routes/tenant/castings/
+  status: partial
+  kanbanTasks:
+    - "9" # Casting Call Creation
+    - "10" # Application Review System
+
+agency-dashboard:
+  clickDummy: account/agency/dashboard.php
+  implementation:
+    frontend: []
+    api: []
+  status: not_implemented
+  kanbanTasks:
+    - "11" # Agency Dashboard Layout
+    - "12" # Agency Analytics
+
+photographer-dashboard:
+  clickDummy: user/photographer.php
+  implementation:
+    frontend: []
+    api: []
+  status: not_implemented
+  kanbanTasks:
+    - "13" # Photographer Portfolio System
+
+public-marketplace:
+  clickDummy: public/gomodels/index.php
+  implementation:
+    frontend:
+      - apps/web/src/pages/public/marketplace/
+    api:
+      - apps/api/src/routes/public/marketplace/
+  status: partial
+  kanbanTasks:
+    - "14" # Public Search Interface
+    - "15" # Marketplace Filters

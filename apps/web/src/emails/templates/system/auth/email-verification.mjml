@@ -1,0 +1,81 @@
+{% extends "layouts/base.mjml" %}
+
+{% block content %}
+<mj-text font-size="28px" font-weight="600" color="#1f2937" align="center">
+  Verify Your Email Address
+</mj-text>
+
+<mj-text font-size="18px" color="#6b7280" align="center" padding-bottom="30px">
+  One more step to complete your account setup
+</mj-text>
+
+<mj-text>
+  <p>Hi {{ userName }},</p>
+  
+  <p>Thank you for creating an account with {{ tenantName or platformName }}! To complete your registration and start using all our features, please verify your email address.</p>
+  
+  <p>Click the button below to confirm that {{ userEmail }} is your email address:</p>
+</mj-text>
+
+<mj-text align="center" padding="30px 0">
+  {% include "components/button.mjml" with { 
+    url: verificationUrl, 
+    text: "Verify Email Address", 
+    style: "primary" 
+  } %}
+</mj-text>
+
+{% include "components/alert.mjml" with { 
+  type: "info", 
+  title: "Verification Required",
+  message: "You won't be able to access certain features until you verify your email address."
+} %}
+
+<mj-text>
+  <p><strong>What happens after verification?</strong></p>
+  <ul>
+    <li>You'll gain full access to all platform features</li>
+    <li>You'll be able to receive important notifications</li>
+    <li>Your account will be marked as verified and trusted</li>
+    {% if userType == "model" or userType == "photographer" %}
+    <li>You'll be able to receive booking requests and opportunities</li>
+    {% elif userType == "agency" %}
+    <li>You'll be able to manage talent and receive client inquiries</li>
+    {% else %}
+    <li>You'll be able to post projects and contact talent</li>
+    {% endif %}
+  </ul>
+</mj-text>
+
+<mj-text>
+  <p><strong>If the button doesn't work:</strong></p>
+  <p>Copy and paste this URL into your browser:</p>
+</mj-text>
+
+<mj-text font-family="monospace" background-color="#f3f4f6" padding="15px" border-radius="4px" font-size="14px">
+  {{ verificationUrl }}
+</mj-text>
+
+<mj-text>
+  <p><strong>Didn't receive this email?</strong></p>
+  <ul>
+    <li>Check your spam or junk mail folder</li>
+    <li>Make sure {{ userEmail }} is spelled correctly</li>
+    <li>You can request a new verification email from your account settings</li>
+  </ul>
+</mj-text>
+
+<mj-text>
+  <p>This verification link will expire in {{ expirationHours or 48 }} hours for security reasons. After that, you'll need to request a new verification email.</p>
+  
+  <p>Thanks,<br>
+  The {{ tenantName or platformName }} Team</p>
+</mj-text>
+
+<mj-divider border-color="#e5e5e5" padding="30px 0" />
+
+<mj-text font-size="14px" color="#6b7280">
+  <p>This email was sent to {{ userEmail }} because an account was created with this email address on {{ tenantName or platformName }}.</p>
+  <p>If you didn't create this account, you can safely ignore this email.</p>
+</mj-text>
+{% endblock %}

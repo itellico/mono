@@ -1,0 +1,727 @@
+{
+  "description": "Comprehensive admin panel for platform management and configuration",
+  "navigation": {
+    "dashboard": "Admin Dashboard",
+    "users": "User Management",
+    "tenants": "Tenant Management",
+    "workflows": "Workflow Management",
+    "integrations": "Integrations",
+    "llmIntegrations": "LLM Integrations",
+    "subscriptions": "Subscriptions",
+    "categories": "Categories",
+    "tags": "Tags",
+    "schemas": "Schemas",
+    "modelSchemas": "Model Schemas",
+    "optionSets": "Option Sets",
+    "entityMetadata": "Entity Metadata",
+    "formBuilder": "Form Builder",
+    "zoneEditor": "Zone Editor",
+    "savedZones": "Saved Zones",
+    "industryTemplates": "Industry Templates",
+    "industryContent": "Industry Content",
+    "buildSystem": "Build System",
+    "searchManagement": "Search Management",
+    "templateTester": "Template Tester",
+    "translations": "Translations",
+    "emailSystem": "Email System",
+    "modules": "Modules",
+    "backupManagement": "Backup Management",
+    "importExport": "Import/Export",
+    "auditSystem": "Audit System",
+    "monitoring": "System Monitoring",
+    "permissions": "Permissions",
+    "savedSearches": "Saved Searches",
+    "devTools": "Dev Tools",
+    "preferences": "Preferences",
+    "settings": "Settings",
+    "content": "Content Management",
+    "applications": "Model Applications",
+    "media": "Media Assets",
+    "analytics": "Analytics",
+    "queue": "Queue Management",
+    "audit": "Audit Logs",
+    "reports": "Reports"
+  },
+  "categories": {
+    "description": "Manage categories for organizing content"
+  },
+  "tags": {
+    "description": "Manage tags for organizing content"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "welcome": "Welcome to the GoModels administration panel"
+  },
+  "stats": {
+    "totalUsers": "Total Users",
+    "newToday": "new today",
+    "pendingApplications": "Pending Applications",
+    "approvedToday": "approved today",
+    "activeJobs": "Active Jobs",
+    "jobsPosted": "Jobs currently posted",
+    "revenue": "Revenue",
+    "monthlyRevenue": "Monthly revenue"
+  },
+  "sections": {
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "quickActions": {
+    "reviewApplications": {
+      "title": "Review Applications",
+      "description": "applications waiting for review"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage user accounts and permissions"
+    },
+    "mediaReview": {
+      "title": "Media Review",
+      "description": "Review uploaded photos and media content"
+    }
+  },
+  "actions": {
+    "approve": "Approve",
+    "reject": "Reject",
+    "suspend": "Suspend",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "review": "Review",
+    "moderate": "Moderate",
+    "ban": "Ban",
+    "unban": "Unban",
+    "impersonate": "Impersonate",
+    "export": "Export Data",
+    "import": "Import Data",
+    "backup": "Create Backup",
+    "restore": "Restore",
+    "reset": "Reset",
+    "override": "Override",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "addUser": "Add User"
+  },
+  "roles": {
+    "superAdmin": "Super Administrator",
+    "contentModerator": "Content Moderator",
+    "userManager": "User Manager",
+    "analyticsViewer": "Analytics Viewer"
+  },
+  "permissions": {
+    "canApproveModels": "Can approve model applications",
+    "canReviewPictures": "Can review media content",
+    "canManageUsers": "Can manage user accounts",
+    "canAccessAnalytics": "Can access analytics data",
+    "canManageContent": "Can manage platform content",
+    "canImpersonateUsers": "Can impersonate users",
+    "canViewAuditLogs": "Can view audit logs",
+    "canExportData": "Can export sensitive data",
+    "accessDenied": "Access denied. You don't have permission to view this resource."
+  },
+  "status": {
+    "pending": "Pending Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "suspended": "Suspended",
+    "flagged": "Flagged for Review",
+    "escalated": "Escalated",
+    "resolved": "Resolved"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "insufficientPermissions": "Insufficient permissions for this action",
+    "confirmAction": "Please confirm this action",
+    "irreversibleAction": "This action cannot be undone"
+  },
+  "messages": {
+    "success": {
+      "userApproved": "User approved successfully",
+      "userRejected": "User rejected successfully",
+      "userSuspended": "User suspended successfully",
+      "settingsUpdated": "Settings updated successfully",
+      "dataExported": "Data exported successfully"
+    },
+    "error": {
+      "actionFailed": "Action failed. Please try again.",
+      "insufficientPermissions": "You don't have permission to perform this action",
+      "userNotFound": "User not found",
+      "invalidData": "Invalid data provided",
+      "systemError": "System error occurred. Please contact support."
+    },
+    "confirm": {
+      "approveUser": "Are you sure you want to approve this user?",
+      "rejectUser": "Are you sure you want to reject this user?",
+      "suspendUser": "Are you sure you want to suspend this user?",
+      "deleteContent": "Are you sure you want to delete this content?",
+      "exportData": "Are you sure you want to export this sensitive data?"
+    }
+  },
+  "table": {
+    "userEmail": "User Email",
+    "userName": "User Name",
+    "userType": "User Type",
+    "registrationDate": "Registration Date",
+    "lastActivity": "Last Activity",
+    "status": "Status",
+    "actions": "Actions",
+    "applicationDate": "Application Date",
+    "reviewedBy": "Reviewed By",
+    "moderationLevel": "Moderation Level"
+  },
+  "settings": {
+    "title": "Site Settings",
+    "description": "Manage platform configuration and administrative settings",
+    "categories": {
+      "general": "General",
+      "upload": "Upload",
+      "localization": "Localization",
+      "security": "Security",
+      "email": "Email",
+      "ui": "UI/UX",
+      "business": "Business"
+    },
+    "upload": {
+      "title": "Upload Settings",
+      "description": "Configure file upload limits and processing options",
+      "maxFileSize": "Maximum File Size (MB)",
+      "allowedTypes": "Allowed File Types",
+      "imageSettings": "Image Settings",
+      "compressionQuality": "Compression Quality",
+      "autoThumbnails": "Auto-generate Thumbnails",
+      "optimizeImages": "Require Image Optimization"
+    },
+    "security": {
+      "title": "Security Settings",
+      "sessionTimeout": "Session Timeout",
+      "maxLoginAttempts": "Maximum Login Attempts",
+      "emailVerification": "Email Verification Required"
+    },
+    "business": {
+      "title": "Business Rules",
+      "description": "Configure business logic and operational settings",
+      "subscription": "Subscription Settings",
+      "applications": "Application Settings",
+      "platform": "Platform Settings"
+    },
+    "contentManagement": {
+      "title": "Content Management",
+      "description": "Manage business categories and content types",
+      "jobTypes": {
+        "title": "Job Types",
+        "description": "Types of modeling jobs available on the platform",
+        "addNew": "Add Job Type"
+      },
+      "specializations": {
+        "title": "Model Specializations",
+        "description": "Specialization categories for different model types",
+        "addNew": "Add Specialization"
+      },
+      "paymentTypes": {
+        "title": "Payment Types",
+        "description": "Available payment structures for jobs",
+        "addNew": "Add Payment Type"
+      }
+    }
+  },
+  "tenants": {
+    "title": "Tenant Management",
+    "description": "Manage platform tenants and their configurations",
+    "stats": {
+      "total": "Total Tenants",
+      "active": "Active Tenants",
+      "inactive": "Inactive Tenants",
+      "totalUsers": "Total Users"
+    },
+    "table": {
+      "title": "Tenant Management",
+      "description": "Manage platform tenants and their configurations",
+      "name": "Tenant Name",
+      "domain": "Domain",
+      "subdomain": "Subdomain",
+      "status": "Status",
+      "createdAt": "Created",
+      "updatedAt": "Last Updated",
+      "userCount": "Users",
+      "currency": "Currency",
+      "features": "Features"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended",
+      "maintenance": "Maintenance"
+    },
+    "filters": {
+      "allTenants": "All Tenants",
+      "activeTenants": "Active Only",
+      "inactiveTenants": "Inactive Only",
+      "searchPlaceholder": "Search tenants by name or domain...",
+      "searchByName": "Search by name",
+      "searchByDomain": "Search by domain",
+      "allStatuses": "All Statuses",
+      "minUsers": "Minimum users",
+      "allCurrencies": "All Currencies"
+    },
+    "emptyMessage": "No tenants found matching your criteria",
+    "actions": {
+      "viewDetails": "View Details",
+      "editTenant": "Edit Tenant",
+      "manageBranding": "Manage Branding",
+      "viewUsers": "View Users",
+      "suspend": "Suspend",
+      "activate": "Activate",
+      "deleteTenant": "Delete Tenant",
+      "exportAll": "Export All",
+      "createNew": "Create New"
+    },
+    "create": {
+      "title": "Create New Tenant",
+      "description": "Set up a new tenant on the itellico Mono. This will create a new isolated environment for the organization.",
+      "form": {
+        "name": "Tenant Name",
+        "namePlaceholder": "e.g., Acme Corporation",
+        "nameDescription": "The display name for this tenant organization",
+        "slug": "Tenant Slug",
+        "slugPlaceholder": "e.g., acme-corp",
+        "slugDescription": "Unique identifier for URLs and API access (letters, numbers, hyphens only)",
+        "domain": "Primary Domain",
+        "domainPlaceholder": "e.g., acme.com",
+        "domainDescription": "The primary domain this tenant will use for branding and email",
+        "description": "Description (Optional)",
+        "descriptionPlaceholder": "Describe this tenant organization...",
+        "descriptionDescription": "Brief description of the tenant organization"
+      },
+      "adminInfo": {
+        "title": "Admin User Information",
+        "description": "Create the initial administrator account for this tenant",
+        "email": "Admin Email",
+        "emailFormat": "slug-admin@mono.com",
+        "password": "Admin Password",
+        "passwordNote": "A secure password will be generated automatically",
+        "permissions": "Admin Permissions",
+        "permissionsList": "Full tenant administration, user management, content moderation"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create Tenant",
+        "creating": "Creating..."
+      },
+      "success": {
+        "title": "Tenant Created Successfully",
+        "message": "The tenant has been created and is ready to use.",
+        "adminCredentials": "Admin Login Credentials",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "copyCredentials": "Copy Credentials",
+        "securityNote": "Save these credentials securely. The password cannot be recovered.",
+        "close": "Close"
+      }
+    }
+  },
+  "integrations": {
+    "title": "Integration Management",
+    "subtitle": "Manage platform integrations and third-party services",
+    "addIntegration": "Add Integration",
+    "listSuccess": "Integrations retrieved successfully",
+    "createSuccess": "Integration created successfully",
+    "errors": {
+      "slugExists": "An integration with this slug already exists"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "integrations": "Integrations",
+      "statistics": "Statistics"
+    },
+    "overview": {
+      "totalIntegrations": "Total Integrations",
+      "availableIntegrations": "Available integrations",
+      "active": "Active",
+      "currentlyEnabled": "Currently enabled",
+      "categories": "Categories",
+      "differentTypes": "Different types",
+      "temporalReady": "Temporal Ready",
+      "workflowEnabled": "Workflow enabled"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "timeAgo": {
+        "twoMinutes": "2 minutes ago",
+        "fifteenMinutes": "15 minutes ago",
+        "oneHour": "1 hour ago"
+      },
+      "mailgunUpdated": "Mailgun integration updated",
+      "n8nTriggered": "n8n workflow triggered",
+      "mattermostSent": "Mattermost notification sent",
+      "events": {
+        "installed": "Integration installed",
+        "installedTime": "2 minutes ago",
+        "configured": "Integration configured",
+        "configuredTime": "15 minutes ago",
+        "updated": "Integration updated",
+        "updatedTime": "1 hour ago"
+      }
+    },
+    "search": {
+      "placeholder": "Search integrations..."
+    },
+    "categories": {
+      "all": "All",
+      "communication": "Communication",
+      "automation": "Automation",
+      "workflow": "Workflow",
+      "external": "External",
+      "crm": "CRM",
+      "payment": "Payment",
+      "marketing": "Marketing",
+      "analytics": "Analytics",
+      "storage": "Storage",
+      "other": "Other"
+    },
+    "filters": {
+      "all": "All"
+    },
+    "card": {
+      "temporal": "Temporal",
+      "authRequired": "Auth Required",
+      "configure": "Configure",
+      "disable": "Disable",
+      "enable": "Enable"
+    },
+    "states": {
+      "loading": "Loading integrations...",
+      "error": "Error loading integrations",
+      "unknownError": "An unknown error occurred",
+      "noResults": "No integrations found",
+      "noIntegrations": "No integrations available",
+      "noResultsDescription": "Try adjusting your search or filter criteria.",
+      "noIntegrationsDescription": "No integrations have been configured yet.",
+      "noDescription": "No description available",
+      "deleting": "Deleting..."
+    },
+    "noResults": {
+      "title": "No integrations found",
+      "message": "Try adjusting your search or filter criteria."
+    },
+    "statistics": {
+      "categoryDistribution": "Category Distribution",
+      "statusDistribution": "Status Distribution",
+      "systemHealth": "System Health",
+      "totalRequests": "Total Requests",
+      "successRate": "Success Rate",
+      "avgResponseTime": "Avg Response Time",
+      "recentErrors": "Recent Errors",
+      "noRecentErrors": "No recent errors",
+      "usage": {
+        "title": "Usage Statistics",
+        "totalExecutions": "Total Executions",
+        "successRate": "Success Rate",
+        "avgResponseTime": "Avg Response Time"
+      },
+      "topIntegrations": {
+        "title": "Top Integrations",
+        "executions": "executions"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "details": {
+      "category": "Category",
+      "version": "Version",
+      "workflow": "Workflow",
+      "enabled": "Enabled"
+    },
+    "actions": {
+      "configure": "Configure",
+      "remove": "Remove"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} to {{end}} of {{total}} integrations",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Add New Integration",
+        "comingSoon": "Integration creation coming soon."
+      },
+      "edit": {
+        "title": "Edit {{name}}",
+        "comingSoon": "Integration editing coming soon."
+      }
+    },
+    "form": {
+      "name": "Name",
+      "category": "Category",
+      "description": "Description"
+    },
+    "confirmDelete": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "toast": {
+      "createSuccess": {
+        "title": "Integration created",
+        "description": "{{name}} integration has been created successfully"
+      },
+      "createError": {
+        "title": "Creation failed"
+      },
+      "updateSuccess": {
+        "title": "Integration updated",
+        "description": "{{name}} integration has been updated successfully"
+      },
+      "updateError": {
+        "title": "Update failed"
+      },
+      "deleteSuccess": {
+        "title": "Integration deleted",
+        "description": "{{name}} integration has been deleted successfully"
+      },
+      "deleteError": {
+        "title": "Deletion failed"
+      }
+    }
+  },
+  "common": {
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import"
+  },
+  "queue": {
+    "title": "Queue Management",
+    "description": "Monitor and control background job processing",
+    "workers": {
+      "title": "Worker Management",
+      "imageProcessing": "Image Processing Worker",
+      "videoProcessing": "Video Processing Worker",
+      "emailWorker": "Email Worker",
+      "housekeeping": "Housekeeping Worker",
+      "deleteMedia": "Delete Media Worker",
+      "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "running": "Running",
+        "stopped": "Stopped"
+      },
+      "actions": {
+        "enable": "Enable",
+        "disable": "Disable",
+        "start": "Start",
+        "stop": "Stop",
+        "restart": "Restart"
+      },
+      "config": {
+        "maxRetries": "Max Retries",
+        "timeout": "Timeout (ms)",
+        "concurrency": "Concurrency"
+      }
+    },
+    "stats": {
+      "totalJobs": "Total Jobs",
+      "activeJobs": "Active Jobs",
+      "failedJobs": "Failed Jobs",
+      "completedJobs": "Completed Jobs",
+      "queuedJobs": "Queued Jobs"
+    }
+  },
+  "housekeeping": {
+    "title": "System Housekeeping",
+    "description": "Clean up orphaned files and optimize storage",
+    "tabs": {
+      "overview": "Overview",
+      "dryRun": "Dry Run",
+      "configuration": "Configuration"
+    },
+    "detectionTypes": {
+      "pendingDeletionFiles": "Pending Deletion Files",
+      "deletedStatusFiles": "Deleted Status Files",
+      "failedProcessingFiles": "Failed Processing Files",
+      "abandonedUploads": "Abandoned Uploads",
+      "physicalOrphans": "Physical Orphans"
+    },
+    "descriptions": {
+      "pendingDeletionFiles": "Files marked for deletion past grace period",
+      "deletedStatusFiles": "Files marked as deleted in database",
+      "failedProcessingFiles": "Files that failed optimization processing",
+      "abandonedUploads": "Uploads that never completed processing",
+      "physicalOrphans": "Files on disk without database records"
+    },
+    "stats": {
+      "filesToProcess": "Files to Process",
+      "filesToClean": "Files to Clean",
+      "spaceToFree": "Space to Free",
+      "cleanupTypes": "Cleanup Types",
+      "status": "Status"
+    },
+    "status": {
+      "ready": "Ready",
+      "issues": "Issues",
+      "running": "Running",
+      "completed": "Completed"
+    },
+    "actions": {
+      "runDryRun": "Run Dry Run",
+      "runImmediate": "Run Immediate",
+      "queueCleanup": "Queue Cleanup",
+      "running": "Running...",
+      "analyze": "Analyze"
+    },
+    "config": {
+      "maxFiles": "Max Files to Process",
+      "gracePeriod": "Grace Period (Hours)",
+      "logDetails": "Log Details",
+      "dryRun": "Dry Run Mode"
+    },
+    "messages": {
+      "dryRunCompleted": "Dry Run Completed",
+      "housekeepingCompleted": "Housekeeping Completed",
+      "housekeepingFailed": "Housekeeping Failed",
+      "analyzing": "Analyzing system files..."
+    }
+  },
+  "maintenance": {
+    "title": "System Maintenance",
+    "defaultMessage": "This system component is temporarily unavailable for maintenance.",
+    "systemName": "Background Processing System",
+    "affectedFeatures": "Affected Features",
+    "workingFeatures": "Working Features",
+    "estimatedRestore": "Estimated restore time",
+    "retryIn": "Retry in {{seconds}} seconds",
+    "actions": {
+      "retry": "Retry Now",
+      "goBack": "Go Back",
+      "backToAdmin": "Back to Admin"
+    },
+    "defaultAffected": [
+      "Queue Management",
+      "Background Jobs",
+      "Worker Processing"
+    ],
+    "defaultWorking": [
+      "User Management",
+      "Media Assets",
+      "Analytics",
+      "Settings"
+    ]
+  },
+  "media": {
+    "upload": {
+      "title": "Media Upload",
+      "dragDrop": "Drag and drop files here, or click to browse",
+      "processing": "Processing...",
+      "completed": "Upload Completed",
+      "failed": "Upload Failed",
+      "retry": "Retry Upload",
+      "maxSize": "Maximum file size",
+      "allowedTypes": "Allowed file types",
+      "uploading": "Uploading",
+      "optimization": "Optimizing"
+    },
+    "types": {
+      "profilePicture": "Profile Picture",
+      "compcard": "Comp Card",
+      "portfolio": "Portfolio",
+      "videoLibrary": "Video Library",
+      "voicePortfolio": "Voice Portfolio",
+      "application": "Application",
+      "jobSubmission": "Job Submission",
+      "document": "Document"
+    }
+  },
+  "users": {
+    "page": {
+      "title": "User Management",
+      "description": "Manage user accounts, permissions, and activity across the platform"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeUsers": "Active Users",
+      "pendingUsers": "Pending Users",
+      "newUsersToday": "New Today",
+      "modelsCount": "Models",
+      "clientsCount": "Clients"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Search by name or email...",
+      "userType": "User Type",
+      "status": "Status",
+      "country": "Country"
+    },
+    "list": {
+      "title": "Users List",
+      "results": "users found"
+    }
+  },
+  "errors": {
+    "failedToLoad": "Failed to load data",
+    "unknown": "An unknown error occurred",
+    "loadingFailed": "Loading failed",
+    "somethingWentWrong": "Something went wrong"
+  },
+  "category": "Category",
+  "search": {
+    "placeholder": "Search categories..."
+  },
+  "filters": {
+    "status": {
+      "title": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "parentCategory": {
+      "title": "Parent Category",
+      "all": "All Categories",
+      "rootOnly": "Root Categories Only"
+    }
+  },
+  "actions": {
+    "addCategory": "Add Category",
+    "addChildCategory": "Add Child Category"
+  },
+  "table": {
+    "name": "Name",
+    "slug": "Slug", 
+    "status": "Status",
+    "description": "Description",
+    "createdAt": "Created At"
+  },
+  "stats": {
+    "totalCategories": "Total Categories",
+    "activeCategories": "Active Categories",
+    "inactiveCategories": "Inactive Categories"
+  },
+  "deleteModal": {
+    "title": "Delete Category",
+    "description": "Are you sure you want to delete the category {{categoryName}}? This action cannot be undone."
+  },
+  "editModal": {
+    "title": "Edit Category",
+    "description": "Update the category information"
+  },
+  "createModal": {
+    "title": "Create Category", 
+    "description": "Create a new category"
+  },
+  "fields": {
+    "parentCategory": "Parent Category",
+    "selectParentCategory": "Select parent category",
+    "noParent": "No Parent",
+    "activeDescription": "Whether this category is active and visible"
+  },
+  "tag": "tag",
+  "tags": {
+    "description": "Manage tags for organizing content"
+  }
+}

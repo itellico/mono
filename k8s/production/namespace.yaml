@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mono-production
+  labels:
+    environment: production
+    name: mono-production

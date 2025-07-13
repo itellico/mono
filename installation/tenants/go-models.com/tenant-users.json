@@ -1,0 +1,90 @@
+{
+  "users": [
+    {
+      "email": "admin@go-models.com",
+      "username": "gomodels_admin",
+      "password": "${GOMODELS_ADMIN_PASSWORD:-GoModels2024!}",
+      "firstName": "GoModels",
+      "lastName": "Admin",
+      "displayName": "GoModels Administrator",
+      "roles": ["tenant_admin", "account_admin"],
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "metadata": {
+        "department": "Administration",
+        "employeeType": "admin"
+      }
+    },
+    {
+      "email": "talent@go-models.com",
+      "username": "talent_manager",
+      "password": "${TALENT_MANAGER_PASSWORD:-Talent2024!}",
+      "firstName": "Talent",
+      "lastName": "Manager",
+      "displayName": "Talent Management",
+      "roles": ["tenant_manager"],
+      "permissions": [
+        "tenant.users.read",
+        "tenant.users.update",
+        "tenant.accounts.read",
+        "tenant.reports.read"
+      ],
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "metadata": {
+        "department": "Talent Management",
+        "employeeType": "manager"
+      }
+    },
+    {
+      "email": "casting@go-models.com",
+      "username": "casting_director",
+      "password": "${CASTING_PASSWORD:-Casting2024!}",
+      "firstName": "Casting",
+      "lastName": "Director",
+      "displayName": "Casting Department",
+      "roles": ["account_manager"],
+      "permissions": [
+        "account.projects.create",
+        "account.projects.manage",
+        "account.users.read",
+        "tenant.notifications.send"
+      ],
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "metadata": {
+        "department": "Casting",
+        "employeeType": "specialist"
+      }
+    },
+    {
+      "email": "support@go-models.com",
+      "username": "support_team",
+      "password": "${SUPPORT_PASSWORD:-Support2024!}",
+      "firstName": "Support",
+      "lastName": "Team",
+      "displayName": "Customer Support",
+      "roles": ["user"],
+      "permissions": [
+        "tenant.users.read",
+        "tenant.reports.read",
+        "user.messages.send",
+        "user.notifications.manage"
+      ],
+      "locale": "en-US",
+      "timezone": "Europe/Vienna",
+      "isActive": true,
+      "emailVerified": true,
+      "metadata": {
+        "department": "Customer Support",
+        "employeeType": "support"
+      }
+    }
+  ]
+}

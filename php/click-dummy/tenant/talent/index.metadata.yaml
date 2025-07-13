@@ -1,0 +1,46 @@
+path: tenant/talent/index.php
+tier: tenant
+title: Talent Database Management
+description: Comprehensive talent management system for marketplace administrators
+features:
+  - talent-profiles
+  - advanced-search
+  - bulk-operations
+  - talent-categories
+  - approval-workflow
+  - talent-analytics
+components:
+  - data-table
+  - search-filters
+  - bulk-actions
+  - profile-cards
+  - status-badges
+implementation_status: partial
+related_docs:
+  - /docs/tenant/core-management/talent-database.md
+  - /docs/architecture/data-models/talent-model.md
+related_tasks:
+  - TENANT-010: Talent search implementation
+  - TENANT-011: Bulk operations API
+  - UI-020: Talent profile cards
+permissions:
+  - tenant.talent.view
+  - tenant.talent.create
+  - tenant.talent.update
+  - tenant.talent.delete
+  - tenant.talent.approve
+api_endpoints:
+  - /api/v1/tenant/talent
+  - /api/v1/tenant/talent/search
+  - /api/v1/tenant/talent/bulk
+  - /api/v1/tenant/talent/{id}/approve
+implementation_files:
+  frontend:
+    - apps/web/src/pages/tenant/talent/
+    - apps/web/src/components/tenant/talent-table/
+    - apps/web/src/components/tenant/talent-filters/
+  api:
+    - apps/api/src/routes/tenant/talent/
+    - apps/api/src/services/talent-service.ts
+  database:
+    - prisma/schema.prisma (Talent model)

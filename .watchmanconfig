@@ -1,0 +1,15 @@
+{
+  "ignore_dirs": [
+    "node_modules",
+    ".next",
+    ".git",
+    "dist",
+    "build",
+    "coverage",
+    "tmp",
+    "temp",
+    ".turbo",
+    "apps/api/uploads",
+    "dist-scripts"
+  ]
+}

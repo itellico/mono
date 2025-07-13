@@ -1,0 +1,983 @@
+{
+  "actions": {
+    "addUser": "Add User",
+    "approve": "Approve",
+    "audit": "Audit",
+    "backup": "Backup Management",
+    "configure": "Configure",
+    "create": "Create",
+    "delete": "Delete",
+    "download": "Download",
+    "edit": "Edit",
+    "export": "Export",
+    "feature": "Feature",
+    "impersonate": "Impersonate",
+    "import": "Import",
+    "manage": "Manage",
+    "moderate": "Moderate",
+    "read": "Read",
+    "retry": "Retry",
+    "review": "Review",
+    "success": {
+      "description": "Action completed successfully",
+      "title": "Success"
+    },
+    "update": "Update",
+    "upload": "Upload",
+    "view": "View",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "createSuccess": "{{entity}} created successfully",
+    "updateSuccess": "{{entity}} updated successfully",
+    "deleteSuccess": "{{entity}} deleted successfully",
+    "saveError": "Failed to save {{entity}}: {{message}}",
+    "deleteError": "Failed to delete {{entity}}: {{message}}"
+  },
+  "apiStatus": {
+    "title": "API Status"
+  },
+  "basicInfo": {
+    "dateOfBirth": {
+      "adultModelDescription": "Must be 18+ to create a model account",
+      "childModelDescription": "Parental consent required for minors",
+      "label": "Date of Birth",
+      "title": "Date of Birth"
+    },
+    "language": {
+      "description": "Select your preferred language for the platform",
+      "primaryLanguage": "Primary Language",
+      "primaryLanguagePlaceholder": "Select your language...",
+      "title": "Language Settings"
+    },
+    "location": {
+      "city": "City",
+      "cityPlaceholder": "Enter your city...",
+      "country": "Country",
+      "countryPlaceholder": "Select your country...",
+      "description": "Your location helps with job matching and local opportunities",
+      "title": "Location"
+    },
+    "personalDetails": {
+      "description": "Basic information about yourself",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name...",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your last name...",
+      "phone": "Phone Number",
+      "title": "Personal Details"
+    },
+    "subtitle": "Complete your profile information",
+    "title": "Basic Information"
+  },
+  "bulkAction": {
+    "error": "Bulk action failed",
+    "success": "Bulk action completed successfully"
+  },
+  "bulkActions": {
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "export": "Export",
+      "verify": "Verify"
+    },
+    "confirmation": {
+      "message_one": "Are you sure you want to perform this action on {{count}} item?",
+      "message_other": "Are you sure you want to perform this action on {{count}} items?"
+    },
+    "error": {
+      "description": "The bulk action could not be completed. Please try again.",
+      "title": "Bulk Action Failed"
+    },
+    "execute": "Execute Action",
+    "executing": "Executing...",
+    "selectAction": "Select an action",
+    "selected_one": "{{count}} item selected",
+    "selected_other": "{{count}} items selected",
+    "success": {
+      "description_one": "Successfully processed {{count}} item",
+      "description_other": "Successfully processed {{count}} items",
+      "title": "Action Completed"
+    }
+  },
+  "category": {
+    "all": "All Categories",
+    "placeholder": "Select a category..."
+  },
+  "common": {
+    "actions": "Actions",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "create": "Create",
+    "errors": {
+      "loadingFailed": "Failed to load data",
+      "submitFailed": "Failed to submit form"
+    },
+    "export": "Export",
+    "retry": "Retry",
+    "save": "Save",
+    "saving": "Saving...",
+    "select": "Select",
+    "validation": {
+      "max": "Value must be less than or equal to {{max}}",
+      "maxLength": "Maximum length is {{maxLength}} characters",
+      "min": "Value must be greater than or equal to {{min}}",
+      "minLength": "Minimum length is {{minLength}} characters",
+      "pattern": "Invalid format",
+      "required": "This field is required"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to your dashboard",
+    "needHelp": "Need Help?",
+    "helpDescription": "Have questions about the review process or need assistance with your profile?",
+    "welcomeMessage": "Welcome to Mono!"
+  },
+  "empty": {
+    "description": "No items found",
+    "title": "No Data Available"
+  },
+  "errors": {
+    "authenticationRequired": "Authentication required",
+    "createFailed": "Failed to create",
+    "deleteFailed": "Failed to delete",
+    "fetchDetailFailed": "Failed to fetch details",
+    "fetchFailed": "Failed to fetch data",
+    "fetchStatsFailed": "Failed to fetch statistics",
+    "failedToLoad": "Failed to load",
+    "insufficientPermissions": "Insufficient permissions",
+    "internalServerError": "Internal server error",
+    "invalidQueryParameters": "Invalid query parameters",
+    "invalidRequestData": "Invalid request data",
+    "unknown": "Unknown error",
+    "updateFailed": "Failed to update"
+  },
+  "filters": {
+    "title": "Filters",
+    "clearAll": "Clear All ({count})"
+  },
+  "globalSearch": {
+    "filters": "Search Filters"
+  },
+  "integrations": {
+    "actions": {
+      "configure": "",
+      "remove": ""
+    },
+    "addIntegration": "",
+    "categories": {
+      "analytics": "Analytics",
+      "external": "External",
+      "workflow": "Workflow"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "error": "Error",
+      "pending": "Pending"
+    },
+    "confirmDelete": "",
+    "createSuccess": "",
+    "details": {
+      "category": "",
+      "enabled": "",
+      "version": "",
+      "workflow": ""
+    },
+    "dialogs": {
+      "create": {
+        "comingSoon": "",
+        "title": ""
+      },
+      "edit": {
+        "comingSoon": "",
+        "title": ""
+      }
+    },
+    "errors": {
+      "slugExists": ""
+    },
+    "filters": {
+      "all": ""
+    },
+    "form": {
+      "category": "",
+      "description": "",
+      "name": ""
+    },
+    "listSuccess": "",
+    "overview": {
+      "active": "",
+      "description": "",
+      "title": ""
+    },
+    "pagination": {
+      "next": "",
+      "page": "",
+      "previous": "",
+      "showing": ""
+    },
+    "removeSuccess": "",
+    "title": "",
+    "updateSuccess": "",
+    "validation": {
+      "categoryRequired": "",
+      "descriptionRequired": "",
+      "nameRequired": ""
+    }
+  },
+  "layout": {
+    "notifications": {
+      "error": "",
+      "info": "",
+      "success": "",
+      "warning": ""
+    },
+    "search": {
+      "placeholder": ""
+    },
+    "title": ""
+  },
+  "multiSelectFilter": {
+    "apply": "Apply",
+    "clear": "Clear",
+    "placeholder": "Select options...",
+    "selectAll": "Select All"
+  },
+  "pagination": {
+    "first": "First",
+    "info": "Showing {{start}} to {{end}} of {{total}} results",
+    "last": "Last",
+    "next": "Next",
+    "ofPages": "of {{pages}}",
+    "page": "Page",
+    "pageSize": "Per page",
+    "previous": "Previous"
+  },
+  "permissions": {
+    "admin": "Admin",
+    "all": "All Permissions",
+    "manage": "Manage",
+    "moderate": "Moderate",
+    "read": "Read",
+    "update": "Update",
+    "write": "Write"
+  },
+  "preference": {
+    "save": "Save Preferences",
+    "saveSuccess": "Preferences saved successfully",
+    "title": "Preferences"
+  },
+  "profile": {
+    "basicInfo": "Basic Information",
+    "contactInfo": "Contact Information",
+    "experienceLevel": "Experience Level",
+    "overview": "Profile Overview",
+    "personalDetails": "Personal Details",
+    "photos": "Photos",
+    "portfolio": "Portfolio",
+    "socialLinks": "Social Links",
+    "specialties": "Specialties"
+  },
+  "resources": {
+    "admin": "Admin",
+    "integration": "Integration",
+    "profile": "Profile",
+    "tenant": "Tenant",
+    "user": "User"
+  },
+  "search": {
+    "filters": {
+      "apply": "Apply Filters",
+      "clear": "Clear Filters",
+      "reset": "Reset Filters"
+    },
+    "noResults": "No results found",
+    "placeholder": "Search...",
+    "results": "Search Results",
+    "title": "Search"
+  },
+  "settings": {
+    "description": "Manage your account settings and preferences",
+    "filters": {
+      "category": "Filter by category"
+    },
+    "title": "Settings"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "archived": "Archived",
+    "draft": "Draft",
+    "published": "Published",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "reviewing": "Under Review",
+    "suspended": "Suspended",
+    "verified": "Verified",
+    "unverified": "Unverified"
+  },
+  "experienceLevel": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "expert": "Expert",
+    "professional": "Professional"
+  },
+  "experienceLevelDescription": {
+    "beginner": "Just starting out in modeling",
+    "intermediate": "Some modeling experience",
+    "advanced": "Experienced model with portfolio",
+    "expert": "Highly experienced professional model",
+    "professional": "Industry professional"
+  },
+  "userType": {
+    "model": "Model",
+    "photographer": "Photographer",
+    "agency": "Agency",
+    "brand": "Brand",
+    "admin": "Admin",
+    "scout": "Scout"
+  },
+  "menu": {
+    "users": "Users",
+    "profiles": "Profiles",
+    "integrations": "Integrations",
+    "settings": "Settings",
+    "tenants": "Tenants",
+    "admin": "Admin",
+    "api": "API",
+    "queue": "Queue"
+  },
+  "specialties": {
+    "fashion": {
+      "runway": "Runway",
+      "editorial": "Editorial",
+      "commercial": "Commercial",
+      "high_fashion": "High Fashion",
+      "catalog": "Catalog",
+      "fitness": "Fitness"
+    },
+    "commercial": {
+      "lifestyle": "Lifestyle",
+      "product": "Product",
+      "corporate": "Corporate",
+      "family": "Family",
+      "mature": "Mature",
+      "character": "Character"
+    },
+    "plus_size": {
+      "fashion": "Fashion",
+      "lingerie": "Lingerie",
+      "fitness": "Fitness",
+      "lifestyle": "Lifestyle",
+      "beauty": "Beauty"
+    },
+    "child": {
+      "catalog": "Catalog",
+      "toy_ads": "Toy Ads",
+      "fashion": "Fashion",
+      "educational": "Educational",
+      "entertainment": "Entertainment"
+    },
+    "hand": {
+      "jewelry": "Jewelry",
+      "cosmetics": "Cosmetics",
+      "technology": "Technology",
+      "food": "Food",
+      "automotive": "Automotive"
+    },
+    "pet": {
+      "commercials": "Commercials",
+      "print": "Print",
+      "fashion": "Fashion",
+      "product": "Product",
+      "entertainment": "Entertainment"
+    },
+    "photographer": {
+      "fashion": "Fashion",
+      "portrait": "Portrait",
+      "commercial": "Commercial",
+      "product": "Product",
+      "beauty": "Beauty",
+      "lifestyle": "Lifestyle"
+    },
+    "agency": {
+      "talent_management": "Talent Management",
+      "casting": "Casting",
+      "brand_development": "Brand Development",
+      "portfolio_building": "Portfolio Building"
+    },
+    "brand": {
+      "fashion": "Fashion",
+      "beauty": "Beauty",
+      "technology": "Technology",
+      "food_beverage": "Food & Beverage",
+      "automotive": "Automotive",
+      "healthcare": "Healthcare"
+    }
+  },
+  "translation": {
+    "key": "Example Translation Key"
+  },
+  "key": "Simple Key Example",
+  "fields": {
+    "name": "Name",
+    "slug": "Slug",
+    "description": "Description",
+    "active": "Active",
+    "status": "Status",
+    "email": "Email",
+    "password": "Password",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "tags": "Tags",
+    "category": "Category",
+    "categories": "Categories"
+  },
+  "ui": {
+    "getStarted": "Get started by editing",
+    "getStartedByEditing": "Get started by editing",
+    "getStartedByEditingWithSpace": "Get started by editing{\" \"}",
+    "saveAndSeeChanges": "Save and see your changes instantly",
+    "deployNow": "Deploy now",
+    "readOurDocs": "Read our docs",
+    "learn": "Learn",
+    "examples": "Examples",
+    "goToNextjs": "Go to nextjs.org →",
+    "previewUpload": "Preview & Upload",
+    "availabilityPricing": "Availability & Pricing",
+    "dragDropBrowse": "Drag and drop files here, or click to browse",
+    "dragDropSelect": "Drag and drop files here, or click to select files",
+    "dragDropSelectShort": "Drag & drop files here, or click to select",
+    "availableFeatures": "Available Features (Working Normally)",
+    "dontHaveAccount": "Don't have an account?",
+    "noSettingsFound": "No settings found for {category}",
+    "needHelp": "Need Help?",
+    "welcomeMessage": "Welcome to Mono!",
+    "setupProfile": "Let's set up your profile to get you started on your modeling journey",
+    "whatDescribesYou": "What best describes you?",
+    "excellent": "Excellent!",
+    "whatHappensNext": "What happens next?",
+    "preview": "Preview ({mode})",
+    "previewWithMode": "Preview ({previewMode})",
+    "syncAndPublish": "Sync & Publish",
+    "regionalLanguageSettings": "Regional & Language Settings",
+    "strengthsAndImprovement": "Strengths & Areas for Improvement",
+    "clearAllWithCount": "Clear All ({activeFiltersCount})",
+    "searchPlaceholder": "Search...",
+    "noData": "No data available",
+    "searchPlaceholder": "Search...",
+    "selectAll": "Select All",
+    "unselectAll": "Unselect All",
+    "showMore": "Show More",
+    "showLess": "Show Less",
+    "toggleFilters": "Toggle Filters",
+    "apply": "Apply",
+    "reset": "Reset",
+    "clear": "Clear",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "close": "Close",
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "add": "Add",
+    "new": "New",
+    "create": "Create",
+    "update": "Update",
+    "save": "Save",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "done": "Done",
+    "skip": "Skip",
+    "uploadInstructions": "Click or drag files to upload",
+    "selectFiles": "Select Files",
+    "browseFiles": "Browse Files",
+    "uploadFiles": "Upload Files",
+    "processing": "Processing...",
+    "pleaseWait": "Please wait...",
+    "loading": "Loading...",
+    "tryAgain": "Try Again",
+    "goBack": "Go Back",
+    "learnMore": "Learn More",
+    "getStartedNow": "Get Started Now",
+    "comingSoon": "Coming Soon",
+    "stayTuned": "Stay tuned for updates",
+    "moreInfo": "More Information",
+    "contactSupport": "Contact Support",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "pressKit": "Press Kit",
+    "investors": "Investors",
+    "partnerships": "Partnerships",
+    "developers": "Developers",
+    "community": "Community",
+    "documentation": "Documentation",
+    "apiReference": "API Reference",
+    "changelog": "Changelog",
+    "roadmap": "Roadmap",
+    "feedback": "Feedback",
+    "bugReport": "Report a Bug",
+    "featureRequest": "Request a Feature",
+    "testimonials": "Testimonials",
+    "caseStudies": "Case Studies",
+    "whitepapers": "Whitepapers",
+    "webinars": "Webinars",
+    "events": "Events",
+    "newsletter": "Newsletter",
+    "socialMedia": "Social Media",
+    "followUs": "Follow Us",
+    "shareThis": "Share This",
+    "bookmark": "Bookmark",
+    "printPage": "Print Page",
+    "emailThis": "Email This",
+    "downloadPdf": "Download PDF",
+    "exportData": "Export Data",
+    "importData": "Import Data",
+    "syncData": "Sync Data",
+    "backupData": "Backup Data",
+    "restoreData": "Restore Data",
+    "archiveData": "Archive Data",
+    "deleteData": "Delete Data",
+    "clearCache": "Clear Cache",
+    "refreshPage": "Refresh Page",
+    "reloadApp": "Reload App",
+    "restartApp": "Restart App",
+    "updateAvailable": "Update Available",
+    "installUpdate": "Install Update",
+    "skipUpdate": "Skip Update",
+    "remindLater": "Remind Me Later",
+    "maintenance": "Maintenance",
+    "scheduled": "Scheduled",
+    "emergency": "Emergency",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "pending": "Pending",
+    "cancelled": "Cancelled",
+    "failed": "Failed",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "debug": "Debug",
+    "trace": "Trace"
+  },
+  "email": {
+    "greeting": "Hello {userFirstName},",
+    "supportHelp": "If you have any questions, our support team is here to help at",
+    "bestRegards": "Best regards,",
+    "thankYou": "Thank you",
+    "welcome": "Welcome",
+    "congratulations": "Congratulations",
+    "confirmation": "Confirmation",
+    "reminder": "Reminder",
+    "notification": "Notification",
+    "invitation": "Invitation",
+    "announcement": "Announcement",
+    "newsletter": "Newsletter",
+    "promotional": "Promotional",
+    "transactional": "Transactional",
+    "automated": "Automated",
+    "personal": "Personal",
+    "urgent": "Urgent",
+    "important": "Important",
+    "confidential": "Confidential",
+    "private": "Private",
+    "public": "Public",
+    "shared": "Shared",
+    "broadcast": "Broadcast",
+    "multicast": "Multicast",
+    "unicast": "Unicast"
+  },
+  "profile-builder": {
+    "availabilityPricing": "Availability & Pricing",
+    "update": {
+      "success": "Profile updated successfully",
+      "successDescription": "Your changes have been saved",
+      "error": "Failed to update profile"
+    }
+  },
+  "media": {
+    "dragDropSelectShort": "Drag & drop files here, or click to select",
+    "previewUpload": "Preview & Upload",
+    "dragDropBrowse": "Drag and drop files here, or click to browse"
+  },
+  "homepage": {
+    "getStartedByEditing": "Get started by editing",
+    "saveAndSeeChanges": "Save and see your changes instantly",
+    "deployNow": "Deploy now",
+    "readOurDocs": "Read our docs",
+    "learn": "Learn",
+    "examples": "Examples",
+    "goToNextjs": "Go to nextjs.org →"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Mono!",
+    "setupProfile": "Let's set up your profile to get you started on your modeling journey",
+    "userTypeSelection": "What best describes you?",
+    "setCardUpload": "Excellent!",
+    "completion": "What happens next?"
+  },
+  "auth": {
+    "dontHaveAccount": "Don't have an account?"
+  },
+  "admin": {
+    "templateBuilder": {
+      "preview": "Preview ({previewMode})",
+      "syncPublish": "Sync & Publish"
+    },
+    "settings": {
+      "noSettingsFound": "No settings found for {category}",
+      "regionalLanguageSettings": "Regional & Language Settings"
+    }
+  },
+  "ai": {
+    "dashboard": {
+      "strengthsImprovement": "Strengths & Areas for Improvement"
+    }
+  },
+  "maintenance": {
+    "availableFeatures": "Available Features (Working Normally)"
+  },
+  "uploads": {
+    "browse": "Browse",
+    "dropHere": "Drop files here",
+    "selectFiles": "Select Files",
+    "button": "Upload",
+    "firstPhoto": "First Photo", 
+    "title": "Upload Files",
+    "success": "Upload successful",
+    "successDescription": "Files uploaded successfully",
+    "close": "Close"
+  },
+  "selected": {
+    "items": "Selected items"
+  },
+  "searchPlaceholder": "Search...",
+  "previewUpload": "Preview & Upload",
+  "dragDropBrowse": "Drag and drop files here, or click to browse",
+  "dragDropSelect": "Drag and drop files here, or click to select files",
+  "clearAllWithCount": "Clear All ({count})",
+  "formBuilder": {
+    "title": "Form Builder",
+    "elements": "{count} elements",
+    "noElements": "0 elements",
+    "tabs": {
+      "elements": "Elements",
+      "library": "Library",
+      "builder": "Builder",
+      "preview": "Preview"
+    },
+    "viewport": {
+      "desktop": "Desktop View",
+      "tablet": "Tablet View", 
+      "mobile": "Mobile View"
+    },
+    "actions": {
+      "import": "Import",
+      "export": "Export",
+      "save": "Save",
+      "addElement": "Add Element",
+      "deleteElement": "Delete Element",
+      "duplicateElement": "Duplicate Element",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down"
+    },
+    "elements": {
+      "textInput": "Text Input",
+      "textArea": "Text Area",
+      "select": "Select Dropdown",
+      "checkbox": "Checkbox",
+      "radio": "Radio Button",
+      "fileUpload": "File Upload",
+      "dateInput": "Date Input",
+      "numberInput": "Number Input",
+      "emailInput": "Email Input",
+      "phoneInput": "Phone Input",
+      "urlInput": "URL Input",
+      "passwordInput": "Password Input",
+      "hiddenInput": "Hidden Input",
+      "section": "Section",
+      "heading": "Heading",
+      "paragraph": "Paragraph",
+      "divider": "Divider",
+      "spacer": "Spacer",
+      "button": "Button",
+      "submitButton": "Submit Button",
+      "resetButton": "Reset Button"
+    },
+    "properties": {
+      "general": "General",
+      "advanced": "Advanced",
+      "styling": "Styling",
+      "validation": "Validation",
+      "conditional": "Conditional Logic",
+      "label": "Label",
+      "placeholder": "Placeholder",
+      "required": "Required",
+      "description": "Description",
+      "defaultValue": "Default Value",
+      "minLength": "Minimum Length",
+      "maxLength": "Maximum Length",
+      "pattern": "Pattern",
+      "customAttributes": "Custom Attributes",
+      "cssClasses": "CSS Classes",
+      "elementId": "Element ID",
+      "schemaField": "Schema Field",
+      "optionSet": "Option Set",
+      "enableConditional": "Enable conditional display",
+      "conditionalRules": "Conditional Rules"
+    },
+    "library": {
+      "searchForms": "Search forms...",
+      "noForms": "No forms found",
+      "createFirst": "Create your first form",
+      "loadForm": "Load Form",
+      "formName": "Form Name",
+      "lastModified": "Last Modified",
+      "elements": "Elements"
+    },
+    "messages": {
+      "elementAdded": "Element added successfully",
+      "elementDeleted": "Element deleted successfully",
+      "elementDuplicated": "Element duplicated successfully",
+      "formSaved": "Form saved successfully",
+      "formLoaded": "Form loaded successfully",
+      "invalidDrop": "Cannot drop element here",
+      "unsavedChanges": "You have unsaved changes"
+    },
+    "validation": {
+      "labelRequired": "Label is required",
+      "invalidPattern": "Invalid pattern",
+      "duplicateId": "Element ID must be unique"
+    }
+  },
+  "zoneEditor": {
+    "title": "Zone Editor",
+    "elements": "{count} elements",
+    "noElements": "0 elements",
+    "tabs": {
+      "elements": "Elements",
+      "library": "Library"
+    },
+    "library": {
+      "searchZones": "Search zones...",
+      "noZones": "No zones found",
+      "createFirst": "Create your first zone",
+      "loadZone": "Load Zone",
+      "zoneName": "Zone Name",
+      "lastModified": "Last Modified",
+      "elements": "Elements"
+    },
+    "elements": {
+      "heroBanner": "Hero Banner",
+      "simpleHero": "Simple Hero",
+      "navigationBar": "Navigation Bar",
+      "breadcrumbs": "Breadcrumbs",
+      "textBlock": "Text Block",
+      "imageGallery": "Image Gallery",
+      "videoPlayer": "Video Player",
+      "contactForm": "Contact Form",
+      "newsletterSignup": "Newsletter Signup",
+      "callToAction": "Call-to-Action",
+      "searchBar": "Search Bar",
+      "container": "Container",
+      "grid": "Grid",
+      "section": "Section",
+      "imageBlock": "Image Block",
+      "carousel": "Carousel",
+      "productCard": "Product Card",
+      "socialMediaLinks": "Social Media Links"
+    }
+  },
+  "emailTemplateEditor": {
+    "title": "Email Template Editor",
+    "elements": "{count} elements",
+    "noElements": "0 elements",
+    "tabs": {
+      "elements": "Elements",
+      "library": "Library"
+    },
+    "library": {
+      "searchTemplates": "Search templates...",
+      "noTemplates": "No templates found",
+      "createFirst": "Create your first template",
+      "loadTemplate": "Load Template",
+      "templateName": "Template Name",
+      "lastModified": "Last Modified",
+      "elements": "Elements"
+    },
+    "elements": {
+      "header": "Header",
+      "footer": "Footer",
+      "textBlock": "Text Block",
+      "imageBlock": "Image Block",
+      "buttonBlock": "Button Block",
+      "spacer": "Spacer",
+      "divider": "Divider",
+      "socialLinks": "Social Links",
+      "unsubscribeLink": "Unsubscribe Link",
+      "personalizedGreeting": "Personalized Greeting"
+    }
+  },
+  "pageEditor": {
+    "title": "Page Editor",
+    "elements": "{count} elements",
+    "noElements": "0 elements",
+    "tabs": {
+      "elements": "Elements",
+      "library": "Library"
+    },
+    "viewport": {
+      "desktop": "Desktop View",
+      "tablet": "Tablet View", 
+      "mobile": "Mobile View"
+    },
+    "actions": {
+      "import": "Import",
+      "export": "Export",
+      "save": "Save",
+      "publish": "Publish",
+      "preview": "Preview"
+    },
+    "library": {
+      "searchPages": "Search pages...",
+      "noPages": "No pages found",
+      "createFirst": "Create your first page",
+      "loadPage": "Load Page",
+      "pageName": "Page Name",
+      "lastModified": "Last Modified",
+      "elements": "Elements",
+      "status": "Status",
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "elements": {
+      "heroSection": "Hero Section",
+      "navigationBar": "Navigation Bar",
+      "contentSection": "Content Section",
+      "imageGallery": "Image Gallery",
+      "testimonials": "Testimonials",
+      "callToAction": "Call to Action",
+      "contactForm": "Contact Form",
+      "featuresGrid": "Features Grid",
+      "pricingTable": "Pricing Table",
+      "blogPosts": "Blog Posts",
+      "socialProof": "Social Proof",
+      "newsletter": "Newsletter Signup",
+      "footer": "Footer",
+      "breadcrumbs": "Breadcrumbs",
+      "sidebar": "Sidebar",
+      "carousel": "Carousel",
+      "videoPlayer": "Video Player",
+      "mapEmbed": "Map Embed",
+      "chatWidget": "Chat Widget",
+      "searchBar": "Search Bar"
+    },
+    "properties": {
+      "pageSettings": "Page Settings",
+      "seoSettings": "SEO Settings",
+      "pageTitle": "Page Title",
+      "pageDescription": "Page Description",
+      "metaKeywords": "Meta Keywords",
+      "canonicalUrl": "Canonical URL",
+      "ogTitle": "Open Graph Title",
+      "ogDescription": "Open Graph Description",
+      "ogImage": "Open Graph Image",
+      "publishStatus": "Publish Status",
+      "publishDate": "Publish Date",
+      "slug": "Page Slug",
+      "parentPage": "Parent Page"
+    }
+  },
+  "importExport": {
+    "title": "Import/Export Manager",
+    "description": "Manage data import and export for categories, tags, model schemas, and option sets",
+    "tabs": {
+      "categories": "Categories",
+      "tags": "Tags",
+      "modelSchemas": "Model Schemas",
+      "optionSets": "Option Sets"
+    },
+    "import": {
+      "title": "Import {entity}",
+      "mode": "Import Mode",
+      "append": "Append - Add to existing data",
+      "replace": "Replace - Delete existing and import new",
+      "jsonData": "JSON Data",
+      "loadSample": "Load Sample",
+      "importing": "Importing...",
+      "importButton": "Import {entity}",
+      "success": "Successfully imported {count} items",
+      "failed": "Import failed",
+      "errors": "Errors:",
+      "warnings": "Warnings:",
+      "noData": "Please provide JSON data to import",
+      "invalidJson": "Invalid JSON format",
+      "invalidMode": "Invalid mode. Must be \"delete\" or \"append\"."
+    },
+    "export": {
+      "title": "Export {entity}",
+      "includeSystem": "Include system {entity}",
+      "exporting": "Exporting...",
+      "exportButton": "Export {entity}",
+      "success": "Exported {count} items",
+      "failed": "Export failed",
+      "download": "Download JSON File",
+      "preview": "Data Preview"
+    },
+    "entities": {
+      "categories": {
+        "title": "Categories",
+        "description": "Import/export hierarchical categories with parent-child relationships"
+      },
+      "tags": {
+        "title": "Tags", 
+        "description": "Import/export flat tags for content categorization"
+      },
+      "modelSchemas": {
+        "title": "Model Schemas",
+        "description": "Import/export model schemas with field definitions"
+      },
+      "optionSets": {
+        "title": "Option Sets",
+        "description": "Import/export option sets with values for dropdowns"
+      }
+    }
+  },
+  "locking": {
+    "error": "Error",
+    "retry": "Retry",
+    "checking_lock_status": "Checking lock status...",
+    "available_for_editing": "Available for editing",
+    "locked_by_you": "Locked by you",
+    "locked_by_another_user": "Locked by another user",
+    "expires": "Expires",
+    "reason": "Reason",
+    "locked_at": "Locked at",
+    "locked_by_user_id": "Locked by user",
+    "locked_for": "Locked for",
+    "refresh": "Refresh",
+    "force_unlock": "Force Unlock",
+    "force_unlock_warning": "This will force release the lock and may cause data conflicts if the other user is actively editing."
+  }
+}

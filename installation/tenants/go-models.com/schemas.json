@@ -1,0 +1,426 @@
+{
+  "schemas": [
+    {
+      "name": "Model Profile",
+      "slug": "model-profile",
+      "description": "Complete model profile schema",
+      "version": "1.0.0",
+      "fields": [
+        {
+          "name": "Basic Information",
+          "slug": "basic-info",
+          "type": "section",
+          "fields": [
+            {
+              "name": "stage_name",
+              "label": "Stage Name",
+              "type": "text",
+              "required": false,
+              "placeholder": "Professional name if different from real name"
+            },
+            {
+              "name": "date_of_birth",
+              "label": "Date of Birth",
+              "type": "date",
+              "required": true,
+              "validation": {
+                "minAge": 16,
+                "requiresParentalConsent": 18
+              }
+            },
+            {
+              "name": "gender",
+              "label": "Gender",
+              "type": "select",
+              "required": true,
+              "options": ["male", "female", "non-binary", "other"]
+            },
+            {
+              "name": "nationality",
+              "label": "Nationality",
+              "type": "select",
+              "required": true,
+              "optionSet": "countries"
+            },
+            {
+              "name": "location",
+              "label": "Current Location",
+              "type": "location",
+              "required": true,
+              "fields": ["city", "country"]
+            }
+          ]
+        },
+        {
+          "name": "Physical Attributes",
+          "slug": "physical-attributes",
+          "type": "section",
+          "fields": [
+            {
+              "name": "height",
+              "label": "Height",
+              "type": "select",
+              "required": true,
+              "optionSet": "model-heights"
+            },
+            {
+              "name": "weight",
+              "label": "Weight",
+              "type": "select",
+              "required": false,
+              "optionSet": "model-weights"
+            },
+            {
+              "name": "eye_color",
+              "label": "Eye Color",
+              "type": "select",
+              "required": true,
+              "optionSet": "eye-colors"
+            },
+            {
+              "name": "hair_color",
+              "label": "Hair Color",
+              "type": "select",
+              "required": true,
+              "optionSet": "hair-colors"
+            },
+            {
+              "name": "hair_length",
+              "label": "Hair Length",
+              "type": "select",
+              "required": true,
+              "options": ["bald", "very-short", "short", "medium", "long", "very-long"]
+            },
+            {
+              "name": "skin_tone",
+              "label": "Skin Tone",
+              "type": "select",
+              "required": true,
+              "optionSet": "skin-tones"
+            },
+            {
+              "name": "ethnicity",
+              "label": "Ethnicity",
+              "type": "select",
+              "required": false,
+              "optionSet": "ethnicities"
+            }
+          ]
+        },
+        {
+          "name": "Measurements",
+          "slug": "measurements",
+          "type": "section",
+          "conditional": {
+            "field": "category",
+            "values": ["fashion-models", "commercial-models"]
+          },
+          "fields": [
+            {
+              "name": "bust",
+              "label": "Bust",
+              "type": "select",
+              "required": false,
+              "optionSet": "bust-measurements",
+              "conditional": {
+                "field": "gender",
+                "values": ["female", "non-binary"]
+              }
+            },
+            {
+              "name": "chest",
+              "label": "Chest",
+              "type": "number",
+              "required": false,
+              "unit": "cm",
+              "conditional": {
+                "field": "gender",
+                "values": ["male", "non-binary"]
+              }
+            },
+            {
+              "name": "waist",
+              "label": "Waist",
+              "type": "select",
+              "required": false,
+              "optionSet": "waist-measurements"
+            },
+            {
+              "name": "hips",
+              "label": "Hips",
+              "type": "select",
+              "required": false,
+              "optionSet": "hip-measurements"
+            },
+            {
+              "name": "cup_size",
+              "label": "Cup Size",
+              "type": "select",
+              "required": false,
+              "optionSet": "cup-sizes",
+              "conditional": {
+                "field": "gender",
+                "values": ["female", "non-binary"]
+              }
+            },
+            {
+              "name": "dress_size",
+              "label": "Dress Size",
+              "type": "regional-select",
+              "required": false,
+              "optionSet": "dress-sizes-women",
+              "conditional": {
+                "field": "gender",
+                "values": ["female", "non-binary"]
+              }
+            },
+            {
+              "name": "suit_size",
+              "label": "Suit Size",
+              "type": "regional-select",
+              "required": false,
+              "optionSet": "suit-sizes-men",
+              "conditional": {
+                "field": "gender",
+                "values": ["male", "non-binary"]
+              }
+            },
+            {
+              "name": "shoe_size",
+              "label": "Shoe Size",
+              "type": "regional-select",
+              "required": false,
+              "optionSet": "shoe-sizes-women,shoe-sizes-men"
+            },
+            {
+              "name": "collar_size",
+              "label": "Collar Size",
+              "type": "number",
+              "required": false,
+              "unit": "cm",
+              "conditional": {
+                "field": "gender",
+                "values": ["male"]
+              }
+            },
+            {
+              "name": "inseam",
+              "label": "Inseam",
+              "type": "number",
+              "required": false,
+              "unit": "cm"
+            }
+          ]
+        },
+        {
+          "name": "Professional Information",
+          "slug": "professional-info",
+          "type": "section",
+          "fields": [
+            {
+              "name": "experience_years",
+              "label": "Years of Experience",
+              "type": "select",
+              "required": true,
+              "optionSet": "experience-years"
+            },
+            {
+              "name": "categories",
+              "label": "Model Categories",
+              "type": "multi-select",
+              "required": true,
+              "optionSet": "model-categories",
+              "min": 1,
+              "max": 5
+            },
+            {
+              "name": "specialties",
+              "label": "Specialties",
+              "type": "tags",
+              "required": false,
+              "tagCategory": "specialties"
+            },
+            {
+              "name": "agency_represented",
+              "label": "Agency Representation",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "agency_name",
+              "label": "Agency Name",
+              "type": "text",
+              "required": false,
+              "conditional": {
+                "field": "agency_represented",
+                "value": true
+              }
+            },
+            {
+              "name": "mother_agency",
+              "label": "Mother Agency",
+              "type": "text",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "Skills & Languages",
+          "slug": "skills-languages",
+          "type": "section",
+          "fields": [
+            {
+              "name": "languages",
+              "label": "Languages",
+              "type": "language-proficiency",
+              "required": false,
+              "optionSet": "model-languages",
+              "min": 1
+            },
+            {
+              "name": "skills",
+              "label": "Special Skills",
+              "type": "tags",
+              "required": false,
+              "tagCategory": "skills"
+            },
+            {
+              "name": "sports",
+              "label": "Sports & Activities",
+              "type": "multi-select",
+              "required": false,
+              "options": ["running", "swimming", "yoga", "dance", "gymnastics", "martial-arts", "horse-riding", "skiing", "surfing", "other"]
+            },
+            {
+              "name": "driving_license",
+              "label": "Driving License",
+              "type": "multi-select",
+              "required": false,
+              "options": ["car", "motorcycle", "truck", "boat"]
+            }
+          ]
+        },
+        {
+          "name": "Availability & Preferences",
+          "slug": "availability",
+          "type": "section",
+          "fields": [
+            {
+              "name": "availability",
+              "label": "Availability",
+              "type": "tags",
+              "required": true,
+              "tagCategory": "availability"
+            },
+            {
+              "name": "travel_willing",
+              "label": "Willing to Travel",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "passport_valid",
+              "label": "Valid Passport",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "work_permits",
+              "label": "Work Permits",
+              "type": "multi-select",
+              "required": false,
+              "optionSet": "countries"
+            },
+            {
+              "name": "shoot_preferences",
+              "label": "Shoot Preferences",
+              "type": "tags",
+              "required": false,
+              "tagCategory": "shoot-preferences"
+            },
+            {
+              "name": "restrictions",
+              "label": "Job Restrictions",
+              "type": "multi-select",
+              "required": false,
+              "options": ["no-nudity", "no-lingerie", "no-swimwear", "no-alcohol", "no-tobacco", "no-fur", "no-leather"]
+            }
+          ]
+        },
+        {
+          "name": "Portfolio Requirements",
+          "slug": "portfolio",
+          "type": "section",
+          "fields": [
+            {
+              "name": "portfolio_images",
+              "label": "Portfolio Images",
+              "type": "image-gallery",
+              "required": true,
+              "min": 5,
+              "max": 50,
+              "acceptedFormats": ["jpg", "jpeg", "png", "webp"],
+              "minResolution": "1200x1600",
+              "maxFileSize": "10MB"
+            },
+            {
+              "name": "comp_cards",
+              "label": "Comp Cards",
+              "type": "file-upload",
+              "required": false,
+              "max": 3,
+              "acceptedFormats": ["pdf", "jpg", "png"]
+            },
+            {
+              "name": "portfolio_videos",
+              "label": "Video Reels",
+              "type": "video-upload",
+              "required": false,
+              "max": 5,
+              "acceptedFormats": ["mp4", "mov", "avi"],
+              "maxFileSize": "100MB",
+              "maxDuration": "3min"
+            },
+            {
+              "name": "polaroids",
+              "label": "Polaroids/Digitals",
+              "type": "image-gallery",
+              "required": true,
+              "min": 2,
+              "max": 10,
+              "description": "Natural photos without makeup or styling"
+            }
+          ]
+        },
+        {
+          "name": "Social & Online Presence",
+          "slug": "social-media",
+          "type": "section",
+          "required": false,
+          "fields": [
+            {
+              "name": "instagram",
+              "label": "Instagram",
+              "type": "url",
+              "required": false,
+              "pattern": "instagram.com/*"
+            },
+            {
+              "name": "website",
+              "label": "Personal Website",
+              "type": "url",
+              "required": false
+            },
+            {
+              "name": "other_profiles",
+              "label": "Other Modeling Profiles",
+              "type": "url-list",
+              "required": false,
+              "max": 5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

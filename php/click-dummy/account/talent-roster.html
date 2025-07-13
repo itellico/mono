@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Roster - Elite Model Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar { width: 250px; position: fixed; height: 100vh; overflow-y: auto; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .talent-card { transition: all 0.3s; cursor: pointer; }
+        .talent-card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .availability-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .available { background-color: #28a745; }
+        .busy { background-color: #dc3545; }
+        .tentative { background-color: #ffc107; }
+        .portfolio-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div id="sidebar"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <div id="header"></div>
+            
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div id="breadcrumb"></div>
+                
+                <!-- Roster Stats -->
+                <div class="row mb-4" id="roster-stats"></div>
+                
+                <!-- Search and Filters -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        ${createSearchBar('Search talent by name, type, location...')}
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary active" id="gridView">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" id="listView">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#addTalentModal">
+                            <i class="fas fa-plus me-2"></i> Add Talent
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filters Sidebar -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div id="filters-panel"></div>
+                    </div>
+                    
+                    <!-- Talent Grid/List -->
+                    <div class="col-md-9">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Showing 24 of 24 talents</span>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-upload me-1"></i> Bulk Update
+                                </button>
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="talent-grid" class="row">
+                            <!-- Talent cards will be populated here -->
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="mt-4" id="pagination"></div>
+                    </div>
+                </div>
+                
+                <!-- Modals -->
+                <div id="modals"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar for Agency Talent Roster
+            const sidebarItems = [
+                { label: 'Dashboard', icon: 'fas fa-tachometer-alt', href: 'agency.html' },
+                { label: 'Talent Roster', icon: 'fas fa-users', active: true },
+                { label: 'Team Management', icon: 'fas fa-user-tie', href: 'team-management.html' },
+                { label: 'Bookings', icon: 'fas fa-calendar-check', href: 'bookings.html' },
+                { label: 'Financial Reports', icon: 'fas fa-chart-line', href: 'financial-reports.html' },
+                { label: 'Contracts', icon: 'fas fa-file-contract', href: 'contracts.html' },
+                { label: 'Messages', icon: 'fas fa-envelope', href: 'messages.html' },
+                { label: 'Settings', icon: 'fas fa-cog', href: 'settings.html' }
+            ];
+            
+            document.getElementById('sidebar').innerHTML = createSidebar('Elite Models', sidebarItems);
+            document.getElementById('header').innerHTML = createHeader('John Agent', 'Agency Manager', 'Account');
+            
+            // Breadcrumb
+            const breadcrumbItems = [
+                { label: 'Account', href: 'index.html' },
+                { label: 'Agency Dashboard', href: 'agency.html' },
+                { label: 'Talent Roster' }
+            ];
+            document.getElementById('breadcrumb').innerHTML = createBreadcrumb(breadcrumbItems);
+            
+            // Roster Stats
+            const rosterStatsHtml = [
+                createStatCard('Total Talent', '24', 'fas fa-users', 'primary'),
+                createStatCard('Available Now', '18', 'fas fa-check-circle', 'success'),
+                createStatCard('On Booking', '4', 'fas fa-calendar', 'warning'),
+                createStatCard('Inactive', '2', 'fas fa-pause-circle', 'secondary')
+            ].join('');
+            document.getElementById('roster-stats').innerHTML = rosterStatsHtml;
+            
+            // Filters Panel
+            const filters = [
+                {
+                    label: 'Talent Type',
+                    type: 'checkbox',
+                    options: [
+                        { id: 'fashion', label: 'Fashion Model (12)' },
+                        { id: 'commercial', label: 'Commercial Model (8)' },
+                        { id: 'fitness', label: 'Fitness Model (6)' },
+                        { id: 'runway', label: 'Runway Model (4)' }
+                    ]
+                },
+                {
+                    label: 'Availability',
+                    type: 'checkbox',
+                    options: [
+                        { id: 'available', label: 'Available (18)' },
+                        { id: 'busy', label: 'On Booking (4)' },
+                        { id: 'tentative', label: 'Tentative (2)' }
+                    ]
+                },
+                {
+                    label: 'Experience Level',
+                    type: 'checkbox',
+                    options: [
+                        { id: 'entry', label: 'Entry Level (6)' },
+                        { id: 'mid', label: 'Mid Level (10)' },
+                        { id: 'senior', label: 'Senior (8)' }
+                    ]
+                },
+                {
+                    label: 'Monthly Earnings',
+                    type: 'range',
+                    min: '$0',
+                    max: '$50K',
+                    id: 'earnings-range'
+                }
+            ];
+            
+            document.getElementById('filters-panel').innerHTML = createFilterPanel(filters);
+            
+            // Sample talent data
+            const talents = [
+                {
+                    name: 'Emma Johnson',
+                    type: 'Fashion Model',
+                    location: 'New York, NY',
+                    rate: '$2,500/day',
+                    rating: '4.9',
+                    bookings: 12,
+                    earnings: '$45,000',
+                    availability: 'available',
+                    image: 'https://via.placeholder.com/300x400/FFB6C1/000000?text=Emma',
+                    tags: ['Fashion', 'Editorial', 'Commercial']
+                },
+                {
+                    name: 'Michael Chen',
+                    type: 'Fitness Model',
+                    location: 'Los Angeles, CA',
+                    rate: '$2,000/day',
+                    rating: '4.8',
+                    bookings: 8,
+                    earnings: '$32,000',
+                    availability: 'busy',
+                    image: 'https://via.placeholder.com/300x400/87CEEB/000000?text=Michael',
+                    tags: ['Fitness', 'Commercial', 'Sports']
+                },
+                {
+                    name: 'Sofia Rodriguez',
+                    type: 'Commercial Model',
+                    location: 'Miami, FL',
+                    rate: '$1,800/day',
+                    rating: '4.7',
+                    bookings: 15,
+                    earnings: '$28,500',
+                    availability: 'available',
+                    image: 'https://via.placeholder.com/300x400/DDA0DD/000000?text=Sofia',
+                    tags: ['Commercial', 'Lifestyle', 'Family']
+                },
+                {
+                    name: 'David Kim',
+                    type: 'Runway Model',
+                    location: 'New York, NY',
+                    rate: '$3,000/day',
+                    rating: '4.9',
+                    bookings: 6,
+                    earnings: '$18,000',
+                    availability: 'tentative',
+                    image: 'https://via.placeholder.com/300x400/98FB98/000000?text=David',
+                    tags: ['Runway', 'High Fashion', 'Editorial']
+                },
+                {
+                    name: 'Isabella Martinez',
+                    type: 'Fashion Model',
+                    location: 'Chicago, IL',
+                    rate: '$2,200/day',
+                    rating: '4.8',
+                    bookings: 10,
+                    earnings: '$35,000',
+                    availability: 'available',
+                    image: 'https://via.placeholder.com/300x400/F0E68C/000000?text=Isabella',
+                    tags: ['Fashion', 'Beauty', 'Lifestyle']
+                },
+                {
+                    name: 'James Wilson',
+                    type: 'Commercial Model',
+                    location: 'Dallas, TX',
+                    rate: '$1,500/day',
+                    rating: '4.6',
+                    bookings: 14,
+                    earnings: '$22,000',
+                    availability: 'available',
+                    image: 'https://via.placeholder.com/300x400/FFE4B5/000000?text=James',
+                    tags: ['Commercial', 'Corporate', 'Mature']
+                }
+            ];
+            
+            // Create talent grid
+            function createTalentGrid(talents) {
+                return talents.map(talent => `
+                    <div class="col-md-4 mb-4">
+                        <div class="card talent-card h-100" onclick="openTalentProfile('${talent.name}')">
+                            <img src="${talent.image}" class="card-img-top" alt="${talent.name}" style="height: 250px; object-fit: cover;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-1">${talent.name}</h5>
+                                    <span class="availability-indicator ${talent.availability}" title="${talent.availability}"></span>
+                                </div>
+                                <p class="text-muted mb-2">${talent.type}</p>
+                                <p class="small text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i> ${talent.location}
+                                </p>
+                                <div class="mb-3">
+                                    ${talent.tags.map(tag => `<span class="badge bg-light text-dark me-1">${tag}</span>`).join('')}
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-primary fw-bold">${talent.rate}</span>
+                                    <div>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <span>${talent.rating}</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span><i class="fas fa-calendar me-1"></i> ${talent.bookings} bookings</span>
+                                    <span><i class="fas fa-dollar-sign me-1"></i> ${talent.earnings}</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i> View
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-calendar me-1"></i> Book
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Populate talent grid
+            document.getElementById('talent-grid').innerHTML = createTalentGrid(talents);
+            
+            // Pagination
+            document.getElementById('pagination').innerHTML = createPagination(1, 1);
+            
+            // Add Talent Modal
+            const addTalentModalBody = `
+                <div class="row">
+                    <div class="col-md-6">
+                        ${createFormInput('First Name', 'text', 'firstName', 'Enter first name', true)}
+                    </div>
+                    <div class="col-md-6">
+                        ${createFormInput('Last Name', 'text', 'lastName', 'Enter last name', true)}
+                    </div>
+                </div>
+                ${createFormInput('Email', 'email', 'email', 'Enter email address', true)}
+                ${createFormInput('Phone', 'tel', 'phone', 'Enter phone number', true)}
+                <div class="mb-3">
+                    <label for="talentType" class="form-label">Talent Type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="talentType" required>
+                        <option value="">Select talent type</option>
+                        <option value="fashion">Fashion Model</option>
+                        <option value="commercial">Commercial Model</option>
+                        <option value="fitness">Fitness Model</option>
+                        <option value="runway">Runway Model</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        ${createFormInput('Height', 'text', 'height', "e.g., 5'8\"")}
+                    </div>
+                    <div class="col-md-6">
+                        ${createFormInput('Daily Rate', 'text', 'rate', 'e.g., $2,500')}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="portfolio" class="form-label">Portfolio Images</label>
+                    <input type="file" class="form-control" id="portfolio" multiple accept="image/*">
+                    <small class="text-muted">Upload up to 10 portfolio images</small>
+                </div>
+            `;
+            
+            const addTalentModalFooter = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Add Talent</button>
+            `;
+            
+            const modalsHtml = createModal('addTalentModal', 'Add New Talent', addTalentModalBody, addTalentModalFooter);
+            document.getElementById('modals').innerHTML = modalsHtml;
+            
+            // View toggle functionality
+            document.getElementById('gridView').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('listView').classList.remove('active');
+                // Switch to grid view (already implemented)
+            });
+            
+            document.getElementById('listView').addEventListener('click', function() {
+                this.classList.add('active');
+                document.getElementById('gridView').classList.remove('active');
+                // Switch to list view (implementation would change the layout)
+            });
+        });
+        
+        function openTalentProfile(talentName) {
+            // This would typically navigate to a detailed talent profile page
+            alert('Opening profile for: ' + talentName);
+        }
+    </script>
+</body>
+</html>

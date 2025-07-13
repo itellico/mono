@@ -1,0 +1,709 @@
+{
+  "timestamp": "2025-07-09T05:33:14.042Z",
+  "stats": {
+    "htmlConverted": 101,
+    "markdownMoved": 0,
+    "rootFilesMoved": 15,
+    "duplicatesRemoved": 0,
+    "filesRenamed": 6,
+    "errors": 0
+  },
+  "mappings": [
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/workflows/development-workflow.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/workflows/development-workflow.md",
+      "category": "development",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/workflows/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/workflows/README.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/workflows/MOBILE_FIRST_COMPONENTS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/workflows/MOBILE_FIRST_COMPONENTS.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/workflows/DOCKER_SERVICES_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/workflows/DOCKER_SERVICES_GUIDE.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/workflows/COMPONENT_LIBRARY_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/workflows/COMPONENT_LIBRARY_GUIDE.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/usage/UPLOAD_SETTINGS_USAGE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/usage/UPLOAD_SETTINGS_USAGE.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_TYPES_AND_COVERAGE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_TYPES_AND_COVERAGE.md",
+      "category": "testing",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_METHODOLOGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_METHODOLOGY.md",
+      "category": "testing",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_CIRCLE_HOWTO.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING_CIRCLE_HOWTO.md",
+      "category": "testing",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/TESTING.md",
+      "category": "testing",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/status/UNIFIED_PROJECT_STATUS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/status/UNIFIED_PROJECT_STATUS.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/roadmap/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/roadmap/README.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/roadmap/PROJECT_STATUS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/roadmap/PROJECT_STATUS.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/roadmap/PROJECT_ROADMAP_AND_STATUS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/roadmap/PROJECT_ROADMAP_AND_STATUS.md",
+      "category": "general",
+      "title": "Project Roadmap & Status Tracker"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/roadmap/IMPLEMENTATION_STATUS_TRACKER.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/roadmap/IMPLEMENTATION_STATUS_TRACKER.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/roadmap/DEVELOPMENT_ROADMAP.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/roadmap/DEVELOPMENT_ROADMAP.md",
+      "category": "development",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/reference/MONO_PLATFORM_AUDIT_REPORT.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/reference/MONO_PLATFORM_AUDIT_REPORT.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/reference/mono_PLATFORM_AUDIT_REPORT.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/reference/mono_PLATFORM_AUDIT_REPORT.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/overview/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/overview/README.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/migrations/API_MIGRATION_COMPLETE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/migrations/API_MIGRATION_COMPLETE.md",
+      "category": "api-reference",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/learning/IMPLEMENTATIONS_LOG.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/learning/IMPLEMENTATIONS_LOG.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/integrations/SETUP_INSTRUCTIONS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/integrations/SETUP_INSTRUCTIONS.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/integrations/RABBITMQ_INTEGRATION_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/integrations/RABBITMQ_INTEGRATION_GUIDE.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/guides/REGIONAL_MEASUREMENT_IMPLEMENTATION_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/guides/REGIONAL_MEASUREMENT_IMPLEMENTATION_GUIDE.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/guides/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/guides/README.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/guides/PLATFORM_INTEGRATION_CLARIFICATIONS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/guides/PLATFORM_INTEGRATION_CLARIFICATIONS.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/guides/AUDIT_QUICK_START.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/guides/AUDIT_QUICK_START.md",
+      "category": "getting-started",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/redis-cache-hierarchy.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/redis-cache-hierarchy.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/TDD_TENANT_CREATION_DEMO.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/TDD_TENANT_CREATION_DEMO.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/SITE_SETTINGS_QUICK_REFERENCE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/SITE_SETTINGS_QUICK_REFERENCE.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/SITE_SETTINGS_MODULE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/SITE_SETTINGS_MODULE.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/SETTINGS_INTEGRATION_TESTING.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/SETTINGS_INTEGRATION_TESTING.md",
+      "category": "testing",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/MONITORING_SETUP.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/MONITORING_SETUP.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_WORKFLOW_DESIGN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_WORKFLOW_DESIGN.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_FIXES_SUMMARY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_FIXES_SUMMARY.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_AUDIT_REPORT.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/DOCUMENTATION_AUDIT_REPORT.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/DATABASE_SEEDERS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/DATABASE_SEEDERS.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/CONSOLIDATED_IMPLEMENTATION_PLAN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/CONSOLIDATED_IMPLEMENTATION_PLAN.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/API_REORGANIZATION_PLAN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/API_REORGANIZATION_PLAN.md",
+      "category": "api-reference",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/API_REORGANIZATION_IMPLEMENTATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/API_REORGANIZATION_IMPLEMENTATION.md",
+      "category": "api-reference",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/API_MIGRATION_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/API_MIGRATION_GUIDE.md",
+      "category": "api-reference",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/general/4TIER_API_REFACTOR_COMPLETE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/4TIER_API_REFACTOR_COMPLETE.md",
+      "category": "api-reference",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/UNIVERSAL_TAGGING_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/UNIVERSAL_TAGGING_SYSTEM.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/TRANSLATION_MANAGEMENT_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/TRANSLATION_MANAGEMENT_SYSTEM.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/THREE_LEVEL_CHANGE_SYSTEM_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/THREE_LEVEL_CHANGE_SYSTEM_GUIDE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/SYSTEMS_INTEGRATION_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/SYSTEMS_INTEGRATION_GUIDE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/SUBSCRIPTION_SYSTEM_SEEDER.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/SUBSCRIPTION_SYSTEM_SEEDER.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/SIMPLIFIED_EMAIL_SYSTEM_NUNJUCKS_ONLY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/SIMPLIFIED_EMAIL_SYSTEM_NUNJUCKS_ONLY.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/SAVED_SEARCHES_INHERITANCE_DESIGN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/SAVED_SEARCHES_INHERITANCE_DESIGN.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/README.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/RBAC_AND_PERMISSIONS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/RBAC_AND_PERMISSIONS.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/RBAC-IMPLEMENTATION-COMPLETE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/RBAC-IMPLEMENTATION-COMPLETE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/PROMO_PAGES_CMS_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/PROMO_PAGES_CMS_SYSTEM.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/PROMO_PAGES_CACHING_STRATEGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/PROMO_PAGES_CACHING_STRATEGY.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/PERMISSION_SYSTEM_IMPLEMENTATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/PERMISSION_SYSTEM_IMPLEMENTATION.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/OPTION_SETS_AND_MODEL_SCHEMAS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/OPTION_SETS_AND_MODEL_SCHEMAS.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/INTERNATIONAL_FEATURES_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/INTERNATIONAL_FEATURES_GUIDE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/GOCARE_MESSAGING_SYSTEM_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/GOCARE_MESSAGING_SYSTEM_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/EMAIL_SYSTEM_FINAL_SUMMARY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/EMAIL_SYSTEM_FINAL_SUMMARY.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/DOCUMENTATION_APPROVAL.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/DOCUMENTATION_APPROVAL.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_WORKFLOW_INTEGRATION_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_WORKFLOW_INTEGRATION_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_CREATIVE_INDUSTRY_SEEDING.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_CREATIVE_INDUSTRY_SEEDING.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_BLOG_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/COMPREHENSIVE_BLOG_SYSTEM.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/AUDIT_SYSTEM_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/AUDIT_SYSTEM_GUIDE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/features/ACADEMY_SYSTEM_COMPREHENSIVE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/features/ACADEMY_SYSTEM_COMPREHENSIVE.md",
+      "category": "features",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/database/PROFESSIONAL_PROFILES_SCHEMA.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/database/PROFESSIONAL_PROFILES_SCHEMA.md",
+      "category": "general",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/WORKFLOW_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/WORKFLOW_SYSTEM.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/WORKFLOWS_COMPREHENSIVE_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/WORKFLOWS_COMPREHENSIVE_GUIDE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/UUID_BEST_PRACTICES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/UUID_BEST_PRACTICES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/USER_DISPLAY_PREFERENCES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/USER_DISPLAY_PREFERENCES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIVERSAL_MEDIA_UPLOADER_IMPLEMENTATION_PLAN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIVERSAL_MEDIA_UPLOADER_IMPLEMENTATION_PLAN.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIVERSAL_MEDIA_UPLOADER_DESIGN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIVERSAL_MEDIA_UPLOADER_DESIGN.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIFIED_MARKETPLACE_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/UNIFIED_MARKETPLACE_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/THREE_LAYER_CACHING_STRATEGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/THREE_LAYER_CACHING_STRATEGY.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/TEMPORAL_INTEGRATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/TEMPORAL_INTEGRATION.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/STORAGE_STRATEGY_BEST_PRACTICES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/STORAGE_STRATEGY_BEST_PRACTICES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/STEP_BY_STEP_AUTH_IMPLEMENTATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/STEP_BY_STEP_AUTH_IMPLEMENTATION.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/STATE_MANAGEMENT_IMPLEMENTATION_EXAMPLES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/STATE_MANAGEMENT_IMPLEMENTATION_EXAMPLES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/ROUTE_REORGANIZATION_SUMMARY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/ROUTE_REORGANIZATION_SUMMARY.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/REDIS_VS_TANSTACK_QUERY_STRATEGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/REDIS_VS_TANSTACK_QUERY_STRATEGY.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/README.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/README.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/REACT_PERFORMANCE_PATTERNS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/REACT_PERFORMANCE_PATTERNS.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/PROJECT_STRUCTURE_OUTLINE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/PROJECT_STRUCTURE_OUTLINE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/MULTI_TENANT_ARCHITECTURE_RECOMMENDATIONS.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/MULTI_TENANT_ARCHITECTURE_RECOMMENDATIONS.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/MONO_PLATFORM_COMPLETE_SPECIFICATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/MONO_PLATFORM_COMPLETE_SPECIFICATION.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/MARKETPLACE_DUAL_SIDED_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/MARKETPLACE_DUAL_SIDED_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/JOBS_GIGS_PAYMENT_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/JOBS_GIGS_PAYMENT_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/INTERNATIONAL_PACKAGES_RESEARCH.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/INTERNATIONAL_PACKAGES_RESEARCH.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/INTERNATIONAL_DATA_IMPLEMENTATION_PLAN.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/INTERNATIONAL_DATA_IMPLEMENTATION_PLAN.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/I18N_HERITABLE_TRANSLATION_BEST_PRACTICES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/I18N_HERITABLE_TRANSLATION_BEST_PRACTICES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/FIVE_TIER_NAVIGATION_SYSTEM.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/FIVE_TIER_NAVIGATION_SYSTEM.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/ENHANCED_PLATFORM_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/ENHANCED_PLATFORM_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/DOMAIN_ARCHITECTURE_STRATEGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/DOMAIN_ARCHITECTURE_STRATEGY.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/CURRENT_API_ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/CURRENT_API_ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/COMPREHENSIVE_STATE_MANAGEMENT_STRATEGY.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/COMPREHENSIVE_STATE_MANAGEMENT_STRATEGY.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/BUILD_TOOLS_MIGRATION_GUIDE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/BUILD_TOOLS_MIGRATION_GUIDE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/AUTHENTICATION_BEST_PRACTICES.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/AUTHENTICATION_BEST_PRACTICES.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/API_ROUTE_ORGANIZATION.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/API_ROUTE_ORGANIZATION.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/API_RESPONSE_FORMAT_STANDARD.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/API_RESPONSE_FORMAT_STANDARD.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/4-tier-api.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/4-tier-api.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/docs/architecture/4-TIER-API-ARCHITECTURE.html",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/architecture/4-TIER-API-ARCHITECTURE.md",
+      "category": "architecture",
+      "title": "itellico Mono"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/comprehensive-test-summary.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/comprehensive-test-summary.md",
+      "category": "testing",
+      "title": "Comprehensive Test Summary"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/YAML_DUPLICATION_EXAMPLES.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/yaml-duplication-examples.md",
+      "category": "general",
+      "title": "YAML DUPLICATION EXAMPLES"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/YAML_DOCUMENTATION_AUDIT_REPORT.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/yaml-documentation-audit-report.md",
+      "category": "general",
+      "title": "YAML DOCUMENTATION AUDIT REPORT"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/YAML_CONSOLIDATION_SUMMARY.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/yaml-consolidation-summary.md",
+      "category": "general",
+      "title": "YAML CONSOLIDATION SUMMARY"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/PNPM_USAGE_GUIDE.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/getting-started/pnpm-usage.md",
+      "category": "getting-started",
+      "title": "PNPM USAGE"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/MONO_DOMAIN_STRATEGY.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/domain-strategy.md",
+      "category": "general",
+      "title": "DOMAIN STRATEGY"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/MCP_SERVERS_SETUP_COMPLETE.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/mcp-servers-setup.md",
+      "category": "general",
+      "title": "MCP SERVERS SETUP"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/MCP_INTEGRATION_GUIDE.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/getting-started/mcp-integration.md",
+      "category": "getting-started",
+      "title": "MCP INTEGRATION"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/MCP_FINAL_STATUS.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/mcp-final-status.md",
+      "category": "general",
+      "title": "MCP FINAL STATUS"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/MCP_CONFIGURATION_FIXED.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/mcp-configuration-fixed.md",
+      "category": "general",
+      "title": "MCP CONFIGURATION FIXED"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/FINAL_MCP_SETUP_INSTRUCTIONS.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/final-mcp-setup-instructions.md",
+      "category": "general",
+      "title": "FINAL MCP SETUP INSTRUCTIONS"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/DOCUMENTATION_SYSTEM_IMPLEMENTATION_COMPLETE.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/documentation-system-implementation.md",
+      "category": "general",
+      "title": "DOCUMENTATION SYSTEM IMPLEMENTATION"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/DOCUMENTATION_SYSTEM_COMPLETE.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/documentation-system.md",
+      "category": "general",
+      "title": "DOCUMENTATION SYSTEM"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/CLAUDE_CODE_MCP_INTEGRATION.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/general/claude-code-mcp-integration.md",
+      "category": "general",
+      "title": "CLAUDE CODE MCP INTEGRATION"
+    },
+    {
+      "oldPath": "/Users/mm2/dev_mm/mono/BROWSER_LOGIN_TEST_RESULTS.md",
+      "newPath": "/Users/mm2/dev_mm/mono/docs/testing/browser-login-test-results.md",
+      "category": "testing",
+      "title": "BROWSER LOGIN TEST RESULTS"
+    }
+  ]
+}

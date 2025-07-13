@@ -1,0 +1,642 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                        Int                        @id @default(autoincrement())
+  uuid                      String                     @unique @default(uuid())
+  name                      String
+  domain                    String                     @unique
+  slug                      String?
+  description               Json?                      @db.JsonB
+  features                  Json?                      @db.JsonB
+  settings                  Json?                      @db.JsonB
+  categories                Json?                      @db.JsonB
+  allowedCountries          Json?                      @db.JsonB
+  defaultCurrency           String?                    @db.VarChar(3)
+  isActive                  Boolean                    @default(true)
+  createdAt                 DateTime                   @default(now()) @db.Timestamptz(6)
+  updatedAt                 DateTime                   @updatedAt @db.Timestamptz(6)
+  accounts                  Account[]
+  subscriptions             TenantSubscription?
+  auditLogs                 AuditLog[]
+  userActivityLogs          UserActivityLog[]
+  roles                     Role[]
+  permissionAudits          PermissionAudit[]
+  changeSets                ChangeSet[]
+  versionHistories          VersionHistory[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Account {
+  id                     Int       @id @default(autoincrement())
+  uuid                   String    @default(uuid())
+  tenantId               Int
+  email                  String    @unique
+  emailVerified          Boolean   @default(false)
+  passwordHash           String?
+  accountType            String    @default("personal") @db.VarChar(20)
+  phone                  String?   @db.VarChar(30)
+  timezone               String?   @db.VarChar(50)
+  countryCode            String?   @db.VarChar(2)
+  languageLocale         String?   @db.VarChar(10)
+  currencyCode           String?   @default("EUR") @db.VarChar(3)
+  city                   String?   @db.VarChar(100)
+  dateFormat             String?   @db.VarChar(20)
+  timeFormat             String?   @db.VarChar(20)
+  numberFormat           String?   @db.VarChar(20)
+  firstDayOfWeek         Int       @default(0)
+  decimalSeparator       String    @default(".") @db.VarChar(1)
+  thousandsSeparator     String    @default(",") @db.VarChar(1)
+  currencyPosition       String    @default("before") @db.VarChar(10)
+  currencySpace          Boolean   @default(false)
+  useRelativeTime        Boolean   @default(true)
+  relativeTimeThreshold  Int       @default(24)
+  relativeTimeStyle      String    @default("long") @db.VarChar(10)
+  compactMode            Boolean   @default(false)
+  showSeconds            Boolean   @default(false)
+  showTimezone           Boolean   @default(false)
+  notificationTimeFormat String    @default("12h") @db.VarChar(10)
+  emailNotifications     Boolean   @default(true)
+  smsNotifications       Boolean   @default(false)
+  themePreference        String    @default("system") @db.VarChar(20)
+  accountCapabilities    Json?     @db.JsonB
+  primaryMarketplaceSide String?   @db.VarChar(20)
+  allowDualSide          Boolean   @default(false)
+  isActive               Boolean   @default(true)
+  isVerified             Boolean   @default(false)
+  lastLoginAt            DateTime? @db.Timestamptz(6)
+  createdAt              DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime  @updatedAt @db.Timestamptz(6)
+  tenant                 Tenant    @relation(fields: [tenantId], references: [id])
+  users                  User[]
+
+  @@index([tenantId])
+  @@index([isActive])
+  @@index([uuid])
+}
+
+model User {
+  id                               Int                        @id @default(autoincrement())
+  uuid                             String                     @default(uuid())
+  accountId                        Int
+  firstName                        String                     @db.VarChar(100)
+  lastName                         String                     @db.VarChar(100)
+  username                         String                     @unique @db.VarChar(50)
+  userType                         String                     @default("individual") @db.VarChar(20)
+  profilePhotoUrl                  String?
+  bio                              String?                    @db.Text
+  website                          String?                    @db.VarChar(255)
+  dateOfBirth                      DateTime?                  @db.Date
+  gender                           String?                    @db.VarChar(20)
+  accountRole                      String                     @default("entity_viewer") @db.VarChar(50)
+  canCreateProfiles                Boolean                    @default(false)
+  canManageAllProfiles             Boolean                    @default(false)
+  canAccessBilling                 Boolean                    @default(false)
+  canBookJobs                      Boolean                    @default(false)
+  profileApplicationStatus         String?                    @db.VarChar(20)
+  profileApprovedAt                DateTime?                  @db.Timestamptz(6)
+  profileRejectedAt                DateTime?                  @db.Timestamptz(6)
+  totalApplications                Int                        @default(0)
+  lastApplicationAt                DateTime?                  @db.Timestamptz(6)
+  userHash                         String                     @db.VarChar(64)
+  isActive                         Boolean                    @default(true)
+  isVerified                       Boolean                    @default(false)
+  createdAt                        DateTime                   @default(now()) @db.Timestamptz(6)
+  updatedAt                        DateTime                   @updatedAt @db.Timestamptz(6)
+  account                          Account                    @relation(fields: [accountId], references: [id])
+  auditLogs                        AuditLog[]
+  recordLocks                      RecordLock[]
+  savedSearches                    SavedSearch[]
+  userActivityLogs                 UserActivityLog[]
+  userRoles                        UserRole[]
+  grantedRoles                     UserRole[]                 @relation("GrantedRoles")
+  permissionAudits                 PermissionAudit[]
+  permissionCache                  UserPermissionCache?
+  changeSets                       ChangeSet[]
+  approvedChangeSets               ChangeSet[]                @relation("ChangeSetApprover")
+  rejectedChangeSets               ChangeSet[]                @relation("ChangeSetRejecter")
+  changeConflictResolutions        ChangeConflict[]
+  versionHistories                 VersionHistory[]
+
+  @@index([accountId])
+  @@index([isActive])
+  @@index([uuid])
+  @@index([userHash])
+}
+
+model Role {
+  id              Int                @id @default(autoincrement())
+  uuid            String             @unique @default(uuid())
+  name            String             @db.VarChar(50)
+  code            String             @unique @db.VarChar(50)
+  level           Int                @default(0)
+  description     String?            @db.Text
+  isSystem        Boolean            @default(false)
+  createdAt       DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @db.Timestamptz(6)
+  tenantId        Int?
+  tenant          Tenant?            @relation(fields: [tenantId], references: [id])
+  permissions     RolePermission[]
+  users           UserRole[]
+
+  @@unique([name, tenantId])
+  @@index([uuid])
+  @@index([code])
+  @@index([level])
+  @@index([tenantId])
+}
+
+model Permission {
+  id                        Int                        @id @default(autoincrement())
+  uuid                      String                     @unique @default(uuid())
+  name                      String                     @unique @db.VarChar(100)
+  pattern                   String?                    @unique @db.VarChar(100)
+  resource                  String?                    @db.VarChar(50)
+  action                    String?                    @db.VarChar(50)
+  scope                     String?                    @db.VarChar(20)
+  description               String?                    @db.Text
+  isWildcard                Boolean                    @default(false)
+  priority                  Int                        @default(100)
+  createdAt                 DateTime                   @default(now()) @db.Timestamptz(6)
+  updatedAt                 DateTime                   @updatedAt @db.Timestamptz(6)
+  roles                     RolePermission[]
+
+  @@index([uuid])
+  @@index([resource, action, scope])
+  @@index([pattern])
+  @@index([isWildcard, priority])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model UserRole {
+  userId      Int
+  roleId      Int
+  validFrom   DateTime  @default(now()) @db.Timestamptz(6)
+  validUntil  DateTime? @db.Timestamptz(6)
+  grantedBy   Int?
+  grantReason String?   @db.Text
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+  role        Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grantor     User?     @relation("GrantedRoles", fields: [grantedBy], references: [id])
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@index([validUntil])
+}
+
+model UserPermissionCache {
+  userId       Int      @id
+  permissions  Json     @db.JsonB
+  computedAt   DateTime @db.Timestamptz(6)
+  expiresAt    DateTime @db.Timestamptz(6)
+  cacheVersion Int      @default(1)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+model PermissionAudit {
+  id               BigInt    @id @default(autoincrement())
+  uuid             String    @unique @default(uuid())
+  userId           Int
+  permissionPattern String    @db.VarChar(100)
+  resource         String?   @db.VarChar(255)
+  action           String    @db.VarChar(50)
+  granted          Boolean
+  ipAddress        String?   @db.VarChar(45)
+  userAgent        String?   @db.Text
+  requestId        String?   @db.VarChar(36)
+  checkDurationMs  Int?
+  tenantId         Int?
+  timestamp        DateTime  @default(now()) @db.Timestamptz(6)
+  user             User      @relation(fields: [userId], references: [id])
+  tenant           Tenant?   @relation(fields: [tenantId], references: [id])
+
+  @@index([uuid])
+  @@index([userId, timestamp])
+  @@index([permissionPattern])
+  @@index([granted])
+  @@index([tenantId, timestamp])
+  @@index([timestamp])
+}
+
+// ===== NON-PERMISSION MODELS BELOW =====
+
+model OptionSet {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @default(uuid())
+  slug        String        @db.VarChar(100)
+  label       String        @db.VarChar(255)
+  tenantId    Int?
+  description String?       @db.Text
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  values      OptionValue[]
+
+  @@unique([slug, tenantId])
+  @@index([uuid])
+  @@index([tenantId])
+  @@index([isActive])
+}
+
+model OptionValue {
+  id               Int       @id @default(autoincrement())
+  uuid             String    @default(uuid())
+  optionSetId      Int
+  value            String    @db.VarChar(255)
+  label            String    @db.VarChar(255)
+  order            Int       @default(0)
+  canonicalRegion  String?   @db.VarChar(10)
+  regionalMappings Json?     @db.JsonB
+  metadata         Json?     @db.JsonB
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6)
+  optionSet        OptionSet @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
+
+  @@unique([optionSetId, value])
+  @@index([uuid])
+  @@index([isActive])
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  uuid          String        @default(uuid())
+  slug          String        @unique @db.VarChar(100)
+  name          String        @db.VarChar(255)
+  description   String?       @db.Text
+  parentId      Int?
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+  parent        Category?     @relation("Subcategories", fields: [parentId], references: [id], onDelete: Restrict)
+  subcategories Category[]    @relation("Subcategories")
+  tags          CategoryTag[]
+
+  @@index([parentId])
+  @@index([isActive])
+  @@index([uuid])
+}
+
+model Tag {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @default(uuid())
+  slug        String        @unique @db.VarChar(100)
+  name        String        @db.VarChar(255)
+  description String?       @db.Text
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  categories  CategoryTag[]
+
+  @@index([isActive])
+  @@index([uuid])
+}
+
+model CategoryTag {
+  categoryId Int
+  tagId      Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, tagId])
+  @@index([tagId])
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(3)
+  name      String   @db.VarChar(100)
+  symbol    String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([isActive])
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(2)
+  name      String   @db.VarChar(100)
+  dialCode  String?  @db.VarChar(10)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([isActive])
+}
+
+model Language {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique @db.VarChar(10)
+  name       String   @db.VarChar(100)
+  nativeName String?  @db.VarChar(100)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([isActive])
+}
+
+model SubscriptionPlan {
+  id           Int                  @id @default(autoincrement())
+  uuid         String               @unique @default(uuid())
+  name         String               @db.VarChar(100)
+  description  String?              @db.Text
+  price        Decimal              @db.Decimal(10, 2)
+  currency     String               @db.VarChar(3)
+  billingCycle String               @db.VarChar(20)
+  isPublic     Boolean              @default(true)
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime             @updatedAt @db.Timestamptz(6)
+  features     PlanFeatureLimit[]
+  tenants      TenantSubscription[]
+
+  @@index([isPublic, isActive])
+}
+
+model Feature {
+  id          Int                @id @default(autoincrement())
+  uuid        String             @unique @default(uuid())
+  key         String             @unique @db.VarChar(50)
+  name        String             @db.VarChar(100)
+  description String?            @db.Text
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime           @updatedAt @db.Timestamptz(6)
+  plans       PlanFeatureLimit[]
+
+  @@index([isActive])
+}
+
+model PlanFeatureLimit {
+  id        Int              @id @default(autoincrement())
+  planId    Int
+  featureId Int
+  limit     Int
+  createdAt DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime         @updatedAt @db.Timestamptz(6)
+  feature   Feature          @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, featureId])
+  @@index([featureId])
+}
+
+model TenantSubscription {
+  id        Int              @id @default(autoincrement())
+  tenantId  Int              @unique
+  planId    Int
+  startDate DateTime         @db.Timestamptz(6)
+  endDate   DateTime?        @db.Timestamptz(6)
+  status    String           @db.VarChar(20)
+  createdAt DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime         @updatedAt @db.Timestamptz(6)
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  tenant    Tenant           @relation(fields: [tenantId], references: [id])
+
+  @@index([planId])
+  @@index([status])
+  @@index([endDate])
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  tenantId   Int
+  userId     Int?
+  action     String   @db.VarChar(100)
+  entityType String   @db.VarChar(50)
+  entityId   String   @db.VarChar(255)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  ipAddress  String?  @db.VarChar(45)
+  metadata   Json?    @db.JsonB
+  newValues  Json?    @db.JsonB
+  oldValues  Json?    @db.JsonB
+  userAgent  String?  @db.Text
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model UserActivityLog {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  Int
+  userId    Int?
+  action    String   @db.VarChar(100)
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  ipAddress String?  @db.VarChar(45)
+  method    String?  @db.VarChar(10)
+  params    Json?    @db.JsonB
+  path      String?  @db.VarChar(500)
+  sessionId String?  @db.VarChar(255)
+  userAgent String?  @db.Text
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+  @@index([action])
+  @@index([sessionId])
+  @@map("user_activity_logs")
+}
+
+model RecordLock {
+  entityType String   @db.VarChar(50)
+  entityId   String   @db.VarChar(255)
+  lockedBy   Int
+  lockedAt   DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt  DateTime @db.Timestamptz(6)
+  reason     String?  @db.Text
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [lockedBy], references: [id])
+
+  @@unique([entityType, entityId])
+  @@index([expiresAt])
+  @@index([lockedBy])
+  @@map("record_locks")
+}
+
+model SavedSearch {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @default(uuid())
+  userId          Int
+  tenantId        Int
+  name            String   @db.VarChar(255)
+  description     String?  @db.Text
+  entityType      String   @db.VarChar(50)
+  filters         Json     @db.JsonB
+  sortBy          String?  @db.VarChar(50)
+  sortOrder       String?  @db.VarChar(4)
+  columnConfig    Json?    @db.JsonB
+  searchValue     String?  @db.Text
+  paginationLimit Int?
+  isDefault       Boolean  @default(false)
+  isPublic        Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entityType, name])
+  @@index([tenantId, entityType])
+  @@index([userId, entityType])
+  @@index([isActive])
+  @@map("saved_searches")
+}
+
+// ============================================
+// THREE-LEVEL CHANGE SYSTEM MODELS
+// ============================================
+
+model ChangeSet {
+  id              String           @id @default(cuid())
+  entityType      String           @db.VarChar(50)
+  entityId        String           @db.VarChar(255)
+  level           ChangeLevel      @default(OPTIMISTIC)
+  status          ChangeStatus     @default(PENDING)
+  changes         Json             @db.JsonB
+  oldValues       Json?            @db.JsonB
+  newValues       Json?            @db.JsonB
+  metadata        Json?            @db.JsonB
+  conflictIds     String[]
+  
+  // Relationships
+  userId          Int
+  user            User             @relation(fields: [userId], references: [id])
+  tenantId        Int
+  tenant          Tenant           @relation(fields: [tenantId], references: [id])
+  
+  // Approval workflow
+  approvedBy      Int?
+  approver        User?            @relation("ChangeSetApprover", fields: [approvedBy], references: [id])
+  approvedAt      DateTime?        @db.Timestamptz(6)
+  rejectedBy      Int?
+  rejecter        User?            @relation("ChangeSetRejecter", fields: [rejectedBy], references: [id])
+  rejectedAt      DateTime?        @db.Timestamptz(6)
+  rejectionReason String?          @db.Text
+  
+  // Timestamps
+  createdAt       DateTime         @default(now()) @db.Timestamptz(6)
+  appliedAt       DateTime?        @db.Timestamptz(6)
+  
+  // Relations
+  conflicts       ChangeConflict[]
+  
+  // Indexes
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([level])
+  @@map("change_sets")
+}
+
+model ChangeConflict {
+  id              String              @id @default(cuid())
+  changeSetId     String
+  changeSet       ChangeSet           @relation(fields: [changeSetId], references: [id], onDelete: Cascade)
+  conflictType    ConflictType
+  conflictData    Json?               @db.JsonB
+  resolution      ConflictResolution?
+  resolvedBy      Int?
+  resolver        User?               @relation(fields: [resolvedBy], references: [id])
+  resolvedAt      DateTime?           @db.Timestamptz(6)
+  
+  createdAt       DateTime            @default(now()) @db.Timestamptz(6)
+  
+  @@index([changeSetId])
+  @@index([conflictType])
+  @@index([createdAt])
+  @@map("change_conflicts")
+}
+
+model VersionHistory {
+  id              String    @id @default(cuid())
+  entityType      String    @db.VarChar(50)
+  entityId        String    @db.VarChar(255)
+  versionNumber   Int
+  data            Json      @db.JsonB
+  changeSetId     String?
+  
+  // Metadata
+  createdBy       Int
+  creator         User      @relation(fields: [createdBy], references: [id])
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  
+  // Relationships
+  tenantId        Int
+  tenant          Tenant    @relation(fields: [tenantId], references: [id])
+  
+  @@unique([entityType, entityId, versionNumber])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([tenantId])
+  @@map("version_history")
+}
+
+// Enums for Three-Level Change System
+enum ChangeLevel {
+  OPTIMISTIC  // Level 1: Client-side only
+  PROCESSING  // Level 2: Being processed by API
+  COMMITTED   // Level 3: Persisted to database
+}
+
+enum ChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  APPLIED
+  ROLLED_BACK
+  CONFLICTED
+}
+
+enum ConflictType {
+  CONCURRENT_EDIT
+  VALIDATION_FAILURE
+  DEPENDENCY_MISSING
+  PERMISSION_DENIED
+  BUSINESS_RULE
+  STALE_DATA
+}
+
+enum ConflictResolution {
+  ACCEPT_CURRENT
+  ACCEPT_INCOMING
+  MERGE
+  MANUAL
+  RETRY
+}
+
+// ============================================
+// SIMPLIFIED RBAC: Only 7 permission tables!
+// Removed 9 redundant tables for cleaner architecture
+// ============================================

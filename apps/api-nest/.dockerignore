@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Testing
+coverage/
+*.log
+
+# Prisma
+prisma/migrations/
+
+# Documentation
+*.md
+docs/
+
+# Cache directories
+.npm/
+.cache/
+.parcel-cache/
+.nyc_output/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# ESLint cache
+.eslintcache
+
+# Temporary folders
+tmp/
+temp/

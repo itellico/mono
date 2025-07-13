@@ -1,0 +1,389 @@
+{
+  "auth": {
+    "error": {
+      "invalidCredentials": "Invalid credentials",
+      "noRefreshToken": "No refresh token",
+      "invalidRefreshToken": "Invalid refresh token",
+      "invalidAccount": "Invalid account",
+      "currentPasswordIncorrect": "Current password is incorrect",
+      "authenticationRequired": "Authentication required",
+      "sessionExpired": "Your session has expired",
+      "accountLocked": "Account is locked",
+      "accountDisabled": "Account is disabled",
+      "emailNotVerified": "Email not verified",
+      "twoFactorRequired": "Two-factor authentication required",
+      "invalidTwoFactorCode": "Invalid two-factor authentication code"
+    },
+    "success": {
+      "passwordChanged": "Password changed successfully. Please login again.",
+      "loginSuccessful": "Login successful",
+      "logoutSuccessful": "Logout successful",
+      "tokenRefreshed": "Authentication token refreshed",
+      "accountVerified": "Account verified successfully",
+      "emailSent": "Verification email sent",
+      "passwordReset": "Password reset successfully"
+    }
+  },
+  "users": {
+    "error": {
+      "notFound": "User not found",
+      "fetchProfileFailed": "Failed to fetch profile",
+      "updateProfileFailed": "Failed to update profile",
+      "createFailed": "Failed to create user",
+      "deleteFailed": "Failed to delete user",
+      "searchFailed": "Failed to search users",
+      "fetchFailed": "Failed to fetch user",
+      "invalidConfirmation": "Invalid confirmation",
+      "invalidPassword": "Invalid password",
+      "deleteAccountFailed": "Failed to delete account",
+      "emailExists": "Email already exists",
+      "usernameExists": "Username already exists",
+      "invalidUserType": "Invalid user type",
+      "permissionDenied": "Permission denied"
+    },
+    "success": {
+      "created": "User created successfully",
+      "updated": "User updated successfully", 
+      "deleted": "User deleted successfully",
+      "accountDeleted": "Account deleted successfully",
+      "profileUpdated": "Profile updated successfully",
+      "statusUpdated": "User status updated successfully",
+      "roleUpdated": "User role updated successfully",
+      "permissionsUpdated": "User permissions updated successfully"
+    }
+  },
+  "media": {
+    "error": {
+      "authenticationRequired": "Authentication required",
+      "noFilesProvided": "No files provided",
+      "uploadContextRequired": "Upload context required",
+      "userAccountNotFound": "User account or tenant not found",
+      "fileTypesNotAllowed": "File types {{types}} not allowed. Allowed: {{allowed}}",
+      "fileSizeExceeded": "Files exceed maximum size of {{maxSize}}MB",
+      "totalSizeExceeded": "Total size exceeds {{maxSize}}MB limit",
+      "uploadFailed": "Upload failed. Please try again.",
+      "notFound": "Media asset not found or access denied",
+      "alreadyMarkedForDeletion": "Media asset is already marked for deletion",
+      "alreadyDeleted": "Media asset has already been deleted",
+      "processingFailed": "Failed to process deletion request",
+      "garbageCollectionFailed": "Garbage collection failed",
+      "getFailed": "Failed to get media asset",
+      "permissionDenied": "Permission denied",
+      "deleteFailed": "Failed to delete media asset",
+      "listFailed": "Failed to list media assets",
+      "getProcessingStatusFailed": "Failed to get processing status",
+      "processingError": "Error processing media file",
+      "optimizationFailed": "Media optimization failed",
+      "thumbnailGenerationFailed": "Thumbnail generation failed",
+      "formatNotSupported": "Media format not supported",
+      "corruptedFile": "File appears to be corrupted",
+      "virusScanFailed": "Virus scan failed",
+      "quarantined": "File has been quarantined"
+    },
+    "success": {
+      "uploaded": "Media uploaded successfully",
+      "deleted": "Media asset deleted successfully",
+      "markedForDeletion": "Media asset marked for deletion successfully",
+      "processed": "Media processing completed",
+      "optimized": "Media optimization completed",
+      "thumbnailGenerated": "Thumbnail generated successfully",
+      "virusScanPassed": "File passed virus scan",
+      "metadataExtracted": "Metadata extracted successfully"
+    },
+    "status": {
+      "uploading": "Uploading",
+      "processing": "Processing",
+      "optimizing": "Optimizing",
+      "completed": "Completed",
+      "failed": "Failed",
+      "quarantined": "Quarantined",
+      "deleted": "Deleted",
+      "markedForDeletion": "Marked for deletion"
+    }
+  },
+  "permissions": {
+    "error": {
+      "fetchFailed": "Failed to fetch permissions",
+      "nameExists": "Permission with this name already exists",
+      "createFailed": "Failed to create permission",
+      "notFound": "Permission not found",
+      "updateFailed": "Failed to update permission",
+      "deleteFailed": "Failed to delete permission",
+      "fetchStatsFailed": "Failed to fetch permission statistics",
+      "invalidPattern": "Invalid permission pattern",
+      "circularDependency": "Circular dependency detected",
+      "inheritanceFailed": "Permission inheritance failed",
+      "grantFailed": "Failed to grant permission",
+      "revokeFailed": "Failed to revoke permission"
+    },
+    "success": {
+      "created": "Permission created successfully",
+      "updated": "Permission updated successfully",
+      "deleted": "Permission deleted successfully",
+      "granted": "Permission granted successfully",
+      "revoked": "Permission revoked successfully",
+      "inheritanceUpdated": "Permission inheritance updated successfully"
+    }
+  },
+  "categories": {
+    "error": {
+      "notFound": "Category not found",
+      "accountNotFound": "Account not found",
+      "slugExists": "Category with this slug already exists",
+      "invalidParent": "Invalid parent category",
+      "cannotDeleteWithChildren": "Cannot delete category with children",
+      "createFailed": "Failed to create category",
+      "updateFailed": "Failed to update category",
+      "deleteFailed": "Failed to delete category",
+      "fetchFailed": "Failed to fetch categories",
+      "circularReference": "Circular reference detected in category hierarchy",
+      "maxDepthExceeded": "Maximum category depth exceeded",
+      "invalidHierarchy": "Invalid category hierarchy"
+    },
+    "success": {
+      "created": "Category created successfully",
+      "updated": "Category updated successfully",
+      "deleted": "Category deleted successfully",
+      "hierarchyUpdated": "Category hierarchy updated successfully",
+      "orderUpdated": "Category order updated successfully"
+    },
+    "default": {
+      "unknown": "Unknown"
+    }
+  },
+  "forms": {
+    "error": {
+      "notFound": "Form not found",
+      "createFailed": "Failed to create form",
+      "updateFailed": "Failed to update form",
+      "deleteFailed": "Failed to delete form",
+      "cannotDeleteWithSubmissions": "Cannot delete form with existing submissions",
+      "schemaNotFound": "Schema not found",
+      "validationFailed": "Form validation failed",
+      "submissionFailed": "Form submission failed",
+      "invalidStructure": "Invalid form structure",
+      "fieldRequired": "Required field missing",
+      "fieldInvalid": "Invalid field value"
+    },
+    "success": {
+      "created": "Form created successfully",
+      "updated": "Form updated successfully",
+      "deleted": "Form deleted successfully",
+      "submitted": "Form submitted successfully",
+      "validated": "Form validation passed"
+    },
+    "template": {
+      "generatedFrom": "Generated from {{schema}} schema"
+    }
+  },
+  "webhooks": {
+    "error": {
+      "integrationNotFound": "Integration not found or disabled",
+      "invalidSignature": "Invalid webhook signature",
+      "processingFailed": "Webhook processing failed",
+      "fetchLogsFailed": "Failed to fetch webhook logs",
+      "fetchConfigFailed": "Failed to fetch webhook configuration",
+      "regenerateSecretFailed": "Failed to regenerate webhook secret",
+      "testFailed": "Webhook test failed",
+      "invalidPayload": "Invalid webhook payload",
+      "rateLimited": "Webhook rate limit exceeded",
+      "deliveryFailed": "Webhook delivery failed",
+      "retryLimitExceeded": "Webhook retry limit exceeded"
+    },
+    "success": {
+      "processed": "Webhook processed successfully: {{type}}",
+      "slackEventProcessed": "Processed Slack event: {{event}}",
+      "githubWebhookProcessed": "Processed GitHub webhook",
+      "stripeEventProcessed": "Processed Stripe event: {{event}}",
+      "configUpdated": "Webhook configuration updated successfully",
+      "secretRegenerated": "Webhook secret regenerated successfully",
+      "testCompleted": "Webhook test completed successfully"
+    },
+    "events": {
+      "unknownSlackEvent": "Unknown Slack webhook event",
+      "urlVerificationChallenge": "URL verification challenge",
+      "deliveryAttempt": "Webhook delivery attempt {{attempt}} of {{maxAttempts}}",
+      "deliverySuccessful": "Webhook delivered successfully",
+      "deliveryRetrying": "Retrying webhook delivery"
+    }
+  },
+  "workflows": {
+    "error": {
+      "notFound": "Workflow not found",
+      "createFailed": "Failed to create workflow",
+      "updateFailed": "Failed to update workflow",
+      "deleteFailed": "Failed to delete workflow",
+      "cannotDeleteWithHistory": "Cannot delete workflow with execution history. Archive it instead.",
+      "notFoundOrInactive": "Workflow not found or inactive",
+      "executionFailed": "Workflow execution failed",
+      "invalidDefinition": "Invalid workflow definition",
+      "compilationFailed": "Workflow compilation failed",
+      "timeoutExceeded": "Workflow execution timeout exceeded",
+      "resourceLimitExceeded": "Workflow resource limit exceeded"
+    },
+    "success": {
+      "created": "Workflow created successfully",
+      "updated": "Workflow updated successfully",
+      "deleted": "Workflow deleted successfully",
+      "executed": "Workflow executed successfully",
+      "archived": "Workflow archived successfully",
+      "published": "Workflow published successfully",
+      "paused": "Workflow paused successfully",
+      "resumed": "Workflow resumed successfully"
+    }
+  },
+  "templates": {
+    "error": {
+      "notFound": "Template not found",
+      "getFailed": "Failed to get templates",
+      "createFailed": "Failed to create template",
+      "updateFailed": "Failed to update template",
+      "deleteFailed": "Failed to delete template",
+      "cloneFailed": "Failed to clone template",
+      "rateFailed": "Failed to rate template",
+      "permissionDenied": "Permission denied",
+      "invalidFormat": "Invalid template format",
+      "compilationFailed": "Template compilation failed",
+      "renderingFailed": "Template rendering failed",
+      "variableNotFound": "Template variable not found"
+    },
+    "success": {
+      "created": "Template created successfully",
+      "updated": "Template updated successfully",
+      "deleted": "Template deleted successfully",
+      "cloned": "Template cloned successfully",
+      "rated": "Template rated successfully",
+      "published": "Template published successfully",
+      "unpublished": "Template unpublished successfully"
+    },
+    "versioning": {
+      "cloneOf": "Clone of {{name}}",
+      "clonedFrom": "Cloned from {{name}}",
+      "initialVersion": "Initial version",
+      "updatedToVersion": "Updated to version {{version}}"
+    }
+  },
+  "notifications": {
+    "error": {
+      "fetchFailed": "Failed to fetch notifications",
+      "notFound": "Notification not found",
+      "markReadFailed": "Failed to mark notification as read",
+      "markAllReadFailed": "Failed to mark all notifications as read",
+      "deleteFailed": "Failed to delete notification",
+      "fetchPreferencesFailed": "Failed to fetch notification preferences",
+      "updatePreferencesFailed": "Failed to update notification preferences",
+      "sendFailed": "Failed to send notification",
+      "noTargetUsers": "No target users found",
+      "fetchTemplatesFailed": "Failed to fetch notification templates",
+      "createTemplateFailed": "Failed to create notification template",
+      "invalidChannel": "Invalid notification channel",
+      "channelUnavailable": "Notification channel unavailable",
+      "templateNotFound": "Notification template not found"
+    },
+    "success": {
+      "sent": "Notification sent successfully",
+      "markedAsRead": "Notification marked as read",
+      "allMarkedAsRead": "All notifications marked as read",
+      "deleted": "Notification deleted successfully",
+      "preferencesUpdated": "Notification preferences updated successfully",
+      "templateCreated": "Notification template created successfully",
+      "channelConfigured": "Notification channel configured successfully"
+    },
+    "validation": {
+      "targetRequired": "Either userId or tenantId must be specified",
+      "messageRequired": "Notification message is required",
+      "channelRequired": "Notification channel is required",
+      "templateRequired": "Notification template is required"
+    }
+  },
+  "monitoring": {
+    "error": {
+      "fetchMetricsFailed": "Failed to fetch comprehensive metrics",
+      "fetchDockerStatsFailed": "Failed to fetch Docker stats",
+      "fetchMonitoringStatsFailed": "Failed to fetch monitoring stats",
+      "fetchSystemInfoFailed": "Failed to fetch system information",
+      "serviceUnavailable": "Monitoring service unavailable",
+      "dataCorrupted": "Monitoring data corrupted",
+      "collectionFailed": "Metrics collection failed",
+      "storageError": "Metrics storage error",
+      "queryError": "Metrics query error"
+    },
+    "success": {
+      "metricsFetched": "Metrics fetched successfully",
+      "systemHealthChecked": "System health checked",
+      "alertConfigured": "Alert configured successfully",
+      "thresholdUpdated": "Monitoring threshold updated",
+      "reportGenerated": "Monitoring report generated"
+    }
+  },
+  "system": {
+    "error": {
+      "maintenanceMode": "System is currently under maintenance",
+      "serviceUnavailable": "Service temporarily unavailable",
+      "resourceExhausted": "System resources exhausted",
+      "configurationError": "System configuration error",
+      "databaseConnectionFailed": "Database connection failed",
+      "cacheConnectionFailed": "Cache connection failed",
+      "externalServiceError": "External service error",
+      "timeoutError": "Request timeout",
+      "rateLimitExceeded": "Rate limit exceeded",
+      "quotaExceeded": "Quota exceeded"
+    },
+    "success": {
+      "systemHealthy": "System is healthy",
+      "serviceRestored": "Service restored",
+      "configurationUpdated": "System configuration updated",
+      "maintenanceCompleted": "Maintenance completed",
+      "backupCompleted": "System backup completed",
+      "updateInstalled": "System update installed"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Degraded",
+      "maintenance": "Under Maintenance",
+      "recovering": "Recovering",
+      "updating": "Updating"
+    }
+  },
+  "validation": {
+    "error": {
+      "required": "This field is required",
+      "invalidFormat": "Invalid format",
+      "tooShort": "Value is too short",
+      "tooLong": "Value is too long",
+      "invalidEmail": "Invalid email address",
+      "invalidUrl": "Invalid URL",
+      "invalidDate": "Invalid date",
+      "invalidNumber": "Invalid number",
+      "outOfRange": "Value is out of range",
+      "patternMismatch": "Value does not match required pattern",
+      "uniquenessViolation": "Value must be unique",
+      "foreignKeyViolation": "Referenced resource does not exist",
+      "dataIntegrityViolation": "Data integrity violation"
+    }
+  },
+  "common": {
+    "error": {
+      "unknown": "An unknown error occurred",
+      "internalServerError": "Internal server error",
+      "badRequest": "Bad request",
+      "unauthorized": "Unauthorized",
+      "forbidden": "Forbidden",
+      "notFound": "Not found",
+      "methodNotAllowed": "Method not allowed",
+      "conflict": "Conflict",
+      "unprocessableEntity": "Unprocessable entity",
+      "tooManyRequests": "Too many requests",
+      "serviceUnavailable": "Service unavailable",
+      "gatewayTimeout": "Gateway timeout"
+    },
+    "success": {
+      "operationCompleted": "Operation completed successfully",
+      "dataRetrieved": "Data retrieved successfully",
+      "resourceCreated": "Resource created successfully",
+      "resourceUpdated": "Resource updated successfully",
+      "resourceDeleted": "Resource deleted successfully"
+    }
+  }
+}

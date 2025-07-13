@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Docusaurus Documentation Server
+  docusaurus:
+    build:
+      context: ./docker/docusaurus
+      dockerfile: Dockerfile
+    container_name: mono-docusaurus
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    volumes:
+      # Mount documentation directories
+      - ./docs:/app/docs:ro
+      - ./mcp-servers/docs-server/src/data:/app/mcp-docs:ro
+      - ./docker/docusaurus/src:/app/src
+      - ./docker/docusaurus/static:/app/static
+      - ./docker/docusaurus/docusaurus.config.js:/app/docusaurus.config.js
+      - ./docker/docusaurus/sidebars.js:/app/sidebars.js
+      - ./docker/docusaurus/plugins:/app/plugins
+      # For development - node_modules volume
+      - docusaurus_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=production
+      - DOCUSAURUS_URL=http://localhost:3005
+    networks:
+      - mono-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3005"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  docusaurus_node_modules:
+
+networks:
+  mono-network:
+    external: true

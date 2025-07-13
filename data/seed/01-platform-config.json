@@ -1,0 +1,56 @@
+{
+  "platform": {
+    "name": "itellico Mono",
+    "version": "1.0.0",
+    "settings": {
+      "multi_tenancy_enabled": true,
+      "custom_domains_enabled": true,
+      "white_labeling_enabled": true,
+      "api_access_enabled": true,
+      "default_language": "en",
+      "supported_languages": ["en", "es", "fr", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh"],
+      "default_currency": "EUR",
+      "supported_currencies": ["EUR", "USD", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK"],
+      "default_timezone": "UTC",
+      "maintenance_mode": false,
+      "features": {
+        "subscriptions": true,
+        "marketplace": true,
+        "messaging": true,
+        "video_calls": true,
+        "ai_features": true,
+        "analytics": true,
+        "api_access": true,
+        "white_label": true,
+        "custom_domains": true,
+        "sso": true,
+        "2fa": true,
+        "audit_logs": true
+      },
+      "limits": {
+        "max_tenants": -1,
+        "max_storage_gb": 10000,
+        "max_bandwidth_gb": 50000,
+        "max_api_calls_per_month": 1000000000
+      },
+      "integrations": {
+        "stripe": {
+          "enabled": true,
+          "webhook_endpoint": "/api/webhooks/stripe"
+        },
+        "sendgrid": {
+          "enabled": true,
+          "webhook_endpoint": "/api/webhooks/sendgrid"
+        },
+        "aws_s3": {
+          "enabled": true,
+          "bucket": "itellico-mono-media"
+        },
+        "cloudflare": {
+          "enabled": true,
+          "zone_id": "CLOUDFLARE_ZONE_ID"
+        }
+      }
+    }
+  }
+}

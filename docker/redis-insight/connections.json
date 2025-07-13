@@ -1,0 +1,56 @@
+[
+  {
+    "id": "mono-production",
+    "name": "mono",
+    "host": "mono-redis",
+    "port": 6379,
+    "username": "",
+    "password": "",
+    "connectionType": "STANDALONE",
+    "nameFromProvider": "mono",
+    "provider": "MANUAL",
+    "modules": [],
+    "version": "7.4.4",
+    "new": false,
+    "timeout": 30000,
+    "db": 0,
+    "tls": false,
+    "verifyServerCert": false,
+    "caCert": {
+      "name": "",
+      "certificate": ""
+    },
+    "clientCert": {
+      "name": "",
+      "certificate": "",
+      "key": ""
+    }
+  },
+  {
+    "id": "mono-test",
+    "name": "mono-test", 
+    "host": "mono-test-redis",
+    "port": 6379,
+    "username": "",
+    "password": "",
+    "connectionType": "STANDALONE",
+    "nameFromProvider": "mono-test",
+    "provider": "MANUAL",
+    "modules": [],
+    "version": "7.4.4", 
+    "new": false,
+    "timeout": 30000,
+    "db": 0,
+    "tls": false,
+    "verifyServerCert": false,
+    "caCert": {
+      "name": "",
+      "certificate": ""
+    },
+    "clientCert": {
+      "name": "",
+      "certificate": "",
+      "key": ""
+    }
+  }
+]

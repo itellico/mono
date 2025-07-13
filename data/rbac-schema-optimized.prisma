@@ -1,0 +1,336 @@
+// Optimized RBAC Schema for Grid Platform
+// Aligned with permission-list-optimized.md
+// Reduces complexity while maintaining security and auditability
+
+// ============================================
+// CORE RBAC TABLES (Simplified)
+// ============================================
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  code        String   @unique @db.VarChar(50) // e.g., "tenant_admin", "agency_owner"
+  level       Int      // Hierarchy level for inheritance
+  description String?  @db.Text
+  isSystem    Boolean  @default(false) // System roles can't be modified
+  
+  // Relationships
+  userRoles        UserRole[]
+  rolePermissions  RolePermission[]
+  permissionSets   RolePermissionSet[]
+  
+  // Audit fields
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Multi-tenant support
+  tenantId    Int?     // NULL for system roles, set for custom tenant roles
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  
+  @@unique([name, tenantId])
+  @@index([code])
+  @@index([level])
+  @@index([tenantId])
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  pattern     String   @unique @db.VarChar(100) // e.g., "profiles.*.own", "content.*.tenant"
+  resource    String   @db.VarChar(50) // e.g., "profiles", "content", "platform"
+  action      String   @db.VarChar(50) // e.g., "*", "read", "write", "delete", "manage"
+  scope       String   @db.VarChar(20) // "global", "tenant", "own"
+  description String?  @db.Text
+  
+  // Permission metadata
+  isWildcard  Boolean  @default(false) // True if pattern contains "*"
+  priority    Int      @default(100) // For permission resolution order
+  
+  // Relationships
+  rolePermissions         RolePermission[]
+  userPermissions         UserPermission[]
+  permissionInheritances  PermissionInheritance[] @relation("ParentPermission")
+  inheritedBy            PermissionInheritance[] @relation("ChildPermission")
+  
+  // Audit fields
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([resource, action, scope])
+  @@index([pattern])
+  @@index([isWildcard, priority])
+}
+
+// ============================================
+// RELATIONSHIP TABLES
+// ============================================
+
+model UserRole {
+  userId      Int
+  roleId      Int
+  
+  // Optional constraints
+  validFrom   DateTime  @default(now())
+  validUntil  DateTime? // For temporary role assignments
+  grantedBy   Int?
+  grantReason String?   @db.Text
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        Role      @relation(fields: [roleId], references: [id])
+  grantor     User?     @relation("GrantedRoles", fields: [grantedBy], references: [id])
+  
+  // Audit fields
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@index([validUntil])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  
+  // Relationships
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  
+  // Audit fields
+  createdAt    DateTime   @default(now())
+  
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+// ============================================
+// OPTIMIZED FEATURES
+// ============================================
+
+// Permission sets for bundling related permissions
+model PermissionSet {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50) // e.g., "content_moderation", "financial_management"
+  description String?  @db.Text
+  
+  // Relationships
+  permissions      PermissionSetItem[]
+  rolePermissions  RolePermissionSet[]
+  
+  // Audit fields
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PermissionSetItem {
+  setId        Int
+  permissionId Int
+  
+  // Relationships
+  set          PermissionSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  permission   Permission    @relation(fields: [permissionId], references: [id])
+  
+  @@id([setId, permissionId])
+  @@index([permissionId])
+}
+
+model RolePermissionSet {
+  roleId Int
+  setId  Int
+  
+  // Relationships
+  role   Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  set    PermissionSet @relation(fields: [setId], references: [id])
+  
+  @@id([roleId, setId])
+  @@index([setId])
+}
+
+// Permission inheritance for wildcard expansion
+model PermissionInheritance {
+  parentId Int
+  childId  Int
+  
+  // Relationships
+  parent   Permission @relation("ParentPermission", fields: [parentId], references: [id])
+  child    Permission @relation("ChildPermission", fields: [childId], references: [id])
+  
+  @@id([parentId, childId])
+  @@index([childId])
+}
+
+// Direct user permissions (bypasses roles)
+model UserPermission {
+  userId       Int
+  permissionId Int
+  
+  // Constraints
+  granted      Boolean   @default(true) // Can be false for explicit deny
+  validFrom    DateTime  @default(now())
+  validUntil   DateTime?
+  grantedBy    Int?
+  grantReason  String?   @db.Text
+  
+  // Resource-specific constraints (optional)
+  resourceType String?   @db.VarChar(50)
+  resourceId   String?   @db.VarChar(255)
+  conditions   Json?     // Additional conditions for the permission
+  
+  // Relationships
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  grantor      User?      @relation("GrantedPermissions", fields: [grantedBy], references: [id])
+  
+  // Audit fields
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  @@id([userId, permissionId])
+  @@index([permissionId])
+  @@index([granted])
+  @@index([validUntil])
+  @@index([resourceType, resourceId])
+}
+
+// ============================================
+// AUDIT & MONITORING
+// ============================================
+
+// Simplified permission usage tracking
+model PermissionAudit {
+  id               BigInt    @id @default(autoincrement())
+  userId           Int
+  permissionPattern String    @db.VarChar(100) // The permission checked
+  resource         String?   @db.VarChar(255) // Specific resource accessed
+  action           String    @db.VarChar(50)  // Action attempted
+  granted          Boolean   // Was access granted?
+  
+  // Context
+  ipAddress        String?   @db.VarChar(45)
+  userAgent        String?   @db.Text
+  requestId        String?   @db.VarChar(36) // For tracing
+  
+  // Performance
+  checkDurationMs  Int?      // How long the permission check took
+  
+  // Multi-tenant
+  tenantId         Int?
+  
+  // Timestamp
+  timestamp        DateTime  @default(now())
+  
+  // Relationships
+  user             User      @relation(fields: [userId], references: [id])
+  tenant           Tenant?   @relation(fields: [tenantId], references: [id])
+  
+  @@index([userId, timestamp])
+  @@index([permissionPattern])
+  @@index([granted])
+  @@index([tenantId, timestamp])
+  @@index([timestamp])
+}
+
+// Emergency access for break-glass scenarios
+model EmergencyAccess {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  targetType   String    @db.VarChar(50) // "tenant", "account", "user"
+  targetId     String    @db.VarChar(255)
+  justification String   @db.Text
+  
+  // Time constraints
+  grantedAt    DateTime  @default(now())
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  
+  // Approval workflow
+  approvedBy   Int?
+  approvedAt   DateTime?
+  
+  // Relationships
+  user         User      @relation(fields: [userId], references: [id])
+  approver     User?     @relation("ApprovedEmergencyAccess", fields: [approvedBy], references: [id])
+  
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([targetType, targetId])
+}
+
+// ============================================
+// PERFORMANCE OPTIMIZATION TABLES
+// ============================================
+
+// Cache computed permissions for users
+model UserPermissionCache {
+  userId           Int      @id
+  permissions      Json     // Array of permission patterns
+  computedAt       DateTime
+  expiresAt        DateTime
+  cacheVersion     Int      @default(1)
+  
+  // Relationships
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([expiresAt])
+}
+
+// Pre-computed permission expansions
+model PermissionExpansion {
+  pattern          String   @id @db.VarChar(100)
+  expandedPatterns Json     // Array of specific permissions this pattern includes
+  computedAt       DateTime
+  
+  @@index([computedAt])
+}
+
+// ============================================
+// VIEWS (For Performance)
+// ============================================
+
+// Note: These would be created as database views via migration
+// 
+// CREATE VIEW user_effective_permissions AS
+// SELECT DISTINCT
+//   u.id as user_id,
+//   p.pattern,
+//   p.resource,
+//   p.action,
+//   p.scope,
+//   'role' as source
+// FROM users u
+// JOIN user_roles ur ON u.id = ur.user_id
+// JOIN role_permissions rp ON ur.role_id = rp.role_id
+// JOIN permissions p ON rp.permission_id = p.id
+// WHERE ur.valid_until IS NULL OR ur.valid_until > NOW()
+// 
+// UNION
+// 
+// SELECT DISTINCT
+//   u.id as user_id,
+//   p.pattern,
+//   p.resource,
+//   p.action,
+//   p.scope,
+//   'direct' as source
+// FROM users u
+// JOIN user_permissions up ON u.id = up.user_id
+// JOIN permissions p ON up.permission_id = p.id
+// WHERE up.granted = true
+//   AND (up.valid_until IS NULL OR up.valid_until > NOW());
+
+// ============================================
+// CONFIGURATION
+// ============================================
+
+model RBACConfig {
+  id                      Int      @id @default(1) // Singleton
+  enableWildcards         Boolean  @default(true)
+  enableInheritance       Boolean  @default(true)
+  enableCaching           Boolean  @default(true)
+  cacheExpirationMinutes  Int      @default(15)
+  maxPermissionsPerUser   Int      @default(1000)
+  enableAuditLog          Boolean  @default(true)
+  auditRetentionDays      Int      @default(90)
+  
+  updatedAt               DateTime @updatedAt
+}
