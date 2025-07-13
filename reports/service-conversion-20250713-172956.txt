@@ -1,0 +1,78 @@
+Service Files Conversion Report
+Generated: So 13 Jul 2025 17:29:56 CEST
+
+Total Files: 45
+
+=== ALL SERVICE FILES WITH VIOLATIONS ===
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/tenants-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/professional-profiles.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/limit.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/SavedSearchesService.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/model-schemas.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/subscription.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/enhanced-tagging.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/tenant-domain.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/roles.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/session-cache.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/unified-permission.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/versioning.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/llm-resolver.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/industry-content.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/import-export.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/option-sets.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/entity-attributes.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/users.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/translations-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/email-service-enhanced.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/email-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/settings.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/categories-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/template-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/locking.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/multi-tenant-user.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/industry-template.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/permissions.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/n8n.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/saved-searches.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/tags-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/categories.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/template.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/template-service-simple.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/workflow.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/admin-settings.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/template-bundling.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/bundle.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/tenants.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/tenant-setup.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/feature.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/limits.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/category-service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/form-generation.service.ts
+/Users/mm2/dev_mm/mono/apps/web/src/lib/services/integrations.service.ts
+
+=== CONVERSION CHECKLIST ===
+[ ] SavedSearchesService.ts
+[ ] model-schemas.service.ts
+[ ] subscription.service.ts
+[ ] categories.service.ts
+[ ] modules.service.ts
+[ ] tenant-domain.service.ts
+[ ] enhanced-tagging.service.ts
+[ ] entity-attributes.service.ts
+[ ] translation.service.ts
+[ ] option-sets.service.ts
+
+=== COMPLETED CONVERSIONS ===
+[✓] audit.service.ts
+[✓] language-settings.service.ts
+[✓] admin-dashboard.service.ts
+[✓] tenants.service.ts
+[✓] feature.service.ts
+[✓] limits.service.ts
+[✓] limit.service.ts
+[✓] admin-permissions.service.ts
+[✓] admin-settings.service.ts
+[✓] users.service.ts
+[✓] permissions.service.ts
+[✓] roles.service.ts
+[✓] settings.service.ts

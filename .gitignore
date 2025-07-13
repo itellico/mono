@@ -6,6 +6,15 @@
 /go
 
 # ========================================
+# Backups and Large Files
+# ========================================
+/backups/
+/backup/
+*.tar.gz
+*.zip
+*.rar
+
+# ========================================
 # Dependencies
 # ========================================
 /node_modules
@@ -188,3 +197,4 @@ tsconfig.tsbuildinfo
 # Docker Persistent Data
 # ========================================
 /docker-data/
+/mono

@@ -4,7 +4,7 @@ require_once '../../includes/sidebar.php';
 require_once '../../includes/components.php';
 require_once '../../includes/footer.php';
 
-echo renderHeader("Talent Database - Go Models NYC", "Admin User", "Marketplace Admin", "Tenant");
+echo renderHeader("Professional Database - Go Models", "Brand Manager", "Brand Administrator", "Tenant");
 ?>
 
 <div class="d-flex">
@@ -14,16 +14,16 @@ echo renderHeader("Talent Database - Go Models NYC", "Admin User", "Marketplace 
         <?php 
         echo createBreadcrumb([
             ['label' => 'Tenant', 'href' => '../index.php'],
-            ['label' => 'Talent Database']
+            ['label' => 'Professional Database']
         ]);
         
         echo createHeroSection(
-            "Talent Database",
-            "Manage all registered models and talent in your marketplace",
+            "Professional Database",
+            "Manage all registered professionals in your modeling marketplace - part of the multi-brand platform",
             "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=1200&h=300&fit=crop",
             [
-                ['label' => 'Add New Model', 'icon' => 'fas fa-plus', 'style' => 'success'],
-                ['label' => 'Import Talent', 'icon' => 'fas fa-upload', 'style' => 'info'],
+                ['label' => 'Add Professional', 'icon' => 'fas fa-plus', 'style' => 'success'],
+                ['label' => 'Cross-Brand Search', 'icon' => 'fas fa-network-wired', 'style' => 'info'],
                 ['label' => 'Export List', 'icon' => 'fas fa-download', 'style' => 'secondary']
             ]
         );

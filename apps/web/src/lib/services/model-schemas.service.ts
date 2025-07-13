@@ -1,10 +1,14 @@
-import { db as prisma } from '@/lib/db';
+/**
+ * Model Schemas Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All model schema operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { logger } from '@/lib/logger';
 import { unstable_cache } from 'next/cache';
-import { auth } from '@/lib/auth';
-import { AuditService } from '@/lib/services/audit.service';
 import { getRedisClient } from '@/lib/redis';
-import { type ModelSchema, type SchemaDefinition } from '@prisma/client';
 
 // ============================
 // 🏗️ MODEL SCHEMAS SERVICE
@@ -26,7 +30,7 @@ interface ModelSchemaCreateData {
   subType: string;
   displayName: Record<string, string>;
   description?: Record<string, string>;
-  schema: SchemaDefinition;
+  schema: any;
   isActive?: boolean;
 }
 
@@ -39,6 +43,20 @@ interface ModelSchemaStats {
   byType: Record<string, number>;
   byStatus: Record<string, number>;
   recent: number;
+}
+
+interface ModelSchema {
+  id: string;
+  uuid: string;
+  type: string;
+  subType: string;
+  displayName: Record<string, string>;
+  description?: Record<string, string>;
+  schema: any;
+  isActive: boolean;
+  tenantId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /**
@@ -66,6 +84,8 @@ const getCacheKey = (key: string, userContext?: any, params?: any): string => {
  * Model Schemas Service Class
  */
 export class ModelSchemasService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
   private static async getRedis() {
     try {
       return await getRedisClient();
@@ -85,302 +105,208 @@ export class ModelSchemasService {
    * Get all model schemas (platform-level for super admin)
    */
   static async getAllModelSchemas(): Promise<ModelSchema[]> {
-    const results = await prisma.modelSchema.findMany({
-      where: { tenantId: null }, // Platform-level only
-      orderBy: { createdAt: 'desc' },
-    });
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas`, {
+        headers,
+      });
 
-    return results.map(this.transformModelSchema);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model schemas: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+    } catch (error) {
+      logger.error('Failed to fetch all model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
   }
 
   /**
    * Get model schemas by type
    */
   static async getModelSchemasByType(type: string): Promise<ModelSchema[]> {
-    const results = await prisma.modelSchema.findMany({
-      where: {
-        tenantId: null,
-        type: type,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return results.map(this.transformModelSchema);
-  }
-
-  /**
-   * Get a specific model schema by ID
-   */
-  static async getModelSchemaById(id: string): Promise<ModelSchema | null> {
-    const result = await prisma.modelSchema.findFirst({
-      where: {
-        id: id,
-        tenantId: null,
-      },
-    });
-
-    return result ? this.transformModelSchema(result) : null;
-  }
-
-  /**
-   * Get a model schema by type and subType
-   */
-  static async getModelSchemaByTypeAndSubType(
-    type: string, 
-    subType: string
-  ): Promise<ModelSchema | null> {
-    const result = await prisma.modelSchema.findFirst({
-      where: {
-        tenantId: null,
-        type: type,
-        subType: subType,
-      },
-    });
-
-    return result ? this.transformModelSchema(result) : null;
-  }
-
-  /**
-   * Get model schemas with search and filtering
-   * Implements three-layer caching strategy
-   */
-  static async getModelSchemas(params: ModelSchemaSearchParams = {}): Promise<ModelSchema[]> {
-    const startTime = performance.now();
-    
     try {
-      const session = await auth();
-      const userContext = session?.user ? {
-        userId: session.user.id,
-        tenantId: (session.user as any).tenantId,
-        roles: (session.user as any).roles || [],
-      } : null;
-      const cacheKey = getCacheKey('list', userContext, params);
-      
-      // Layer 3: Check Redis cache first
-      try {
-        const redis = await this.getRedis();
-        const cachedData = await redis.get(cacheKey);
-        if (cachedData) {
-          logger.info('model_schemas_cache_hit', {
-            cacheKey,
-            responseTime: performance.now() - startTime,
-            source: 'redis'
-          });
-          return JSON.parse(cachedData);
-        }
-      } catch (redisError) {
-        logger.warn('Redis cache check failed, proceeding without cache', {
-          error: redisError.message,
-          cacheKey
-        });
-      }
-
-      // Layer 1: Use Next.js unstable_cache for server components
-      const fetchData = unstable_cache(
-        async () => {
-          const {
-            search = '',
-            type = 'all',
-            status = 'all',
-            limit = 50,
-            offset = 0,
-            sortBy = 'createdAt',
-            sortOrder = 'desc'
-          } = params;
-
-          const whereConditions: any = {};
-
-          // Tenant isolation - critical security requirement
-          const isSuperAdmin = userContext?.roles?.includes('super_admin');
-          if (!isSuperAdmin && userContext?.tenantId) {
-            whereConditions.tenantId = userContext.tenantId;
-          } else if (isSuperAdmin) {
-            // Super admin can see all schemas, including global (tenantId: null)
-            // No specific tenantId filter needed here for super admin
-          }
-
-          // Search conditions
-          if (search) {
-            whereConditions.OR = [
-              { subType: { contains: search, mode: 'insensitive' } },
-              { displayName: { path: ['en-US'], string_contains: search, mode: 'insensitive' } },
-            ];
-          }
-
-          // Type filtering
-          if (type !== 'all') {
-            whereConditions.type = type;
-          }
-
-          // Status filtering
-          if (status !== 'all') {
-            whereConditions.isActive = status === 'active';
-          }
-
-          const orderBy: any = {};
-          if (sortBy === 'name') {
-            orderBy.subType = sortOrder;
-          } else if (sortBy === 'type') {
-            orderBy.type = sortOrder;
-          } else if (sortBy === 'updated') {
-            orderBy.updatedAt = sortOrder;
-          } else {
-            orderBy.createdAt = sortOrder;
-          }
-
-          const schemas = await prisma.modelSchema.findMany({
-            where: whereConditions,
-            orderBy: orderBy,
-            skip: offset,
-            take: limit,
-          });
-
-          return schemas;
-        },
-        [cacheKey],
-        {
-          revalidate: 30 * 60, // 30 minutes
-          tags: ['model-schemas', `tenant:${userContext?.tenantId || 'super_admin'}`]
-        }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/model-schemas?type=${encodeURIComponent(type)}`,
+        { headers }
       );
 
-      const data = await fetchData();
-      const transformedData = data.map(this.transformModelSchema);
-
-      // Layer 2: Cache in Redis with TTL
-      try {
-        const redis = await this.getRedis();
-        await redis.set(cacheKey, JSON.stringify(transformedData), 'EX', 30 * 60); // 30 minutes
-      } catch (redisError) {
-        logger.warn('Redis cache write failed', {
-          error: redisError.message,
-          cacheKey
-        });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model schemas by type: ${response.statusText}`);
       }
 
-      logger.info('model_schemas_cache_miss', {
-        cacheKey,
-        responseTime: performance.now() - startTime,
-        resultCount: transformedData.length,
-        source: 'database'
-      });
-
-      return transformedData;
-
+      const data = await response.json();
+      return data.data || data;
     } catch (error) {
-      logger.error('model_schemas_fetch_error', {
-        error: error instanceof Error ? error.message : String(error),
-        params,
-        responseTime: performance.now() - startTime
+      logger.error('Failed to fetch model schemas by type', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        type
       });
-      
-      // For critical errors, still throw to be handled by the calling code
       throw error;
     }
   }
 
   /**
-   * Get model schema statistics with caching
+   * Search model schemas with caching and tenant isolation
    */
-  static async getModelSchemasStats(): Promise<ModelSchemaStats> {
-    const startTime = performance.now();
-    
+  static async searchModelSchemas(
+    params: ModelSchemaSearchParams,
+    userContext?: any
+  ): Promise<{ schemas: ModelSchema[]; total: number }> {
+    const cacheKey = getCacheKey('search', userContext, params);
+
     try {
-      const session = await auth();
-      const userContext = session?.user ? {
-        userId: session.user.id,
-        tenantId: (session.user as any).tenantId,
-        roles: (session.user as any).roles || [],
-      } : null;
-      const cacheKey = getCacheKey('stats', userContext);
-      
-      // Check Redis cache
-      try {
-        const redis = await this.getRedis();
-        const cachedStats = await redis.get(cacheKey);
-        if (cachedStats) {
-          logger.info('model_schemas_stats_cache_hit', {
-            cacheKey,
-            responseTime: performance.now() - startTime
-          });
-          return JSON.parse(cachedStats);
-        }
-      } catch (redisError) {
-        logger.warn('Redis stats cache check failed', {
-          error: redisError.message,
-          cacheKey
-        });
+      // Try cache first
+      const redis = await this.getRedis();
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        logger.debug('Model schemas search cache hit', { cacheKey });
+        return JSON.parse(cached);
       }
-
-      // Generate stats from database
-      const isSuperAdmin = userContext?.roles?.includes('super_admin');
-      
-      const whereConditions: any = {};
-      if (!isSuperAdmin && userContext?.tenantId) {
-        whereConditions.tenantId = userContext.tenantId;
-      }
-
-      const allSchemas = await prisma.modelSchema.findMany({
-        where: whereConditions,
-        select: { type: true, isActive: true, createdAt: true },
-      });
-      
-      const stats: ModelSchemaStats = {
-        total: allSchemas.length,
-        byType: {},
-        byStatus: {
-          active: 0,
-          inactive: 0
-        },
-        recent: 0
-      };
-
-      // Calculate statistics
-      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      
-      for (const schema of allSchemas) {
-        // Count by type
-        stats.byType[schema.type] = (stats.byType[schema.type] || 0) + 1;
-        
-        // Count by status
-        if (schema.isActive) {
-          stats.byStatus.active++;
-        } else {
-          stats.byStatus.inactive++;
-        }
-        
-        // Count recent (last 7 days)
-        if (new Date(schema.createdAt) > oneWeekAgo) {
-          stats.recent++;
-        }
-      }
-
-      // Cache stats for 10 minutes
-      try {
-        const redis = await this.getRedis();
-        await redis.set(cacheKey, JSON.stringify(stats), 'EX', 10 * 60);
-      } catch (redisError) {
-        logger.warn('Redis stats cache write failed', {
-          error: redisError.message,
-          cacheKey
-        });
-      }
-
-      logger.info('model_schemas_stats_generated', {
-        cacheKey,
-        responseTime: performance.now() - startTime,
-        stats
-      });
-
-      return stats;
-
     } catch (error) {
-      logger.error('model_schemas_stats_error', {
-        error: error instanceof Error ? error.message : String(error),
-        responseTime: performance.now() - startTime
+      logger.warn('Cache read failed, proceeding without cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams();
       
-      // For critical errors, still throw to be handled by the calling code
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/model-schemas/search?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to search model schemas: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const data = result.data || result;
+
+      // Cache the result
+      try {
+        const redis = await this.getRedis();
+        await redis.setex(cacheKey, 300, JSON.stringify(data)); // 5 minutes TTL
+      } catch (error) {
+        logger.warn('Cache write failed', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+
+      return data;
+    } catch (error) {
+      logger.error('Failed to search model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        params
+      });
+      throw error;
+    }
+  }
+
+  // ============================
+  // 🔍 GET OPERATIONS
+  // ============================
+
+  /**
+   * Get model schema by ID with caching
+   */
+  static async getModelSchemaById(id: string): Promise<ModelSchema | null> {
+    const cacheKey = `model_schema:${id}`;
+
+    try {
+      // Try cache first
+      const redis = await this.getRedis();
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        logger.debug('Model schema cache hit', { id });
+        return JSON.parse(cached);
+      }
+    } catch (error) {
+      logger.warn('Cache read failed, proceeding without cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+        headers,
+      });
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model schema: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const schema = data.data || data;
+
+      // Cache the result
+      try {
+        const redis = await this.getRedis();
+        await redis.setex(cacheKey, 600, JSON.stringify(schema)); // 10 minutes TTL
+      } catch (error) {
+        logger.warn('Cache write failed', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+
+      return schema;
+    } catch (error) {
+      logger.error('Failed to fetch model schema by ID', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get model schema by type and subtype
+   */
+  static async getModelSchemaByTypeAndSubType(
+    type: string,
+    subType: string
+  ): Promise<ModelSchema | null> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/model-schemas/by-type/${encodeURIComponent(type)}/${encodeURIComponent(subType)}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model schema by type: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+    } catch (error) {
+      logger.error('Failed to fetch model schema by type and subtype', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        type,
+        subType
+      });
       throw error;
     }
   }
@@ -390,378 +316,406 @@ export class ModelSchemasService {
   // ============================
 
   /**
-   * Create a new model schema
+   * Create new model schema
    */
-  static async createModelSchema(data: ModelSchemaCreateData): Promise<ModelSchema> {
-    const startTime = performance.now();
-    
+  static async createModelSchema(
+    data: ModelSchemaCreateData,
+    userContext?: any
+  ): Promise<ModelSchema> {
     try {
-      const session = await auth();
-      const userContext = session?.user ? {
-        id: session.user.id,
-        userId: session.user.id,
-        tenantId: (session.user as any).tenantId,
-        roles: (session.user as any).roles || [],
-      } : null;
-      if (!userContext) {
-        throw new Error('User context required for model schema creation');
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create model schema: ${response.statusText}`);
       }
 
-      // Prepare schema data with tenant isolation
-      const schemaData = {
-        ...data,
-        tenantId: userContext.tenantId || null, // Super admin can create global schemas
-        createdBy: userContext.id,
-        updatedBy: userContext.id,
-        isActive: data.isActive ?? true,
-      };
-
-      // Create schema in database transaction
-      const newSchema = await prisma.modelSchema.create({
-        data: schemaData,
-      });
-
-      // Audit logging
-      await AuditService.logEntityChange({
-        entityType: 'model_schema',
-        entityId: newSchema.id,
-        action: 'create',
-        userId: userContext.id,
-        tenantId: userContext.tenantId,
-        changes: {
-          created: schemaData
-        },
-        metadata: {
-          type: data.type,
-          subType: data.subType
-        }
-      });
+      const result = await response.json();
+      const schema = result.data || result;
 
       // Invalidate related caches
-      await this.invalidateModelSchemasCaches(userContext);
+      await this.invalidateCache(userContext);
 
-      logger.userAction('model_schema_created', {
-        schemaId: newSchema.id,
-        type: data.type,
-        subType: data.subType,
-        userId: userContext.id,
-        tenantId: userContext.tenantId,
-        responseTime: performance.now() - startTime
+      logger.info('Model schema created', {
+        id: schema.id,
+        type: schema.type,
+        subType: schema.subType
       });
 
-      return newSchema as ModelSchema;
-
+      return schema;
     } catch (error) {
-      logger.error('model_schema_create_error', {
-        error: error.message,
-        data,
-        responseTime: performance.now() - startTime
+      logger.error('Failed to create model schema', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        data
       });
       throw error;
     }
   }
 
   /**
-   * Update an existing model schema
+   * Update model schema
    */
-  static async updateModelSchema(data: ModelSchemaUpdateData): Promise<ModelSchema> {
-    const startTime = performance.now();
-    
+  static async updateModelSchema(
+    data: ModelSchemaUpdateData,
+    userContext?: any
+  ): Promise<ModelSchema> {
     try {
-      const session = await auth();
-      const userContext = session?.user ? {
-        id: session.user.id,
-        userId: session.user.id,
-        tenantId: (session.user as any).tenantId,
-        roles: (session.user as any).roles || [],
-      } : null;
-      if (!userContext) {
-        throw new Error('User context required for model schema update');
-      }
-
-      // Get existing schema for audit comparison
-      const existingSchema = await prisma.modelSchema.findUnique({
-        where: { id: data.id },
-      });
-
-      if (!existingSchema) {
-        throw new Error('Model schema not found');
-      }
-
-      // Tenant access validation
-      const isSuperAdmin = userContext?.roles?.includes('super_admin');
-      if (!isSuperAdmin && existingSchema.tenantId !== userContext.tenantId) {
-        throw new Error('Access denied: Cannot modify schema from different tenant');
-      }
-
-      // Prepare update data
-      const updateData = {
-        ...data,
-        updatedBy: userContext.id,
-        updatedAt: new Date(),
-      };
-      delete (updateData as any).id;
-
-      // Update in database
-      const updatedSchema = await prisma.modelSchema.update({
-        where: { id: data.id },
-        data: updateData,
-      });
-
-      // Audit logging with change tracking
-      await AuditService.logEntityChange({
-        entityType: 'model_schema',
-        entityId: data.id,
-        action: 'update',
-        userId: userContext.id,
-        tenantId: userContext.tenantId,
-        changes: {
-          before: existingSchema,
-          after: updatedSchema
-        },
-        metadata: {
-          fieldsChanged: Object.keys(updateData)
-        }
-      });
-
-      // Invalidate related caches
-      await this.invalidateModelSchemasCaches(userContext);
-
-      logger.userAction('model_schema_updated', {
-        schemaId: data.id,
-        userId: userContext.id,
-        tenantId: userContext.tenantId,
-        fieldsChanged: Object.keys(updateData),
-        responseTime: performance.now() - startTime
-      });
-
-      return updatedSchema as ModelSchema;
-
-    } catch (error) {
-      logger.error('model_schema_update_error', {
-        error: error.message,
-        schemaId: data.id,
-        responseTime: performance.now() - startTime
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Update model schema fields only
-   */
-  static async updateModelSchemaFields(
-    id: string,
-    schemaDefinition: SchemaDefinition
-  ): Promise<ModelSchema | null> {
-    const result = await prisma.modelSchema.update({
-      where: {
-        id: id,
-        tenantId: null, // Only update platform-level schemas
-      },
-      data: {
-        schema: schemaDefinition as any,
-        updatedAt: new Date(),
-      },
-    });
-
-    return result ? this.transformModelSchema(result) : null;
-  }
-
-  // ============================
-  // 🗑️ DELETE OPERATIONS
-  // ============================
-
-  /**
-   * Delete a model schema
-   */
-  static async deleteModelSchema(schemaId: string): Promise<void> {
-    const startTime = performance.now();
-    
-    try {
-      const session = await auth();
-      const userContext = session?.user ? {
-        id: session.user.id,
-        userId: session.user.id,
-        tenantId: (session.user as any).tenantId,
-        roles: (session.user as any).roles || [],
-      } : null;
-      if (!userContext) {
-        throw new Error('User context required for model schema deletion');
-      }
-
-      // Get existing schema for audit logging
-      const existingSchema = await prisma.modelSchema.findUnique({
-        where: { id: schemaId },
-      });
-
-      if (!existingSchema) {
-        throw new Error('Model schema not found');
-      }
-
-      // Tenant access validation
-      const isSuperAdmin = userContext?.roles?.includes('super_admin');
-      if (!isSuperAdmin && existingSchema.tenantId !== userContext.tenantId) {
-        throw new Error('Access denied: Cannot delete schema from different tenant');
-      }
-
-      // Soft delete (mark as inactive) instead of hard delete
-      await prisma.modelSchema.update({
-        where: { id: schemaId },
-        data: {
-          isActive: false,
-          updatedBy: userContext.id,
-          updatedAt: new Date(),
-        },
-      });
-
-      // Audit logging
-      await AuditService.logEntityChange(
-        existingSchema.tenantId, // tenantId
-        'model_schema', // entityType
-        schemaId, // entityId
-        'delete', // action
-        userContext.id, // userId
-        existingSchema, // oldData
-        null, // newData (deleted)
-        { deleteType: 'soft_delete' } // metadata
-      );
-
-      // Invalidate related caches
-      await this.invalidateModelSchemasCaches(userContext);
-
-      logger.userAction('model_schema_deleted', {
-        schemaId,
-        type: existingSchema.type,
-        subType: existingSchema.subType,
-        userId: userContext.id,
-        tenantId: userContext.tenantId,
-        responseTime: performance.now() - startTime
-      });
-
-    } catch (error) {
-      logger.error('model_schema_delete_error', {
-        error: error instanceof Error ? error.message : String(error),
-        schemaId,
-        responseTime: performance.now() - startTime
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Soft delete (deactivate) a model schema
-   */
-  static async deactivateModelSchema(id: string): Promise<boolean> {
-    const result = await prisma.modelSchema.update({
-      where: {
-        id: id,
-        tenantId: null, // Only deactivate platform-level schemas
-      },
-      data: {
-        isActive: false,
-        updatedAt: new Date(),
-      },
-    });
-
-    return !!result;
-  }
-
-  // ============================
-  // 🔧 UTILITY METHODS
-  // ============================
-
-  /**
-   * Transform database result to ModelSchema interface
-   */
-  private static transformModelSchema(result: any): ModelSchema {
-    return {
-      id: result.id,
-      tenantId: result.tenantId,
-      type: result.type,
-      subType: result.subType,
-      displayName: result.displayName || {},
-      description: result.description || {},
-      schema: result.schema || { fields: [], version: '1.0.0' },
-      isActive: result.isActive,
-      metadata: result.metadata || {},
-      createdAt: result.createdAt.toISOString(),
-      updatedAt: result.updatedAt.toISOString(),
-    };
-  }
-
-  /**
-   * Validate schema definition
-   */
-  static validateSchemaDefinition(schema: SchemaDefinition): boolean {
-    if (!schema.fields || !Array.isArray(schema.fields)) {
-      return false;
-    }
-
-    if (!schema.version) {
-      return false;
-    }
-
-    // Check for duplicate field names
-    const fieldNames = schema.fields.map(f => f.name);
-    const uniqueNames = new Set(fieldNames);
-    if (fieldNames.length !== uniqueNames.size) {
-      return false;
-    }
-
-    // Validate each field
-    for (const field of schema.fields) {
-      if (!field.id || !field.name || !field.type) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * Invalidate all model schemas related caches
-   */
-  private static async invalidateModelSchemasCaches(userContext: any): Promise<void> {
-    try {
-      const isSuperAdmin = userContext?.roles?.includes('super_admin');
-      const tenantId = userContext?.tenantId;
-
-      // Redis cache keys to invalidate
-      const cachePatterns = [];
+      const headers = await ApiAuthService.getAuthHeaders();
+      const { id, ...updateData } = data;
       
-      if (isSuperAdmin) {
-        cachePatterns.push('cache:super_admin:model_schemas:*');
-        // Super admin changes affect all tenant caches
-        cachePatterns.push('cache:*:model_schemas:*');
-      } else if (tenantId) {
-        cachePatterns.push(`cache:${tenantId}:model_schemas:*`);
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update model schema: ${response.statusText}`);
       }
 
-      // Invalidate Redis caches
+      const result = await response.json();
+      const schema = result.data || result;
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+      await this.invalidateSingleCache(id);
+
+      logger.info('Model schema updated', { id });
+
+      return schema;
+    } catch (error) {
+      logger.error('Failed to update model schema', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        data
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete model schema
+   */
+  static async deleteModelSchema(id: string, userContext?: any): Promise<boolean> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/${id}`, {
+        method: 'DELETE',
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete model schema: ${response.statusText}`);
+      }
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+      await this.invalidateSingleCache(id);
+
+      logger.info('Model schema deleted', { id });
+
+      return true;
+    } catch (error) {
+      logger.error('Failed to delete model schema', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id
+      });
+      throw error;
+    }
+  }
+
+  // ============================
+  // 🔄 BULK OPERATIONS
+  // ============================
+
+  /**
+   * Bulk create model schemas
+   */
+  static async bulkCreateModelSchemas(
+    schemas: ModelSchemaCreateData[],
+    userContext?: any
+  ): Promise<ModelSchema[]> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/create`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ schemas }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to bulk create model schemas: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const createdSchemas = result.data || result;
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+
+      logger.info('Model schemas bulk created', { count: createdSchemas.length });
+
+      return createdSchemas;
+    } catch (error) {
+      logger.error('Failed to bulk create model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        count: schemas.length
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk update model schemas
+   */
+  static async bulkUpdateModelSchemas(
+    updates: ModelSchemaUpdateData[],
+    userContext?: any
+  ): Promise<ModelSchema[]> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/update`, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ updates }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to bulk update model schemas: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const updatedSchemas = result.data || result;
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+      for (const update of updates) {
+        await this.invalidateSingleCache(update.id);
+      }
+
+      logger.info('Model schemas bulk updated', { count: updatedSchemas.length });
+
+      return updatedSchemas;
+    } catch (error) {
+      logger.error('Failed to bulk update model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        count: updates.length
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk upsert model schemas
+   */
+  static async bulkUpsertModelSchemas(
+    schemas: (ModelSchemaCreateData & { id?: string })[],
+    userContext?: any
+  ): Promise<ModelSchema[]> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/upsert`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ schemas }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to bulk upsert model schemas: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const upsertedSchemas = result.data || result;
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+
+      logger.info('Model schemas bulk upserted', { count: upsertedSchemas.length });
+
+      return upsertedSchemas;
+    } catch (error) {
+      logger.error('Failed to bulk upsert model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        count: schemas.length
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk delete model schemas
+   */
+  static async bulkDeleteModelSchemas(
+    ids: string[],
+    userContext?: any
+  ): Promise<number> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/bulk/delete`, {
+        method: 'DELETE',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to bulk delete model schemas: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const deletedCount = result.count || 0;
+
+      // Invalidate caches
+      await this.invalidateCache(userContext);
+      for (const id of ids) {
+        await this.invalidateSingleCache(id);
+      }
+
+      logger.info('Model schemas bulk deleted', { count: deletedCount });
+
+      return deletedCount;
+    } catch (error) {
+      logger.error('Failed to bulk delete model schemas', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        count: ids.length
+      });
+      throw error;
+    }
+  }
+
+  // ============================
+  // 📊 STATS OPERATIONS
+  // ============================
+
+  /**
+   * Get model schema statistics
+   */
+  static async getModelSchemaStats(userContext?: any): Promise<ModelSchemaStats> {
+    const cacheKey = getCacheKey('stats', userContext);
+
+    try {
+      // Try cache first
       const redis = await this.getRedis();
-      for (const pattern of cachePatterns) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        logger.debug('Model schema stats cache hit');
+        return JSON.parse(cached);
+      }
+    } catch (error) {
+      logger.warn('Cache read failed, proceeding without cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/model-schemas/stats`, {
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model schema stats: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const stats = data.data || data;
+
+      // Cache the result
+      try {
+        const redis = await this.getRedis();
+        await redis.setex(cacheKey, 300, JSON.stringify(stats)); // 5 minutes TTL
+      } catch (error) {
+        logger.warn('Cache write failed', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+
+      return stats;
+    } catch (error) {
+      logger.error('Failed to fetch model schema stats', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  // ============================
+  // 🗑️ CACHE OPERATIONS
+  // ============================
+
+  /**
+   * Invalidate all model schema caches
+   */
+  private static async invalidateCache(userContext?: any): Promise<void> {
+    try {
+      const redis = await this.getRedis();
+      const patterns = [
+        'platform:model_schemas:*',
+        'tenant:*:model_schemas:*'
+      ];
+
+      for (const pattern of patterns) {
         const keys = await redis.keys(pattern);
         if (keys.length > 0) {
           await redis.del(...keys);
+          logger.debug('Model schema cache invalidated', { pattern, count: keys.length });
         }
       }
-
-      logger.info('model_schemas_cache_invalidated', {
-        patterns: cachePatterns,
-        userContext: {
-          userId: userContext.id,
-          tenantId: userContext.tenantId,
-          isSuperAdmin
-        }
-      });
-
     } catch (error) {
-      logger.error('model_schemas_cache_invalidation_error', {
-        error: error.message,
-        userContext
+      logger.warn('Failed to invalidate model schema cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
-      // Don't throw - cache invalidation failure shouldn't break the operation
     }
   }
+
+  /**
+   * Invalidate single model schema cache
+   */
+  private static async invalidateSingleCache(id: string): Promise<void> {
+    try {
+      const redis = await this.getRedis();
+      const cacheKey = `model_schema:${id}`;
+      await redis.del(cacheKey);
+      logger.debug('Single model schema cache invalidated', { id });
+    } catch (error) {
+      logger.warn('Failed to invalidate single model schema cache', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id
+      });
+    }
+  }
+
+  /**
+   * Transform model schema data
+   */
+  private static transformModelSchema(schema: any): ModelSchema {
+    return {
+      ...schema,
+      createdAt: new Date(schema.createdAt),
+      updatedAt: new Date(schema.updatedAt),
+    };
+  }
 }
+
+// Export singleton instance
+export const modelSchemasService = new ModelSchemasService();

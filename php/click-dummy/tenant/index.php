@@ -4,7 +4,7 @@ require_once '../includes/sidebar.php';
 require_once '../includes/components.php';
 require_once '../includes/footer.php';
 
-echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace Admin", "Tenant");
+echo renderHeader("Go Models - Brand Dashboard", "Brand Manager", "Brand Administrator", "Tenant");
 ?>
 
 <div class="d-flex">
@@ -18,33 +18,45 @@ echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace
         ]);
         
         echo createHeroSection(
-            "Go Models NYC",
-            "Premium fashion modeling marketplace serving New York City",
+            "Go Models",
+            "Premium modeling marketplace - Part of the Multi-Brand Platform Network",
             "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1200&h=300&fit=crop",
             [
-                ['label' => 'Add Model', 'icon' => 'fas fa-plus', 'style' => 'success'],
-                ['label' => 'Create Casting', 'icon' => 'fas fa-bullhorn', 'style' => 'primary']
+                ['label' => 'Add Professional', 'icon' => 'fas fa-plus', 'style' => 'success'],
+                ['label' => 'Create Gig', 'icon' => 'fas fa-bullhorn', 'style' => 'primary'],
+                ['label' => 'Brand Settings', 'icon' => 'fas fa-cog', 'style' => 'info']
             ]
         );
         ?>
         
-        <!-- Tenant Stats -->
+        <!-- Brand Performance Stats -->
         <div class="row mb-4">
             <?php
-            echo createStatCard('Active Models', '2,450', 'fas fa-users', 'success');
-            echo createStatCard('Open Castings', '17', 'fas fa-bullhorn', 'primary');
-            echo createStatCard('Applications Today', '89', 'fas fa-file-alt', 'info');
-            echo createStatCard('Monthly Revenue', '$125K', 'fas fa-dollar-sign', 'warning');
+            echo createStatCard('Active Professionals', '847', 'fas fa-users', 'success');
+            echo createStatCard('Open Gigs', '34', 'fas fa-bullhorn', 'primary');
+            echo createStatCard('Applications Today', '127', 'fas fa-file-alt', 'info');
+            echo createStatCard('Monthly Revenue', '€8,200', 'fas fa-euro-sign', 'warning');
             ?>
+        </div>
+        
+        <!-- Cross-Brand Integration Notice -->
+        <div class="alert alert-info mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-network-wired me-2"></i>
+                <div>
+                    <strong>Multi-Brand Integration Active</strong> - Your go-models.com brand is connected to voice-agents.com for cross-industry opportunities.
+                    <a href="#" class="alert-link ms-2">Manage Integrations</a>
+                </div>
+            </div>
         </div>
         
         <!-- Main Dashboard Content -->
         <div class="row">
             <!-- Left Column - Recent Activity -->
             <div class="col-lg-8">
-                <!-- Featured Models -->
+                <!-- Featured Professionals -->
                 <?php echo createCard(
-                    "Featured Models",
+                    "Featured Professionals",
                     '
                     <div class="row g-3">
                         <div class="col-md-4">
@@ -121,21 +133,21 @@ echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace
                         </div>
                     </div>
                     ',
-                    '<a href="talent/index.php" class="btn btn-outline-success">View All Models</a>'
+                    '<a href="talent/index.php" class="btn btn-outline-success">View All Professionals</a>'
                 ); ?>
 
-                <!-- Recent Casting Calls -->
+                <!-- Recent Gigs -->
                 <div class="mt-4">
                     <?php
-                    $headers = ['Casting Call', 'Client', 'Applications', 'Deadline', 'Status'];
+                    $headers = ['Gig Title', 'Client', 'Applications', 'Deadline', 'Status'];
                     $rows = [
                         ['Vogue Summer Campaign', 'Vogue Magazine', '247', 'Dec 15', '<span class="badge bg-success">Active</span>'],
                         ['Nike Athletic Wear', 'Nike Inc.', '189', 'Dec 18', '<span class="badge bg-success">Active</span>'],
                         ['H&M Fall Collection', 'H&M Fashion', '156', 'Dec 12', '<span class="badge bg-warning">Closing Soon</span>'],
-                        ['Zara Commercial Shoot', 'Zara Fashion', '203', 'Dec 20', '<span class="badge bg-success">Active</span>'],
+                        ['Cross-Brand Voice Project', 'voice-agents.com', '23', 'Dec 22', '<span class="badge bg-info">Cross-Brand</span>'],
                         ['Elle Editorial Feature', 'Elle Magazine', '91', 'Dec 10', '<span class="badge bg-danger">Closed</span>']
                     ];
-                    echo createDataTable('Recent Casting Calls', $headers, $rows, false);
+                    echo createDataTable('Recent Gigs', $headers, $rows, false);
                     ?>
                 </div>
             </div>
@@ -148,16 +160,19 @@ echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace
                     '
                     <div class="d-grid gap-2">
                         <button class="btn btn-success">
-                            <i class="fas fa-plus me-2"></i> Add New Model
+                            <i class="fas fa-plus me-2"></i> Add Professional
                         </button>
                         <button class="btn btn-primary">
-                            <i class="fas fa-bullhorn me-2"></i> Create Casting Call
+                            <i class="fas fa-bullhorn me-2"></i> Create Gig
                         </button>
                         <button class="btn btn-info">
-                            <i class="fas fa-users me-2"></i> Manage Applications
+                            <i class="fas fa-network-wired me-2"></i> Cross-Brand Setup
                         </button>
                         <button class="btn btn-warning">
-                            <i class="fas fa-chart-bar me-2"></i> View Analytics
+                            <i class="fas fa-chart-bar me-2"></i> Brand Analytics
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-cog me-2"></i> Industry Settings
                         </button>
                     </div>
                     '
@@ -166,11 +181,11 @@ echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace
                 <!-- Marketplace Stats -->
                 <div class="mt-3">
                     <?php echo createCard(
-                        "Marketplace Performance",
+                        "Brand Performance",
                         '
                         <div class="text-center mb-3">
                             <h4 class="text-success">4.8★</h4>
-                            <small class="text-muted">Average Model Rating</small>
+                            <small class="text-muted">Average Professional Rating</small>
                         </div>
                         <div class="mb-3">
                             <div class="d-flex justify-content-between">
@@ -212,30 +227,30 @@ echo renderHeader("Go Models NYC - Tenant Dashboard", "Admin User", "Marketplace
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-user-plus text-success me-3"></i>
                                 <div class="flex-grow-1">
-                                    <strong class="d-block">New Model Registered</strong>
-                                    <small class="text-muted">Isabella Chen joined the platform</small>
+                                    <strong class="d-block">New Professional Registered</strong>
+                                    <small class="text-muted">Isabella Chen joined go-models.com</small>
                                 </div>
                                 <small class="text-muted">2h</small>
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-bullhorn text-primary me-3"></i>
+                                <i class="fas fa-network-wired text-info me-3"></i>
                                 <div class="flex-grow-1">
-                                    <strong class="d-block">New Casting Call</strong>
-                                    <small class="text-muted">Vogue Summer Campaign posted</small>
+                                    <strong class="d-block">Cross-Brand Opportunity</strong>
+                                    <small class="text-muted">Voice agent needed for modeling gig</small>
                                 </div>
-                                <small class="text-muted">4h</small>
+                                <small class="text-muted">3h</small>
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-star text-warning me-3"></i>
+                                <i class="fas fa-bullhorn text-primary me-3"></i>
                                 <div class="flex-grow-1">
-                                    <strong class="d-block">High Rating Received</strong>
-                                    <small class="text-muted">Emma Johnson got 5-star review</small>
+                                    <strong class="d-block">New Gig Posted</strong>
+                                    <small class="text-muted">Vogue Summer Campaign created</small>
                                 </div>
-                                <small class="text-muted">6h</small>
+                                <small class="text-muted">4h</small>
                             </div>
                         </div>
                         '

@@ -1,4 +1,11 @@
-import { db } from '@/lib/db';
+/**
+ * Language Settings Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All language settings operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 
@@ -22,12 +29,13 @@ export interface LanguageSettings {
  * 
  * Manages centralized language configuration following cursor rules:
  * - Redis caching with proper tenant isolation
- * - Service layer pattern with transaction support
+ * - Service layer pattern with API integration
  * - Proper error handling and logging
  */
 class LanguageSettingsService {
   private readonly CACHE_TTL = 30 * 60; // 30 minutes
   private readonly DEFAULT_SOURCE_LANGUAGE = 'en-US';
+  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   /**
    * Get cache key for language settings
@@ -53,24 +61,20 @@ class LanguageSettingsService {
         return JSON.parse(cached);
       }
 
-      // Query database
-      // TODO: Implement proper language settings table
-      // The Language model in Prisma doesn't have isDefault, tenantId fields
-      // This needs to be redesigned to use a separate settings table
-      // For now, return default settings
-      const result = [];
+      // Query API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const url = tenantId 
+        ? `${this.API_BASE_URL}/api/v1/admin/language-settings?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v1/admin/language-settings`;
 
-      // Return default settings until proper language settings table is implemented
-      const settings: LanguageSettings = {
-        code: this.DEFAULT_SOURCE_LANGUAGE,
-        tenantId: tenantId ? tenantId.toString() : null,
-        sourceLanguageCode: this.DEFAULT_SOURCE_LANGUAGE,
-        fallbackLanguageCode: this.DEFAULT_SOURCE_LANGUAGE,
-        autoTranslateEnabled: false,
-        qualityThreshold: 0.8,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+      const response = await fetch(url, { headers });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch language settings: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const settings = data.data || data;
 
       // Cache the result
       try {
@@ -91,55 +95,6 @@ class LanguageSettingsService {
 
       // Return fallback settings
       return {
-        id: 'fallback',
-        tenantId: tenantId || null,
-        sourceLanguageCode: this.DEFAULT_SOURCE_LANGUAGE,
-        fallbackLanguageCode: this.DEFAULT_SOURCE_LANGUAGE,
-        autoTranslateEnabled: false,
-        qualityThreshold: 0.8,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-    }
-  }
-
-  /**
-   * Update source language setting
-   */
-  async updateSourceLanguage(tenantId: number | null, sourceLanguageCode: string): Promise<void> {
-    try {
-      // TODO: Implement proper language settings storage
-      // For now, just log the change
-      logger.info('Source language update requested (not implemented)', { tenantId, sourceLanguageCode });
-
-      // Invalidate cache
-      const cacheKey = this.getCacheKey(tenantId);
-      const redis = await getRedisClient();
-      await redis.del(cacheKey);
-
-      // Also invalidate all translation caches for this tenant
-      await this.invalidateTranslationCaches(tenantId);
-
-      logger.info('Source language updated', { tenantId, sourceLanguageCode });
-
-    } catch (error) {
-      logger.error('Error updating source language', { 
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
-        sourceLanguageCode 
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Create default language settings
-   */
-  private async createDefaultSettings(tenantId?: number): Promise<LanguageSettings> {
-    try {
-      // TODO: Implement proper language settings storage
-      // For now, return default settings
-      const settings: LanguageSettings = {
         code: this.DEFAULT_SOURCE_LANGUAGE,
         tenantId: tenantId ? tenantId.toString() : null,
         sourceLanguageCode: this.DEFAULT_SOURCE_LANGUAGE,
@@ -149,84 +104,188 @@ class LanguageSettingsService {
         createdAt: new Date(),
         updatedAt: new Date()
       };
+    }
+  }
 
-      logger.info('Created default language settings', { 
-        tenantId,
-        sourceLanguage: settings.sourceLanguageCode 
+  /**
+   * Update language settings
+   */
+  async updateLanguageSettings(
+    tenantId: number | undefined,
+    settings: Partial<LanguageSettings>
+  ): Promise<LanguageSettings> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const url = tenantId 
+        ? `${this.API_BASE_URL}/api/v1/admin/language-settings?tenantId=${tenantId}`
+        : `${this.API_BASE_URL}/api/v1/admin/language-settings`;
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
       });
 
-      return settings;
+      if (!response.ok) {
+        throw new Error(`Failed to update language settings: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const updatedSettings = data.data || data;
+
+      // Invalidate cache
+      await this.invalidateCache(tenantId);
+
+      logger.info('Language settings updated', { tenantId, updatedSettings });
+
+      return updatedSettings;
 
     } catch (error) {
-      logger.error('Error creating default language settings', { 
+      logger.error('Error updating language settings', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId 
+        tenantId,
+        settings
       });
       throw error;
     }
   }
 
   /**
-   * Invalidate all translation caches for a tenant
+   * Get source language code
    */
-  private async invalidateTranslationCaches(tenantId?: number): Promise<void> {
+  async getSourceLanguageCode(tenantId?: number): Promise<string> {
+    const settings = await this.getLanguageSettings(tenantId);
+    return settings.sourceLanguageCode;
+  }
+
+  /**
+   * Get fallback language code
+   */
+  async getFallbackLanguageCode(tenantId?: number): Promise<string> {
+    const settings = await this.getLanguageSettings(tenantId);
+    return settings.fallbackLanguageCode;
+  }
+
+  /**
+   * Check if auto-translate is enabled
+   */
+  async isAutoTranslateEnabled(tenantId?: number): Promise<boolean> {
+    const settings = await this.getLanguageSettings(tenantId);
+    return settings.autoTranslateEnabled;
+  }
+
+  /**
+   * Get quality threshold
+   */
+  async getQualityThreshold(tenantId?: number): Promise<number> {
+    const settings = await this.getLanguageSettings(tenantId);
+    return settings.qualityThreshold;
+  }
+
+  /**
+   * Get all available languages
+   */
+  async getAvailableLanguages(): Promise<Array<{ code: string; name: string; nativeName: string }>> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/languages`, {
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch available languages: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
+    } catch (error) {
+      logger.error('Error getting available languages', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      // Return default languages
+      return [
+        { code: 'en-US', name: 'English', nativeName: 'English' },
+        { code: 'es-ES', name: 'Spanish', nativeName: 'Español' },
+        { code: 'fr-FR', name: 'French', nativeName: 'Français' },
+        { code: 'de-DE', name: 'German', nativeName: 'Deutsch' },
+      ];
+    }
+  }
+
+  /**
+   * Set source language
+   */
+  async setSourceLanguage(tenantId: number | undefined, languageCode: string): Promise<void> {
+    await this.updateLanguageSettings(tenantId, { sourceLanguageCode: languageCode });
+  }
+
+  /**
+   * Set fallback language
+   */
+  async setFallbackLanguage(tenantId: number | undefined, languageCode: string): Promise<void> {
+    await this.updateLanguageSettings(tenantId, { fallbackLanguageCode: languageCode });
+  }
+
+  /**
+   * Toggle auto-translate
+   */
+  async setAutoTranslateEnabled(tenantId: number | undefined, enabled: boolean): Promise<void> {
+    await this.updateLanguageSettings(tenantId, { autoTranslateEnabled: enabled });
+  }
+
+  /**
+   * Set quality threshold
+   */
+  async setQualityThreshold(tenantId: number | undefined, threshold: number): Promise<void> {
+    if (threshold < 0 || threshold > 1) {
+      throw new Error('Quality threshold must be between 0 and 1');
+    }
+    await this.updateLanguageSettings(tenantId, { qualityThreshold: threshold });
+  }
+
+  /**
+   * Invalidate cached language settings
+   */
+  async invalidateCache(tenantId?: number): Promise<void> {
     try {
       const redis = await getRedisClient();
-      const tenant = tenantId ? tenantId.toString() : 'global';
-      const pattern = `cache:${tenant}:translations:*`;
-
-      const keys = await redis.keys(pattern);
-      if (keys.length > 0) {
-        await redis.del(...keys);
-        logger.info('Translation caches invalidated', { tenantId, keysCount: keys.length });
-      }
+      const cacheKey = this.getCacheKey(tenantId);
+      await redis.del(cacheKey);
+      
+      logger.info('Language settings cache invalidated', { tenantId, cacheKey });
     } catch (error) {
-      logger.warn('Failed to invalidate translation caches', { 
+      logger.warn('Failed to invalidate language settings cache', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId 
+        tenantId
       });
     }
   }
 
   /**
-   * Get available source languages for tenant
+   * Invalidate all language settings cache
    */
-  async getAvailableSourceLanguages(tenantId?: number): Promise<Array<{
-    code: string;
-    name: string;
-    nativeName: string;
-    isDefault: boolean;
-  }>> {
+  async invalidateAllCache(): Promise<void> {
     try {
-      const conditions = tenantId 
-        ? [eq(supportedLanguages.tenantId, tenantId)]
-        : [eq(supportedLanguages.tenantId, null)];
-
-      const languages = await db
-        .select({
-          code: supportedLanguages.code,
-          name: supportedLanguages.name,
-          nativeName: supportedLanguages.nativeName,
-          isDefault: supportedLanguages.isDefault
-        })
-        .from(supportedLanguages)
-        .where(and(
-          eq(supportedLanguages.isActive, true),
-          ...conditions
-        ))
-        .orderBy(supportedLanguages.name);
-
-      return languages;
-
+      const redis = await getRedisClient();
+      const pattern = 'cache:*:language-settings';
+      const keys = await redis.keys(pattern);
+      
+      if (keys.length > 0) {
+        await redis.del(...keys);
+        logger.info('All language settings cache invalidated', { keysDeleted: keys.length });
+      }
     } catch (error) {
-      logger.error('Error getting available source languages', { 
-        error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId 
+      logger.warn('Failed to invalidate all language settings cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
-      return [];
     }
   }
 }
 
 // Export singleton instance
-export const languageSettingsService = new LanguageSettingsService(); 
+export const languageSettingsService = new LanguageSettingsService();

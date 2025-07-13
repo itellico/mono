@@ -1,8 +1,14 @@
-import { db as prisma } from '@/lib/db';
+/**
+ * Audit Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All audit operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { createHash } from 'crypto';
-import { type AuditLog, type UserActivityLog } from '@prisma/client';
 
 export interface AuditLogEntry {
   tenantId: number;
@@ -60,6 +66,7 @@ export interface AuditResponse {
 export class AuditService {
   private readonly CACHE_TTL = 300; // 5 minutes for audit logs
   private readonly ACTIVITY_CACHE_TTL = 180; // 3 minutes for activity logs
+  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   /**
    * Generate cache key for audit log queries
@@ -120,18 +127,19 @@ export class AuditService {
    */
   async logAction(entry: AuditLogEntry): Promise<void> {
     try {
-      await prisma.auditLog.create({
-        data: {
-          tenantId: entry.tenantId,
-          userId: entry.userId,
-          action: entry.action,
-          entityType: entry.entityType,
-          entityId: entry.entityId,
-          changes: entry.changes || {},
-          context: entry.context || {},
-          timestamp: new Date()
-        }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(entry),
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to log audit entry: ${response.statusText}`);
+      }
 
       logger.info('Audit log entry created', {
         tenantId: entry.tenantId,
@@ -187,15 +195,19 @@ export class AuditService {
    */
   async logUserActivity(entry: UserActivityEntry): Promise<void> {
     try {
-      await prisma.userActivityLog.create({
-        data: {
-          tenantId: entry.tenantId,
-          userId: entry.userId,
-          action: entry.action,
-          path: entry.component, // Map component to path field
-          metadata: entry.metadata || {}
-        }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/activity`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(entry),
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to log user activity: ${response.statusText}`);
+      }
 
       logger.debug('User activity logged', {
         tenantId: entry.tenantId,
@@ -231,7 +243,7 @@ export class AuditService {
       });
     }
 
-    const result = await this.queryAuditDatabase(filters);
+    const result = await this.queryAuditAPI(filters);
 
     try {
       const redis = await getRedisClient();
@@ -245,89 +257,40 @@ export class AuditService {
   }
 
   /**
-   * Query database for audit logs with filters
+   * Query API for audit logs with filters
    */
-  private async queryAuditDatabase(filters: AuditFilters): Promise<AuditResponse> {
-    const {
-      tenantId,
-      entityType,
-      entityId,
-      action,
-      changedBy,
-      startDate,
-      endDate,
-      search,
-      page = 1,
-      limit = 50
-    } = filters;
-
-    const offset = (page - 1) * Math.min(limit, 100);
-    const whereConditions: any = { tenantId: tenantId };
-
-    // Entity filters
-    if (entityType) {
-      whereConditions.entityType = entityType;
-    }
-    if (entityId) {
-      whereConditions.entityId = entityId;
-    }
-    if (action) {
-      whereConditions.action = action;
-    }
-    if (changedBy) {
-      whereConditions.userId = changedBy;
-    }
-
-    // Date range filters
-    if (startDate) {
-      whereConditions.timestamp = { ...whereConditions.timestamp, gte: startDate };
-    }
-    if (endDate) {
-      whereConditions.timestamp = { ...whereConditions.timestamp, lte: endDate };
-    }
-
-    // Search filter (search in entity type or context)
-    if (search) {
-      whereConditions.OR = [
-        { entityType: { contains: search, mode: 'insensitive' } },
-        { entityId: { contains: search, mode: 'insensitive' } },
-      ];
-    }
-
+  private async queryAuditAPI(filters: AuditFilters): Promise<AuditResponse> {
     try {
-      const logs = await prisma.auditLog.findMany({
-        where: whereConditions,
-        orderBy: { timestamp: 'desc' },
-        take: Math.min(limit, 100),
-        skip: offset,
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams();
+      
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
       });
 
-      const totalCount = await prisma.auditLog.count({
-        where: whereConditions,
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit?${queryParams}`, {
+        headers,
       });
 
-      logger.info('Audit logs retrieved from database', {
-        tenantId,
-        count: logs.length,
-        total: totalCount,
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audit logs: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      logger.info('Audit logs retrieved from API', {
+        tenantId: filters.tenantId,
+        count: data.logs?.length || 0,
         filters
       });
 
-      return {
-        logs,
-        pagination: {
-          page,
-          limit: Math.min(limit, 100),
-          total: totalCount,
-          totalPages: Math.ceil(totalCount / Math.min(limit, 100)),
-          hasMore: offset + Math.min(limit, 100) < totalCount
-        }
-      };
+      return data;
 
     } catch (error) {
       logger.error('Failed to query audit logs', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
         filters
       });
       throw error;
@@ -355,14 +318,17 @@ export class AuditService {
     }
 
     try {
-      const trail = await prisma.auditLog.findMany({
-        where: {
-          tenantId: tenantId,
-          entityType: entityType,
-          entityId: entityId,
-        },
-        orderBy: { timestamp: 'desc' },
-      });
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/audit/entity/${entityType}/${entityId}?tenantId=${tenantId}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch entity audit trail: ${response.statusText}`);
+      }
+
+      const trail = await response.json();
 
       try {
         const redis = await getRedisClient();
@@ -405,7 +371,7 @@ export class AuditService {
       });
     }
 
-    const result = await this.queryActivityDatabase(filters);
+    const result = await this.queryActivityAPI(filters);
 
     try {
       const redis = await getRedisClient();
@@ -419,73 +385,40 @@ export class AuditService {
   }
 
   /**
-   * Query database for user activity logs
+   * Query API for user activity logs
    */
-  private async queryActivityDatabase(filters: ActivityFilters): Promise<AuditResponse> {
-    const {
-      tenantId,
-      userId,
-      action,
-      component,
-      startDate,
-      endDate,
-      page = 1,
-      limit = 50
-    } = filters;
-
-    const offset = (page - 1) * Math.min(limit, 100);
-    const whereConditions: any = { tenantId: tenantId };
-
-    if (userId) {
-      whereConditions.userId = userId;
-    }
-    if (action) {
-      whereConditions.action = action;
-    }
-    if (component) {
-      whereConditions.component = { contains: component, mode: 'insensitive' };
-    }
-    if (startDate) {
-      whereConditions.timestamp = { ...whereConditions.timestamp, gte: startDate };
-    }
-    if (endDate) {
-      whereConditions.timestamp = { ...whereConditions.timestamp, lte: endDate };
-    }
-
+  private async queryActivityAPI(filters: ActivityFilters): Promise<AuditResponse> {
     try {
-      const logs = await prisma.userActivityLog.findMany({
-        where: whereConditions,
-        orderBy: { timestamp: 'desc' },
-        take: Math.min(limit, 100),
-        skip: offset,
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams();
+      
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
       });
 
-      const totalCount = await prisma.userActivityLog.count({
-        where: whereConditions,
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/activity?${queryParams}`, {
+        headers,
       });
 
-      logger.info('User activity retrieved from database', {
-        tenantId,
-        count: logs.length,
-        total: totalCount,
+      if (!response.ok) {
+        throw new Error(`Failed to fetch user activity: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      logger.info('User activity retrieved from API', {
+        tenantId: filters.tenantId,
+        count: data.logs?.length || 0,
         filters
       });
 
-      return {
-        logs,
-        pagination: {
-          page,
-          limit: Math.min(limit, 100),
-          total: totalCount,
-          totalPages: Math.ceil(totalCount / Math.min(limit, 100)),
-          hasMore: offset + Math.min(limit, 100) < totalCount
-        }
-      };
+      return data;
 
     } catch (error) {
       logger.error('Failed to query user activity', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        tenantId,
         filters
       });
       throw error;
@@ -550,7 +483,50 @@ export class AuditService {
       });
     }
   }
+
+  /**
+   * Export audit logs to various formats
+   */
+  async exportAuditLogs(filters: AuditFilters, format: 'csv' | 'json' | 'pdf' = 'csv'): Promise<Blob> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams();
+      
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      });
+      queryParams.append('format', format);
+
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/audit/export?${queryParams}`, {
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to export audit logs: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+
+      logger.info('Audit logs exported', {
+        tenantId: filters.tenantId,
+        format,
+        size: blob.size
+      });
+
+      return blob;
+
+    } catch (error) {
+      logger.error('Failed to export audit logs', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        filters,
+        format
+      });
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance
-export const auditService = new AuditService(); 
+export const auditService = new AuditService();

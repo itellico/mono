@@ -1,5 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+/**
+ * Saved Searches Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All saved search operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { cacheMiddleware } from '@/lib/cache/cache-middleware';
 import { logger } from '@/lib/logger';
 
@@ -102,6 +108,8 @@ export interface ApplySavedSearchResult {
  */
 export class SavedSearchesService {
   
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
   // ============================================================================
   // CACHE KEYS
   // ============================================================================
@@ -146,35 +154,26 @@ export class SavedSearchesService {
     return cacheMiddleware.get(
       cacheKey,
       async () => {
-        logger.info('Fetching user saved searches from database', { userId, tenantId, entityType });
+        logger.info('Fetching user saved searches from API', { userId, tenantId, entityType });
         
-        const searches = await prisma.savedSearch.findMany({
-          where: {
-            userId,
-            tenantId,
-            isActive: true,
-            ...(entityType && { entityType })
-          },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true
-              }
-            }
-          },
-          orderBy: [
-            { isDefault: 'desc' },
-            { name: 'asc' }
-          ]
+        const headers = await ApiAuthService.getAuthHeaders();
+        const queryParams = new URLSearchParams({
+          userId: userId.toString(),
+          tenantId: tenantId.toString(),
+          ...(entityType && { entityType })
         });
+        
+        const response = await fetch(
+          `${this.API_BASE_URL}/api/v1/saved-searches?${queryParams}`,
+          { headers }
+        );
 
-        return searches.map(search => ({
-          ...search,
-          createdAt: search.createdAt,
-          updatedAt: search.updatedAt
-        }));
+        if (!response.ok) {
+          throw new Error(`Failed to fetch saved searches: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data || data;
       },
       ['saved_searches', `user:${userId}`, `tenant:${tenantId}`],
       300 // 5 minutes TTL
@@ -194,39 +193,26 @@ export class SavedSearchesService {
     return cacheMiddleware.get(
       cacheKey,
       async () => {
-        logger.info('Fetching entity saved searches from database', { entityType, tenantId, userId });
+        logger.info('Fetching entity saved searches from API', { entityType, tenantId, userId });
         
-        const searches = await prisma.savedSearch.findMany({
-          where: {
-            entityType,
-            tenantId,
-            isActive: true,
-            OR: [
-              { isPublic: true },
-              ...(userId ? [{ userId }] : [])
-            ]
-          },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true
-              }
-            }
-          },
-          orderBy: [
-            { isDefault: 'desc' },
-            { isPublic: 'desc' },
-            { name: 'asc' }
-          ]
+        const headers = await ApiAuthService.getAuthHeaders();
+        const queryParams = new URLSearchParams({
+          entityType,
+          tenantId: tenantId.toString(),
+          ...(userId && { userId: userId.toString() })
         });
+        
+        const response = await fetch(
+          `${this.API_BASE_URL}/api/v1/saved-searches/entity?${queryParams}`,
+          { headers }
+        );
 
-        return searches.map(search => ({
-          ...search,
-          createdAt: search.createdAt,
-          updatedAt: search.updatedAt
-        }));
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entity saved searches: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data || data;
       },
       ['saved_searches', `entity:${entityType}`, `tenant:${tenantId}`],
       300 // 5 minutes TTL
@@ -242,30 +228,24 @@ export class SavedSearchesService {
     return cacheMiddleware.get(
       cacheKey,
       async () => {
-        logger.info('Fetching saved search by UUID from database', { uuid });
+        logger.info('Fetching saved search by UUID from API', { uuid });
         
-        const search = await prisma.savedSearch.findUnique({
-          where: { uuid },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true
-              }
-            }
-          }
-        });
+        const headers = await ApiAuthService.getAuthHeaders();
+        const response = await fetch(
+          `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+          { headers }
+        );
 
-        if (!search) {
+        if (response.status === 404) {
           return null;
         }
 
-        return {
-          ...search,
-          createdAt: search.createdAt,
-          updatedAt: search.updatedAt
-        };
+        if (!response.ok) {
+          throw new Error(`Failed to fetch saved search: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data || data;
       },
       ['saved_searches', `search:${uuid}`],
       600 // 10 minutes TTL
@@ -278,235 +258,383 @@ export class SavedSearchesService {
   static async createSavedSearch(data: CreateSavedSearchInput): Promise<SavedSearchData> {
     logger.info('Creating new saved search', { userId: data.userId, entityType: data.entityType, name: data.name });
     
-    // Handle default search logic - only one default per user per entity type
-    if (data.isDefault) {
-      await prisma.savedSearch.updateMany({
-        where: {
-          userId: data.userId,
-          tenantId: data.tenantId,
-          entityType: data.entityType,
-          isDefault: true
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches`,
+      {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
         },
-        data: { isDefault: false }
-      });
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to create saved search: ${response.statusText}`);
     }
 
-    const newSearch = await prisma.savedSearch.create({
-      data: {
-        ...data,
-        uuid: crypto.randomUUID()
-      },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        }
-      }
-    });
+    const result = await response.json();
+    const newSearch = result.data || result;
 
     // Invalidate related caches
-    await this.invalidateUserCaches(data.userId, data.tenantId, data.entityType);
+    await cacheMiddleware.invalidate([
+      `user:${data.userId}`,
+      `tenant:${data.tenantId}`,
+      `entity:${data.entityType}`
+    ]);
 
-    logger.info('Created saved search successfully', { id: newSearch.id, uuid: newSearch.uuid });
-
-    return {
-      ...newSearch,
-      createdAt: newSearch.createdAt,
-      updatedAt: newSearch.updatedAt
-    };
+    logger.info('Saved search created successfully', { uuid: newSearch.uuid, name: newSearch.name });
+    return newSearch;
   }
 
   /**
    * Update a saved search with cache invalidation
    */
-  static async updateSavedSearch(
-    uuid: string, 
-    data: UpdateSavedSearchInput,
-    userId: number,
-    tenantId: number
-  ): Promise<SavedSearchData> {
-    logger.info('Updating saved search', { uuid, userId });
+  static async updateSavedSearch(uuid: string, data: UpdateSavedSearchInput): Promise<SavedSearchData> {
+    logger.info('Updating saved search', { uuid, updates: Object.keys(data) });
     
-    // Get current search for validation and cache invalidation
-    const currentSearch = await this.getSavedSearchByUuid(uuid);
-    if (!currentSearch) {
-      throw new Error('Saved search not found');
-    }
-
-    // Validate ownership or permissions
-    if (currentSearch.userId !== userId && currentSearch.tenantId !== tenantId) {
-      throw new Error('Permission denied');
-    }
-
-    // Handle default search logic
-    if (data.isDefault && currentSearch.entityType) {
-      await prisma.savedSearch.updateMany({
-        where: {
-          userId,
-          tenantId,
-          entityType: currentSearch.entityType,
-          isDefault: true,
-          uuid: { not: uuid }
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+      {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
         },
-        data: { isDefault: false }
-      });
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to update saved search: ${response.statusText}`);
     }
 
-    const updatedSearch = await prisma.savedSearch.update({
-      where: { uuid },
-      data,
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        }
-      }
-    });
+    const result = await response.json();
+    const updatedSearch = result.data || result;
 
     // Invalidate related caches
-    await this.invalidateUserCaches(userId, tenantId, currentSearch.entityType);
+    await cacheMiddleware.invalidate([
+      `search:${uuid}`,
+      `user:${updatedSearch.userId}`,
+      `tenant:${updatedSearch.tenantId}`,
+      `entity:${updatedSearch.entityType}`
+    ]);
 
-    logger.info('Updated saved search successfully', { uuid });
-
-    return {
-      ...updatedSearch,
-      createdAt: updatedSearch.createdAt,
-      updatedAt: updatedSearch.updatedAt
-    };
+    logger.info('Saved search updated successfully', { uuid });
+    return updatedSearch;
   }
 
   /**
    * Delete a saved search with cache invalidation
    */
-  static async deleteSavedSearch(uuid: string, userId: number, tenantId: number): Promise<void> {
-    logger.info('Deleting saved search', { uuid, userId });
+  static async deleteSavedSearch(uuid: string): Promise<boolean> {
+    logger.info('Deleting saved search', { uuid });
     
-    // Get current search for validation
-    const currentSearch = await this.getSavedSearchByUuid(uuid);
-    if (!currentSearch) {
-      throw new Error('Saved search not found');
+    // Get search details for cache invalidation
+    const search = await this.getSavedSearchByUuid(uuid);
+    if (!search) {
+      return false;
     }
 
-    // Validate ownership or permissions
-    if (currentSearch.userId !== userId && currentSearch.tenantId !== tenantId) {
-      throw new Error('Permission denied');
-    }
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}`,
+      {
+        method: 'DELETE',
+        headers,
+      }
+    );
 
-    await prisma.savedSearch.delete({
-      where: { uuid }
-    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete saved search: ${response.statusText}`);
+    }
 
     // Invalidate related caches
-    await this.invalidateUserCaches(userId, tenantId, currentSearch.entityType);
+    await cacheMiddleware.invalidate([
+      `search:${uuid}`,
+      `user:${search.userId}`,
+      `tenant:${search.tenantId}`,
+      `entity:${search.entityType}`
+    ]);
 
-    logger.info('Deleted saved search successfully', { uuid });
+    logger.info('Saved search deleted successfully', { uuid });
+    return true;
   }
 
   /**
-   * Get saved searches statistics
+   * Check if a search name already exists for a user
    */
-  static async getSavedSearchStats(tenantId: number): Promise<SavedSearchStats> {
+  static async checkNameExists(
+    userId: number,
+    tenantId: number,
+    entityType: string,
+    name: string,
+    excludeUuid?: string
+  ): Promise<boolean> {
+    const headers = await ApiAuthService.getAuthHeaders();
+    const queryParams = new URLSearchParams({
+      userId: userId.toString(),
+      tenantId: tenantId.toString(),
+      entityType,
+      name,
+      ...(excludeUuid && { excludeUuid })
+    });
+    
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/check-name?${queryParams}`,
+      { headers }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to check name: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.exists || false;
+  }
+
+  /**
+   * Get the default saved search for an entity type
+   */
+  static async getDefaultSearch(
+    userId: number,
+    tenantId: number,
+    entityType: string
+  ): Promise<SavedSearchData | null> {
+    const headers = await ApiAuthService.getAuthHeaders();
+    const queryParams = new URLSearchParams({
+      userId: userId.toString(),
+      tenantId: tenantId.toString(),
+      entityType,
+    });
+    
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/default?${queryParams}`,
+      { headers }
+    );
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch default search: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.data || data;
+  }
+
+  /**
+   * Set a saved search as default
+   */
+  static async setDefaultSearch(uuid: string): Promise<SavedSearchData> {
+    logger.info('Setting saved search as default', { uuid });
+    
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/default`,
+      {
+        method: 'PUT',
+        headers,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to set default search: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const updatedSearch = result.data || result;
+
+    // Invalidate related caches
+    await cacheMiddleware.invalidate([
+      `search:${uuid}`,
+      `user:${updatedSearch.userId}`,
+      `tenant:${updatedSearch.tenantId}`,
+      `entity:${updatedSearch.entityType}`
+    ]);
+
+    logger.info('Default search set successfully', { uuid });
+    return updatedSearch;
+  }
+
+  /**
+   * Get statistics for saved searches
+   */
+  static async getStats(tenantId: number): Promise<SavedSearchStats> {
     const cacheKey = this.getStatsKey(tenantId);
     
     return cacheMiddleware.get(
       cacheKey,
       async () => {
-        logger.info('Fetching saved search statistics from database', { tenantId });
+        logger.info('Fetching saved search stats from API', { tenantId });
         
-        const [total, defaults, publicSearches, entityTypes] = await Promise.all([
-          prisma.savedSearch.count({
-            where: { tenantId, isActive: true }
-          }),
-          prisma.savedSearch.count({
-            where: { tenantId, isActive: true, isDefault: true }
-          }),
-          prisma.savedSearch.count({
-            where: { tenantId, isActive: true, isPublic: true }
-          }),
-          prisma.savedSearch.groupBy({
-            by: ['entityType'],
-            where: { tenantId, isActive: true }
-          }).then(groups => groups.length)
-        ]);
+        const headers = await ApiAuthService.getAuthHeaders();
+        const response = await fetch(
+          `${this.API_BASE_URL}/api/v1/saved-searches/stats?tenantId=${tenantId}`,
+          { headers }
+        );
 
-        return {
-          total,
-          defaults,
-          public: publicSearches,
-          entityTypes
-        };
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stats: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.data || data;
       },
-      ['saved_searches', 'stats', `tenant:${tenantId}`],
-      900 // 15 minutes TTL
+      ['saved_searches', `stats:${tenantId}`],
+      300 // 5 minutes TTL
     );
   }
 
   /**
-   * Convert saved search data to AdminListPage configuration format
+   * Apply a saved search to get filters and configuration
    */
-  static convertToAdminListPageConfig(search: SavedSearchData): ApplySavedSearchResult {
+  static async applySavedSearch(uuid: string): Promise<ApplySavedSearchResult> {
+    const search = await this.getSavedSearchByUuid(uuid);
+    
+    if (!search) {
+      throw new Error('Saved search not found');
+    }
+
     const result: ApplySavedSearchResult = {
       filters: {}
     };
 
-    // Convert filters from database format to AdminListPage format
+    // Parse filters
     if (search.filters && typeof search.filters === 'object') {
       Object.entries(search.filters).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          result.filters[key] = value.map(String);
+        if (key === 'search' && typeof value === 'string') {
+          result.searchValue = value;
+        } else if (Array.isArray(value)) {
+          result.filters[key] = value.map(v => String(v));
         } else if (value !== null && value !== undefined) {
           result.filters[key] = [String(value)];
         }
       });
     }
 
-    // Convert sort configuration
+    // Parse sort configuration
     if (search.sortBy) {
       result.sortConfig = {
         column: search.sortBy,
-        direction: (search.sortOrder === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc'
+        direction: (search.sortOrder as 'asc' | 'desc') || 'asc'
       };
     }
 
-    // Convert column configuration
-    if (search.columnConfig && typeof search.columnConfig === 'object') {
-      result.columnVisibility = search.columnConfig as ColumnConfiguration;
+    // Parse column visibility
+    if (search.columnConfig) {
+      result.columnVisibility = search.columnConfig;
     }
 
     return result;
   }
 
-  // ============================================================================
-  // CACHE INVALIDATION
-  // ============================================================================
-
   /**
-   * Invalidate all caches related to a user's saved searches
+   * Clone a saved search
    */
-  private static async invalidateUserCaches(userId: number, tenantId: number, entityType: string): Promise<void> {
-    const tags = [
-      'saved_searches',
-      `user:${userId}`,
-      `tenant:${tenantId}`,
-      `entity:${entityType}`,
-      'stats'
-    ];
+  static async cloneSavedSearch(uuid: string, newName: string): Promise<SavedSearchData> {
+    const original = await this.getSavedSearchByUuid(uuid);
+    
+    if (!original) {
+      throw new Error('Saved search not found');
+    }
 
-    await cacheMiddleware.invalidateByTags(tags);
-    logger.info('Invalidated saved search caches', { userId, tenantId, entityType, tags });
+    const cloneData: CreateSavedSearchInput = {
+      userId: original.userId,
+      tenantId: original.tenantId,
+      name: newName,
+      description: original.description || undefined,
+      entityType: original.entityType,
+      filters: original.filters,
+      sortBy: original.sortBy || undefined,
+      sortOrder: original.sortOrder || undefined,
+      columnConfig: original.columnConfig || undefined,
+      isDefault: false,
+      isPublic: original.isPublic
+    };
+
+    return this.createSavedSearch(cloneData);
   }
 
   /**
-   * Clear all saved search caches for a tenant
+   * Override a saved search (update filters from current state)
    */
-  static async clearTenantCaches(tenantId: number): Promise<void> {
-    await cacheMiddleware.invalidateByTags(['saved_searches', `tenant:${tenantId}`]);
-    logger.info('Cleared all saved search caches for tenant', { tenantId });
+  static async overrideSavedSearch(
+    uuid: string,
+    filters: Record<string, unknown>,
+    sortBy?: string,
+    sortOrder?: string,
+    columnConfig?: Record<string, boolean>
+  ): Promise<SavedSearchData> {
+    logger.info('Overriding saved search', { uuid });
+    
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/override`,
+      {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filters,
+          sortBy,
+          sortOrder,
+          columnConfig
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to override saved search: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const updatedSearch = result.data || result;
+
+    // Invalidate cache
+    await cacheMiddleware.invalidate([`search:${uuid}`]);
+
+    logger.info('Saved search overridden successfully', { uuid });
+    return updatedSearch;
   }
-} 
+
+  /**
+   * Promote a saved search to public (admin only)
+   */
+  static async promoteSavedSearch(uuid: string): Promise<SavedSearchData> {
+    logger.info('Promoting saved search to public', { uuid });
+    
+    const headers = await ApiAuthService.getAuthHeaders();
+    const response = await fetch(
+      `${this.API_BASE_URL}/api/v1/saved-searches/${uuid}/promote`,
+      {
+        method: 'PUT',
+        headers,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to promote saved search: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    const updatedSearch = result.data || result;
+
+    // Invalidate related caches
+    await cacheMiddleware.invalidate([
+      `search:${uuid}`,
+      `tenant:${updatedSearch.tenantId}`,
+      `entity:${updatedSearch.entityType}`
+    ]);
+
+    logger.info('Saved search promoted successfully', { uuid });
+    return updatedSearch;
+  }
+}
