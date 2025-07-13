@@ -41,15 +41,15 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                         <div class="role-box super-admin">
                             <i class="fas fa-crown"></i>
                             <strong>Super Admin</strong>
-                            <small>Platform owner - all tenants</small>
+                            <small>Multi-brand platform owner</small>
                         </div>
                     </div>
                     <div class="hierarchy-connector"></div>
                     <div class="hierarchy-level">
                         <div class="role-box tenant-admin">
                             <i class="fas fa-user-shield"></i>
-                            <strong>Tenant Admin</strong>
-                            <small>Manages their platform instance</small>
+                            <strong>Brand Manager</strong>
+                            <small>Manages specific brand (go-models, go-pets, etc.)</small>
                         </div>
                     </div>
                     <div class="hierarchy-connector"></div>
@@ -57,7 +57,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                         <div class="role-box manager">
                             <i class="fas fa-user-tie"></i>
                             <strong>Account Manager</strong>
-                            <small>Manages accounts/teams</small>
+                            <small>Manages business accounts/agencies</small>
                         </div>
                     </div>
                     <div class="hierarchy-connector"></div>
@@ -65,12 +65,12 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                         <div class="role-box agency">
                             <i class="fas fa-building"></i>
                             <strong>Agency</strong>
-                            <small>Professional account</small>
+                            <small>Business/Agency account</small>
                         </div>
                         <div class="role-box talent">
                             <i class="fas fa-user"></i>
-                            <strong>Talent</strong>
-                            <small>Individual performer</small>
+                            <strong>Professional</strong>
+                            <small>Individual talent (any industry)</small>
                         </div>
                         <div class="role-box guardian">
                             <i class="fas fa-user-friends"></i>
@@ -80,7 +80,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                         <div class="role-box guest">
                             <i class="fas fa-user-circle"></i>
                             <strong>Guest</strong>
-                            <small>Public access</small>
+                            <small>Public multi-brand access</small>
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                         </div>
                                     </div>
                                 </td>
-                                <td>Complete system access with all permissions</td>
+                                <td>Complete multi-brand platform access with all permissions</td>
                                 <td><span class="badge bg-danger">System</span></td>
                                 <td>2 users</td>
                                 <td>All permissions</td>
@@ -137,13 +137,13 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                             <i class="fas fa-user-shield"></i>
                                         </div>
                                         <div>
-                                            <strong>Tenant Admin</strong>
-                                            <div class="small text-muted">tenant_admin</div>
+                                            <strong>Brand Manager</strong>
+                                            <div class="small text-muted">brand_manager</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>Full administration of their tenant instance</td>
-                                <td><span class="badge bg-warning">Tenant</span></td>
+                                <td>Full administration of their specific brand (go-models, go-pets, voice-agents)</td>
+                                <td><span class="badge bg-warning">Brand</span></td>
                                 <td>5 users</td>
                                 <td>156 permissions</td>
                                 <td><span class="badge bg-success">Active</span></td>
@@ -165,7 +165,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                         </div>
                                     </div>
                                 </td>
-                                <td>Manage users and content within their account</td>
+                                <td>Manage users, content and custom fields within their business account</td>
                                 <td><span class="badge bg-primary">Custom</span></td>
                                 <td>23 users</td>
                                 <td>84 permissions</td>
@@ -193,7 +193,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                         </div>
                                     </div>
                                 </td>
-                                <td>Professional agency account with team management</td>
+                                <td>Professional agency account with cross-brand talent management</td>
                                 <td><span class="badge bg-primary">Custom</span></td>
                                 <td>156 users</td>
                                 <td>67 permissions</td>
@@ -216,12 +216,12 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                             <i class="fas fa-user"></i>
                                         </div>
                                         <div>
-                                            <strong>Talent</strong>
-                                            <div class="small text-muted">talent</div>
+                                            <strong>Professional</strong>
+                                            <div class="small text-muted">professional</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>Individual talent/model account</td>
+                                <td>Individual professional account (models, voice actors, pets, etc.)</td>
                                 <td><span class="badge bg-primary">Custom</span></td>
                                 <td>1,234 users</td>
                                 <td>45 permissions</td>
@@ -249,7 +249,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                         </div>
                                     </div>
                                 </td>
-                                <td>Parent/Guardian with oversight capabilities</td>
+                                <td>Parent/Guardian with oversight capabilities for minors across all brands</td>
                                 <td><span class="badge bg-primary">Custom</span></td>
                                 <td>89 users</td>
                                 <td>52 permissions</td>
@@ -263,6 +263,29 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
                                             <i class="fas fa-copy"></i>
                                         </button>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="role-icon guest-icon me-2">
+                                            <i class="fas fa-user-circle"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Guest</strong>
+                                            <div class="small text-muted">guest</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Public access for browsing all brands without registration</td>
+                                <td><span class="badge bg-secondary">System</span></td>
+                                <td>Unlimited</td>
+                                <td>12 permissions</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                                        <i class="fas fa-lock"></i>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -349,6 +372,7 @@ echo renderHeader("Roles Management - Platform Admin", "Admin User", "Super Admi
 .agency-icon { background-color: #20c997; color: white; }
 .talent-icon { background-color: #ffc107; color: white; }
 .guardian-icon { background-color: #6f42c1; color: white; }
+.guest-icon { background-color: #6c757d; color: white; }
 </style>
 
 <script>

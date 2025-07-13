@@ -1,15 +1,30 @@
 /**
- * Tenant Domain Service
+ * Tenant Domain Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All tenant domain operations go through NestJS API with proper authentication
  * 
  * Handles tenant detection by domain with Redis caching for performance.
  * Integrates with the 4-tier permission system and maintains tenant isolation.
  */
 
-import { prisma } from '@/lib/prisma';
-import { redis } from '@/lib/redis';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { parseDomain } from '@/lib/config/domains';
-import type { Tenant } from '@prisma/client';
+
+export interface Tenant {
+  id: number;
+  uuid: string;
+  name: string;
+  slug: string;
+  customDomain?: string | null;
+  isActive: boolean;
+  settings?: any;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
+}
 
 export interface TenantDomainInfo extends Tenant {
   domainType: 'subdomain' | 'custom';
@@ -17,6 +32,7 @@ export interface TenantDomainInfo extends Tenant {
 
 export class TenantDomainService {
   private static instance: TenantDomainService;
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   
   // Cache TTL: 5 minutes for domain mapping
   private readonly CACHE_TTL = 300;
@@ -35,6 +51,17 @@ export class TenantDomainService {
       TenantDomainService.instance = new TenantDomainService();
     }
     return TenantDomainService.instance;
+  }
+
+  private static async getRedis() {
+    try {
+      return await getRedisClient();
+    } catch (error) {
+      logger.warn('Redis client unavailable, proceeding without cache', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error; // Re-throw to be caught by the calling methods
+    }
   }
 
   /**
@@ -60,6 +87,7 @@ export class TenantDomainService {
 
       // Check Redis cache first
       const cacheKey = this.REDIS_KEYS.byDomain(domainWithoutPort);
+      const redis = await TenantDomainService.getRedis();
       const cached = await redis.get(cacheKey);
       
       if (cached) {
@@ -102,44 +130,78 @@ export class TenantDomainService {
    * Get tenant by custom domain
    */
   private async getTenantByCustomDomain(domain: string): Promise<TenantDomainInfo | null> {
-    const tenant = await prisma.tenant.findFirst({
-      where: {
-        customDomain: domain,
-        isActive: true,
-        deletedAt: null
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/by-domain/${encodeURIComponent(domain)}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
       }
-    });
 
-    if (tenant) {
-      return {
-        ...tenant,
-        domainType: 'custom'
-      };
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tenant by custom domain: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const tenant = data.data || data;
+
+      if (tenant) {
+        return {
+          ...tenant,
+          domainType: 'custom'
+        };
+      }
+
+      return null;
+    } catch (error) {
+      logger.error('Failed to fetch tenant by custom domain', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        domain
+      });
+      return null;
     }
-
-    return null;
   }
 
   /**
    * Get tenant by subdomain
    */
   private async getTenantBySubdomain(subdomain: string): Promise<TenantDomainInfo | null> {
-    const tenant = await prisma.tenant.findFirst({
-      where: {
-        slug: subdomain,
-        isActive: true,
-        deletedAt: null
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/by-slug/${encodeURIComponent(subdomain)}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
       }
-    });
 
-    if (tenant) {
-      return {
-        ...tenant,
-        domainType: 'subdomain'
-      };
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tenant by subdomain: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const tenant = data.data || data;
+
+      if (tenant) {
+        return {
+          ...tenant,
+          domainType: 'subdomain'
+        };
+      }
+
+      return null;
+    } catch (error) {
+      logger.error('Failed to fetch tenant by subdomain', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        subdomain
+      });
+      return null;
     }
-
-    return null;
   }
 
   /**
@@ -148,11 +210,20 @@ export class TenantDomainService {
    */
   async invalidateTenantDomainCache(tenantId: number): Promise<void> {
     try {
-      // Get tenant to find all associated domains
-      const tenant = await prisma.tenant.findUnique({
-        where: { id: tenantId },
-        select: { slug: true, customDomain: true }
-      });
+      // Get tenant to find all associated domains via API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/${tenantId}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        logger.warn('Failed to fetch tenant for cache invalidation', { tenantId });
+        return;
+      }
+
+      const data = await response.json();
+      const tenant = data.data || data;
 
       if (!tenant) return;
 
@@ -172,6 +243,7 @@ export class TenantDomainService {
 
       // Delete all related cache keys
       if (keysToDelete.length > 0) {
+        const redis = await TenantDomainService.getRedis();
         await redis.del(...keysToDelete);
         logger.info('Tenant domain cache invalidated', { tenantId, keysDeleted: keysToDelete.length });
       }
@@ -186,25 +258,20 @@ export class TenantDomainService {
    */
   async preloadCustomDomains(): Promise<void> {
     try {
-      const tenants = await prisma.tenant.findMany({
-        where: {
-          customDomain: { not: null },
-          isActive: true,
-          deletedAt: null
-        },
-        select: {
-          id: true,
-          uuid: true,
-          name: true,
-          slug: true,
-          customDomain: true,
-          isActive: true,
-          settings: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true
-        }
-      });
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants?customDomainOnly=true&isActive=true`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tenants with custom domains: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const tenants = data.data || data;
+
+      const redis = await TenantDomainService.getRedis();
 
       for (const tenant of tenants) {
         if (tenant.customDomain) {
@@ -227,15 +294,28 @@ export class TenantDomainService {
    * Validate if a custom domain is available
    */
   async isCustomDomainAvailable(domain: string, excludeTenantId?: number): Promise<boolean> {
-    const existing = await prisma.tenant.findFirst({
-      where: {
-        customDomain: domain,
-        ...(excludeTenantId && { id: { not: excludeTenantId } }),
-        deletedAt: null
-      }
-    });
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        domain,
+        ...(excludeTenantId && { excludeTenantId: excludeTenantId.toString() })
+      });
 
-    return !existing;
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/domain-availability?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to check domain availability: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.available || false;
+    } catch (error) {
+      logger.error('Error checking domain availability', { domain, excludeTenantId, error });
+      return false;
+    }
   }
 
   /**
@@ -248,11 +328,23 @@ export class TenantDomainService {
         throw new Error('Custom domain is already in use');
       }
 
-      // Update tenant
-      await prisma.tenant.update({
-        where: { id: tenantId },
-        data: { customDomain }
-      });
+      // Update tenant via API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${TenantDomainService.API_BASE_URL}/api/v1/admin/tenants/${tenantId}/custom-domain`,
+        {
+          method: 'PUT',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ customDomain }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to update tenant custom domain: ${response.statusText}`);
+      }
 
       // Invalidate cache
       await this.invalidateTenantDomainCache(tenantId);

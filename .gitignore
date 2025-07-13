@@ -198,3 +198,6 @@ tsconfig.tsbuildinfo
 # ========================================
 /docker-data/
 /mono
+
+# GitHub Workflows
+.github/workflows/

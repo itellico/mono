@@ -1,21 +1,15 @@
 /**
- * Enhanced Multi-Level Tagging Service for itellico Mono
+ * Enhanced Multi-Level Tagging Service - API Client
  * 
- * This service demonstrates the multi-level tagging system concept
- * supporting Platform → Tenant → Account → User scope hierarchy
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All enhanced tagging operations go through NestJS API with proper authentication
  */
 
-import { eq, and, or, sql, inArray, isNull, desc, asc } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { 
-  enhancedTags, 
-  enhancedEntityTags, 
-  type EnhancedTag, 
-  type EnhancedTagScope, 
-  type EnhancedTaggableEntityType 
-} from '@/lib/schemas';
-import { categories } from '@/lib/schemas';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { logger } from '@/lib/logger';
+
+export type EnhancedTagScope = 'platform' | 'tenant' | 'account' | 'user';
+export type EnhancedTaggableEntityType = string;
 
 export interface TaggingContext {
   tenantId?: number;
@@ -51,6 +45,49 @@ export interface UpdateTagParams {
   updatedBy: number;
 }
 
+export interface EnhancedTag {
+  id: string;
+  uuid: string;
+  name: string;
+  slug: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  categoryId?: string;
+  scopeLevel: EnhancedTagScope;
+  tenantId?: number;
+  accountId?: number;
+  userId?: number;
+  isSystem: boolean;
+  isActive: boolean;
+  usageCount: number;
+  metadata?: any;
+  createdBy: number;
+  updatedBy?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TagWithScope extends EnhancedTag {
+  scopeLevel: EnhancedTagScope;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    path: string;
+  } | null;
+}
+
+export interface CategoryHierarchy {
+  id: string;
+  name: string;
+  slug: string;
+  path: string;
+  level: number;
+  parent?: CategoryHierarchy;
+  children?: CategoryHierarchy[];
+}
+
 /**
  * Entity Type Registry - Defines which entities can be tagged and their allowed scopes
  */
@@ -82,735 +119,682 @@ export const ENHANCED_TAGGABLE_ENTITIES = {
   'dashboard': { scopes: ['tenant', 'account', 'user'] as EnhancedTagScope[] }
 } as const;
 
-export interface TagWithScope extends EnhancedTag {
-  scopeLevel: EnhancedTagScope;
-  category?: {
-    id: string;
-    name: string;
-    slug: string;
-    path: string;
-  } | null;
-}
-
-export interface CategoryHierarchy {
-  id: string;
-  name: string;
-  slug: string;
-  path: string;
-  level: number;
-  parentId: string | null;
-  children?: CategoryHierarchy[];
-}
-
 export class EnhancedTaggingService {
-  
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   /**
-   * Get available categories for dropdown selection
+   * Create a new enhanced tag
    */
-  async getAvailableCategories(context: TaggingContext): Promise<CategoryHierarchy[]> {
+  static async createTag(params: CreateTagParams): Promise<EnhancedTag> {
     try {
-      if (!context.tenantId) {
-        return [];
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create enhanced tag: ${response.statusText}`);
       }
 
-      const categoryList = await db.select({
-        id: categories.id,
-        name: categories.name,
-        slug: categories.slug,
-        path: categories.path,
-        level: categories.level,
-        parentId: categories.parentId,
-        sortOrder: categories.sortOrder
-      })
-      .from(categories)
-      .where(
-        and(
-          eq(categories.tenantId, context.tenantId),
-          eq(categories.isActive, true)
-        )
-      )
-      .orderBy(asc(categories.level), asc(categories.sortOrder), asc(categories.name));
+      const result = await response.json();
+      const newTag = result.data || result;
 
-      // Build hierarchy
-      const categoryMap = new Map<string, CategoryHierarchy>();
-      const rootCategories: CategoryHierarchy[] = [];
-
-      // First pass: create all category objects
-      categoryList.forEach(cat => {
-        categoryMap.set(cat.id, {
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          path: cat.path,
-          level: cat.level,
-          parentId: cat.parentId,
-          children: []
-        });
+      logger.info('Enhanced tag created', {
+        id: newTag.id,
+        name: newTag.name,
+        scope: newTag.scopeLevel,
+        tenantId: params.context.tenantId
       });
 
-      // Second pass: build hierarchy
-      categoryList.forEach(cat => {
-        const categoryObj = categoryMap.get(cat.id)!;
-        if (cat.parentId && categoryMap.has(cat.parentId)) {
-          const parent = categoryMap.get(cat.parentId)!;
-          parent.children = parent.children || [];
-          parent.children.push(categoryObj);
-        } else {
-          rootCategories.push(categoryObj);
-        }
-      });
+      return newTag;
 
-      return rootCategories;
-      
     } catch (error) {
-      logger.error('Failed to get available categories', { error, context });
-      throw new Error('Failed to retrieve categories');
+      logger.error('Failed to create enhanced tag', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        params
+      });
+      throw error;
     }
   }
 
   /**
-   * Get available tags with scope awareness and category information
+   * Update an enhanced tag
    */
-  async getAvailableTags(
-    context: TaggingContext, 
-    entityType?: EnhancedTaggableEntityType
+  static async updateTag(params: UpdateTagParams): Promise<EnhancedTag> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const { id, ...updateData } = params;
+      
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}`, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update enhanced tag: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const updatedTag = result.data || result;
+
+      logger.info('Enhanced tag updated', {
+        id: updatedTag.id,
+        name: updatedTag.name
+      });
+
+      return updatedTag;
+
+    } catch (error) {
+      logger.error('Failed to update enhanced tag', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id: params.id
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Delete an enhanced tag
+   */
+  static async deleteTag(id: string, context: TaggingContext): Promise<boolean> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}`, {
+        method: 'DELETE',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ context }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete enhanced tag: ${response.statusText}`);
+      }
+
+      logger.info('Enhanced tag deleted', { id });
+
+      return true;
+
+    } catch (error) {
+      logger.error('Failed to delete enhanced tag', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get enhanced tags by scope
+   */
+  static async getTagsByScope(
+    scope: EnhancedTagScope,
+    context: TaggingContext,
+    options: {
+      includeInactive?: boolean;
+      includeSystem?: boolean;
+      categoryId?: string;
+      search?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
   ): Promise<TagWithScope[]> {
     try {
-      const conditions = [];
-      
-      // Platform tags (accessible to everyone)
-      conditions.push(eq(enhancedTags.scopeLevel, 'platform'));
-      
-      // Configuration tags (super admin only)
-      if (context.userRole === 'super_admin') {
-        conditions.push(eq(enhancedTags.scopeLevel, 'configuration'));
-      }
-      
-      // Tenant-level tags
-      if (context.tenantId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'tenant'),
-            eq(enhancedTags.tenantId, context.tenantId)
-          )
-        );
-      }
-      
-      // Account-level tags
-      if (context.accountId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'account'),
-            eq(enhancedTags.accountId, context.accountId)
-          )
-        );
-      }
-      
-      // User-level tags
-      if (context.userId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'user'),
-            eq(enhancedTags.userId, context.userId)
-          )
-        );
-      }
-      
-      if (conditions.length === 0) {
-        return [];
-      }
-      
-      const results = await db.select({
-        id: enhancedTags.id,
-        name: enhancedTags.name,
-        slug: enhancedTags.slug,
-        description: enhancedTags.description,
-        color: enhancedTags.color,
-        icon: enhancedTags.icon,
-        categoryId: enhancedTags.categoryId,
-        scopeLevel: enhancedTags.scopeLevel,
-        tenantId: enhancedTags.tenantId,
-        accountId: enhancedTags.accountId,
-        userId: enhancedTags.userId,
-        isSystem: enhancedTags.isSystem,
-        isActive: enhancedTags.isActive,
-        usageCount: enhancedTags.usageCount,
-        metadata: enhancedTags.metadata,
-        createdBy: enhancedTags.createdBy,
-        updatedBy: enhancedTags.updatedBy,
-        createdAt: enhancedTags.createdAt,
-        updatedAt: enhancedTags.updatedAt,
-        // Category information
-        categoryName: categories.name,
-        categorySlug: categories.slug,
-        categoryPath: categories.path
-      })
-      .from(enhancedTags)
-      .leftJoin(categories, eq(enhancedTags.categoryId, categories.id))
-      .where(
-        and(
-          or(...conditions),
-          eq(enhancedTags.isActive, true)
-        )
-      )
-      .orderBy(desc(enhancedTags.usageCount), asc(enhancedTags.name));
-      
-      return results.map(tag => ({
-        ...tag,
-        scopeLevel: tag.scopeLevel as EnhancedTagScope,
-        category: tag.categoryName ? {
-          id: tag.categoryId!,
-          name: tag.categoryName,
-          slug: tag.categorySlug!,
-          path: tag.categoryPath!
-        } : null
-      }));
-      
-    } catch (error) {
-      logger.error('Failed to get available enhanced tags', { error, context, entityType });
-      throw new Error('Failed to retrieve enhanced tags');
-    }
-  }
-  
-  /**
-   * Tag an entity with proper scope validation
-   */
-  async tagEntity(params: {
-    tagId: string;
-    entityType: EnhancedTaggableEntityType;
-    entityId: string;
-    context: TaggingContext;
-    createdBy: number;
-  }): Promise<void> {
-    try {
-      logger.info('Tagging entity with enhanced tag', params);
-      
-      // Validate entity type is taggable
-      const entityConfig = ENHANCED_TAGGABLE_ENTITIES[params.entityType];
-      if (!entityConfig) {
-        throw new Error(`Entity type ${params.entityType} is not taggable`);
-      }
-      
-      // Get tag and validate it exists and is active
-      const tag = await db.select().from(enhancedTags).where(eq(enhancedTags.id, params.tagId)).limit(1);
-      if (!tag.length || !tag[0].isActive) {
-        throw new Error('Tag not found or inactive');
-      }
-      
-      // Validate scope access
-      const hasAccess = await this.validateTagAccess(tag[0], params.context);
-      if (!hasAccess) {
-        throw new Error('Insufficient permissions to use this tag');
-      }
-      
-      // Check if tag is already applied to this entity
-      const existingTag = await db.select()
-        .from(enhancedEntityTags)
-        .where(
-          and(
-            eq(enhancedEntityTags.tagId, params.tagId),
-            eq(enhancedEntityTags.entityType, params.entityType),
-            eq(enhancedEntityTags.entityId, params.entityId)
-          )
-        )
-        .limit(1);
-        
-      if (existingTag.length > 0) {
-        throw new Error('Tag already applied to this entity');
-      }
-      
-      // Create tag association in transaction
-      await db.transaction(async (tx) => {
-        // Create the tag association
-        await tx.insert(enhancedEntityTags).values({
-          tagId: params.tagId,
-          entityType: params.entityType,
-          entityId: params.entityId,
-          tenantId: params.context.tenantId!,
-          accountId: params.context.accountId,
-          createdBy: params.createdBy,
-        });
-        
-        // Update usage count
-        await tx.update(enhancedTags)
-          .set({ 
-            usageCount: sql`${enhancedTags.usageCount} + 1`,
-            updatedAt: new Date()
-          })
-          .where(eq(enhancedTags.id, params.tagId));
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        scope,
+        ...Object.fromEntries(
+          Object.entries({ ...context, ...options }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
       });
-      
-      logger.info('Entity tagged successfully with enhanced tag', params);
-      
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/by-scope?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tags by scope: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
     } catch (error) {
-      logger.error('Failed to tag entity with enhanced tag', { error, params });
+      logger.error('Failed to fetch tags by scope', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        scope,
+        context
+      });
       throw error;
     }
   }
-  
+
   /**
-   * Remove a tag from an entity
+   * Get all available enhanced tags for a context
    */
-  async untagEntity(params: {
-    tagId: string;
-    entityType: EnhancedTaggableEntityType;
-    entityId: string;
-    context: TaggingContext;
-  }): Promise<void> {
+  static async getAvailableTags(
+    context: TaggingContext,
+    entityType?: EnhancedTaggableEntityType,
+    options: {
+      includeInactive?: boolean;
+      includeSystem?: boolean;
+      categoryId?: string;
+      search?: string;
+    } = {}
+  ): Promise<TagWithScope[]> {
     try {
-      logger.info('Untagging entity', params);
-      
-      // Remove tag association in transaction
-      await db.transaction(async (tx) => {
-        // Remove the tag association
-        const result = await tx.delete(enhancedEntityTags)
-          .where(
-            and(
-              eq(enhancedEntityTags.tagId, params.tagId),
-              eq(enhancedEntityTags.entityType, params.entityType),
-              eq(enhancedEntityTags.entityId, params.entityId),
-              eq(enhancedEntityTags.tenantId, params.context.tenantId!)
-            )
-          );
-        
-        // Update usage count if tag was removed
-        if (result.rowCount && result.rowCount > 0) {
-          await tx.update(enhancedTags)
-            .set({ 
-              usageCount: sql`GREATEST(${enhancedTags.usageCount} - 1, 0)`,
-              updatedAt: new Date()
-            })
-            .where(eq(enhancedTags.id, params.tagId));
-        }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        ...Object.fromEntries(
+          Object.entries({ ...context, entityType, ...options }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
       });
-      
-      logger.info('Entity untagged successfully', params);
-      
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/available?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch available tags: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
     } catch (error) {
-      logger.error('Failed to untag entity', { error, params });
+      logger.error('Failed to fetch available tags', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        context,
+        entityType
+      });
       throw error;
     }
   }
-  
+
   /**
-   * Get tags associated with a specific entity
+   * Tag an entity
    */
-  async getEntityTags(
+  static async tagEntity(
+    entityType: EnhancedTaggableEntityType,
+    entityId: string,
+    tagIds: string[],
+    context: TaggingContext,
+    taggedBy: number
+  ): Promise<void> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/tag-entity`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entityType,
+          entityId,
+          tagIds,
+          context,
+          taggedBy,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to tag entity: ${response.statusText}`);
+      }
+
+      logger.info('Entity tagged', {
+        entityType,
+        entityId,
+        tagIds,
+        context
+      });
+
+    } catch (error) {
+      logger.error('Failed to tag entity', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        entityType,
+        entityId,
+        tagIds
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Untag an entity
+   */
+  static async untagEntity(
+    entityType: EnhancedTaggableEntityType,
+    entityId: string,
+    tagIds: string[],
+    context: TaggingContext
+  ): Promise<void> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/untag-entity`, {
+        method: 'DELETE',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entityType,
+          entityId,
+          tagIds,
+          context,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to untag entity: ${response.statusText}`);
+      }
+
+      logger.info('Entity untagged', {
+        entityType,
+        entityId,
+        tagIds,
+        context
+      });
+
+    } catch (error) {
+      logger.error('Failed to untag entity', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        entityType,
+        entityId,
+        tagIds
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get tags for an entity
+   */
+  static async getEntityTags(
     entityType: EnhancedTaggableEntityType,
     entityId: string,
     context: TaggingContext
   ): Promise<TagWithScope[]> {
     try {
-      if (!context.tenantId) {
-        return [];
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        entityType,
+        entityId,
+        ...Object.fromEntries(
+          Object.entries(context).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/entity-tags?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch entity tags: ${response.statusText}`);
       }
-      
-      const entityTagList = await db.select({
-        id: enhancedTags.id,
-        name: enhancedTags.name,
-        slug: enhancedTags.slug,
-        description: enhancedTags.description,
-        color: enhancedTags.color,
-        icon: enhancedTags.icon,
-        categoryId: enhancedTags.categoryId,
-        scopeLevel: enhancedTags.scopeLevel,
-        tenantId: enhancedTags.tenantId,
-        accountId: enhancedTags.accountId,
-        userId: enhancedTags.userId,
-        isSystem: enhancedTags.isSystem,
-        isActive: enhancedTags.isActive,
-        usageCount: enhancedTags.usageCount,
-        metadata: enhancedTags.metadata,
-        createdBy: enhancedTags.createdBy,
-        updatedBy: enhancedTags.updatedBy,
-        createdAt: enhancedTags.createdAt,
-        updatedAt: enhancedTags.updatedAt,
-        taggedAt: enhancedEntityTags.createdAt,
-        // Category information
-        categoryName: categories.name,
-        categorySlug: categories.slug,
-        categoryPath: categories.path
-      })
-      .from(enhancedTags)
-      .innerJoin(enhancedEntityTags, eq(enhancedTags.id, enhancedEntityTags.tagId))
-      .leftJoin(categories, eq(enhancedTags.categoryId, categories.id))
-      .where(
-        and(
-          eq(enhancedEntityTags.entityType, entityType),
-          eq(enhancedEntityTags.entityId, entityId),
-          eq(enhancedEntityTags.tenantId, context.tenantId!),
-          eq(enhancedTags.isActive, true)
-        )
-      )
-      .orderBy(enhancedTags.name);
-      
-      return entityTagList.map(tag => ({
-        ...tag,
-        scopeLevel: tag.scopeLevel as EnhancedTagScope,
-        category: tag.categoryName ? {
-          id: tag.categoryId!,
-          name: tag.categoryName,
-          slug: tag.categorySlug!,
-          path: tag.categoryPath!
-        } : null
-      }));
-      
+
+      const data = await response.json();
+      return data.data || data;
+
     } catch (error) {
-      logger.error('Failed to get entity enhanced tags', { error, entityType, entityId, context });
-      throw new Error('Failed to retrieve entity tags');
-    }
-  }
-  
-  /**
-   * Create a new enhanced tag
-   */
-  async createTag(params: CreateTagParams): Promise<string> {
-    try {
-      // Validate permissions
-      if (!this.canCreateTagAtScope(params.scope, params.context)) {
-        throw new Error(`Insufficient permissions to create ${params.scope} level tag`);
-      }
-      
-      // Determine scope-specific IDs
-      let tenantId: number | null = null;
-      let accountId: number | null = null;
-      let userId: number | null = null;
-      
-      switch (params.scope) {
-        case 'platform':
-        case 'configuration':
-          // Platform and configuration tags have no tenant/account/user constraints
-          break;
-        case 'tenant':
-          tenantId = params.context.tenantId!;
-          break;
-        case 'account':
-          tenantId = params.context.tenantId!;
-          accountId = params.context.accountId!;
-          break;
-        case 'user':
-          tenantId = params.context.tenantId!;
-          accountId = params.context.accountId!;
-          userId = params.context.userId!;
-          break;
-      }
-      
-      const [newTag] = await db.insert(enhancedTags).values({
-        name: params.name,
-        slug: params.slug,
-        description: params.description,
-        color: params.color,
-        icon: params.icon,
-        categoryId: params.categoryId,
-        scopeLevel: params.scope,
-        tenantId: tenantId,
-        accountId: accountId,
-        userId: userId,
-        isSystem: false,
-        isActive: true,
-        usageCount: 0,
-        createdBy: params.createdBy,
-        updatedBy: params.createdBy,
-      }).returning({ id: enhancedTags.id });
-      
-      logger.info('Enhanced tag created successfully', { tagId: newTag.id, params });
-      return newTag.id;
-      
-    } catch (error) {
-      logger.error('Failed to create enhanced tag', { error, params });
+      logger.error('Failed to fetch entity tags', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        entityType,
+        entityId,
+        context
+      });
       throw error;
     }
   }
-  
+
   /**
-   * Update an enhanced tag
+   * Get entities by tag
    */
-  async updateTag(params: UpdateTagParams): Promise<void> {
+  static async getEntitiesByTag(
+    tagId: string,
+    context: TaggingContext,
+    options: {
+      entityType?: EnhancedTaggableEntityType;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ entityType: string; entityId: string; taggedAt: Date; taggedBy: number }[]> {
     try {
-      // Get existing tag to check permissions
-      const [existingTag] = await db.select()
-        .from(enhancedTags)
-        .where(eq(enhancedTags.id, params.id))
-        .limit(1);
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        tagId,
+        ...Object.fromEntries(
+          Object.entries({ ...context, ...options }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
 
-      if (!existingTag) {
-        throw new Error('Tag not found');
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/entities-by-tag?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch entities by tag: ${response.statusText}`);
       }
 
-      // Validate access
-      if (!await this.validateTagAccess(existingTag, params.context)) {
-        throw new Error('Insufficient permissions to update this tag');
-      }
+      const data = await response.json();
+      return data.data || data;
 
-      // Prevent editing system tags unless super admin
-      if (existingTag.isSystem && params.context.userRole !== 'super_admin') {
-        throw new Error('System tags can only be edited by super administrators');
-      }
-
-      const updateData: Partial<typeof enhancedTags.$inferInsert> = {
-        updatedBy: params.updatedBy,
-        updatedAt: new Date()
-      };
-
-      if (params.name !== undefined) updateData.name = params.name;
-      if (params.slug !== undefined) updateData.slug = params.slug;
-      if (params.description !== undefined) updateData.description = params.description;
-      if (params.color !== undefined) updateData.color = params.color;
-      if (params.icon !== undefined) updateData.icon = params.icon;
-      if (params.categoryId !== undefined) updateData.categoryId = params.categoryId;
-      if (params.isActive !== undefined) updateData.isActive = params.isActive;
-      
-      // Only super admin can change scope level
-      if (params.scopeLevel !== undefined && params.context.userRole === 'super_admin') {
-        updateData.scopeLevel = params.scopeLevel as EnhancedTagScope;
-      }
-      
-      // Only super admin can change system flag
-      if (params.isSystem !== undefined && params.context.userRole === 'super_admin') {
-        updateData.isSystem = params.isSystem;
-      }
-
-      await db.update(enhancedTags)
-        .set(updateData)
-        .where(eq(enhancedTags.id, params.id));
-
-      logger.info('Enhanced tag updated successfully', { tagId: params.id, updateData });
-      
     } catch (error) {
-      logger.error('Failed to update enhanced tag', { error, params });
+      logger.error('Failed to fetch entities by tag', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tagId,
+        context
+      });
       throw error;
     }
   }
-  
+
   /**
-   * Delete an enhanced tag
+   * Search entities by tags
    */
-  async deleteTag(tagId: string, context: TaggingContext): Promise<void> {
+  static async searchEntitiesByTags(
+    tagIds: string[],
+    entityType: EnhancedTaggableEntityType,
+    context: TaggingContext,
+    options: {
+      matchAll?: boolean; // true = AND, false = OR
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ entityId: string; tags: TagWithScope[]; relevanceScore: number }[]> {
     try {
-      // Get existing tag to check permissions
-      const [existingTag] = await db.select()
-        .from(enhancedTags)
-        .where(eq(enhancedTags.id, tagId))
-        .limit(1);
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/search-entities`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tagIds,
+          entityType,
+          context,
+          ...options,
+        }),
+      });
 
-      if (!existingTag) {
-        throw new Error('Tag not found');
+      if (!response.ok) {
+        throw new Error(`Failed to search entities by tags: ${response.statusText}`);
       }
 
-      // Validate access
-      if (!await this.validateTagAccess(existingTag, context)) {
-        throw new Error('Insufficient permissions to delete this tag');
-      }
+      const data = await response.json();
+      return data.data || data;
 
-      // Prevent deleting system tags unless super admin
-      if (existingTag.isSystem && context.userRole !== 'super_admin') {
-        throw new Error('System tags can only be deleted by super administrators');
-      }
-
-      // Check if tag is in use
-      if (existingTag.usageCount > 0) {
-        throw new Error('Cannot delete tag that is currently in use');
-      }
-
-      await db.delete(enhancedTags)
-        .where(eq(enhancedTags.id, tagId));
-
-      logger.info('Enhanced tag deleted successfully', { tagId });
-      
     } catch (error) {
-      logger.error('Failed to delete enhanced tag', { error, tagId, context });
+      logger.error('Failed to search entities by tags', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tagIds,
+        entityType,
+        context
+      });
       throw error;
     }
   }
-  
+
   /**
-   * Get tag usage statistics by scope
+   * Get tag suggestions
    */
-  async getTagStatsByScope(context: TaggingContext): Promise<{
-    platform: number;
-    tenant: number;
-    account: number;
-    user: number;
-    configuration: number;
-    total: number;
+  static async getTagSuggestions(
+    query: string,
+    context: TaggingContext,
+    entityType?: EnhancedTaggableEntityType,
+    options: {
+      limit?: number;
+      includeInactive?: boolean;
+    } = {}
+  ): Promise<TagWithScope[]> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        q: query,
+        ...Object.fromEntries(
+          Object.entries({ ...context, entityType, ...options }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/suggestions?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tag suggestions: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
+    } catch (error) {
+      logger.error('Failed to fetch tag suggestions', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        query,
+        context
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get tag usage statistics
+   */
+  static async getTagUsageStats(
+    context: TaggingContext,
+    options: {
+      scope?: EnhancedTagScope;
+      entityType?: EnhancedTaggableEntityType;
+      dateFrom?: Date;
+      dateTo?: Date;
+      limit?: number;
+    } = {}
+  ): Promise<{
+    totalTags: number;
+    totalUsages: number;
+    topTags: { tag: TagWithScope; usageCount: number; entities: string[] }[];
+    scopeDistribution: Record<EnhancedTagScope, number>;
+    entityTypeDistribution: Record<string, number>;
   }> {
     try {
-      const conditions = [];
-      
-      // Platform tags
-      if (this.hasPlatformAccess(context)) {
-        conditions.push(eq(enhancedTags.scopeLevel, 'platform'));
-      }
-      
-      // Configuration tags (super admin only)
-      if (context.userRole === 'super_admin') {
-        conditions.push(eq(enhancedTags.scopeLevel, 'configuration'));
-      }
-      
-      // Tenant tags
-      if (context.tenantId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'tenant'),
-            eq(enhancedTags.tenantId, context.tenantId)
-          )
-        );
-      }
-      
-      // Account tags
-      if (context.accountId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'account'),
-            eq(enhancedTags.accountId, context.accountId)
-          )
-        );
-      }
-      
-      // User tags
-      if (context.userId) {
-        conditions.push(
-          and(
-            eq(enhancedTags.scopeLevel, 'user'),
-            eq(enhancedTags.userId, context.userId)
-          )
-        );
-      }
-      
-      if (conditions.length === 0) {
-        return { platform: 0, tenant: 0, account: 0, user: 0, configuration: 0, total: 0 };
-      }
-      
-      const [stats] = await db.select({
-        platform: sql<number>`COUNT(*) FILTER (WHERE scope_level = 'platform')`,
-        tenant: sql<number>`COUNT(*) FILTER (WHERE scope_level = 'tenant')`,
-        account: sql<number>`COUNT(*) FILTER (WHERE scope_level = 'account')`,
-        user: sql<number>`COUNT(*) FILTER (WHERE scope_level = 'user')`,
-        configuration: sql<number>`COUNT(*) FILTER (WHERE scope_level = 'configuration')`,
-        total: sql<number>`COUNT(*)`,
-      })
-      .from(enhancedTags)
-      .where(
-        and(
-          or(...conditions),
-          eq(enhancedTags.isActive, true)
-        )
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        ...Object.fromEntries(
+          Object.entries({ ...context, ...options }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/usage-stats?${queryParams}`,
+        { headers }
       );
-      
-      return stats;
-      
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tag usage stats: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
     } catch (error) {
-      logger.error('Failed to get enhanced tag stats', { error, context });
-      throw new Error('Failed to retrieve tag statistics');
+      logger.error('Failed to fetch tag usage stats', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        context,
+        options
+      });
+      throw error;
     }
   }
-  
+
   /**
-   * Search entities by tags with scope awareness
+   * Bulk tag entities
    */
-  async searchEntitiesByTags(params: {
-    tagIds: string[];
-    entityType: EnhancedTaggableEntityType;
-    context: TaggingContext;
-    matchAll?: boolean;
-  }): Promise<string[]> {
+  static async bulkTagEntities(
+    operations: {
+      entityType: EnhancedTaggableEntityType;
+      entityId: string;
+      tagIds: string[];
+      operation: 'add' | 'remove' | 'replace';
+    }[],
+    context: TaggingContext,
+    taggedBy: number
+  ): Promise<{ successful: number; failed: number; errors: any[] }> {
     try {
-      if (params.tagIds.length === 0) {
-        return [];
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/bulk-tag`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          operations,
+          context,
+          taggedBy,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to bulk tag entities: ${response.statusText}`);
       }
-      
-      let results;
-      
-      if (params.matchAll) {
-        // For AND logic, group by entityId and count distinct tags
-        results = await db.select({
-          entityId: enhancedEntityTags.entityId
-        })
-        .from(enhancedEntityTags)
-        .where(
-          and(
-            inArray(enhancedEntityTags.tagId, params.tagIds),
-            eq(enhancedEntityTags.entityType, params.entityType),
-            eq(enhancedEntityTags.tenantId, params.context.tenantId!)
-          )
-        )
-        .groupBy(enhancedEntityTags.entityId)
-        .having(sql`COUNT(DISTINCT ${enhancedEntityTags.tagId}) = ${params.tagIds.length}`);
-      } else {
-        // For OR logic, just get all matching entities
-        results = await db.select({
-          entityId: enhancedEntityTags.entityId
-        })
-        .from(enhancedEntityTags)
-        .where(
-          and(
-            inArray(enhancedEntityTags.tagId, params.tagIds),
-            eq(enhancedEntityTags.entityType, params.entityType),
-            eq(enhancedEntityTags.tenantId, params.context.tenantId!)
-          )
-        );
-      }
-      return results.map(r => r.entityId);
-      
+
+      const result = await response.json();
+      const bulkResult = result.data || result;
+
+      logger.info('Bulk tagging completed', {
+        successful: bulkResult.successful,
+        failed: bulkResult.failed,
+        operationsCount: operations.length
+      });
+
+      return bulkResult;
+
     } catch (error) {
-      logger.error('Failed to search entities by enhanced tags', { error, params });
-      throw new Error('Failed to search entities by tags');
+      logger.error('Failed to bulk tag entities', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        operationsCount: operations.length
+      });
+      throw error;
     }
   }
-  
+
   /**
-   * Private helper methods
+   * Get tag by ID
    */
-  
-  private hasPlatformAccess(context: TaggingContext): boolean {
-    return context.userRole === 'super_admin' || context.userRole === 'platform_admin';
-  }
-  
-  private async validateTagAccess(tag: EnhancedTag, context: TaggingContext): Promise<boolean> {
-    switch (tag.scopeLevel) {
-      case 'platform':
-        return true; // Platform tags are accessible to everyone
-        
-      case 'configuration':
-        return context.userRole === 'super_admin'; // Configuration tags only for super admin
-        
-      case 'tenant':
-        return tag.tenantId === context.tenantId;
-        
-      case 'account':
-        return tag.tenantId === context.tenantId && 
-               tag.accountId === context.accountId;
-               
-      case 'user':
-        return tag.tenantId === context.tenantId && 
-               tag.accountId === context.accountId && 
-               tag.userId === context.userId;
-               
-      default:
-        return false;
+  static async getTagById(id: string, context: TaggingContext): Promise<TagWithScope | null> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        ...Object.fromEntries(
+          Object.entries(context).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/enhanced-tags/${id}?${queryParams}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tag: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
+    } catch (error) {
+      logger.error('Failed to fetch tag by ID', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id,
+        context
+      });
+      throw error;
     }
   }
-  
-  private canCreateTagAtScope(scope: EnhancedTagScope, context: TaggingContext): boolean {
-    switch (scope) {
-      case 'platform':
-        return this.hasPlatformAccess(context);
-      case 'configuration':
-        return context.userRole === 'super_admin';
-      case 'tenant':
-        return !!context.tenantId && (
-          context.userRole === 'tenant_admin' || 
-          this.hasPlatformAccess(context)
-        );
-      case 'account':
-        return !!context.accountId && !!context.tenantId;
-      case 'user':
-        return !!context.userId && !!context.accountId && !!context.tenantId;
-      default:
-        return false;
+
+  /**
+   * Validate tagging operation
+   */
+  static async validateTaggingOperation(
+    entityType: EnhancedTaggableEntityType,
+    entityId: string,
+    tagIds: string[],
+    context: TaggingContext
+  ): Promise<{
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+    allowedTags: string[];
+    restrictedTags: string[];
+  }> {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/enhanced-tags/validate`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entityType,
+          entityId,
+          tagIds,
+          context,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to validate tagging operation: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+
+    } catch (error) {
+      logger.error('Failed to validate tagging operation', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        entityType,
+        entityId,
+        tagIds
+      });
+      throw error;
     }
   }
 }
 
 // Export singleton instance
-export const enhancedTaggingService = new EnhancedTaggingService(); 
+export const enhancedTaggingService = new EnhancedTaggingService();

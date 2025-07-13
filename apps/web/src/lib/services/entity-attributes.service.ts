@@ -1,5 +1,12 @@
-import { PrismaClient } from '@prisma/client';
-import type { Redis } from 'ioredis';
+/**
+ * Entity Attributes Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All entity attribute operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 
 export interface EntityAttribute {
@@ -29,11 +36,22 @@ export interface PaginationOptions {
 }
 
 export class EntityAttributesService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   constructor(
-    private db: PrismaClient,
-    private redis: Redis,
     private tenantId: number
   ) {}
+
+  private static async getRedis() {
+    try {
+      return await getRedisClient();
+    } catch (error) {
+      logger.warn('Redis client unavailable, proceeding without cache', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
+    }
+  }
 
   private getCacheKey(entityType: string, entityId: number, attributeKey?: string): string {
     const base = `tenant:${this.tenantId}:entity:${entityType}:${entityId}:attributes`;
@@ -52,23 +70,42 @@ export class EntityAttributesService {
     }
   ): Promise<EntityAttribute> {
     try {
-      // For now, store in cache only since we don't have the entity_attributes table yet
-      const attribute: EntityAttribute = {
-        id: `${entityType}-${entityId}-${attributeKey}`,
-        entityType,
-        entityId,
-        attributeKey,
-        attributeValue,
-        isSystem: options?.isSystem || false,
-        expiresAt: options?.expiresAt || null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdBy: options?.userId,
-        updatedBy: options?.userId
-      };
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tenantId: this.tenantId,
+          entityType,
+          entityId,
+          attributeKey,
+          attributeValue,
+          isSystem: options?.isSystem || false,
+          expiresAt: options?.expiresAt || null,
+          userId: options?.userId,
+        }),
+      });
 
-      const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
-      await this.redis.set(cacheKey, JSON.stringify(attribute), 'EX', 3600); // 1 hour TTL
+      if (!response.ok) {
+        throw new Error(`Failed to set entity attribute: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const attribute = result.data || result;
+
+      // Update cache
+      try {
+        const redis = await EntityAttributesService.getRedis();
+        const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
+        await redis.set(cacheKey, JSON.stringify(attribute), 'EX', 3600); // 1 hour TTL
+      } catch (redisError) {
+        logger.warn('Failed to cache entity attribute', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
+      }
 
       return attribute;
     } catch (error) {
@@ -88,22 +125,65 @@ export class EntityAttributesService {
     attributeKey: string
   ): Promise<EntityAttribute | null> {
     try {
-      const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
-      const cached = await this.redis.get(cacheKey);
-      
-      if (cached) {
-        const attribute = JSON.parse(cached) as EntityAttribute;
+      // Try cache first
+      try {
+        const redis = await EntityAttributesService.getRedis();
+        const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
+        const cached = await redis.get(cacheKey);
         
-        // Check if expired
-        if (attribute.expiresAt && new Date(attribute.expiresAt) < new Date()) {
-          await this.redis.del(cacheKey);
-          return null;
+        if (cached) {
+          const attribute = JSON.parse(cached) as EntityAttribute;
+          
+          // Check if expired
+          if (attribute.expiresAt && new Date(attribute.expiresAt) < new Date()) {
+            await redis.del(cacheKey);
+          } else {
+            return attribute;
+          }
         }
-        
-        return attribute;
+      } catch (redisError) {
+        logger.warn('Cache read failed, proceeding with API call', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
       }
 
-      return null;
+      // Fetch from API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        tenantId: this.tenantId.toString(),
+        entityType,
+        entityId: entityId.toString(),
+        attributeKey,
+      });
+
+      const response = await fetch(
+        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/get?${queryParams}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to get entity attribute: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const attribute = data.data || data;
+
+      // Cache the result
+      try {
+        const redis = await EntityAttributesService.getRedis();
+        const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
+        await redis.set(cacheKey, JSON.stringify(attribute), 'EX', 3600);
+      } catch (redisError) {
+        logger.warn('Failed to cache entity attribute', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
+      }
+
+      return attribute;
     } catch (error) {
       logger.error('Failed to get entity attribute', {
         entityType,
@@ -121,24 +201,37 @@ export class EntityAttributesService {
     includeExpired = false
   ): Promise<EntityAttribute[]> {
     try {
-      const pattern = this.getCacheKey(entityType, entityId) + ':*';
-      const keys = await this.redis.keys(pattern);
-      
-      const attributes: EntityAttribute[] = [];
-      
-      for (const key of keys) {
-        const cached = await this.redis.get(key);
-        if (cached) {
-          const attribute = JSON.parse(cached) as EntityAttribute;
-          
-          // Skip expired unless requested
-          if (!includeExpired && attribute.expiresAt && new Date(attribute.expiresAt) < new Date()) {
-            await this.redis.del(key);
-            continue;
-          }
-          
-          attributes.push(attribute);
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        tenantId: this.tenantId.toString(),
+        entityType,
+        entityId: entityId.toString(),
+        includeExpired: includeExpired.toString(),
+      });
+
+      const response = await fetch(
+        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/list?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get entity attributes: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const attributes = data.data || data;
+
+      // Update cache for each attribute
+      try {
+        const redis = await EntityAttributesService.getRedis();
+        for (const attribute of attributes) {
+          const cacheKey = this.getCacheKey(entityType, entityId, attribute.attributeKey);
+          await redis.set(cacheKey, JSON.stringify(attribute), 'EX', 3600);
         }
+      } catch (redisError) {
+        logger.warn('Failed to cache entity attributes', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
       }
 
       return attributes;
@@ -157,11 +250,29 @@ export class EntityAttributesService {
     pagination: PaginationOptions
   ): Promise<{ attributes: EntityAttribute[]; total: number }> {
     try {
-      // For now, return empty result since we're using cache only
-      // In production, this would query the database
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        tenantId: this.tenantId.toString(),
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString(),
+        ...Object.fromEntries(
+          Object.entries(filters).map(([key, value]) => [key, String(value)])
+        ),
+      });
+
+      const response = await fetch(
+        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/search?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get paginated attributes: ${response.statusText}`);
+      }
+
+      const data = await response.json();
       return {
-        attributes: [],
-        total: 0
+        attributes: data.data?.items || data.items || [],
+        total: data.data?.total || data.total || 0
       };
     } catch (error) {
       logger.error('Failed to get paginated attributes', {
@@ -180,9 +291,41 @@ export class EntityAttributesService {
     userId?: number
   ): Promise<boolean> {
     try {
-      const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
-      const result = await this.redis.del(cacheKey);
-      return result > 0;
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/remove`,
+        {
+          method: 'DELETE',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            tenantId: this.tenantId,
+            entityType,
+            entityId,
+            attributeKey,
+            userId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to remove entity attribute: ${response.statusText}`);
+      }
+
+      // Remove from cache
+      try {
+        const redis = await EntityAttributesService.getRedis();
+        const cacheKey = this.getCacheKey(entityType, entityId, attributeKey);
+        await redis.del(cacheKey);
+      } catch (redisError) {
+        logger.warn('Failed to remove attribute from cache', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
+      }
+
+      return true;
     } catch (error) {
       logger.error('Failed to remove entity attribute', {
         entityType,
@@ -206,31 +349,58 @@ export class EntityAttributesService {
     }>,
     userId: number
   ): Promise<EntityAttribute[]> {
-    const results: EntityAttribute[] = [];
-    
-    for (const attr of attributes) {
+    try {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${EntityAttributesService.API_BASE_URL}/api/v1/admin/entity-attributes/bulk`,
+        {
+          method: 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            tenantId: this.tenantId,
+            attributes: attributes.map(attr => ({
+              ...attr,
+              userId: attr.userId || userId
+            })),
+            userId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to set bulk attributes: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const createdAttributes = result.data || result;
+
+      // Update cache for successful attributes
       try {
-        const result = await this.setAttribute(
-          attr.entityType,
-          attr.entityId,
-          attr.attributeKey,
-          attr.attributeValue,
-          {
-            expiresAt: attr.expiresAt,
-            userId: attr.userId || userId
-          }
-        );
-        results.push(result);
-      } catch (error) {
-        logger.error('Failed to set attribute in bulk operation', {
-          entityType: attr.entityType,
-          entityId: attr.entityId,
-          attributeKey: attr.attributeKey,
-          error: error instanceof Error ? error.message : String(error)
+        const redis = await EntityAttributesService.getRedis();
+        for (const attribute of createdAttributes) {
+          const cacheKey = this.getCacheKey(
+            attribute.entityType,
+            attribute.entityId,
+            attribute.attributeKey
+          );
+          await redis.set(cacheKey, JSON.stringify(attribute), 'EX', 3600);
+        }
+      } catch (redisError) {
+        logger.warn('Failed to cache bulk attributes', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
         });
       }
+
+      return createdAttributes;
+    } catch (error) {
+      logger.error('Failed to set bulk attributes', {
+        count: attributes.length,
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
     }
-    
-    return results;
   }
 }
