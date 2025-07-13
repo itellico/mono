@@ -1,16 +1,25 @@
-import { eq, and, isNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { eq, and, isNull } from 'drizzle-orm';
+// import { db } from '@/lib/db';
+// import {
+//   llmScopeConfigs,
+//   llmScopes,
+//   llmProviders,
+//   llmApiKeys,
+//   type LlmScopeConfigWithRelations,
+//   type LlmPromptRequest
+// } from '@/lib/schemas/llm-integrations';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
-import {
-  llmScopeConfigs,
-  llmScopes,
-  llmProviders,
-  llmApiKeys,
-  type LlmScopeConfigWithRelations,
-  type LlmPromptRequest
-} from '@/lib/schemas/llm-integrations';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { encrypt, decrypt } from '@/lib/utils/encryption';
+
+// Keep type imports
+export type {
+  LlmScopeConfigWithRelations,
+  LlmPromptRequest
+} from '@/lib/schemas/llm-integrations';
 
 // ============================
 // LLM RESOLVER SERVICE

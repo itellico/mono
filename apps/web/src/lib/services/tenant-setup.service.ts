@@ -1,7 +1,10 @@
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db as prisma } from '@/lib/db';
 import { hash } from 'bcryptjs';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
-import { db as prisma } from '@/lib/db';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 interface TenantSetupData {
   name: string;

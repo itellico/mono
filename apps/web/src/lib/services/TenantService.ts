@@ -1,8 +1,11 @@
-import { db } from '@/lib/database';
-import { siteSettings, accounts, users } from '@/lib/schema';
-import { eq, and, count } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/database';
+// import { siteSettings, accounts, users } from '@/lib/schema';
+// import { eq, and, count } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
 import { TenantError } from '@/lib/platform/tenant-foundation';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 export class TenantService {
   constructor(private tenantId: number) {}

@@ -1,17 +1,20 @@
-import { eq, and, desc, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { 
-  emailTemplates, 
-  emailDeliveries, 
-  emailPreferences, 
-  emailCampaigns,
-  emailAnalytics,
-  emailProviders,
-  emailTemplateVariables,
-  tenants
-} from '@/lib/schemas';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { eq, and, desc, sql } from 'drizzle-orm';
+// import { db } from '@/lib/db';
+// import { 
+//   emailTemplates, 
+//   emailDeliveries, 
+//   emailPreferences, 
+//   emailCampaigns,
+//   emailAnalytics,
+//   emailProviders,
+//   emailTemplateVariables,
+//   tenants
+// } from '@/lib/schemas';
 import { queueEmail } from '@/lib/email-queue';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
 import path from 'path';

@@ -1,29 +1,41 @@
-import { db } from '@/lib/db';
-import { sql } from 'drizzle-orm';
-import { 
-  templates, 
-  reusableComponents, 
-  templateBaseLayouts, 
-  templateComponentUsage,
-  Template,
-  ReusableComponent,
-  TemplateBaseLayout,
-  YamlTemplate
-} from '@/lib/schemas/templates';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { sql } from 'drizzle-orm';
+// import { 
+//   templates, 
+//   reusableComponents, 
+//   templateBaseLayouts, 
+//   templateComponentUsage,
+//   Template,
+//   ReusableComponent,
+//   TemplateBaseLayout,
+//   YamlTemplate
+// } from '@/lib/schemas/templates';
+// import { eq, and, or, isNull, desc, asc } from 'drizzle-orm';
 import { 
   parseYamlTemplate, 
   generateYamlTemplate, 
   validateYamlTemplate,
   createEmptyTemplate 
 } from '@/lib/utils/yaml-template';
-import { eq, and, or, isNull, desc, asc } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+
+// Keep type imports
+export type {
+  Template,
+  ReusableComponent,
+  TemplateBaseLayout,
+  YamlTemplate
+} from '@/lib/schemas/templates';
 
 // ============================
 // 🎨 TEMPLATE SERVICE
 // ============================
 
 export class TemplateService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   /**
    * Get all templates for a tenant (includes global templates)
    */

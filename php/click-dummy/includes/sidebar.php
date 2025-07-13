@@ -15,12 +15,12 @@ function renderSidebar($tier, $items, $currentPage = '') {
     
     $sidebar = '
     <nav class="sidebar bg-dark text-white">
-        <div class="sidebar-header p-3 border-bottom border-secondary">
-            <h5 class="text-center mb-1">' . htmlspecialchars($tier) . ' Dashboard</h5>
+        <div class="sidebar-header">
+            <h5 class="text-center mb-1 text-white">' . htmlspecialchars($tier) . ' Dashboard</h5>
             <small class="text-center d-block" style="color: #adb5bd;">Tier ' . (array_search($tier, array_keys($tierColors)) + 1) . '</small>
         </div>
-        <div class="sidebar-content p-3">
-            <ul class="nav flex-column">';
+        <div class="sidebar-content">
+            <ul class="nav flex-column list-unstyled">';
     
     foreach ($items as $item) {
         $isActive = ($item['href'] ?? '') === $currentPage;
@@ -34,15 +34,15 @@ function renderSidebar($tier, $items, $currentPage = '') {
         if ($isSeparator) {
             $sidebar .= '
                 <li class="nav-item mt-3 mb-2">
-                    <hr class="border-secondary">
-                    <small class="text-muted text-uppercase fw-bold ps-2">' . htmlspecialchars($item['label']) . '</small>
+                    <hr>
+                    <div class="text-muted text-uppercase fw-bold">' . htmlspecialchars($item['label']) . '</div>
                 </li>';
         } else {
             $sidebar .= '
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white ' . $activeClass . ' ' . $subItemClass . '" href="' . htmlspecialchars($href) . '">
-                        <i class="' . htmlspecialchars($item['icon']) . ' me-2"></i> 
-                        ' . htmlspecialchars($item['label']) . '
+                <li class="nav-item">
+                    <a class="nav-link ' . $activeClass . ' ' . $subItemClass . '" href="' . htmlspecialchars($href) . '">
+                        <i class="' . htmlspecialchars($item['icon']) . '"></i>
+                        <span>' . htmlspecialchars($item['label']) . '</span>
                     </a>
                 </li>';
         }

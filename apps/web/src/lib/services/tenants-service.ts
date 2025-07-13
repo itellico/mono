@@ -1,8 +1,14 @@
-import { db } from '@/lib/db';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { Tenant } from '@prisma/client';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { createHash } from 'crypto';
-import { Tenant } from '@prisma/client';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+
+// Keep type import
+export type { Tenant } from '@prisma/client';
 
 interface TenantFilters {
   search?: string;

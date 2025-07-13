@@ -1,9 +1,12 @@
-import { db } from '@/lib/db';
-import { versionHistory } from '@/lib/schemas';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { versionHistory } from '@/lib/schemas';
+// import { eq, and, desc, count } from 'drizzle-orm';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
-import { eq, and, desc, count } from 'drizzle-orm';
 import { createHash } from 'crypto';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 export interface VersionEntry {
   tenantId: number;

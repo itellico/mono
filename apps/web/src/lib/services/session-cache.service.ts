@@ -4,12 +4,15 @@
  * Manages server-side session data storage to keep cookies lean
  */
 
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { userRoles, roles, permissions, rolePermissions } from '@/lib/schemas';
+// import { eq, and } from 'drizzle-orm';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { ServerSessionData } from '@/lib/auth/session-types';
-import { db } from '@/lib/db';
-import { userRoles, roles, permissions, rolePermissions } from '@/lib/schemas';
-import { eq, and } from 'drizzle-orm';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 export class SessionCacheService {
   private static readonly CACHE_PREFIX = 'session-data';

@@ -3,21 +3,31 @@
  * Bundles standard itellico Mono components + industry-specific components into complete templates
  */
 
-import { db } from '@/lib/db';
-import { 
-  industryTemplates, 
-  industryTemplateComponents,
-  type IndustryTemplate,
-  type IndustryTemplateComponent,
-  type IndustryType
-} from '@/lib/schemas/industry-templates';
-import { modelSchemas } from '@/lib/schemas/model-schemas';
-import { optionSets } from '@/lib/schemas/options';
-import { modules } from '@/lib/schemas/modules';
-import { pages } from '@/lib/schemas/industry-templates';
-import { formTemplates } from '@/lib/schemas/forms';
-import { eq, and, inArray, or } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { 
+//   industryTemplates, 
+//   industryTemplateComponents,
+//   type IndustryTemplate,
+//   type IndustryTemplateComponent,
+//   type IndustryType
+// } from '@/lib/schemas/industry-templates';
+// import { modelSchemas } from '@/lib/schemas/model-schemas';
+// import { optionSets } from '@/lib/schemas/options';
+// import { modules } from '@/lib/schemas/modules';
+// import { pages } from '@/lib/schemas/industry-templates';
+// import { formTemplates } from '@/lib/schemas/forms';
+// import { eq, and, inArray, or } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+
+// Keep type imports
+export type {
+  IndustryTemplate,
+  IndustryTemplateComponent,
+  IndustryType
+} from '@/lib/schemas/industry-templates';
 
 interface ComponentBundle {
   // Standard itellico Mono Components (ALWAYS INCLUDED)

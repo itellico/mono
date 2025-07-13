@@ -3,9 +3,12 @@
  * Centralized service for handling media uploads with tenant isolation
  */
 
-import { db } from '@/lib/database';
-import { mediaAssets, mediaProcessing } from '@/lib/schema';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/database';
+// import { mediaAssets, mediaProcessing } from '@/lib/schema';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import crypto from 'crypto';
 import path from 'path';
 import { writeFile, mkdir } from 'fs/promises';

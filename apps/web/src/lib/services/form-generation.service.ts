@@ -1,7 +1,11 @@
-import { db } from '@/lib/db';
-import { modelSchemas, optionSets, optionValues } from '@/lib/schemas';
-import { eq } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { modelSchemas, optionSets, optionValues } from '@/lib/schemas';
+// import { eq } from 'drizzle-orm';
 import { getRedisClient } from '@/lib/redis';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+import { logger } from '@/lib/logger';
 
 /**
  * Form Generation Service

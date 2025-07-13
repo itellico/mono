@@ -32,6 +32,7 @@ body {
     overflow-y: auto;
     z-index: 1000;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    background-color: #343a40 !important;
 }
 
 .sidebar-header {
@@ -40,10 +41,13 @@ body {
     background: rgba(52, 58, 64, 0.95);
     backdrop-filter: blur(10px);
     z-index: 100;
+    padding: 1rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .sidebar-content {
     flex: 1;
+    padding: 0.5rem !important;
 }
 
 .sidebar-footer {
@@ -53,20 +57,85 @@ body {
     backdrop-filter: blur(10px);
 }
 
+.sidebar .nav-item {
+    margin-bottom: 2px;
+    width: 100%;
+}
+
 .sidebar .nav-link {
     transition: all 0.3s ease;
-    border-radius: 8px;
-    margin-bottom: 4px;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    color: #ffffff !important;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
 }
 
 .sidebar .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(4px);
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateX(2px);
+    color: #ffffff !important;
 }
 
 .sidebar .nav-link.active {
-    transform: translateX(4px);
+    transform: translateX(2px);
     box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    background-color: rgba(0, 123, 255, 0.2) !important;
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Sub-items styling */
+.sidebar .nav-link.ps-3 {
+    padding-left: 2.5rem !important;
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Separator styling */
+.sidebar hr {
+    margin: 0.5rem 0;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar .text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    padding: 0 1rem;
+}
+
+/* Fix nav list styling */
+.sidebar ul.nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar .nav-item {
+    list-style: none;
+}
+
+/* Ensure proper spacing for separators */
+.sidebar .nav-item hr {
+    width: 100%;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.sidebar .nav-item .text-muted {
+    display: block;
+    padding: 0.25rem 1rem 0.75rem 1rem;
 }
 
 /* Main Content */

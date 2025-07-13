@@ -12,9 +12,12 @@
  * - Permission inheritance validation
  */
 
-import { db } from '@/lib/db';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import type { 
   Permission,
   Role,

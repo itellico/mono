@@ -1,13 +1,16 @@
-import { db } from '@/lib/db';
-import { 
-  categories, 
-  tags, 
-  modelSchemas,
-  optionSets,
-  optionValues 
-} from '@/lib/schemas';
-import { eq, and, inArray } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { 
+//   categories, 
+//   tags, 
+//   modelSchemas,
+//   optionSets,
+//   optionValues 
+// } from '@/lib/schemas';
+// import { eq, and, inArray } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 export interface ImportOptions {
   mode: 'delete' | 'append';

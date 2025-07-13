@@ -1,8 +1,11 @@
-import { db } from '@/lib/db';
-import { recordLocks } from '@/lib/schemas';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { recordLocks } from '@/lib/schemas';
+// import { eq, and, lt, gt } from 'drizzle-orm';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
-import { eq, and, lt, gt } from 'drizzle-orm';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 export interface LockEntry {
   tenantId: number;
@@ -28,6 +31,7 @@ export interface LockInfo {
 export class LockingService {
   private readonly DEFAULT_TTL_MINUTES = 30;
   private readonly REDIS_LOCK_PREFIX = 'lock';
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   /**
    * Generate Redis key for entity lock
@@ -72,23 +76,22 @@ export class LockingService {
 
       await redis.setex(lockKey, ttlMinutes * 60, JSON.stringify(lockData));
 
-      // Sync to database
-      await db.insert(recordLocks).values({
-        tenantId: entry.tenantId,
-        entityType: entry.entityType,
-        entityId: entry.entityId,
-        lockedBy: entry.lockedBy,
-        lockedAt: new Date(),
-        expiresAt,
-        reason: entry.reason
-      }).onConflictDoUpdate({
-        target: [recordLocks.tenantId, recordLocks.entityType, recordLocks.entityId],
-        set: {
+      // Sync to database via API
+      const headers = await ApiAuthService.getAuthHeaders();
+      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tenantId: entry.tenantId,
+          entityType: entry.entityType,
+          entityId: entry.entityId,
           lockedBy: entry.lockedBy,
-          lockedAt: new Date(),
           expiresAt,
           reason: entry.reason
-        }
+        }),
       });
 
       logger.info('Lock acquired successfully', {
@@ -134,15 +137,12 @@ export class LockingService {
       const redis = await getRedisClient();
       await redis.del(lockKey);
 
-      // Remove from database
-      await db.delete(recordLocks).where(
-        and(
-          eq(recordLocks.tenantId, tenantId),
-          eq(recordLocks.entityType, entityType),
-          eq(recordLocks.entityId, entityId),
-          eq(recordLocks.lockedBy, userId)
-        )
-      );
+      // Remove from database via API
+      const headers = await ApiAuthService.getAuthHeaders();
+      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}`, {
+        method: 'DELETE',
+        headers,
+      });
 
       logger.info('Lock released successfully', {
         tenantId,
@@ -272,13 +272,11 @@ export class LockingService {
       await redis.del(lockKey);
 
       // Remove from database
-      await db.delete(recordLocks).where(
-        and(
-          eq(recordLocks.tenantId, tenantId),
-          eq(recordLocks.entityType, entityType),
-          eq(recordLocks.entityId, entityId)
-        )
-      );
+      const headers = await ApiAuthService.getAuthHeaders();
+      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}/force`, {
+        method: 'DELETE',
+        headers,
+      });
 
       logger.info('Lock force released', {
         tenantId,
@@ -343,14 +341,11 @@ export class LockingService {
    */
   private async cleanupExpiredLock(tenantId: number, entityType: string, entityId: string): Promise<void> {
     try {
-      await db.delete(recordLocks).where(
-        and(
-          eq(recordLocks.tenantId, tenantId),
-          eq(recordLocks.entityType, entityType),
-          eq(recordLocks.entityId, entityId),
-          lt(recordLocks.expiresAt, new Date())
-        )
-      );
+      const headers = await ApiAuthService.getAuthHeaders();
+      await fetch(`${LockingService.API_BASE_URL}/api/v1/admin/locks/${tenantId}/${entityType}/${entityId}/cleanup`, {
+        method: 'DELETE',
+        headers,
+      });
 
       logger.debug('Expired lock cleaned up', {
         tenantId,

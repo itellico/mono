@@ -1,21 +1,24 @@
-import { eq, and, desc, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { 
-  emailTemplates, 
-  emailDeliveries, 
-  emailPreferences, 
-  emailCampaigns,
-  emailAnalytics,
-  emailProviders,
-  emailTemplateVariables,
-  tenants
-} from '@/lib/schemas';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { eq, and, desc, sql } from 'drizzle-orm';
+// import { db } from '@/lib/db';
+// import { 
+//   emailTemplates, 
+//   emailDeliveries, 
+//   emailPreferences, 
+//   emailCampaigns,
+//   emailAnalytics,
+//   emailProviders,
+//   emailTemplateVariables,
+//   tenants
+// } from '@/lib/schemas';
 import { queueEmail } from '@/lib/email-queue';
 import { logger } from '@/lib/logger';
 import Handlebars from 'handlebars';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { reactEmailService, type EmailTemplateName } from './react-email-service';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 // Type definitions for enums
 type EmailType = 'transactional' | 'marketing' | 'notification' | 'system';

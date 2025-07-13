@@ -1,21 +1,34 @@
-import { eq, and, desc, sql, count } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { eq, and, desc, sql, count } from 'drizzle-orm';
+// import { db } from '@/lib/db';
+// import {
+//   tenantN8nConfigs,
+//   tenantN8nUsage,
+//   n8nExecutionLogs,
+//   n8nWorkflowTemplates,
+//   tenantWorkflowInstances,
+//   type TenantN8nConfig,
+//   type NewTenantN8nConfig,
+//   type N8nExecutionLog,
+//   type NewN8nExecutionLog,
+//   type TenantWorkflowInstance,
+//   type NewTenantWorkflowInstance,
+// } from '@/lib/schemas/n8n-integration';
 import { z } from 'zod';
 import crypto from 'crypto';
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis';
-import { db } from '@/lib/db';
-import {
-  tenantN8nConfigs,
-  tenantN8nUsage,
-  n8nExecutionLogs,
-  n8nWorkflowTemplates,
-  tenantWorkflowInstances,
-  type TenantN8nConfig,
-  type NewTenantN8nConfig,
-  type N8nExecutionLog,
-  type NewN8nExecutionLog,
-  type TenantWorkflowInstance,
-  type NewTenantWorkflowInstance,
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+
+// Keep type imports
+export type {
+  TenantN8nConfig,
+  NewTenantN8nConfig,
+  N8nExecutionLog,
+  NewN8nExecutionLog,
+  TenantWorkflowInstance,
+  NewTenantWorkflowInstance,
 } from '@/lib/schemas/n8n-integration';
 
 // ============================

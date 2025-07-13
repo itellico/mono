@@ -129,5 +129,14 @@
       }
     }
   },
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7-mcp",
+    "magic-mcp",
+    "puppeteer",
+    "docs-mcp",
+    "sequential-thinking",
+    "kanboard-mcp",
+    "click-dummy-mcp"
+  ]
 }

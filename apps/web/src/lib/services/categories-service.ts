@@ -1,7 +1,10 @@
-import { db as prisma } from '@/lib/db';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db as prisma } from '@/lib/db';
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { createHash } from 'crypto';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 interface CategoryFilters {
   search?: string;
@@ -23,6 +26,7 @@ interface CategoryResponse {
 
 export class CategoriesService {
   private readonly CACHE_TTL = 300; // 5 minutes
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   private generateCacheKey(filters: CategoryFilters): string {
     const filterString = JSON.stringify(filters);
@@ -51,7 +55,7 @@ export class CategoriesService {
       });
     }
 
-    const result = await this.queryDatabase(filters);
+    const result = await this.queryAPI(filters);
 
     try {
       const redis = await getRedisClient();
@@ -64,64 +68,66 @@ export class CategoriesService {
     return result;
   }
 
-  private async queryDatabase(filters: CategoryFilters): Promise<CategoryResponse> {
-    const {
-      search = '',
-      page = 1,
-      limit = 20,
-      parentId
-    } = filters;
+  private async queryAPI(filters: CategoryFilters): Promise<CategoryResponse> {
+    try {
+      const {
+        search = '',
+        page = 1,
+        limit = 20,
+        parentId
+      } = filters;
 
-    const offset = (page - 1) * Math.min(limit, 100);
-    const whereConditions: any = {};
+      logger.info('Querying categories from API', { filters });
 
-    if (search) {
-      whereConditions.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { slug: { contains: search, mode: 'insensitive' } },
-      ];
-    }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: Math.min(limit, 100).toString(),
+      });
 
-    if (parentId !== undefined) {
-      whereConditions.parentId = parentId;
-    }
+      if (search) {
+        queryParams.set('search', search);
+      }
 
-    const categoriesResult = await prisma.category.findMany({
-      where: whereConditions,
-      orderBy: { createdAt: 'desc' },
-      take: Math.min(limit, 100),
-      skip: offset,
-      include: {
-        parent: true,
-        subcategories: true,
-        tags: {
-          include: {
-            tag: true
-          }
+      if (parentId !== undefined) {
+        queryParams.set('parentId', parentId.toString());
+      }
+
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch categories: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const result = data.data || data;
+
+      logger.info('Categories retrieved from API', {
+        count: result.categories?.length || 0,
+        total: result.pagination?.total || 0,
+        filters
+      });
+
+      return {
+        categories: result.categories || result.items || [],
+        pagination: result.pagination || {
+          page,
+          limit: Math.min(limit, 100),
+          total: 0,
+          totalPages: 0,
+          hasMore: false
         }
-      }
-    });
-
-    const totalCount = await prisma.category.count({
-      where: whereConditions,
-    });
-
-    logger.info('Categories retrieved from database', {
-      count: categoriesResult.length,
-      total: totalCount,
-      filters
-    });
-
-    return {
-      categories: categoriesResult,
-      pagination: {
-        page,
-        limit: Math.min(limit, 100),
-        total: totalCount,
-        totalPages: Math.ceil(totalCount / Math.min(limit, 100)),
-        hasMore: offset + Math.min(limit, 100) < totalCount
-      }
-    };
+      };
+    } catch (error) {
+      logger.error('Failed to query categories via API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        filters
+      });
+      throw error;
+    }
   }
 
   async getById(categoryId: string): Promise<any> {
@@ -142,34 +148,48 @@ export class CategoriesService {
       });
     }
 
-    const category = await prisma.category.findUnique({
-      where: { uuid: categoryId },
-      include: {
-        parent: true,
-        subcategories: true,
-        tags: {
-          include: {
-            tag: true
-          }
+    try {
+      logger.info('Fetching category from API', { categoryId });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${categoryId}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch category: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const category = data.data || data;
+
+      if (category) {
+        try {
+          const redis = await getRedisClient();
+          await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(category));
+          logger.debug('Single category cached successfully', { cacheKey, categoryId });
+        } catch (error) {
+          logger.warn('Redis cache write failed for single category', { 
+            error: error.message, 
+            cacheKey,
+            categoryId 
+          });
         }
       }
-    });
 
-    if (category) {
-      try {
-        const redis = await getRedisClient();
-        await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(category));
-        logger.debug('Single category cached successfully', { cacheKey, categoryId });
-      } catch (error) {
-        logger.warn('Redis cache write failed for single category', { 
-          error: error.message, 
-          cacheKey,
-          categoryId 
-        });
-      }
+      return category;
+    } catch (error) {
+      logger.error('Failed to fetch category via API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        categoryId
+      });
+      throw error;
     }
-
-    return category;
   }
 
   async create(categoryData: {
@@ -178,66 +198,122 @@ export class CategoriesService {
     description?: string;
     parentId?: number;
   }) {
-    const { name, slug, description, parentId } = categoryData;
+    try {
+      const { name, slug, description, parentId } = categoryData;
 
-    const newCategory = await prisma.category.create({
-      data: {
-        name,
-        slug,
-        description: description || null,
-        parentId: parentId || null,
-        isActive: true
+      logger.info('Creating category via API', { name, slug });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories`,
+        {
+          method: 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            slug,
+            description: description || null,
+            parentId: parentId || null,
+            isActive: true
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to create category: ${response.statusText}`);
       }
-    });
 
-    await this.invalidateCache();
+      const data = await response.json();
+      const newCategory = data.data || data;
 
-    logger.info('New category created', {
-      categoryId: newCategory.id,
-      categoryName: name,
-    });
+      await this.invalidateCache();
 
-    return newCategory;
+      logger.info('New category created via API', {
+        categoryId: newCategory.id,
+        categoryName: name,
+      });
+
+      return newCategory;
+    } catch (error) {
+      logger.error('Failed to create category via API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        categoryData
+      });
+      throw error;
+    }
   }
 
   async update(uuid: string, updates: any) {
-    const updatedCategory = await prisma.category.update({
-      where: { uuid },
-      data: {
-        ...updates,
-        updatedAt: new Date()
+    try {
+      logger.info('Updating category via API', { uuid, updates });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${uuid}`,
+        {
+          method: 'PUT',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updates),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to update category: ${response.statusText}`);
       }
-    });
 
-    await this.invalidateCache();
+      const data = await response.json();
+      const updatedCategory = data.data || data;
 
-    logger.info('Category updated', { categoryUuid: uuid, updates });
+      await this.invalidateCache();
 
-    return updatedCategory;
+      logger.info('Category updated via API', { categoryUuid: uuid, updates });
+
+      return updatedCategory;
+    } catch (error) {
+      logger.error('Failed to update category via API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        uuid,
+        updates
+      });
+      throw error;
+    }
   }
 
   async delete(uuid: string) {
-    // Delete associated CategoryTag entries first
-    const category = await prisma.category.findUnique({
-      where: { uuid },
-      include: { tags: true }
-    });
+    try {
+      logger.info('Deleting category via API', { uuid });
 
-    if (category) {
-      await prisma.categoryTag.deleteMany({
-        where: { categoryId: category.id }
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/${uuid}`,
+        {
+          method: 'DELETE',
+          headers,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete category: ${response.statusText}`);
+      }
+
+      await this.invalidateCache();
+
+      logger.info('Category deleted via API', { categoryUuid: uuid });
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Failed to delete category via API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        uuid
       });
+      throw error;
     }
-
-    const deletedCategory = await prisma.category.delete({
-      where: { uuid }
-    });
-
-    await this.invalidateCache();
-
-    logger.info('Category deleted', { categoryUuid: uuid });
-
-    return deletedCategory;
   }
 
   async invalidateCache(): Promise<void> {
@@ -266,25 +342,43 @@ export class CategoriesService {
       logger.warn('Stats cache read failed', { error: error.message });
     }
 
-    const totalCount = await prisma.category.count();
-    const activeCount = await prisma.category.count({
-      where: { isActive: true },
-    });
-
-    const stats = {
-      total: totalCount,
-      active: activeCount,
-      inactive: totalCount - activeCount
-    };
-
     try {
-      const redis = await getRedisClient();
-      await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(stats));
-    } catch (error) {
-      logger.warn('Stats cache write failed', { error: error.message });
-    }
+      logger.info('Fetching category stats from API');
 
-    return stats;
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${CategoriesService.API_BASE_URL}/api/v1/admin/categories/stats`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch category stats: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const stats = data.data || data;
+
+      try {
+        const redis = await getRedisClient();
+        await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(stats));
+      } catch (error) {
+        logger.warn('Stats cache write failed', { error: error.message });
+      }
+
+      logger.info('Category stats retrieved from API', { stats });
+      return stats;
+    } catch (error) {
+      logger.error('Failed to fetch category stats via API', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      // Fallback stats
+      return {
+        total: 0,
+        active: 0,
+        inactive: 0
+      };
+    }
   }
 }
 

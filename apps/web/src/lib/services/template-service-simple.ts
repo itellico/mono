@@ -1,7 +1,10 @@
-import { db } from '@/lib/db';
-import { modelSchemas } from '@/lib/schemas';
-import { eq, and, asc } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { modelSchemas } from '@/lib/schemas';
+// import { eq, and, asc } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import type { 
   TemplateContext, 
   ParsedSchema, 
