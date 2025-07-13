@@ -201,3 +201,6 @@ tsconfig.tsbuildinfo
 
 # GitHub Workflows
 .github/workflows/
+
+# Claude Code Settings
+.claude/local_settings.json
