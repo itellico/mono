@@ -1,6 +1,11 @@
-import { db } from '@/lib/db';
-import { translations, supportedLanguages } from '@/lib/schemas/translations';
-import { eq, and, or, like, desc, asc, isNull } from 'drizzle-orm';
+/**
+ * Translations Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All translation operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis';
 
@@ -88,6 +93,7 @@ export interface PaginatedResult<T> {
 
 class TranslationsService {
   private readonly CACHE_TTL = 3600; // 1 hour
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   /**
    * Generate cache key following mandatory pattern: cache:{tenant_id}:{entity}:{id}
@@ -141,27 +147,31 @@ class TranslationsService {
         logger.warn('Cache error, proceeding without cache', { error: cacheError.message });
       }
 
-      // Build query conditions
-      const conditions = [
-        eq(translations.entityType, entityType),
-        eq(translations.entityId, entityId),
-        eq(translations.languageCode, languageCode),
-        eq(translations.key, key)
-      ];
+      // Fetch from API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        entityType,
+        entityId,
+        languageCode,
+        key,
+        ...(tenantId !== undefined && { tenantId: tenantId.toString() }),
+      });
 
-      if (tenantId !== undefined) {
-        conditions.push(eq(translations.tenantId, tenantId));
-      } else {
-        conditions.push(isNull(translations.tenantId));
+      const response = await fetch(
+        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/get?${queryParams}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
       }
 
-      const result = await db
-        .select()
-        .from(translations)
-        .where(and(...conditions))
-        .limit(1);
+      if (!response.ok) {
+        throw new Error(`Failed to get translation: ${response.statusText}`);
+      }
 
-      const translation = result[0] || null;
+      const data = await response.json();
+      const translation = data.data || data;
 
       // Cache the result
       if (translation) {
@@ -192,118 +202,54 @@ class TranslationsService {
       logger.info('Getting translations with filters', { filters, pagination });
 
       const {
-        tenantId,
-        entityType,
-        entityId,
-        languageCode,
-        key,
-        needsReview,
-        isAutoTranslated,
-        search
-      } = filters;
-
-      const {
         page = 1,
         limit = 50,
         sortBy = 'updatedAt',
         sortOrder = 'desc'
       } = pagination;
 
-      // Build where conditions
-      const conditions = [];
+      // Fetch from API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        sortBy,
+        sortOrder,
+        ...Object.fromEntries(
+          Object.entries(filters).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
 
-      if (tenantId !== undefined) {
-        conditions.push(eq(translations.tenantId, tenantId));
+      const response = await fetch(
+        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/search?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get translations: ${response.statusText}`);
       }
 
-      if (entityType) {
-        conditions.push(eq(translations.entityType, entityType));
-      }
+      const result = await response.json();
+      const data = result.data || result;
 
-      if (entityId) {
-        conditions.push(eq(translations.entityId, entityId));
-      }
-
-      if (languageCode) {
-        conditions.push(eq(translations.languageCode, languageCode));
-      }
-
-      if (key) {
-        conditions.push(eq(translations.key, key));
-      }
-
-      if (needsReview !== undefined) {
-        conditions.push(eq(translations.needsReview, needsReview));
-      }
-
-      if (isAutoTranslated !== undefined) {
-        conditions.push(eq(translations.isAutoTranslated, isAutoTranslated));
-      }
-
-      if (search) {
-        conditions.push(
-          or(
-            like(translations.key, `%${search}%`),
-            like(translations.value, `%${search}%`),
-            like(translations.entityType, `%${search}%`),
-            like(translations.entityId, `%${search}%`)
-          )
-        );
-      }
-
-      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-      // Get total count
-      const totalResult = await db
-        .select({ count: translations.id })
-        .from(translations)
-        .where(whereClause);
-
-      const total = totalResult.length;
-
-      // Get paginated results
-      const offset = (page - 1) * limit;
-
-      // Fix the orderBy to use the correct column reference
-      let orderByColumn;
-      if (sortBy === 'updatedAt') {
-        orderByColumn = translations.updatedAt;
-      } else if (sortBy === 'createdAt') {
-        orderByColumn = translations.createdAt;
-      } else if (sortBy === 'key') {
-        orderByColumn = translations.key;
-      } else if (sortBy === 'value') {
-        orderByColumn = translations.value;
-      } else {
-        orderByColumn = translations.updatedAt; // default
-      }
-
-      const orderBy = sortOrder === 'asc' ? asc(orderByColumn) : desc(orderByColumn);
-
-      const results = await db
-        .select()
-        .from(translations)
-        .where(whereClause)
-        .orderBy(orderBy)
-        .limit(limit)
-        .offset(offset);
-
-      const totalPages = Math.ceil(total / limit);
+      const totalPages = Math.ceil(data.pagination.total / limit);
 
       logger.info('Translations retrieved', { 
-        total, 
+        total: data.pagination.total, 
         page, 
         limit, 
         totalPages,
-        resultsCount: results.length 
+        resultsCount: data.data.length 
       });
 
       return {
-        data: results,
+        data: data.data || data.items || [],
         pagination: {
           page,
           limit,
-          total,
+          total: data.pagination?.total || data.total || 0,
           totalPages
         }
       };
@@ -332,33 +278,24 @@ class TranslationsService {
         logger.warn('Cache error, proceeding without cache', { error: cacheError.message });
       }
 
-      const conditions = [];
+      // Fetch from API
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        activeOnly: activeOnly.toString(),
+        ...(tenantId !== undefined && { tenantId: tenantId || 'null' }),
+      });
 
-      // Tenant isolation: if tenantId provided, get tenant-specific + global (null tenant_id)
-      if (tenantId !== undefined) {
-        if (tenantId === null) {
-          conditions.push(isNull(supportedLanguages.tenantId));
-        } else {
-          conditions.push(
-            or(
-              eq(supportedLanguages.tenantId, tenantId),
-              isNull(supportedLanguages.tenantId)
-            )
-          );
-        }
+      const response = await fetch(
+        `${TranslationsService.API_BASE_URL}/api/v1/admin/translations/supported-languages?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get supported languages: ${response.statusText}`);
       }
 
-      if (activeOnly) {
-        conditions.push(eq(supportedLanguages.isActive, true));
-      }
-
-      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-      const result = await db
-        .select()
-        .from(supportedLanguages)
-        .where(whereClause)
-        .orderBy(asc(supportedLanguages.translationPriority), asc(supportedLanguages.name));
+      const data = await response.json();
+      const result = data.data || data;
 
       // Cache for 30 minutes
       try {
@@ -424,24 +361,22 @@ class TranslationsService {
     try {
       logger.info('Creating translation', { data });
 
-      const translationData = {
-        id: crypto.randomUUID(),
-        tenantId: data.tenantId || null,
-        entityType: data.entityType,
-        entityId: data.entityId,
-        languageCode: data.languageCode,
-        key: data.key,
-        value: data.value,
-        isAutoTranslated: data.isAutoTranslated || false,
-        needsReview: data.needsReview || false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${TranslationsService.API_BASE_URL}/api/v1/admin/translations`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-      const [created] = await db
-        .insert(translations)
-        .values(translationData)
-        .returning();
+      if (!response.ok) {
+        throw new Error(`Failed to create translation: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const created = result.data || result;
 
       // Clear cache for this translation
       await this.clearTranslationCache(

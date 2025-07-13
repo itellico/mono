@@ -1,9 +1,14 @@
-import { db as prisma } from '@/lib/db';
+/**
+ * Option Sets Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All option set operations go through NestJS API with proper authentication
+ */
+
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import { logger } from '@/lib/logger';
-import { OptionSetCache } from '@/lib/redis';
+import { getRedisClient } from '@/lib/redis';
 import { AVAILABLE_REGIONS, type RegionCode } from '@/lib/constants/regions';
-import { AuditService } from '@/lib/services/audit.service';
-import { type OptionSet, type OptionValue } from '@prisma/client';
 
 export interface OptionSet {
   id: number;
@@ -68,6 +73,25 @@ export interface RegionalMapping {
 }
 
 export class OptionSetsService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  private static readonly CACHE_TTL = 300; // 5 minutes
+
+  private static async getRedis() {
+    try {
+      return await getRedisClient();
+    } catch (error) {
+      logger.warn('Redis client unavailable, proceeding without cache', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
+    }
+  }
+
+  private static getCacheKey(tenantId: number | null, key: string): string {
+    const tenant = tenantId ? tenantId.toString() : 'global';
+    return `option_sets:${tenant}:${key}`;
+  }
+
   /**
    * Get all option sets with optional filtering
    */
@@ -83,71 +107,37 @@ export class OptionSetsService {
     try {
       logger.info('[OptionSetsService] Fetching option sets', { tenantId, search, categoryId, limit, offset });
 
-      const whereConditions: any = {};
-
-      if (tenantId !== undefined) {
-        if (tenantId === null) {
-          whereConditions.tenantId = null;
-        } else {
-          whereConditions.tenantId = tenantId;
-        }
-      }
-      if (search) {
-        whereConditions.OR = [
-          { label: { contains: search, mode: 'insensitive' } },
-          { slug: { contains: search, mode: 'insensitive' } },
-        ];
-      }
-      if (categoryId) {
-        whereConditions.categoryId = categoryId;
-      }
-
-      const results = await prisma.optionSet.findMany({
-        where: whereConditions,
-        include: {
-          _count: {
-            select: { optionValues: true },
-          },
-          category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              path: true,
-              color: true,
-            },
-          },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: limit,
-        skip: offset,
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+        ...Object.fromEntries(
+          Object.entries({ tenantId, search, categoryId }).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
       });
 
-      const transformedResults = results.map(os => ({
-        id: os.id,
-        slug: os.slug,
-        label: os.label,
-        tenantId: os.tenantId,
-        categoryId: os.categoryId,
-        createdAt: os.createdAt.toISOString(),
-        valueCount: os._count?.optionValues || 0,
-        category: os.category ? {
-          id: os.category.id.toString(),
-          name: os.category.name,
-          slug: os.category.slug,
-          path: os.category.path,
-          color: os.category.color,
-        } : null,
-      }));
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/option-sets?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch option sets: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const results = data.data || data;
 
       logger.info('[OptionSetsService] Option sets retrieved successfully', { 
-        count: transformedResults.length,
+        count: results.length,
         tenantId,
         search,
         categoryId
       });
 
-      return transformedResults;
+      return results;
     } catch (error) {
       logger.error('[OptionSetsService] Error fetching option sets', { error, tenantId, search, categoryId });
       throw error;
@@ -162,56 +152,51 @@ export class OptionSetsService {
       logger.info('[OptionSetsService] Fetching option set by ID', { id, tenantId });
 
       // Check cache first
-      const cacheKey = OptionSetCache.getCacheKey(tenantId, id.toString());
-      const cached = await OptionSetCache.get<OptionSet>(cacheKey);
-      if (cached) {
-        logger.info('[OptionSetsService] Option set retrieved from cache', { id, tenantId });
-        return cached;
-      }
-
-      const whereConditions: any = { id: id };
-      if (tenantId !== undefined) {
-        if (tenantId === null) {
-          whereConditions.tenantId = null;
-        } else {
-          whereConditions.tenantId = tenantId;
+      const cacheKey = this.getCacheKey(tenantId, `id:${id}`);
+      try {
+        const redis = await this.getRedis();
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          logger.info('[OptionSetsService] Option set retrieved from cache', { id, tenantId });
+          return JSON.parse(cached);
         }
+      } catch (redisError) {
+        logger.warn('Cache read failed, proceeding with API call', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
       }
 
-      const result = await prisma.optionSet.findFirst({
-        where: whereConditions,
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        ...(tenantId !== undefined && { tenantId: String(tenantId) }),
       });
 
-      if (!result) {
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/option-sets/${id}?${queryParams}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
         logger.warn('[OptionSetsService] Option set not found', { id, tenantId });
         return null;
       }
 
-      // Get the values for this option set
-      const rawValues = await prisma.optionValue.findMany({
-        where: { optionSetId: id },
-        orderBy: [
-          { order: 'asc' },
-          { createdAt: 'asc' },
-        ],
-      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch option set by ID: ${response.statusText}`);
+      }
 
-      // Cast JSONB fields to proper types for each value
-      const values = rawValues.map(value => ({
-        ...value,
-        regionalMappings: (value.regionalMappings as Record<string, string>) || {},
-        metadata: (value.metadata as Record<string, any>) || {},
-        createdAt: value.createdAt.toISOString()
-      })) as OptionValue[];
-
-      const optionSetWithValues = {
-        ...result,
-        createdAt: result.createdAt.toISOString(),
-        values
-      };
+      const data = await response.json();
+      const optionSetWithValues = data.data || data;
 
       // Cache the result
-      await OptionSetCache.set(cacheKey, optionSetWithValues);
+      try {
+        const redis = await this.getRedis();
+        await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(optionSetWithValues));
+      } catch (redisError) {
+        logger.warn('Failed to cache option set', {
+          error: redisError instanceof Error ? redisError.message : String(redisError)
+        });
+      }
 
       logger.info('[OptionSetsService] Option set retrieved successfully', { id, tenantId });
       return optionSetWithValues;
@@ -280,40 +265,33 @@ export class OptionSetsService {
     try {
       logger.info('[OptionSetsService] Creating option set', { data });
 
-      // Check if slug already exists
-      const existing = await this.getOptionSetBySlug(data.slug, data.tenantId);
-      if (existing) {
-        throw new Error(`Option set with slug "${data.slug}" already exists`);
-      }
-
-      const result = await prisma.optionSet.create({
-        data: {
-          slug: data.slug,
-          label: data.label,
-          tenantId: data.tenantId || null,
-          createdAt: new Date()
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(`${this.API_BASE_URL}/api/v1/admin/option-sets`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(data),
       });
 
-      // Audit logging
-      await AuditService.logEntityChange(
-        data.tenantId || 0, // Assuming 0 for global or a default tenantId if null
-        'option_set',
-        result.id.toString(),
-        'create',
-        0, // TODO: Replace with actual userId
-        null,
-        result,
-        { slug: data.slug, label: data.label }
-      );
+      if (!response.ok) {
+        throw new Error(`Failed to create option set: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const newOptionSet = result.data || result;
+
+      // Invalidate cache
+      await this.invalidateCache(data.tenantId);
 
       logger.info('[OptionSetsService] Option set created successfully', { 
-        id: result.id,
+        id: newOptionSet.id,
         slug: data.slug,
         tenantId: data.tenantId 
       });
 
-      return result;
+      return newOptionSet;
     } catch (error) {
       logger.error('[OptionSetsService] Error creating option set', { error, data });
       throw error;
@@ -704,6 +682,31 @@ export class OptionSetsService {
     } catch (error) {
       logger.error('[OptionSetsService] Error fetching statistics', { error });
       throw error;
+    }
+  }
+
+  /**
+   * Invalidate cache for option sets
+   */
+  private static async invalidateCache(tenantId?: number | null): Promise<void> {
+    try {
+      const redis = await this.getRedis();
+      const patterns = [
+        `option_sets:${tenantId ? tenantId.toString() : 'global'}:*`,
+        'option_sets:*:statistics',
+      ];
+
+      for (const pattern of patterns) {
+        const keys = await redis.keys(pattern);
+        if (keys.length > 0) {
+          await redis.del(...keys);
+          logger.debug('Option sets cache invalidated', { pattern, count: keys.length });
+        }
+      }
+    } catch (error) {
+      logger.warn('Failed to invalidate option sets cache', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   }
 } 

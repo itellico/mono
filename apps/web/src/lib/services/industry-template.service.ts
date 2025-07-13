@@ -1,20 +1,62 @@
 /**
- * Industry Template Service
- * Simplified service for managing industry templates
+ * Industry Template Service - API Client
+ * 
+ * ✅ ARCHITECTURE COMPLIANCE: Uses API calls instead of direct database access
+ * All industry template operations go through NestJS API with proper authentication
  */
 
-import { eq, and, desc, asc, count, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { 
-  industryTemplates,
-  industryTemplateComponents,
-  type IndustryTemplate,
-  type NewIndustryTemplate,
-  type IndustryTemplateComponent,
-  type NewIndustryTemplateComponent,
-  type IndustryType,
-  type ComponentType
-} from '@/lib/schemas';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
+import { logger } from '@/lib/logger';
+import { getRedisClient } from '@/lib/redis';
+
+export type IndustryType = 'healthcare' | 'finance' | 'education' | 'retail' | 'manufacturing' | 'technology' | 'hospitality' | 'other';
+export type ComponentType = 'form' | 'table' | 'chart' | 'dashboard' | 'workflow' | 'report' | 'other';
+
+export interface IndustryTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  industryType: IndustryType;
+  isPublished: boolean;
+  isActive: boolean;
+  popularity: number;
+  templateData: any;
+  metadata?: any;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface NewIndustryTemplate {
+  name: string;
+  description?: string;
+  industryType: IndustryType;
+  isPublished?: boolean;
+  isActive?: boolean;
+  popularity?: number;
+  templateData: any;
+  metadata?: any;
+}
+
+export interface IndustryTemplateComponent {
+  id: string;
+  templateId: string;
+  name: string;
+  componentType: ComponentType;
+  configuration: any;
+  sortOrder: number;
+  isRequired: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface NewIndustryTemplateComponent {
+  templateId: string;
+  name: string;
+  componentType: ComponentType;
+  configuration: any;
+  sortOrder?: number;
+  isRequired?: boolean;
+}
 
 export interface IndustryTemplateFilters {
   industryType?: IndustryType;
@@ -29,6 +71,20 @@ export interface PaginationOptions {
 }
 
 export class IndustryTemplateService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  private static readonly CACHE_TTL = 300; // 5 minutes
+
+  private static async getRedis() {
+    try {
+      return await getRedisClient();
+    } catch (error) {
+      logger.warn('Redis client unavailable, proceeding without cache', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      throw error;
+    }
+  }
+
   /**
    * List industry templates with basic filtering
    */
@@ -37,55 +93,49 @@ export class IndustryTemplateService {
     pagination: PaginationOptions = { page: 1, limit: 20 }
   ) {
     try {
-      // Build query conditions
-      const conditions = [];
-      
-      if (filters.industryType) {
-        conditions.push(eq(industryTemplates.industryType, filters.industryType));
-      }
-      
-      if (filters.isPublished !== undefined) {
-        conditions.push(eq(industryTemplates.isPublished, filters.isPublished));
-      }
-      
-      if (filters.isActive !== undefined) {
-        conditions.push(eq(industryTemplates.isActive, filters.isActive));
-      }
-      
-      if (filters.search) {
-        conditions.push(
-          sql`${industryTemplates.name} ILIKE ${`%${filters.search}%`}`
-        );
+      logger.info('Listing industry templates', { filters, pagination });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString(),
+        ...Object.fromEntries(
+          Object.entries(filters).map(([key, value]) => 
+            value !== undefined ? [key, String(value)] : []
+          ).filter(arr => arr.length > 0)
+        ),
+      });
+
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to list industry templates: ${response.statusText}`);
       }
 
-      // Get total count
-      const [totalResult] = await db
-        .select({ count: count() })
-        .from(industryTemplates)
-        .where(conditions.length > 0 ? and(...conditions) : undefined);
+      const data = await response.json();
+      const result = data.data || data;
 
-      const total = totalResult.count;
-      const totalPages = Math.ceil(total / pagination.limit);
-      const offset = (pagination.page - 1) * pagination.limit;
-
-      // Get templates
-      const templates = await db
-        .select()
-        .from(industryTemplates)
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(desc(industryTemplates.popularity))
-        .limit(pagination.limit)
-        .offset(offset);
+      logger.info('Industry templates retrieved successfully', { 
+        count: result.templates?.length || 0,
+        total: result.total 
+      });
 
       return {
-        templates,
-        total,
+        templates: result.templates || result.items || [],
+        total: result.total || 0,
         page: pagination.page,
-        totalPages,
+        totalPages: result.totalPages || Math.ceil((result.total || 0) / pagination.limit),
       };
     } catch (error) {
-      console.error('Failed to list industry templates:', error);
-      throw new Error('Failed to list industry templates');
+      logger.error('Failed to list industry templates', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        filters,
+        pagination 
+      });
+      throw error;
     }
   }
 
@@ -94,16 +144,33 @@ export class IndustryTemplateService {
    */
   async getTemplate(id: string): Promise<IndustryTemplate | null> {
     try {
-      const [template] = await db
-        .select()
-        .from(industryTemplates)
-        .where(eq(industryTemplates.id, id))
-        .limit(1);
+      logger.info('Getting industry template', { id });
 
-      return template || null;
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        { headers }
+      );
+
+      if (response.status === 404) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to get industry template: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const template = data.data || data;
+
+      logger.info('Industry template retrieved successfully', { id });
+      return template;
     } catch (error) {
-      console.error('Failed to get industry template:', error);
-      throw new Error('Failed to get industry template');
+      logger.error('Failed to get industry template', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id 
+      });
+      throw error;
     }
   }
 
