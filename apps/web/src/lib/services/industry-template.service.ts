@@ -179,14 +179,39 @@ export class IndustryTemplateService {
    */
   async createTemplate(data: NewIndustryTemplate): Promise<IndustryTemplate> {
     try {
-      const [template] = await db
-        .insert(industryTemplates)
-        .values(data)
-        .returning();
+      logger.info('Creating industry template', { name: data.name, industryType: data.industryType });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates`,
+        {
+          method: 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to create industry template: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const template = result.data || result;
+
+      logger.info('Industry template created successfully', { 
+        id: template.id, 
+        name: data.name 
+      });
 
       return template;
     } catch (error) {
-      console.error('Failed to create industry template:', error);
+      logger.error('Failed to create industry template', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        data 
+      });
       throw new Error('Failed to create industry template');
     }
   }
@@ -199,22 +224,41 @@ export class IndustryTemplateService {
     updates: Partial<IndustryTemplate>
   ): Promise<IndustryTemplate> {
     try {
-      const [template] = await db
-        .update(industryTemplates)
-        .set({
-          ...updates,
-          updatedAt: new Date(),
-        })
-        .where(eq(industryTemplates.id, id))
-        .returning();
+      logger.info('Updating industry template', { id, updates: Object.keys(updates) });
 
-      if (!template) {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updates),
+        }
+      );
+
+      if (response.status === 404) {
         throw new Error('Template not found');
       }
 
+      if (!response.ok) {
+        throw new Error(`Failed to update industry template: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const template = result.data || result;
+
+      logger.info('Industry template updated successfully', { id });
+
       return template;
     } catch (error) {
-      console.error('Failed to update industry template:', error);
+      logger.error('Failed to update industry template', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id,
+        updates 
+      });
       throw new Error('Failed to update industry template');
     }
   }
@@ -224,16 +268,31 @@ export class IndustryTemplateService {
    */
   async deleteTemplate(id: string): Promise<void> {
     try {
-      const result = await db
-        .delete(industryTemplates)
-        .where(eq(industryTemplates.id, id))
-        .returning({ id: industryTemplates.id });
+      logger.info('Deleting industry template', { id });
 
-      if (result.length === 0) {
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${id}`,
+        {
+          method: 'DELETE',
+          headers,
+        }
+      );
+
+      if (response.status === 404) {
         throw new Error('Template not found');
       }
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete industry template: ${response.statusText}`);
+      }
+
+      logger.info('Industry template deleted successfully', { id });
     } catch (error) {
-      console.error('Failed to delete industry template:', error);
+      logger.error('Failed to delete industry template', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        id 
+      });
       throw new Error('Failed to delete industry template');
     }
   }
@@ -243,15 +302,32 @@ export class IndustryTemplateService {
    */
   async getTemplateComponents(templateId: string): Promise<IndustryTemplateComponent[]> {
     try {
-      const components = await db
-        .select()
-        .from(industryTemplateComponents)
-        .where(eq(industryTemplateComponents.templateId, templateId))
-        .orderBy(asc(industryTemplateComponents.componentOrder));
+      logger.info('Getting template components', { templateId });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${templateId}/components`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to get template components: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const components = data.data || data;
+
+      logger.info('Template components retrieved successfully', { 
+        templateId, 
+        count: components.length 
+      });
 
       return components;
     } catch (error) {
-      console.error('Failed to get template components:', error);
+      logger.error('Failed to get template components', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        templateId 
+      });
       throw new Error('Failed to get template components');
     }
   }
@@ -264,17 +340,41 @@ export class IndustryTemplateService {
     componentData: Omit<NewIndustryTemplateComponent, 'templateId'>
   ): Promise<IndustryTemplateComponent> {
     try {
-      const [component] = await db
-        .insert(industryTemplateComponents)
-        .values({
-          ...componentData,
-          templateId,
-        })
-        .returning();
+      logger.info('Adding component to template', { templateId, componentName: componentData.name });
+
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/${templateId}/components`,
+        {
+          method: 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(componentData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to add component to template: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const component = result.data || result;
+
+      logger.info('Component added to template successfully', { 
+        templateId, 
+        componentId: component.id,
+        componentName: componentData.name 
+      });
 
       return component;
     } catch (error) {
-      console.error('Failed to add component to template:', error);
+      logger.error('Failed to add component to template', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        templateId,
+        componentData 
+      });
       throw new Error('Failed to add component to template');
     }
   }
@@ -284,42 +384,31 @@ export class IndustryTemplateService {
    */
   async getTemplateStats() {
     try {
-      // Get basic counts
-      const [totalTemplates] = await db
-        .select({ count: count() })
-        .from(industryTemplates)
-        .where(eq(industryTemplates.isActive, true));
+      logger.info('Getting template statistics');
 
-      const [publishedTemplates] = await db
-        .select({ count: count() })
-        .from(industryTemplates)
-        .where(
-          and(
-            eq(industryTemplates.isActive, true),
-            eq(industryTemplates.isPublished, true)
-          )
-        );
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${IndustryTemplateService.API_BASE_URL}/api/v1/admin/industry-templates/stats`,
+        { headers }
+      );
 
-      // Get popular templates
-      const popularTemplates = await db
-        .select()
-        .from(industryTemplates)
-        .where(
-          and(
-            eq(industryTemplates.isActive, true),
-            eq(industryTemplates.isPublished, true)
-          )
-        )
-        .orderBy(desc(industryTemplates.popularity))
-        .limit(5);
+      if (!response.ok) {
+        throw new Error(`Failed to get template stats: ${response.statusText}`);
+      }
 
-      return {
-        totalTemplates: totalTemplates.count,
-        publishedTemplates: publishedTemplates.count,
-        popularTemplates,
-      };
+      const data = await response.json();
+      const stats = data.data || data;
+
+      logger.info('Template statistics retrieved successfully', { 
+        totalTemplates: stats.totalTemplates,
+        publishedTemplates: stats.publishedTemplates 
+      });
+
+      return stats;
     } catch (error) {
-      console.error('Failed to get template stats:', error);
+      logger.error('Failed to get template stats', { 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       throw new Error('Failed to get template stats');
     }
   }

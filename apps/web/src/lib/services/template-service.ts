@@ -1,8 +1,11 @@
-import { db } from '@/lib/db';
-import { modelSchemas, optionSets, optionValues } from '@/lib/schemas';
-import { eq, and } from 'drizzle-orm';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
+// import { modelSchemas, optionSets, optionValues } from '@/lib/schemas';
+// import { eq, and } from 'drizzle-orm';
 import { TemplateCache } from '@/lib/redis';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 import type { ModelSchema, SchemaDefinition, SchemaField } from '@/lib/schemas/model-schemas';
 import type { OptionSet, OptionValue } from '@/lib/schemas/options';
 
@@ -35,6 +38,7 @@ export interface ParsedOption {
 }
 
 export class TemplateService {
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   // ============================
   // 🔄 CORE SCHEMA LOADER
@@ -93,39 +97,63 @@ export class TemplateService {
     tenantId: string
   ): Promise<any | null> {
     try {
-      // Try tenant-specific schema first
-      let result = await db
-        .select()
-        .from(modelSchemas)
-        .where(
-          and(
-            eq(modelSchemas.type, type),
-            eq(modelSchemas.subType, subType),
-            eq(modelSchemas.tenantId, tenantId),
-            eq(modelSchemas.isActive, true)
-          )
-        )
-        .limit(1);
+      logger.info('Loading schema from API', { type, subType, tenantId });
 
-      // Fallback to platform-level schema
-      if (result.length === 0) {
-        result = await db
-          .select()
-          .from(modelSchemas)
-          .where(
-            and(
-              eq(modelSchemas.type, type),
-              eq(modelSchemas.subType, subType),
-              eq(modelSchemas.tenantId, null), // Platform-level
-              eq(modelSchemas.isActive, true)
-            )
-          )
-          .limit(1);
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams({
+        type,
+        subType,
+        tenantId,
+        isActive: 'true',
+      });
+
+      // Try tenant-specific schema first
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/model-schemas?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to load schema: ${response.statusText}`);
       }
 
-      return result[0] || null;
+      const data = await response.json();
+      const schemas = data.data || data;
+
+      if (schemas && schemas.length > 0) {
+        return schemas[0];
+      }
+
+      // Fallback to platform-level schema
+      const platformParams = new URLSearchParams({
+        type,
+        subType,
+        tenantId: 'null', // Platform-level
+        isActive: 'true',
+      });
+
+      const platformResponse = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/model-schemas?${platformParams}`,
+        { headers }
+      );
+
+      if (platformResponse.ok) {
+        const platformData = await platformResponse.json();
+        const platformSchemas = platformData.data || platformData;
+        
+        if (platformSchemas && platformSchemas.length > 0) {
+          return platformSchemas[0];
+        }
+      }
+
+      return null;
     } catch (error) {
-      logger.error('Database schema load failed:', error);
+      logger.error('Schema load failed via API', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        type, 
+        subType, 
+        tenantId 
+      });
       return null;
     }
   }
@@ -194,19 +222,31 @@ export class TemplateService {
     region: string = 'GLOBAL'
   ): Promise<ParsedOption[]> {
     try {
-      const values = await db
-        .select()
-        .from(optionValues)
-        .where(eq(optionValues.optionSetId, optionSetId))
-        .orderBy(optionValues.order);
+      logger.info('Loading options from API', { optionSetId, region });
 
-      return values.map(value => ({
+      const headers = await ApiAuthService.getAuthHeaders();
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/option-values?optionSetId=${optionSetId}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to load options: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const values = data.data || data;
+
+      return values.map((value: any) => ({
         value: value.value,
         label: this.getRegionalLabel(value, region),
         metadata: value.metadata || {}
       }));
     } catch (error) {
-      logger.error(`Failed to load options for set ${optionSetId}:`, error);
+      logger.error('Failed to load options via API', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        optionSetId 
+      });
       return [];
     }
   }
@@ -297,13 +337,30 @@ export class TemplateService {
 
   static async getAllOptionSets(tenantId?: string): Promise<OptionSet[]> {
     try {
-      const query = tenantId
-        ? db.select().from(optionSets).where(eq(optionSets.tenantId, parseInt(tenantId)))
-        : db.select().from(optionSets);
+      logger.info('Loading option sets from API', { tenantId });
 
-      return await query;
+      const headers = await ApiAuthService.getAuthHeaders();
+      const queryParams = new URLSearchParams();
+      if (tenantId) {
+        queryParams.set('tenantId', tenantId);
+      }
+
+      const response = await fetch(
+        `${this.API_BASE_URL}/api/v1/admin/option-sets?${queryParams}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to load option sets: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
     } catch (error) {
-      logger.error('Failed to load option sets:', error);
+      logger.error('Failed to load option sets via API', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tenantId 
+      });
       return [];
     }
   }

@@ -75,17 +75,19 @@ function getPlatformSidebarItems() {
         ['label' => 'Dashboard', 'icon' => 'fas fa-tachometer-alt', 'href' => $platformBase . 'index.php'],
         ['label' => 'Architecture Overview', 'icon' => 'fas fa-sitemap', 'href' => $platformBase . 'overview.php'],
         
-        // MULTI-BRAND MANAGEMENT
+        // MULTI-BRAND MANAGEMENT  
         ['label' => 'Brand Management', 'icon' => 'fas fa-layer-group', 'href' => $platformBase . 'brands/brand-manager.php'],
         ['label' => 'Industry Templates', 'icon' => 'fas fa-code-branch', 'href' => $platformBase . 'industry-templates/template-library.php'],
+        ['label' => 'Cross-Brand Integration', 'icon' => 'fas fa-network-wired', 'href' => $platformBase . 'cross-brand/integration-hub.php'],
         
         // GLOBAL RESOURCES
         ['label' => 'Global Resources', 'icon' => 'fas fa-cube', 'href' => '#', 'separator' => true],
         
-        // Basic Resources
-        ['label' => 'Option Sets', 'icon' => 'fas fa-list-ul', 'href' => $platformBase . 'resources/option-sets.php'],
-        ['label' => 'Base Categories', 'icon' => 'fas fa-folder', 'href' => $platformBase . 'resources/categories.php'],
-        ['label' => 'Base Tags', 'icon' => 'fas fa-tags', 'href' => $platformBase . 'resources/tags.php'],
+        // Global Resources (Platform-Level)
+        ['label' => 'Global Option Sets', 'icon' => 'fas fa-list-ul', 'href' => $platformBase . 'resources/option-sets.php'],
+        ['label' => 'System Categories', 'icon' => 'fas fa-folder', 'href' => $platformBase . 'resources/categories.php'],
+        ['label' => 'System Tags', 'icon' => 'fas fa-tags', 'href' => $platformBase . 'resources/tags.php'],
+        ['label' => 'Industry Installers', 'icon' => 'fas fa-download', 'href' => $platformBase . 'installers/industry-setup.php'],
         
         // Access Control
         ['label' => 'Access Control', 'icon' => 'fas fa-shield-alt', 'href' => '#', 'separator' => true],
@@ -112,9 +114,10 @@ function getPlatformSidebarItems() {
         ['label' => 'Add-on Pricing', 'icon' => 'fas fa-plus-circle', 'href' => $platformBase . 'billing/addon-pricing.php'],
         ['label' => 'Revenue Analytics', 'icon' => 'fas fa-chart-line', 'href' => $platformBase . 'revenue/index.php'],
         
-        // BRAND MANAGEMENT
-        ['label' => 'Brand Management', 'icon' => 'fas fa-building', 'href' => '#', 'separator' => true],
-        ['label' => 'All Brands', 'icon' => 'fas fa-building', 'href' => $platformBase . 'tenants/index.php'],
+        // BRAND/TENANT MANAGEMENT
+        ['label' => 'Brand/Tenant Management', 'icon' => 'fas fa-building', 'href' => '#', 'separator' => true],
+        ['label' => 'All Tenants (Brands)', 'icon' => 'fas fa-building', 'href' => $platformBase . 'tenants/index.php'],
+        ['label' => 'Cross-Tenant API', 'icon' => 'fas fa-exchange-alt', 'href' => $platformBase . 'cross-brand/api-management.php'],
         
         // DEVELOPER TOOLS
         ['label' => 'Developer Tools', 'icon' => 'fas fa-code', 'href' => '#', 'separator' => true],
@@ -152,16 +155,23 @@ function getTenantSidebarItems() {
     $tenantBase = APP_BASE_PATH . '/tenant/';
     
     return [
-        ['label' => 'Brand Dashboard', 'icon' => 'fas fa-tachometer-alt', 'href' => $tenantBase . 'index.php'],
+        ['label' => 'Tenant Dashboard', 'icon' => 'fas fa-tachometer-alt', 'href' => $tenantBase . 'index.php'],
         ['label' => 'Professional Database', 'icon' => 'fas fa-users', 'href' => $tenantBase . 'talent/index.php'],
-        ['label' => 'Gig Management', 'icon' => 'fas fa-bullhorn', 'href' => $tenantBase . 'castings/index.php'],
+        ['label' => 'Generic Gig System', 'icon' => 'fas fa-bullhorn', 'href' => $tenantBase . 'castings/index.php'],
         ['label' => 'Applications', 'icon' => 'fas fa-file-alt', 'href' => $tenantBase . 'applications/index.php'],
-        ['label' => 'Brand Marketplace', 'icon' => 'fas fa-store', 'href' => $tenantBase . 'marketplace/index.php'],
+        ['label' => 'Industry Marketplace', 'icon' => 'fas fa-store', 'href' => $tenantBase . 'marketplace/index.php'],
         
-        // CROSS-BRAND FEATURES
-        ['label' => 'Cross-Brand Features', 'icon' => 'fas fa-network-wired', 'href' => '#', 'separator' => true],
-        ['label' => 'Data Sharing', 'icon' => 'fas fa-share-alt', 'href' => $tenantBase . 'cross-brand/data-sharing.php'],
+        // TENANT CONFIGURATION (Industry-Specific)
+        ['label' => 'Tenant Configuration', 'icon' => 'fas fa-cogs', 'href' => '#', 'separator' => true],
+        ['label' => 'Categories & Tags', 'icon' => 'fas fa-folder', 'href' => $tenantBase . 'categories/index.php'],
+        ['label' => 'Industry Workflows', 'icon' => 'fas fa-project-diagram', 'href' => $tenantBase . 'workflows/index.php'],
         ['label' => 'Gig Templates', 'icon' => 'fas fa-layer-group', 'href' => $tenantBase . 'gig-templates/template-manager.php'],
+        ['label' => 'Translations', 'icon' => 'fas fa-language', 'href' => $tenantBase . 'translations/index.php'],
+        
+        // CROSS-TENANT INTEGRATION
+        ['label' => 'Cross-Tenant Features', 'icon' => 'fas fa-network-wired', 'href' => '#', 'separator' => true],
+        ['label' => 'Data Sharing API', 'icon' => 'fas fa-share-alt', 'href' => $tenantBase . 'cross-brand/data-sharing.php'],
+        ['label' => 'Cross-Tenant Requests', 'icon' => 'fas fa-exchange-alt', 'href' => $tenantBase . 'cross-brand/api-requests.php'],
         
         // CONTENT MANAGEMENT
         ['label' => 'Content Management', 'icon' => 'fas fa-file-alt', 'href' => '#', 'separator' => true],
@@ -199,10 +209,11 @@ function getAccountSidebarItems() {
         ['label' => 'Talent Account', 'icon' => 'fas fa-user', 'href' => $pathPrefix . 'talent/index.php'],
         ['label' => 'Guardian Account', 'icon' => 'fas fa-users', 'href' => $pathPrefix . 'guardian/index.php'],
         
-        // ACCOUNT-LEVEL FEATURES
-        ['label' => 'Account Management', 'icon' => 'fas fa-cogs', 'href' => '#', 'separator' => true],
+        // ACCOUNT-LEVEL CUSTOMIZATION (Only Place for Custom Fields)
+        ['label' => 'Account Customization', 'icon' => 'fas fa-cogs', 'href' => '#', 'separator' => true],
         ['label' => 'Custom Field Manager', 'icon' => 'fas fa-sliders-h', 'href' => $pathPrefix . 'custom-fields/field-manager.php'],
-        ['label' => 'Cross-Brand Discovery', 'icon' => 'fas fa-search', 'href' => $pathPrefix . 'cross-brand/talent-discovery.php']
+        ['label' => 'Cross-Tenant Discovery', 'icon' => 'fas fa-search', 'href' => $pathPrefix . 'cross-brand/talent-discovery.php'],
+        ['label' => 'Account Billing', 'icon' => 'fas fa-credit-card', 'href' => $pathPrefix . 'billing/index.php']
     ];
 }
 
@@ -220,9 +231,9 @@ function getAgencySidebarItems() {
     
     return [
         ['label' => 'Agency Dashboard', 'icon' => 'fas fa-tachometer-alt', 'href' => $pathPrefix . 'agency/index.php'],
-        ['label' => 'Projects', 'icon' => 'fas fa-project-diagram', 'href' => $pathPrefix . 'projects/index.php'],
-        ['label' => 'Talent Roster', 'icon' => 'fas fa-users', 'href' => $pathPrefix . 'talent/index.php'],
-        ['label' => 'Talent Search', 'icon' => 'fas fa-search', 'href' => $pathPrefix . 'search/index.php'],
+        ['label' => 'Generic Gig Projects', 'icon' => 'fas fa-project-diagram', 'href' => $pathPrefix . 'projects/index.php'],
+        ['label' => 'Professional Roster', 'icon' => 'fas fa-users', 'href' => $pathPrefix . 'talent/index.php'],
+        ['label' => 'Cross-Tenant Search', 'icon' => 'fas fa-search', 'href' => $pathPrefix . 'search/index.php'],
         ['label' => 'Team Management', 'icon' => 'fas fa-user-friends', 'href' => $pathPrefix . 'team/index.php'],
         
         // CONTENT & MEDIA
@@ -319,14 +330,14 @@ function getGuardianSidebarItems() {
     
     return [
         ['label' => 'Guardian Dashboard', 'icon' => 'fas fa-tachometer-alt', 'href' => $pathPrefix . 'guardian/index.php'],
-        ['label' => 'Profile Management', 'icon' => 'fas fa-users-cog', 'href' => $pathPrefix . 'guardian/profiles.php'],
-        ['label' => 'Consolidated Calendar', 'icon' => 'fas fa-calendar-alt', 'href' => $pathPrefix . 'guardian/calendar.php'],
-        ['label' => 'All Bookings', 'icon' => 'fas fa-list-alt', 'href' => $pathPrefix . 'guardian/bookings.php'],
-        ['label' => 'Parental Controls', 'icon' => 'fas fa-shield-alt', 'href' => $pathPrefix . 'guardian/protections.php'],
-        ['label' => 'Applications Review', 'icon' => 'fas fa-file-signature', 'href' => $pathPrefix . 'guardian/applications.php'],
-        ['label' => 'Trust Fund Management', 'icon' => 'fas fa-piggy-bank', 'href' => $pathPrefix . 'guardian/earnings.php'],
+        ['label' => 'Multi-Tenant Profiles', 'icon' => 'fas fa-users-cog', 'href' => $pathPrefix . 'guardian/profiles.php'],
+        ['label' => 'Cross-Industry Calendar', 'icon' => 'fas fa-calendar-alt', 'href' => $pathPrefix . 'guardian/calendar.php'],
+        ['label' => 'All Brand Bookings', 'icon' => 'fas fa-list-alt', 'href' => $pathPrefix . 'guardian/bookings.php'],
+        ['label' => 'Cross-Tenant Controls', 'icon' => 'fas fa-shield-alt', 'href' => $pathPrefix . 'guardian/protections.php'],
+        ['label' => 'Multi-Industry Reviews', 'icon' => 'fas fa-file-signature', 'href' => $pathPrefix . 'guardian/applications.php'],
+        ['label' => 'Consolidated Earnings', 'icon' => 'fas fa-piggy-bank', 'href' => $pathPrefix . 'guardian/earnings.php'],
         ['label' => 'Family Messages', 'icon' => 'fas fa-envelope', 'href' => $pathPrefix . 'guardian/messages.php'],
-        ['label' => 'Activity Monitoring', 'icon' => 'fas fa-history', 'href' => $pathPrefix . 'guardian/activity.php'],
+        ['label' => 'Cross-Brand Monitoring', 'icon' => 'fas fa-history', 'href' => $pathPrefix . 'guardian/activity.php'],
         ['label' => 'Guardian Settings', 'icon' => 'fas fa-cog', 'href' => $pathPrefix . 'guardian/settings.php'],
         ['label' => '← Back to Account Types', 'icon' => 'fas fa-arrow-left', 'href' => $pathPrefix . 'index.php']
     ];
@@ -353,10 +364,11 @@ function getUserSidebarItems() {
         ['label' => 'Messages', 'icon' => 'fas fa-envelope', 'href' => $pathPrefix . 'messages/index.php'],
         ['label' => 'Calendar', 'icon' => 'fas fa-calendar', 'href' => $pathPrefix . 'calendar/index.php'],
         
-        // CROSS-INDUSTRY FEATURES
-        ['label' => 'Cross-Industry', 'icon' => 'fas fa-network-wired', 'href' => '#', 'separator' => true],
-        ['label' => 'Multi-Brand Profile', 'icon' => 'fas fa-share-alt', 'href' => $pathPrefix . 'cross-industry/profile-showcase.php'],
-        ['label' => 'Professional Network', 'icon' => 'fas fa-users', 'href' => $pathPrefix . 'networking/professional-network.php'],
+        // CROSS-TENANT/MULTI-BRAND FEATURES
+        ['label' => 'Cross-Tenant Features', 'icon' => 'fas fa-network-wired', 'href' => '#', 'separator' => true],
+        ['label' => 'Multi-Tenant Profile', 'icon' => 'fas fa-share-alt', 'href' => $pathPrefix . 'cross-industry/profile-showcase.php'],
+        ['label' => 'Cross-Industry Network', 'icon' => 'fas fa-users', 'href' => $pathPrefix . 'networking/professional-network.php'],
+        ['label' => 'Multi-Industry Gigs', 'icon' => 'fas fa-briefcase', 'href' => $pathPrefix . 'gigs/cross-industry.php'],
         
         // CONTENT & MEDIA
         ['label' => 'Content & Media', 'icon' => 'fas fa-images', 'href' => '#', 'separator' => true],

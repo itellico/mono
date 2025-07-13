@@ -9,9 +9,12 @@
  * - Column configuration and sorting support
  */
 
-import { db } from '@/lib/db';
+// ✅ ARCHITECTURE COMPLIANCE: Use NestJS API instead of direct database access
+// ❌ REMOVED: Direct database imports (architectural violation)
+// import { db } from '@/lib/db';
 import { cache } from '@/lib/cache/cache-middleware';
 import { logger } from '@/lib/logger';
+import { ApiAuthService } from '@/lib/api-clients/api-auth.service';
 
 // Types
 export interface ColumnConfiguration {
@@ -172,6 +175,7 @@ export interface CreateSavedSearchAdminResult {
 
 export class SavedSearchesService {
   private static instance: SavedSearchesService;
+  private static readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   private constructor() {}
 
